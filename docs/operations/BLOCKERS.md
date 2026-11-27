@@ -77,3 +77,5 @@ GPT-04 회차 01 전체 CI 성공; 기하 후보 통합 승인. 기존 실기기
 GPT-04 회차 02: 124/124 합성 호스트 글꼴 조합 fit; 기기 font/실제 표시 및 locale·native HR/날씨 runtime 미실시, 기존 B-002/004/006/008 유지. 후보 전체 CI 46060479503 최종 확인 대기. AG/GB 소유권 및 기존 main 제품 유지.
 
 OPS-06: GPT04-D1 OPEN/P0 후보 Group name 필수 속성 누락(46060479503), 수정 374dec9 재검증 CI 46062170635. AG01-AUD-04 OPEN/P1 runtime package/display 오판 4종 분리 함수 재현. AG 원격 환경 0 Wear AVD, 실제 실행 NOT RUN. AG 기존 pin CI 실패; main pin 해결 유지. GB-01 통합 완료, GB-02 READY.
+
+GPT04-D1 RESOLVED: CI 46062170635 SUCCESS, 100 host and 12 APK PASS. Runtime/locale/glyph/AOD pixel verification still pending. No product or external owner edits.

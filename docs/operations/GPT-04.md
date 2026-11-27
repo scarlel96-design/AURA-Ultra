@@ -1,5 +1,5 @@
 # GPT-04 — 원형 레이아웃 및 가독성 준비
-상태: PARTIAL / 독립 준비 작업. 회차 01 원형 기하 후보 CI 진행. 관련 WO-03/04/09/16, R-01/03/10/17/18/20/22/26. GPT-03 GO. WO-01/02 PARTIAL; 정식 WO 완료 아님.
+상태: PARTIAL / 독립 준비 작업. 회차 03 기본 페이스 격리 CI 성공. 관련 WO-03/04/09/16, R-01/03/10/17/18/20/22/26. GPT-03 GO. WO-01/02 PARTIAL; 정식 WO 완료 아님.
 ## 범위
 1. 450 논리 좌표의 원형 안전 영역과 정보 영역 사이 간격을 정량화한다. 432/438/480/498 화면에 투영한다. 실제 설치 OS와 화면을 확인한 것으로 간주하지 않는다.
 2. 공통 시간·날짜·배터리·걸음과 향후 심박/날씨용 영역을 명시한다. 표시되지 않은 값은 합성 예시로만 사용한다. 기존 제품 XML 유지. 글리프 너비와 실제 런타임 시험을 기하 시험과 구분한다.
@@ -16,3 +16,8 @@
 회차 01 기하 CI 46059943214 SUCCESS 및 통합 완료. 회차 02 후보 b68a78233db16e4f35a73a03ce4117f830722dca, CI 46060479503. [REPORT-02](../evidence/GPT-04/REPORT-02.md), [호스트 글꼴 증거](../evidence/GPT-04/HOST-GLYPH-PROBE.md). 실제 표시 및 전체 CI 검증 대기. 현재 GPT-04 PARTIAL.
 
 회차 02 후보 CI 46060479503 FAILURE: WFF2 Group name 누락. 수정 374dec922873d9a6c3ec679e5c686e80eb289394, CI 46062170635. 기존 99 host PASS 및 기존 8 APK PASS; 신규 후보 APK NOT RUN. 수정 후 전체 CI 증거 확인 전 통합 금지.
+
+## GPT-04 회차 03 — Group name 수정 검증 (2026-11-28 KST)
+- 기준 main 383915b708500381cd9c87831ee0fbdf03477711. 검증 코드 374dec922873d9a6c3ec679e5c686e80eb289394; [CI 46062170635](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46062170635), job 140718791762 SUCCESS. 100 host tests PASS, independent generation/missing/stale/repair PASS. 기존 bootstrap 4 및 flavor override 4 APK clean build, 신규 Signature 4 APK clean build 총 12/12; 공식 WFF2~5 positive/negative, raw XML/compiled Manifest/ZIP, memory, v2 signatures 모두 PASS. GPT04-D1 RESOLVED. 이전 실패 46060479503 보존.
+- 신규 basic XML SHA 00faf8b87e45744ef1a549fb1a2e6a38fe11007594f08c01515f48ceedfa3c29; BASIC_APK_RESULT 4건 해당 SHA 일치. WFF2 APK 0fcf3fe1e9c8d8f40dc38aff9fa1898a016e2e53b56c557f38a3229ef26f3b98, WFF3 11cdb6ef04d8db31151e50f9500e8ea812c9dfb6c8b62249a42a725b645c8b71, WFF4 2715cc0ee53c1f8d2663d2032332e2615372cc738afab5136bc6bfe2e8823ad6, WFF5 bac0da34c1439848167cabe092c46f8b56455ed42981991a50e33b594160fb01. Evaluator active 2371712 B, ambient 3181712 B per candidate APK; +810000 B versus bootstrap AOD, under 7340032 B budget. Date retained; cause of additional layer in this candidate not isolated, tool estimate only. Actual RAM/power/glyph/runtime NOT RUN.
+- Artifact 15228689612 layout evidence sha256:ad241cfbd3056a497e77300c8013bc46e050465265a414d0f86002ef008c8b9c; 15228969107 bootstrap APK sha256:f742a9952e2c83505e6884689ba7bc114328e335ae3acaaaab819a480778f385, both unexpired. Original CI logs/metadata checked; no independent artifact download. Candidate APKs intentionally not uploaded. 7 candidate paths, external owner paths and product apps/watchface unchanged. Merge verified tools and development evidence only; preserve newer main records. Main merge CI separately tracked. GPT-04 PARTIAL: localized sample preview, AM/PM setting distinction, actual runtime/visual gate remain. GPT 3/12, WO GO 0/38, product NO-GO. B-002/003 runtime/004/005/006/007/008, AG01-AUD-04 and GB01-E1 remain. GB-02/AG-01-R04 independent scopes unchanged.

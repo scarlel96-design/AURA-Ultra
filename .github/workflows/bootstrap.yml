@@ -31,6 +31,9 @@ jobs:
         run: |
           python tools/round_layout.py --write
           python tools/round_layout.py --check
+          python tools/generate_basic_face.py --write
+          python tools/generate_basic_face.py --check
+          python tools/check_layout_reproduction.py
       - name: Check project invariants
         run: python tools/check_foundation.py
       - name: Validation tool regression tests
@@ -59,6 +62,14 @@ jobs:
         run: python tools/build_profiles.py signatures
       - name: Isolated generated flavor regression
         run: python tools/check_flavor_isolation.py
+      - name: Isolated Signature basic display
+        run: python tools/check_basic_face_build.py
+      - name: Upload layout development evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: aura-layout-development-evidence
+          path: assets/generated/layouts/
+          if-no-files-found: error
       - name: Upload debug APKs
         uses: actions/upload-artifact@v4
         with:

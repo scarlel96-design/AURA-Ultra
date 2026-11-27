@@ -2,7 +2,7 @@
 등록: 2026-11-27. 기준 main c1c66b76b7af4a20bb7a08a369fb5962d28b973f. 1차 결과 접수. 담당자 판정과 총괄 검증/통합 판정을 구분한다.
 | 담당 | ID | 상태 | 브랜치 | 소유 경로 |
 |---|---|---|---|---|
-| ChatGPT | GPT-04 | PARTIAL (기하 통합, 기본 표시 후보 CI 진행) | 정본 규정에 따름 | 그래픽 토큰, 생성 도구, 자산, 공통 빌드 및 중앙 운영 문서 |
+| ChatGPT | GPT-04 | PARTIAL (기하·기본 표시 검증, 프리뷰 준비) | 정본 규정에 따름 | 그래픽 토큰, 생성 도구, 자산, 공통 빌드 및 중앙 운영 문서 |
 | Grok Build | [GB-01](GB-01.md) | GO (독립 모듈 통합 승인) | agent/grok/GB-01 | modules/domain/**, docs/evidence/GB-01/** |
 | Antigravity CLI | [AG-01](AG-01.md) | PARTIAL / R03 증거 확인, runtime 검증 보완 | agent/antigravity/AG-01 | tests/compatibility/ag-01/**, docs/evidence/AG-01/** |
 | Codex | 미배정 | NOT STARTED | 추후 지정 | 고난도 통합 및 실기기 |
