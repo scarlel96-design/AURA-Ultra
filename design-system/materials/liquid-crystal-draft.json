@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "logicalSize": 450,
+  "lighting": {
+    "origin": "upper-left",
+    "angleDegrees": 45
+  },
+  "panelRegions": [
+    "weather",
+    "heart"
+  ],
+  "displacementLogical": 3,
+  "maxChannel": 68,
+  "profiles": {
+    "ULTRA": "REFRACTED",
+    "BALANCED": "REFRACTED",
+    "ECO": "STATIC",
+    "AOD": null
+  }
+}
