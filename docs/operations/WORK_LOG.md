@@ -7,3 +7,4 @@
 - 운영 개선: 사용자 승인에 따라 과거 8개 문서 원본 blob을 보관. 현재 상태/차단/배정과 상세 증거 분리. [보관소](../archive/README.md).
 - 다음: R06 격리된 실제 소재 APK 후보, 최종 검증 및 GPT-06 중단 게이트. 제품 NO-GO.
 - R06: 격리 소재 APK 후보 e1a5f62abbf20cbaa6d9c741251b96d7a6caddd1; [CI](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46082882539) 대기. [보고서](https://github.com/scarlel96-design/AURA-Ultra/blob/e1a5f62abbf20cbaa6d9c741251b96d7a6caddd1/docs/evidence/GPT-06/REPORT-06-MATERIAL-APK.md). 정적 Balanced 재질/원본 기본 표시, 동적 센서/실제 기기 미검증.
+- R05 통합 CI 46082669709 SUCCESS, 301 PASS. [최종 증거](../evidence/GPT-06/REPORT-05-INTEGRATED.md). R06 실행 중. OPS-07 후보 46b22851d401bc5c4db548e1b45a3e9fbbca17b5, CI 46083109875 진행; [보고서](https://github.com/scarlel96-design/AURA-Ultra/blob/46b22851d401bc5c4db548e1b45a3e9fbbca17b5/docs/evidence/OPS-07/REPORT.md).
