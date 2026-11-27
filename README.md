@@ -36,3 +36,7 @@ WFF2/3/4 debug variant, Gradle Wrapper, SDK36, 자동 검사 및 CI를 구성했
 ## 세션 독립형 개발 운영
 [핵심 요구사항 보존표](docs/operations/PROJECT_INVARIANTS.md) · [차단점](docs/operations/BLOCKERS.md) · [작업 이력](docs/operations/WORK_LOG.md) · [진행률 기준](docs/operations/PROGRESS_MODEL.md) · [인수인계](docs/operations/HANDOFF.md) · [GPT-01](docs/operations/GPT-01.md)
 현재 작업과 실제 검증 결과는 STATUS를 참조한다. 이전 대화를 기억하지 않아도 저장소를 읽어 재개할 수 있게 유지한다.
+
+## 매 작업 필수 검증 및 기록
+[작업별 기록 규정](docs/operations/TASK_RECORD_PROTOCOL.md) · [심층 검증 규정](docs/operations/VERIFICATION_PROTOCOL.md) · [표준 작업 보고서](docs/operations/TASK_REPORT_TEMPLATE.md)
+모든 작업에 사전 검증, 요구사항 추적, 실패 검출 시험, 회귀 검사, 구현 후 별도 재검토, 증거 감사 및 영속 기록을 적용한다. 기록 없이 작업 완료를 선언하지 않는다.

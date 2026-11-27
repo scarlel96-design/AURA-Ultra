@@ -1,4 +1,4 @@
-# 세션 독립형 자율 개발 운영 규정 v1.0
+# 세션 독립형 자율 개발 운영 규정 v1.1
 
 ## 목적과 권한
 사용자 지시: 채팅 GPT가 안전하게 처리할 수 있는 개발을 최대한 선행한다. Codex 사용량과 중복 개발을 줄인다. 사용자는 반복해서 상세 WO를 지정할 필요가 없다.
@@ -8,7 +8,7 @@
 ## 1. 매 세션 복원
 1. 저장소 scarlel96-design/AURA-Ultra의 실제 main HEAD를 조회한다.
 2. HEAD에 고정해 AGENTS.md, docs/STATUS.md, 이 문서, docs/operations/GPT_EXECUTION_PLAN.md, docs/operations/PROJECT_INVARIANTS.md를 읽는다.
-3. 현재 작업 ID와 차단 ID를 찾는다. docs/operations/BLOCKERS.md, docs/operations/WORK_LOG.md의 관련 최근 기록, docs/ROADMAP.md와 관련 WO 명세·증거를 읽는다.
+3. [TASK_RECORD_PROTOCOL.md](TASK_RECORD_PROTOCOL.md), [VERIFICATION_PROTOCOL.md](VERIFICATION_PROTOCOL.md), [TASK_REPORT_TEMPLATE.md](TASK_REPORT_TEMPLATE.md)를 읽는다. 현재 작업 ID와 차단 ID를 찾는다. docs/operations/BLOCKERS.md, docs/operations/WORK_LOG.md의 관련 최근 기록, docs/ROADMAP.md와 관련 WO 명세·증거를 읽는다.
 4. 활성 작업의 실제 소스, CI 설정, 최신 관련 실행 결과와 변경 이력을 확인한다. 현재 HEAD와 CI 검사 SHA를 구분한다.
 5. 현재 환경의 도구, 파일 쓰기 권한, 네트워크, CI, 기기 접근 가능성을 확인한다.
 6. 기존 기록과 실제 소스/증거가 불일치하면 상태를 정정한다. 과거 대화 기억이나 이전 에이전트의 완료 주장만 신뢰하지 않는다.
@@ -29,6 +29,7 @@ WO는 제품 요구사항의 공식 작업 단위다. GPT-NN은 채팅 작업 �
 사용자의 "다음 작업"은 준비된 다음 WO 또는 독립 하위 작업의 착수 승인으로 인정한다. 매번 별도 승인을 요청하지 않는다. 한 요청 안에서 안전하게 완료할 수 있는 관련 하위 작업을 묶어 수행한다. 다음 요청에는 실제 체크포인트부터 재개한다.
 
 ## 3. 실행 및 증거
+- 모든 작업에 TASK_RECORD_PROTOCOL 및 VERIFICATION_PROTOCOL의 G0~G7을 적용한다. 시작 전 보고서 초안을 작성한다. 작업 후 요구사항-구현-시험-증거 대조 및 별도 재검토를 수행한다.
 - 변경 전 기준 SHA, 목표, 요구사항 ID, 관련 WO, 수정 파일, 제외 범위, 검증 명령과 위험을 기록한다. 상세 WO가 없으면 TEMPLATE에 따라 해당 작업의 실행 명세를 먼저 작성한다.
 - 읽기 전용 조사, 스키마 확인, 작은 재현 시험을 먼저 수행한다. 오류를 실제 로그로 재현하거나 식별한다.
 - 기존 통합 구조를 유지한다. 관련 없는 파일은 변경하지 않는다. 가능한 작은 커밋으로 분리한다.
@@ -39,6 +40,7 @@ WO는 제품 요구사항의 공식 작업 단위다. GPT-NN은 채팅 작업 �
 - 중요 구현은 검증 브랜치/PR을 우선한다. 사용자가 승인한 현재의 초기 개발 방식에서는 저위험 문서·도구 수정의 main 반영도 가능하다. 실패한 검증을 성공으로 표시하지 않는다.
 
 ## 4. 작업 종료 시 필수 갱신
+TASK_REPORT_TEMPLATE의 모든 적용 항목을 채운다. 문서 기반 재개 경로와 실제 반영 여부를 확인한다. 기록이 저장되지 않았으면 작업 완료를 선언하지 않는다.
 docs/STATUS.md: 현재 단일 재개 체크포인트. 활성 GPT/WO, 단계, 다음 행동, 미완료 조건, 관련 코드 커밋, 최신 확인 CI 및 남은 시험을 갱신한다.
 docs/operations/WORK_LOG.md: 새 항목을 시간순으로 추가한다. 과거 항목을 덮어쓰지 않는다.
 docs/operations/BLOCKERS.md: 새 장애, 원인 가설, 증거, 해결 조건, 담당 환경을 갱신한다.
