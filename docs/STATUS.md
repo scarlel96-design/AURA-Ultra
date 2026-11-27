@@ -32,5 +32,7 @@
 
 ## GPT-06 최종 결합 후보
 - SHA 65c45f51bebce19b7df8091e1e55ed2afb4ec312, branch gpt-06-final-integration; [Bootstrap CI](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46083441184) IN_PROGRESS (316 expected host tests); [문서 검사](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46083441202) SUCCESS 7 PASS, 12 files within limits. R06/OPS 정확한 12개 원본 blob 보존, Bootstrap에 실제 doc-budget 검사 추가; 최신 GPT-06 명세 병합. 15 변경 경로, AG/GB 및 제품 파일 변경 없음.
-- R06 CI 46082882539 SUCCESS: 309 PASS, WFF2~5 material APK 4/4; active 2412312 B, AOD 3181712 B per APK (official evaluator). [검증 보고](https://github.com/scarlel96-design/AURA-Ultra/blob/65c45f51bebce19b7df8091e1e55ed2afb4ec312/docs/evidence/GPT-06/REPORT-06-VERIFIED.md), [APK artifact](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46082882539/artifacts/15238230693), unexpired at check. 실제 설치/렌더링/전력 NOT RUN.
+- R06 CI 46082882539 SUCCESS: 309 PASS, WFF2~5 material APK 4/4; active 2412312 B, AOD 3181712 B per APK (official evaluator). [검증 보고](https://github.com/scarlel96-design/AURA-Ultra/blob/65c45f51bebce19b7df8091e1e55ed2afb4ec312/docs/evidence/GPT-06/REPORT-06-VERIFIED.md), [APK artifact](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46082882539/artifacts/15238230693), unexpired at check. 직접 다운로드 후 ZIP/APK/XML/PNG/RGBA 해시·CRC 검사 PASS. 실제 설치/렌더링/전력 NOT RUN.
 - 사용자 재확인: GPT-06 전체 독립 준비가 끝나거나 외부 조건으로 소진되면 명시적으로 전체 결과 보고 후 중단. GPT-07 자동 착수 금지. 아직 완료 판정 아님.
+
+- R06 다운로드 검증: [REPORT-06-ARTIFACT-READBACK](evidence/GPT-06/REPORT-06-ARTIFACT-READBACK.md). 114720 B, 4/4 APK, ZIP/PNG CRC 및 RGBA 해시 일치, DEX 없음. 최종 결합 CI 46083441184는 소재 APK 단계 IN_PROGRESS. 보호 경로 38개 blob 동일. 완료 판정 보류.

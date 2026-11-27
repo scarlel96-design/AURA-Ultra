@@ -18,3 +18,5 @@ OPS-07 별도 후보 46b22851d401bc5c4db548e1b45a3e9fbbca17b5, CI 46083109875 SU
 
 ## 최종 결합 확인
 후보 65c45f51bebce19b7df8091e1e55ed2afb4ec312; [Bootstrap CI](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46083441184) IN_PROGRESS, 전체 예상 316 host tests; [문서 검사](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46083441202) SUCCESS 7 PASS 및 12개 문서 상한 준수. [R06 검증](https://github.com/scarlel96-design/AURA-Ultra/blob/65c45f51bebce19b7df8091e1e55ed2afb4ec312/docs/evidence/GPT-06/REPORT-06-VERIFIED.md). 결합 및 main 회귀 성공 전 GPT-06 완료 판정 금지. 실기기 승인 없이는 제품 승격 금지. 사용자 재확인: GPT-06 전체 결과를 명시적으로 보고하고 중단, GPT-07 자동 착수 금지.
+
+R06 artifact 15238230693 직접 다운로드 및 파일 검사 PASS. [검증](../evidence/GPT-06/REPORT-06-ARTIFACT-READBACK.md). 결합 CI 46083441184 소재 APK 단계 IN_PROGRESS. 최신 main과 후보 보호 경로 38개 blob 일치. 최종 결합 결과 확인 및 통합 전 전체 종료 판정 금지.
