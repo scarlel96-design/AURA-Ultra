@@ -16,7 +16,7 @@ def main():
         sdk = os.environ.get("ANDROID_HOME") or os.environ.get("ANDROID_SDK_ROOT")
         if not sdk:
             raise ValueError("Android SDK path not configured")
-        signer = Path(sdk) / "build-tools/35.0.0" / ("apksigner.bat" if os.name == "nt" else "apksigner")
+        signer = Path(sdk) / "build-tools/36.0.0" / ("apksigner.bat" if os.name == "nt" else "apksigner")
         for p in profiles:
             apk = debug_apk(p)
             print(f"SIGNATURE_PROFILE {p['name']} {apk.name}", flush=True)

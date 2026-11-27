@@ -24,8 +24,7 @@
       "name": "wff5",
       "version": 5,
       "minSdk": 37,
-      "enabled": false,
-      "reason": "Wear OS 7 / API 37 candidate; migrate AGP and SDK in isolated verification before enabling. Schema probe is not install support."
+      "enabled": true
     }
   ]
 }

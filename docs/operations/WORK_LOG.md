@@ -56,3 +56,6 @@
 - 회차 01 코드 7820f90cbb35220fe9c6da4f9702374714d143d1, CI 46001149417 in_progress/PENDING. 원격 소스 자기 재검토 수행. 기존 결과 보존, STATUS/REPORT-01에 재개 기록.
 
 - GPT-02 회차 01 최종: 코드 7820f90cbb35220fe9c6da4f9702374714d143d1, CI 46001149417 SUCCESS. 37 PASS/0 FAIL, 공식 WFF2~5 정상 및 invalid XML 검출, WFF2~4 APK build/raw XML/manifest/memory/signature PASS, Artifact 15197783477. WFF5 disabled, GPT-02 PARTIAL. 다음 API37 격리 전환. REPORT-01 참조.
+
+## 2026-11-27 / GPT-02 회차 02
+- 기준 bfe56169a60eea1a40e71ba6db4a679a6192595b. PRE-FLIGHT 및 CI 46001149417 확인. 공식 AGP9.1.1 호환 표와 Gradle9.3.1 checksum, 공식 wrapper JAR·스크립트 확인. 격리 브랜치 gpt-02-api37에서 WFF5 포함 4 APK 후보 및 검사기 회귀 작성. CI PENDING. main 유지. REPORT-02 참조.

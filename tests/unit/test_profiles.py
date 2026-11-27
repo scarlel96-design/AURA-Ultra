@@ -49,7 +49,7 @@ class ProfileTests(unittest.TestCase):
 
     def test_build_tasks(self):
         profiles = [p for p in validate_profiles(self.config) if p["enabled"]]
-        self.assertEqual([":apps:watchface:assembleWff2Debug", ":apps:watchface:assembleWff3Debug", ":apps:watchface:assembleWff4Debug"], debug_tasks(profiles))
+        self.assertEqual([":apps:watchface:assembleWff2Debug", ":apps:watchface:assembleWff3Debug", ":apps:watchface:assembleWff4Debug", ":apps:watchface:assembleWff5Debug"], debug_tasks(profiles))
 
     def test_overlay_and_fallback(self):
         with tempfile.TemporaryDirectory() as directory:

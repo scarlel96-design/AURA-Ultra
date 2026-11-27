@@ -22,7 +22,7 @@ jobs:
         with:
           python-version: '3.12'
       - name: Verify Gradle wrapper
-        run: echo '2db75c40782f5e8ba1fc278a5574bab070adccb2d21ca5a6e5ed840888448046  gradle/wrapper/gradle-wrapper.jar' | sha256sum -c -
+        run: echo 'b3a875ddc1f044746e1b1a55f645584505f4a10438c1afea9f15e92a7c42ec13  gradle/wrapper/gradle-wrapper.jar' | sha256sum -c -
       - name: Check project invariants
         run: python tools/check_foundation.py
       - name: Validation tool regression tests
@@ -30,9 +30,14 @@ jobs:
       - name: Install Android SDK
         uses: android-actions/setup-android@138b5fb1cf087fdb4c5f3c621466fe304d0cf2e3 # v4.0.3
         with:
-          packages: 'platform-tools platforms;android-36 build-tools;35.0.0'
+          packages: 'platform-tools platforms;android-37 build-tools;36.0.0'
       - name: Confirm Android SDK tools
-        run: sdkmanager --version
+        run: |
+          sdkmanager --version
+          test -f "$ANDROID_HOME/platforms/android-37/android.jar"
+          test -x "$ANDROID_HOME/build-tools/36.0.0/apksigner"
+          java -version
+          ./gradlew --version
       - name: Official WFF validation
         run: python tools/verify_wff.py
       - name: Build debug APKs

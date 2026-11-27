@@ -12,3 +12,5 @@
 기준 CI 46000111754. 공식 AGP 9.1.1 호환 표 확인. SDK37 설치와 Gradle 전환은 다음 회차의 별도 CI/회귀로 검증한다. 현재 로컬 사용자 PC 또는 워치 접근 없음. Optimizer 공식 저장소 문서 존재, 실행 NOT RUN.
 
 CI 46001149417: 기존 SDK36/AGP8.10.1에서 WFF2/3/4 APK 및 WFF5 schema-only PASS. API37 후보 자체 실행 NOT RUN.
+
+GPT-02 회차 02 격리 후보: AGP9.1.1, Gradle9.3.1, JDK17, SDK37, build-tools36.0.0. 공식 Gradle distribution SHA-256 b266d5ff6b90eada6dc3b20cb090e3731302e553a27c5d3e4df1f0d76beaff06, wrapper SHA-256 b3a875ddc1f044746e1b1a55f645584505f4a10438c1afea9f15e92a7c42ec13. CI 결과 PENDING. https://gradle.org/release-checksums/ ; https://developer.android.com/build/releases/agp-9-1-0-release-notes .

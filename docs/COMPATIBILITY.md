@@ -18,9 +18,9 @@
 | 2 | Wear OS 5 / 34 | enabled | 날씨, 기본 소재 및 모션 |
 | 3 | Wear OS 5.1 / 35 | enabled | 혼합 모드 |
 | 4 | Wear OS 6 / 36 | enabled | AOD transition, Reference, 색상 변환 |
-| 5 | Wear OS 7 / 37 (OS 및 API 근거; 공식 WFF 버전 표는 4까지) | disabled; schema probe | 확장 혼합, 텍스트·설정 기능 |
+| 5 | Wear OS 7 / 37 (OS 및 API 근거; 공식 WFF 버전 표는 4까지) | enabled candidate; CI pending | 확장 혼합, 텍스트·설정 기능 |
 
-WFF5는 공식 발표 및 스키마 존재 확인. API37 지원 toolchain으로 별도 전환·검증 필요. WFF2/3/4 기존 빌드를 유지한다. 공식 지원과 프로젝트 설치 호환성은 다르다. [API 매트릭스](evidence/WO-01/API_CAPABILITIES.md).
+WFF5는 공식 발표 및 스키마 존재 확인. API37 지원 toolchain 전환 후보를 격리 검증한다. WFF2/3/4 최소 API 및 ID를 유지한다. 공식 지원과 프로젝트 설치 호환성은 다르다. [API 매트릭스](evidence/WO-01/API_CAPABILITIES.md).
 프로필 계약 compatibility/profiles.json 및 tools/profile_contract.py. 공통 src/main/res/raw/watchface.xml, 필요한 경우 src/wffN/res/raw/watchface.xml override. 활성 프로필별 스키마·실제 APK·메모리·서명 검사. 비활성 프로필 스키마 검사만으로 APK/설치를 주장하지 않는다. [패키지 정책 ADR](adr/ADR-007.md).
 
 ## 기기 프로필 및 시험

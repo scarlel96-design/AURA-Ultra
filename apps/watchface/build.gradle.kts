@@ -4,12 +4,12 @@ plugins {
 
 android {
     namespace = "io.github.scarlel96.aura.watchface"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "io.github.scarlel96.aura.watchface"
         minSdk = 34
-        targetSdk = 36
+        targetSdk = 37
         versionCode = 1
         versionName = "0.1.0-bootstrap"
     }
@@ -33,6 +33,12 @@ android {
             minSdk = 36
             applicationIdSuffix = ".wff4"
             manifestPlaceholders["wffVersion"] = "4"
+        }
+        create("wff5") {
+            dimension = "format"
+            minSdk = 37
+            applicationIdSuffix = ".wff5"
+            manifestPlaceholders["wffVersion"] = "5"
         }
     }
     buildTypes {

@@ -65,6 +65,16 @@ def inspect_manifest(xml, profile):
     return errors
 
 
+def inspect_face(archive, expected):
+    """Compare the packaged face with the selected source bytes."""
+    name = "res/raw/watchface.xml"
+    if name not in archive.namelist():
+        return ["Missing packaged face"]
+    if archive.read(name) != expected:
+        return ["Packaged face differs from selected source"]
+    return []
+
+
 def analyzer_path():
     tool = shutil.which("apkanalyzer")
     if tool:
@@ -95,10 +105,7 @@ def main():
                 entries = archive.namelist()
                 print("ZIP entries:\n" + "\n".join(sorted(entries)))
                 errors = inspect_entries(entries)
-                if "res/raw/watchface.xml" not in entries:
-                    errors.append("Missing packaged face")
-                elif archive.read("res/raw/watchface.xml") != face_source(p).read_bytes():
-                    errors.append("Packaged face differs from selected source")
+                errors.extend(inspect_face(archive, face_source(p).read_bytes()))
                 corrupt = archive.testzip()
                 if corrupt:
                     errors.append("Corrupt ZIP entry: " + corrupt)

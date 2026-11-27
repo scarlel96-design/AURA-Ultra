@@ -9,7 +9,7 @@
 |---|---|
 | 정본 브랜치 | main |
 | 확인한 코드 SHA | 7820f90cbb35220fe9c6da4f9702374714d143d1 |
-| 활성 GPT 작업 | GPT-02 PARTIAL / 회차 01 CI 성공 |
+| 활성 GPT 작업 | GPT-02 회차 02 후보 / 검증 대기 |
 | 활성 WO | WO-01 PARTIAL; WO-02·04 준비 작업만 일부 구현 |
 | 다음 안전한 행동 | GPT-02 회차 02: API37/AGP9.1.1/Gradle9.3.1 격리 전환 및 WFF5 APK 검증 |
 | 다음 실행 명세 | operations/GPT-02.md |
@@ -164,3 +164,6 @@ Artifact [15197783477](https://github.com/scarlel96-design/AURA-Ultra/actions/ru
 G0 PASS; G1 현재 회차 범위 PASS; G2 단위 fixture 및 실제 validator 실패 검출 PASS; G3 전체 CI PASS; G4 현재 3 APK 및 #5 스키마 PASS, 실제 WFF5/기기/전용 overlay 빌드 NOT RUN; G5 원격 코드 자기 재검토 수행, 독립 리뷰 미실시; G6 코드 SHA·CI·Artifact 메타데이터 대조 PASS; G7 원격 등록 및 문서 링크 검사(변경 전 기록 커밋 7f77441 기준 0 오류), 최종 문서 반영 재확인 필요.
 발견/한계: WFF5 신규 flavor 활성화 때 test_build_tasks 기대 목록과 SDK/build-tools 경로를 함께 갱신한다. 실제 flavor override는 합성 단위 시험만 수행. 신규 APK raw XML 대조는 실제 정상 3종에 적용; 오류 주입 검사는 후속 회차에 추가. B-003은 SDK37/AGP9 전환 및 실제 빌드/설치 필요; B-004는 실제 기기/Ultra2025 출고 OS 미확정; B-007 정식 정책 제안, 승인 필요. B-002 유지. GPT-02 PARTIAL, WO-01 PARTIAL, GPT 완료 1/12, WO GO 0/38, 제품 NO-GO.
 다음 회차: 별도 브랜치 또는 격리 CI에서 AGP9.1.1 + Gradle9.3.1 + SDK37 + build-tools36.0.0의 공식 배포 및 checksum 확인, WFF5 활성화 후보 작성. 기존 2~4 및 5 전체 정상/실패 스키마·clean build·raw APK·memory·signature 회귀 성공 후에만 main 변경 고려. 실기기 지원은 별도 시험. 이번 증거 커밋은 문서 전용 [skip ci].
+
+## GPT-02 회차 02 후보
+기준 main bfe56169a60eea1a40e71ba6db4a679a6192595b, 격리 브랜치 gpt-02-api37. AGP9.1.1/Gradle9.3.1/SDK37/build-tools36.0.0, WFF5 flavor 활성화 후보, APK XML 오류 주입 시험 추가. 4개 APK 및 전체 회귀 CI PENDING. main 반영 전 실제 결과 확인. 기기·출시 미검증. [REPORT-02](evidence/GPT-02/REPORT-02.md).
