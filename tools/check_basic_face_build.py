@@ -1,5 +1,7 @@
 """Build the candidate in a temporary project, without changing the product face."""
+import argparse
 import hashlib
+import subprocess
 import json
 import shutil
 import tempfile
@@ -10,9 +12,20 @@ from generate_bootstrap import ROOT, FACE, check_outputs
 from generate_basic_face import OUTPUT, generate
 from check_flavor_isolation import FILES, DIRECTORIES, run
 from profile_contract import enabled_profiles, debug_apk
+from signature_dev_bundle import build_bundle, write_new, sha
 
 
 def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--development-bundle", type=Path)
+    args = parser.parse_args()
+    source_sha = None
+    if args.development_bundle is not None:
+        if args.development_bundle.exists():
+            raise FileExistsError(args.development_bundle)
+        if subprocess.check_output(["git", "status", "--porcelain", "--untracked-files=no"], cwd=ROOT).strip():
+            raise ValueError("Tracked worktree changes; commit before bundling")
+        source_sha = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
     original = (ROOT / FACE).read_bytes()
     outputs = generate()
     check_outputs(ROOT, outputs)
@@ -37,16 +50,24 @@ def main():
         run(root, "check_apk.py")
         run(root, "verify_memory.py")
         run(root, "build_profiles.py", "signatures")
+        apks = {}
         for p in enabled_profiles(root):
             apk = debug_apk(p, app)
             with zipfile.ZipFile(apk) as z:
                 if z.read("res/raw/watchface.xml") != face:
                     raise ValueError("Candidate APK XML mismatch")
+            apks[p["name"]] = apk.read_bytes()
             print("BASIC_APK_RESULT " + json.dumps({"profile": p["name"],
                 "xml_sha256": hashlib.sha256(face).hexdigest(),
                 "apk_sha256": hashlib.sha256(apk.read_bytes()).hexdigest()}, sort_keys=True))
     if (ROOT / FACE).read_bytes() != original:
         raise ValueError("Product face changed")
+    if args.development_bundle is not None:
+        if subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip() != source_sha or subprocess.check_output(["git", "status", "--porcelain", "--untracked-files=no"], cwd=ROOT).strip():
+            raise ValueError("Source changed during build")
+        data, metadata = build_bundle(apks, face, source_sha)
+        write_new(args.development_bundle, data)
+        print("DEV_BUNDLE_RESULT " + json.dumps({"sha256": sha(data), "bytes": len(data), "manifest": metadata}, sort_keys=True))
     print("PASS: isolated Signature basic candidate, four profiles; product unchanged")
 
 

@@ -65,7 +65,9 @@ jobs:
       - name: Isolated generated flavor regression
         run: python tools/check_flavor_isolation.py
       - name: Isolated Signature basic display
-        run: python tools/check_basic_face_build.py
+        run: |
+          python tools/check_basic_face_build.py --development-bundle "$RUNNER_TEMP/aura-signature-development.zip"
+          test -s "$RUNNER_TEMP/aura-signature-development.zip"
       - name: Upload layout development evidence
         uses: actions/upload-artifact@v4
         with:
