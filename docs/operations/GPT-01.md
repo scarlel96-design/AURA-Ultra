@@ -1,5 +1,5 @@
 # GPT-01 — 빌드 및 검증 파이프라인 안정화
-상태: READY / WO-01 PARTIAL, WO-02·04 준비 작업. 이 문서 작성 자체는 오류 수정이 아니다.
+상태: GO(초기 빌드 토대) / WO-01 PARTIAL, WO-02·04 준비 작업. 최종 증거: ../evidence/GPT-01/REPORT-02.md.
 요구사항: R-02, R-20, R-22, R-25.
 기준 코드 SHA: 544a7010f4bed515d667bfa6a9bbda1389f5bc92.
 관련 실패: B-001 (CI 45997124733 및 45998056978), B-010 (검증기 판정 조건 위험).
@@ -25,3 +25,6 @@ PARTIAL: 빌드는 성공했으나 APK 내용·검사·Artifact 중 하나가 �
 NO-GO: 공식 규격 실패 또는 실행 코드 포함 문제가 미해결.
 제외: 정식 서명, Play 배포, 신규 테마·센서·건강 기능, 무단 SDK 라이선스/패키지 정책 변경.
 증거: docs/evidence/GPT-01/REPORT.md. 롤백: 해당 변경 커밋만 revert. 사용자 파일이나 기존 기록을 삭제하지 않는다.
+
+## 종료 결과
+CI 46000111754/46000111676 SUCCESS, 26 PASS/0 FAIL. B-001/B-010 RESOLVED. 3 APK 메모리 예산 및 Debug 서명 PASS. Release/실기기/AOD 픽셀/전력 NOT RUN. 다음 GPT-02. 제품 출시 NO-GO.

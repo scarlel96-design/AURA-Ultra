@@ -3,7 +3,7 @@ OPEN은 미해결, BLOCKED는 외부 조건 필요, RESOLVED는 해결 증거가
 
 | ID | 상태 / 우선도 | 내용 및 증거 | 해결 조건 | 담당 |
 |---|---|---|---|---|
-| B-001 | OPEN / P0 (현재 실패 해소) | 기존 CI APK 실행 코드 검사 FAIL. 새 CI 45999371709: 3 APK 스키마/ZIP/Manifest PASS 및 Artifact 확보. 과거 정확한 ZIP 항목/원인 미확인. | 과거 실패 격리 재현 및 원인 증거 보완. 현재 APK PASS 증거 유지. | GPT-01 |
+| B-001 | RESOLVED | 과거 WFF2 APK classes.dex 및 AGP 생성 R 클래스 5개 재현, 현행 3 APK 리소스 전용 검사 PASS | CI 46000111676/46000111754; REPORT-02 | GPT-01 |
 | B-002 | BLOCKED / P1 | 현재 채팅 환경에 Android SDK/ADB 및 연결된 워치 없음 | CI로 대체 가능한 검증 수행; 실제 설치·센서·전력 시험은 접근 가능한 환경에서 수행 | GPT / Codex / 사용자 |
 | B-003 | OPEN / P1 | WFF5 빌드 비활성. SDK/API, 스키마, 설치된 OS 미확정 | 공식 문서와 호환 도구·기기 증거 확보, 별도 profile 검증 | GPT-02 / 실기기 |
 | B-004 | OPEN / P1 | Watch7 크기/펌웨어/OS 및 최신 Samsung 기기 공식 매트릭스 미확인 | 공식 사양 확인, 실제 지원 대상별 기기/OS 기록 | WO-01 / 34 / 35 |
@@ -15,7 +15,7 @@ OPEN은 미해결, BLOCKED는 외부 조건 필요, RESOLVED는 해결 증거가
 
 | B-010 | RESOLVED | tools/verify_wff.py의 성공 조건이 일반 VALID 포함 여부에 의존한다. 헤더 Validation도 매치되므로 명시적 성공을 검증하지 못할 위험. 실제 두 CI의 성공 로그는 버전별 PASSED를 확인했다. 오판 발생 자체는 미재현. | 공식 validator 결과 형식 확인, 성공·실패·불명확·버전 불일치 회귀 시험, 대상별 명시적 성공 검사 | GPT-01 |
 
-B-001 해결 전 후속 통합 작업을 GO 처리하지 않는다. 독립 테스트·설계·도메인 작업은 RESUME_PROTOCOL의 선행 조건에 따라 진행 가능하다.
+B-001 해결 확인. 재발 시 관련 통합 작업의 GO를 중단한다. 독립 테스트·설계·도메인 작업은 RESUME_PROTOCOL의 선행 조건에 따라 진행 가능하다.
 
 ## 운영 점검 기록 (2026-11-27)
 문서 기준 SHA 951593e4fbbac33f2c675ea5cbbf07edbe22353d, CI 45998609726 (completed/failure): Official WFF validation: success; Build debug APKs: success; Check APK contents: failure; Upload debug APKs: skipped. https://github.com/scarlel96-design/AURA-Ultra/actions/runs/45998609726. 운영 문서 변경 실행이며 제품 코드 변경 없음. B-001/B-010 해결 증거 없음.
@@ -34,3 +34,6 @@ B-010: 명시적 파일/버전 PASSED 판정, 오류/종료 코드/중복 검사
 B-001 과거 95e51cc 격리 재현 job 추가. 실행 결과 미확인. B-010 해결 유지. 메모리 및 debug 서명 검사 새 CI 대기. 실제 기기 접근 차단 B-002 유지.
 
 - 회차 02 검증 코드 98a4f915577cf3175beeca19864a431061673e7b, CI 46000111754/46000111676. 메모리·서명·격리 재현 최종 증거 확인 전 B-001 OPEN. B-010 RESOLVED 유지. STATUS 참조.
+
+## GPT-01 회차 02 최종 확인
+B-001 RESOLVED: 과거 SHA 격리 재현 classes.dex 및 R 클래스 5개 확인, 현행 3개 APK 검사 PASS. B-010 RESOLVED 유지. 현행 메모리 2,371,712 bytes 활성/AOD, 3 Debug 서명 PASS. CI 46000111754/46000111676 SUCCESS. B-002/003/004/007 등 기존 실기기·WFF5·기기/배포 정책 차단점은 유지. 새 결함 없음.

@@ -37,3 +37,6 @@ Bootstrap shows time/date, battery and step/goal in active mode. Ambient hides d
 
 ## Asset memory and signature checks
 After APK assembly and payload inspection, run `python tools/verify_memory.py`. It downloads Google's Apache-2.0 evaluator with a pinned SHA-256 and uses `--report --apply-v1-offload-limitations` without assuming optional image optimizations. The wrapper enforces the existing 70/7 MiB budgets on exact integer bytes. The evaluator estimates asset memory, not live RAM. CI also runs Android SDK apksigner verify on each debug APK. Historical packaging reproduction uses an isolated checkout, not a change to current minification settings; no historical APK is uploaded.
+
+## Verified baseline (2026-11-27)
+CI 46000111754: all three debug APKs pass schema, package, asset memory (2,371,712 bytes active/ambient), v2 signature checks. Memory evaluator 1.5.1 (b87dde8). Historical CI 46000111676 reproduced classes.dex containing generated R classes. Current R8 configuration resolves the failure. See docs/evidence/GPT-01/REPORT-02.md for hashes and links. Debug certificates are not production signing identities; CI runner keys may differ between runs. Release and update installation are unverified.

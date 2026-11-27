@@ -47,3 +47,5 @@
 - 기존 70/7 MiB 예산 검증, 실패 검출 단위 시험, debug 서명 검사, 별도 과거 SHA 재현 CI 추가. 제품 XML/Gradle 설정 변경 없음. 새 CI PENDING. REPORT-02 참조.
 
 - 회차 02 코드 98a4f915577cf3175beeca19864a431061673e7b, CI 46000111754 및 46000111676 확인. 원격 소스 자기 재검토 완료. 실제 단계별 상태와 재개 조건은 STATUS 및 REPORT-02에 저장. [skip ci] 문서 체크포인트.
+
+- GPT-01 회차 02 최종: 코드 98a4f915577cf3175beeca19864a431061673e7b, 현행 CI 46000111754 및 과거 재현 CI 46000111676 SUCCESS. 26 PASS/0 FAIL, 메모리 2,371,712 bytes 양 모드 및 3 APK v2 서명 PASS, Artifact 15197747235. 과거 classes.dex/R 클래스 재현으로 B-001 RESOLVED. B-010 RESOLVED 유지. GPT-01 GO(빌드 토대), 1/12 GPT 묶음 완료, WO-01 PARTIAL, 출시 NO-GO. 다음 GPT-02. 증거 REPORT-02.
