@@ -8,10 +8,10 @@
 | 항목 | 현재 값 |
 |---|---|
 | 정본 브랜치 | main |
-| 확인한 코드 SHA | 110183ebf3ea3259be979292dde2400bb9f9dbb9 (GPT-06 R01 통합 CI 성공) |
-| 활성 GPT 작업 | GPT-04 PARTIAL / 통합 CI 성공; GPT-05 PARTIAL R07 검증·통합; GPT-06 PARTIAL R01 통합 성공 / R02 보완 후보 |
+| 확인한 코드 SHA | 3020ceddd577ff2357a8483b28a2218992031e4d (R02 후보 CI 성공; 통합 73e19fa 검증 미확정) |
+| 활성 GPT 작업 | GPT-04 PARTIAL / 통합 CI 성공; GPT-05 PARTIAL R07 검증·통합; GPT-06 PARTIAL R02 후보 검증 및 통합 완료 |
 | 활성 WO | WO-01 PARTIAL; WO-02·04 준비 작업만 일부 구현 |
-| 다음 안전한 행동 | R02 보완 CI 46078480317 검증 → 통합 검토 → R03 유리 소재 |
+| 다음 안전한 행동 | R02 통합 회귀 확인 → R03 Liquid Crystal 독립 후보 |
 | 다음 실행 명세 | operations/GPT-05.md 및 operations/GPT-06.md |
 | 현재 차단 | B-011 도구 불일치 해결; B-002/003 런타임/004/005/006/007/008 유지 |
 | 공식 WO GO | 0/38 |
@@ -423,3 +423,7 @@ R07 integration CI 46075293496 SUCCESS 246 PASS; R01 CI 46075399378 SUCCESS 258 
 ## GPT-06 R02 corrective checkpoint
 - R01 integrated 110183ebf3ea3259be979292dde2400bb9f9dbb9, CI 46077503677 job 140768565131 SUCCESS, 258 PASS/0 FAIL/0 SKIP (13.318s), 12 materials and prior budgets unchanged, 41/41 preview pairs, all steps success, 47 committed inputs. Bundle 311014 B SHA256 b9c5c82f0afa4ecebdcef348df225074b63ad8f6149457fc35766f2966a36d47, sourceCommit exact, readbackVerified true, XML 4bbe6db1a6a215538ea8e0d37509c35132845ad845a0fb42efb78c19f8f11313. Four APK SHA256 matched basic and memory: cdb216d9f6a87a45052e4485107fd4dcb329c838bd3441fd13dfa2434a436dc8, 092ea7d781d93c42ce6a0e319bda935a7a9efc5eceebd123dadd2df305eaa034, 39450d866599bb117c7b1b020c78491ca50c7cd437fd2ff6e55d2171ac989c9a, e645256e139331ab521fd30349b97c0c127a4aad220433f37e0ce67e7453df8c. Each active/ambient estimate 2371712/3181712 B. Artifact metadata 15235587164 digest sha256:fc7aa87000c3dbc166408035dd163d55776b3bc38224c8fa7461b0ac300f0355 and 15235122660 digest sha256:b29e43f0b0f425f71ff07c2ab6d53f6b6ea4281e9d8c338fe9b7241d618c3124 unexpired; independent download NOT RUN. Expected stale WFF4 negative detected.
 - GPT06-D1 OPEN/P1: candidate 8ad0d24fa5907cc635deef11092b9284bd2ba85d CI 46077603468 failed setup with one error, 258 existing tests ran and 12 new ring tests NOT RUN. SDK/WFF/APK stages skipped. Do not integrate. Corrected candidate 3020ceddd577ff2357a8483b28a2218992031e4d, CI 46078480317 IN_PROGRESS. Preserve 60 ticks; shorten only indices 10/50, enforce separate continuous annulus and 2160 tick/region checks with 1 px margin, plus 36 ring/region checks. 15 ring methods (273 total expected), 16 SVG outputs. Actual corrected execution pending; resolve only after exact full CI success. No product, dependency, workflow, agent changes. R03 deferred. B-005 and B-008 actual graphics/runtime remain. GPT-06 PARTIAL / release NO-GO. AG/GB HOLD unchanged. Mandatory stop after GPT-06 completion or independent-work exhaustion; no GPT-07 without instruction.
+
+
+## GPT-06 R02 verified integration
+- Candidate 3020ceddd577ff2357a8483b28a2218992031e4d CI 46078480317 SUCCESS: 273 PASS, 0 FAIL, 0 SKIP, 16 SVGs, 2160 tick checks, 36 ring checks. Corrected GPT06-D1 candidate gate passed. Exact three tested blobs integrated on main 73e19fac4ecf834c5aa1206cee3f475c5a21566b by fast-forward. Combined main CI not yet confirmed. See docs/evidence/GPT-06/REPORT-02-VERIFIED.md. Next R03 independent glass candidate; verify integration regression. Product NO-GO, GPT-06 PARTIAL; user stop before GPT-07. AG/GB HOLD unchanged.
