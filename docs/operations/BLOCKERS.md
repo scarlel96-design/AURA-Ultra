@@ -67,3 +67,5 @@ GPT-03 회차 01 후보 CI 46006560829 진행 중. 기존 차단점 유지, 신�
 B-011 RESOLVED(현재 도구 버전): CI 46056609237 공식 validator 및 evaluator 신규 pin, 4 APK 전체 PASS. 가변 release에 따른 재발 가능성은 남는다. 이전 실패 로그 유지. GB01-E1 및 AG01-AUD 항목 유지. 실제 Wear OS runtime 미실시.
 
 GPT-03 회차 02: B-011 현재 pin 해결 유지, main GB01 독립 CI 81 PASS 재확인. 격리 flavor 후보 CI 46059190750 및 main CI 46059108841 진행/최종 확인 대기. 향후 실제 제품 override 도입 전 현재 common-only fixture를 일반화한다. B-002/003/004/005/006/007/008 및 GB01-E1 유지. AG-01 소유권 유지, PR #2 미병합.
+
+GPT-03 회차 03: CI 46059190750 SUCCESS, 격리 source precedence 및 stale APK 검출·복원 PASS. B-011 해결 유지. 기존 실기기/외부 데이터/정식 배포 차단 유지. 제품 override 확장 전 fixture 일반화.

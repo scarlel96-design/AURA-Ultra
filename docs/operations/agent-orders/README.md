@@ -2,7 +2,7 @@
 등록: 2026-11-27. 기준 main c1c66b76b7af4a20bb7a08a369fb5962d28b973f. 1차 결과 접수. 담당자 판정과 총괄 검증/통합 판정을 구분한다.
 | 담당 | ID | 상태 | 브랜치 | 소유 경로 |
 |---|---|---|---|---|
-| ChatGPT | GPT-03 | PARTIAL (공통 기반 통합, flavor 시험) | 정본 규정에 따름 | 그래픽 토큰, 생성 도구, 자산, 공통 빌드 및 중앙 운영 문서 |
+| ChatGPT | GPT-04 | READY (GPT-03 GO) | 정본 규정에 따름 | 그래픽 토큰, 생성 도구, 자산, 공통 빌드 및 중앙 운영 문서 |
 | Grok Build | [GB-01](GB-01.md) | GO (독립 모듈 통합 승인) | agent/grok/GB-01 | modules/domain/**, docs/evidence/GB-01/** |
 | Antigravity CLI | [AG-01](AG-01.md) | PARTIAL / 원격 증거 확인, 검사기 보완 | agent/antigravity/AG-01 | tests/compatibility/ag-01/**, docs/evidence/AG-01/** |
 | Codex | 미배정 | NOT STARTED | 추후 지정 | 고난도 통합 및 실기기 |
@@ -15,3 +15,5 @@
 OPS-05: GB01 81 Kotlin 독립 CI PASS. 공통 도구 갱신 후보 0cec622 검증 대기(B-011). GB-02 통합 승인 조건 충족.
 
 최신: GB-01 통합 승인. GB-02 READY, modules/intelligence/** 및 docs/evidence/GB-02/**만 변경. AG-01-R03 별도 작업 계속. 중앙 담당자는 GPT-03 공통 생성·빌드 검증만 변경한다.
+
+GPT-03 종료. GPT-04는 design-system/layouts, 공통 그래픽/검증 도구, 중앙 문서만 변경. GB-02 및 AG-01 영역 제외.

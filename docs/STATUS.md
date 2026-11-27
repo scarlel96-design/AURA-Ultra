@@ -8,14 +8,14 @@
 | 항목 | 현재 값 |
 |---|---|
 | 정본 브랜치 | main |
-| 확인한 코드 SHA | 5c26135b5347da38edb5e0ab69c0561710d69733 (검증 코드와 동일, 중앙 문서 병합) |
-| 활성 GPT 작업 | GPT-03 PARTIAL / 격리 flavor 후보 CI 진행 / GB-01 통합 완료 |
+| 확인한 코드 SHA | 020d2e835a474e1785f1fbe82d8eb159e514b7bb (격리 flavor 검증) |
+| 활성 GPT 작업 | GPT-04 READY / GPT-03 GO(개발 기반) |
 | 활성 WO | WO-01 PARTIAL; WO-02·04 준비 작업만 일부 구현 |
-| 다음 안전한 행동 | CI 46059108841 및 46059190750 최종 로그 확인 → GPT-03 후보 통합 판단 → GPT-04 |
-| 다음 실행 명세 | operations/GPT-03.md |
+| 다음 안전한 행동 | GPT-04 공통 레이아웃, 해상도별 정적 기하 검증 |
+| 다음 실행 명세 | operations/GPT-04.md |
 | 현재 차단 | B-011 도구 불일치 해결; B-002/003 런타임/004/005/006/007/008 유지 |
 | 공식 WO GO | 0/38 |
-| GPT 묶음 완료 | 2/12 |
+| GPT 묶음 완료 | 3/12 |
 | 실제 제품 완성도 | 미확정; 초기 빌드 토대 |
 | 출시 판정 | NO-GO |
 
@@ -239,3 +239,6 @@ G0 PASS; G1 현재 작업 범위 PASS; G2 40 단위 및 공식 negative probe PA
 - [CI 46059108841](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46059108841), job 140708750567, in_progress/PENDING: Set up job: success; Verify Gradle wrapper: success; Reproduce bootstrap assets: success; Independent bootstrap regeneration: success; Check project invariants: success; Validation tool regression tests: success; Install Android SDK: success; Confirm Android SDK tools: success; Official WFF validation: success; Build debug APKs: success; Check APK contents: success; Official asset memory evaluation: in_progress; Verify debug APK signatures: pending; Upload debug APKs: pending.
 - [CI 46059190750](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46059190750), job 140709019984, in_progress/PENDING: Set up job: success; Verify Gradle wrapper: success; Reproduce bootstrap assets: success; Independent bootstrap regeneration: success; Check project invariants: success; Validation tool regression tests: success; Install Android SDK: success; Confirm Android SDK tools: success; Official WFF validation: success; Build debug APKs: in_progress; Check APK contents: pending; Official asset memory evaluation: pending; Verify debug APK signatures: pending; Isolated generated flavor regression: pending; Upload debug APKs: pending.
 - G5 별도 자기 정적 검토: 외부 파일 변경 없음, 기존 제품 APK 원본 유지, 임시 workspace 및 exact negative 판정. 현재 fixture는 common-only bootstrap 및 4개 enabled profile을 전제로 한다. 실제 제품 override 도입 전 이 시험을 독립 기준 fixture로 일반화하고 관련 회귀 시험을 수행한다. G2/G3/G4/G6 최종 CI 원본 로그 대기. 실기기 미실시. G7 main 문서 기록 및 반영 확인 대상. GPT-03 PARTIAL, GPT 완료 2/12, WO GO 0/38, 출시 NO-GO. 다음 행동: 두 bootstrap CI 원본 로그/Artifact 확인. 후보의 실제 FLAVOR_RESULT 4개×2회, 정확한 WFF4 실패와 나머지 3개 PASS, 정상 복원 및 최종 artifact 확인 후 안전한 통합. 그 후 GPT-04 공통 레이아웃 준비. 도구 pin 자동 변경 금지. 신규 의존성/실제 사용자 기기 변경 없음.
+
+## GPT-03 회차 03 최종 판정 (2026-11-28 KST)
+기준 main 0ae1a5a15faa81fe07bdcdea954f8aa3b0736712; 검증 후보 020d2e835a474e1785f1fbe82d8eb159e514b7bb. [main CI 46059108841](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46059108841), job 140708750567 SUCCESS, 68 host PASS, 4 APK clean build/memory/signature, Artifact 15227264569. [후보 CI 46059190750](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46059190750), job 140709019984 SUCCESS. 74 host PASS/0 FAIL. 기존 생성 및 독립 프로세스 재생성, WFF2~5 공식 정상/invalid, 기본 4 APK clean build 41s, 격리 4 APK clean build 7s, 원본 XML·manifest·리소스·서명·메모리 PASS. 모든 active/ambient 2371712 bytes. FLAVOR_RESULT 8건(복원 전후 각 4건) 원본/패키징 SHA 일치 및 두 매트릭스 동일. WFF2/3/5 공통 XML SHA 6bd6980ae225fa3a4b0237c2c5cc946bf1246a4745e1f2ff155ff1f4fb8345b5, WFF4 override SHA 7f8dfad7bad2ea053770a777042c00622ab005d54fa7e8e792c10a033673f142. 실제 오류 주입: FAIL: wff4: Packaged face differs from selected source; 다른 세 프로필 PASS 및 복원 후 모두 PASS. 마지막 PASS: generated WFF4 override isolated; all four APKs verified; stale source rejected; product unchanged. Artifact 15227534241, 78999 bytes, digest sha256:61276ae6191b0bb3fdebddbba40b01b587186184a68010a35085306aebbb122e, expired=false. 메타데이터 및 원본 로그 확인, 다운로드/재해시 미실시. main Kotlin 81 PASS(46059108810) 유지, domain 코드 변경 없음. 검증 후보 5개 변경 파일, 에이전트 소유 파일 수정 0. GPT-03 개발 기반 GO; 기존 공통 bootstrap 한정이며 실제 override 확장 전에 fixture 일반화 필요. 제품 리소스 그대로. WO-01/02 PARTIAL, 정식 WO GO 0/38, GPT 3/12, 출시 NO-GO. B-011 해결 유지; B-002/003 runtime/004/005/006/007/008 및 GB01-E1 유지. AG PR #2 미병합, GB-02 독립 진행 가능. GPT-04 독립 레이아웃 준비 착수.
