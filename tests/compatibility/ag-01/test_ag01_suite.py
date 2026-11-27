@@ -1,4 +1,4 @@
-"""Unit and schema regression suite for AG-01 WFF 2-5 PoC fixtures and verification tooling."""
+"""Unit and schema regression suite for AG-01 WFF 2-5 PoC fixtures, controlled AOD memory ablation fixtures, and verification tooling."""
 import sys
 import unittest
 import xml.etree.ElementTree as ET
@@ -10,6 +10,7 @@ sys.path.insert(0, str(ROOT / "tools"))
 sys.path.insert(0, str(AG01_DIR))
 
 from run_ag01_verification import (
+    ABLATION_SPECS,
     NEGATIVE_SPECS,
     POC_SPECS,
     ensure_validator_jar,
@@ -153,6 +154,44 @@ class Ag01PoCStructureTests(unittest.TestCase):
         min_fonts = [f for f in root.findall(".//Font") if f.get("minSize")]
         self.assertGreaterEqual(len(min_fonts), 3)
 
+    def test_controlled_ablation_fixtures_isolate_clock_count_and_aod_parttext(self):
+        """Verify the 4 controlled ablation fixtures hold ActiveDecoration constant while varying only DigitalClock count and AOD PartText visibility."""
+        def canonical_tree(elem):
+            return (
+                elem.tag,
+                sorted(elem.attrib.items()),
+                (elem.text or "").strip(),
+                [canonical_tree(c) for c in elem],
+            )
+
+        self.assertEqual(4, len(ABLATION_SPECS))
+        baseline = ET.parse(next(s for s in POC_SPECS if s["id"] == "poc_wff4_motion_triggers")["path"]).getroot()
+        baseline_active_tree = canonical_tree(baseline.find(".//Group[@name='ActiveDecoration']"))
+
+        for spec in ABLATION_SPECS:
+            with self.subTest(ablation=spec["id"]):
+                self.assertTrue(spec["path"].is_file(), f"Missing {spec['path']}")
+                root = ET.parse(spec["path"]).getroot()
+                active_group = root.find(".//Group[@name='ActiveDecoration']")
+                self.assertIsNotNone(active_group)
+                self.assertEqual(baseline_active_tree, canonical_tree(active_group))
+
+                fluid = root.find(".//Group[@name='FluidClockContainer']")
+                self.assertIsNotNone(fluid)
+                clocks = fluid.findall(".//DigitalClock")
+                self.assertEqual(spec["digital_clocks"], len(clocks))
+
+                aod_visible_parts = []
+                for child in fluid.iter():
+                    if child.tag.startswith("Part"):
+                        hidden = any(
+                            v.get("mode") == "AMBIENT" and v.get("target") == "alpha" and v.get("value") == "0"
+                            for v in child.findall("Variant")
+                        )
+                        if not hidden:
+                            aod_visible_parts.append(child)
+                self.assertEqual(spec["aod_visible_part_nodes"], len(aod_visible_parts))
+
     def test_rejection_helper_detects_unexpected_pass_and_inconclusive_output(self):
         """G2 verification: ensure require_rejection catches false passes and missing error strings."""
         face = POC_SPECS[0]["path"].resolve()
@@ -174,7 +213,6 @@ class Ag01PoCStructureTests(unittest.TestCase):
         parent_map = {child: parent for parent in root.iter() for child in parent}
         refs = root.findall(".//Reference")
         self.assertTrue(any(parent_map[r].tag in PROHIBITED_REFERENCE_PARENTS for r in refs))
-
 
 
 class Ag01OfficialValidatorMatrixTests(unittest.TestCase):
@@ -204,6 +242,14 @@ class Ag01OfficialValidatorMatrixTests(unittest.TestCase):
                         require_rejection(proc.returncode, proc.stdout, expected_err)
                     else:
                         require_pass(proc.returncode, proc.stdout, spec["path"], version)
+
+    def test_ablation_fixtures_valid_on_wff4_and_wff5(self):
+        """Verify all 4 controlled ablation fixtures pass WFF 4 and WFF 5 validation."""
+        for spec in ABLATION_SPECS:
+            for version in (4, 5):
+                with self.subTest(ablation=spec["id"], wff_version=version):
+                    proc = run_validator_utf8(self.jar, spec["path"], version)
+                    require_pass(proc.returncode, proc.stdout, spec["path"], version)
 
 
 if __name__ == "__main__":

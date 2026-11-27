@@ -1,0 +1,45 @@
+================================================================================
+AG-01 ENVIRONMENT, TOOL HASHES & WEAR OS EMULATOR READINESS LOG
+================================================================================
+OS Platform:                  Windows-11-10.0.26300-SP0 (AMD64)
+Python Version:               3.14.7 (tags/v3.14.7:823f032, Aug  5 2026, 10:51:32) [MSC v.1944 64 bit (AMD64)]
+Java Version:
+openjdk version "21.0.5" 2024-10-15 LTS
+OpenJDK Runtime Environment Temurin-21.0.5+11 (build 21.0.5+11-LTS)
+OpenJDK 64-Bit Server VM Temurin-21.0.5+11 (build 21.0.5+11-LTS, mixed mode, sharing)
+WFF Validator JAR:            .aura-tools/wff-validator.jar (v1.7.0, SHA-256: 0e2204137fca618264e82f9a053c6c9ec6d4fad08d2b56aa8a57d75c0508a804)
+Memory Evaluator JAR:         .aura-tools/memory-footprint.jar (v1.5.1, SHA-256: 503c5f7bc9209ec4d4d4974f973cf66ad6fbb435e8422c310aac5b820f1f991a)
+Android SDK Root:             C:\Users\scarl\AppData\Local\Android\Sdk
+Available Free Disk Space:    93.67 GiB
+Installed System Images:      ['system-images\\android-36.1\\google_apis_playstore\\x86_64']
+Installed Wear System Images: []
+Configured AVDs:              ['Medium_Phone_API_36.1']
+Connected ADB Devices:        []
+ADB Note:                     
+Emulator Verification Status: NOT RUN
+Reason:                       No isolated Wear OS system image (android-wear / android-wear-signed) or Wear OS AVD is installed locally, and downloading new SDK/emulator images without user approval is prohibited by AG-01 / AG-01-R02.
+
+--- Available Wear OS System Image Packages (queried read-only via sdkmanager --list) ---
+  * system-images;android-34;android-wear;x86_64 | API 34 | Wear OS 5.0 | WFF#2 | rev 1 | est. 1.6 - 2.0 GiB
+  * system-images;android-35-ext15;android-wear;x86_64 | API 35 (ext15) | Wear OS 5.1 | WFF#3 | rev 1 | est. 1.7 - 2.1 GiB
+  * system-images;android-36;android-wear-signed;x86_64 | API 36.0 | Wear OS 6.0 (signed) | WFF#4 | rev 1 | est. 1.8 - 2.3 GiB
+  * system-images;android-36.1;android-wear-signed;x86_64 | API 36.1 | Wear OS 6.1 (signed) | WFF#4 | rev 1 | est. 1.8 - 2.3 GiB
+  * system-images;android-37.0;android-wear-signed;x86_64 | API 37.0 | Wear OS 7.0 (signed) | WFF#5 | rev 1 | est. 1.9 - 2.4 GiB
+
+--- Available Official Wear OS AVD Device Profiles (avdmanager list device) ---
+  * wearos_large_round (numeric id=59, OEM=Google, Tag=android-wear) -> 450x450 circular canvas primary testing
+  * wearos_small_round (numeric id=61, OEM=Google, Tag=android-wear) -> small circular DPI scaling verification
+  * wearos_square (numeric id=62, OEM=Google, Tag=android-wear) -> square layout compatibility
+  * wearos_rect (numeric id=60, OEM=Google, Tag=android-wear) -> rectangular layout compatibility
+
+--- Exact Reproduction Commands (upon approval) ---
+  sdkmanager "system-images;android-34;android-wear;x86_64" "system-images;android-35-ext15;android-wear;x86_64" "system-images;android-36;android-wear-signed;x86_64" "system-images;android-37.0;android-wear-signed;x86_64"
+  avdmanager create avd -n aura_wear36_round -k "system-images;android-36;android-wear-signed;x86_64" -d wearos_large_round
+  avdmanager create avd -n aura_wear37_round -k "system-images;android-37.0;android-wear-signed;x86_64" -d wearos_large_round
+  emulator -avd aura_wear36_round -no-snapshot -no-boot-anim
+  adb wait-for-device
+  adb install -r watchface-wff4-debug.apk
+  adb exec-out screencap -p > active_wff4.png
+  adb shell input keyevent KEYCODE_SLEEP
+  adb exec-out screencap -p > ambient_wff4.png
+  adb shell input keyevent KEYCODE_WAKEUP
