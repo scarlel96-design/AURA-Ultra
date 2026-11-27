@@ -26,3 +26,6 @@ WFF5는 공식 발표 및 스키마 존재 확인. API37 지원 toolchain으로 
 ## 기기 프로필 및 시험
 deviceModel, screenWidth, screenHeight, installedWearOs, apiLevel, supportedWffVersion, firmwareBuild, region, capabilities, testEvidenceRef. 미확인 값 unknown. 신규 기기 자동 지원 보장 금지.
 ADB 읽기 전용 확인: adb devices -l; adb -s DEVICE shell getprop ro.product.model; adb -s DEVICE shell getprop ro.build.version.sdk; adb -s DEVICE shell getprop ro.build.fingerprint; adb -s DEVICE shell wm size. 실제 WFF 지원 및 설치는 별도 검증한다. 에뮬레이터/Remote Test Lab 이용 가능 여부 및 실물 센서·AOD·밝기·전력 시험은 후속 검증. 원격 시험을 배터리 측정으로 대체하지 않는다.
+
+## 확인된 자동 시험
+CI 46001149417: WFF2~5 공통 XML schema PASS 및 invalid XML 4/4 검출, WFF2/3/4 Debug APK 빌드·원본 XML·메모리·서명 PASS. WFF5 APK와 기기 시험 NOT RUN. 자세한 증거: [REPORT-01](evidence/GPT-02/REPORT-01.md).

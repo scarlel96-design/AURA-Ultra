@@ -1,5 +1,5 @@
 # GPT-02 — 호환성 및 다중 WFF 개발 기반
-상태: READY / WO-01 PARTIAL. 독립 준비 작업으로 시작한다. 요구사항 R-01, R-02, R-20, R-22, R-23, R-25. 이전 GPT-01 GO(빌드 토대), CI 46000111754/46000111676.
+상태: PARTIAL / 회차 01 CI 성공 / WO-01 PARTIAL. 독립 준비 작업으로 시작한다. 요구사항 R-01, R-02, R-20, R-22, R-23, R-25. 이전 GPT-01 GO(빌드 토대), CI 46000111754/46000111676.
 ## 착수
 AGENTS.md PRE-FLIGHT로 최신 HEAD, STATUS, 이 명세, 공식 근거, 현재 CI를 확인한다. 필요하면 WO-01 남은 산출물과 상세 WO-02 명세를 작성한다.
 ## 범위와 검증
@@ -12,3 +12,6 @@ AGENTS.md PRE-FLIGHT로 최신 HEAD, STATUS, 이 명세, 공식 근거, 현재 C
 7. 정상·실패 fixture, 공식 검증, 영향받는 모든 APK clean build와 CI 결과를 기록한다. 실기기 확인은 증거 없으면 NOT RUN.
 ## 산출물 및 판정
 docs/evidence/GPT-02/REPORT-NN.md, WO-01 관련 TOOLCHAIN/DEVICE_MATRIX/API_CAPABILITIES/SOURCES, COMPATIBILITY.md, 필요시 ADR 및 상세 WO-02. 필수 공식 근거·프로필 계약·회귀 증거가 충족되면 범위 GO. 미확정 실기기/SDK/정식 배포는 해당 검증 미완료로 별도 보존. B-002/003/004/007에 대한 근거 및 남은 조건을 기록한다. 제품 출시 NO-GO 유지. 롤백: 해당 커밋만 revert.
+
+## 회차 02 시작 조건
+회차 01 증거: ../evidence/GPT-02/REPORT-01.md. API37 전환은 검증 브랜치 또는 격리 CI에서 수행한다. 공식 wrapper JAR 및 배포 SHA-256, AGP9.1.1/Gradle9.3.1/JDK17, SDK37/build-tools36.0.0 확인. WFF5 활성화 후보와 test_build_tasks 기대 목록, SDK 및 서명 도구 경로, 모든 프로필 계약을 동시에 갱신한다. 4개 APK 정상/실패 스키마·clean build·raw XML·memory·signature 전부 검증한다. 실제 WFF5 전용 기능 및 설치는 후속 PoC. 원본 XML 불일치 오류 주입 검사 추가. 실패 시 기존 main 유지 및 원인 기록. 정식 패키지/서명/배포 변경 제외.
