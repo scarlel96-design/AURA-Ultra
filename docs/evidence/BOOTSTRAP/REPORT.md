@@ -4,3 +4,6 @@ Scope: resource-only Gradle module, WFF2/3/4 debug variants, shared face, previe
 Gradle wrapper jar copied from official v8.11.1 Git blob; GitHub source/destination blob SHA matched a4b76b9530d66f5e68d973ea569d8e19de379189. CI checks published SHA-256 and distribution checksum. Official validator release digest pinned based on GitHub API metadata.
 Validation: connector tree/commit verification to be checked after publication; local Gradle/SDK/ADB unavailable. CI and APK validation results must be retrieved before marking build PASS. Memory evaluator, renderer, all physical watches, power tests and full WFF compatibility NOT RUN.
 Decisions: provisional debug namespace, API36 compile/target, flavor application ID suffixes, shared baseline XML, original approximate preview, Java17/AGP8.10.1/Gradle8.11.1. No production signing. No WFF runtime executable code. No wholesale creation of empty modules.
+
+## CI attempt 1
+https://github.com/scarlel96-design/AURA-Ultra/actions/runs/45997002132 : wrapper SHA-256 and project invariants PASS. SDK setup FAIL (sdkmanager command not found, exit 127); official schema and APK assembly skipped. Add pinned android-actions/setup-android v4.0.3 and explicit SDK verification. Follow-up run pending; no build success claimed.
