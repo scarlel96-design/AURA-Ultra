@@ -1,13 +1,6 @@
 # 최근 작업 이력
-이전 누적 이력: [archive](../archive/README.md). 최신 체크포인트는 [STATUS](../STATUS.md). 상세 로그는 evidence에 기록한다.
-
-- 2026-11-28 GPT-06 R01/R02: 소재·링 생성, R02 통합 273 host PASS. [보고서](../evidence/GPT-06/REPORT-02-VERIFIED.md).
-- R03/R04: 283 host PASS 각각, 통합 293 PASS CI 46081405307. [R03](../evidence/GPT-06/REPORT-03-GLASS.md), [R04](../evidence/GPT-06/REPORT-04-OPTICAL.md).
-- R05: 301 PASS, CI 46081519011. 검증 세부 [REPORT-05-VERIFIED](../evidence/GPT-06/REPORT-05-VERIFIED.md). 통합 c4791149928ce1d90fadc31dcb7af73403e6d02f; CI 46082669709 최종 대기.
-- 운영 개선: 사용자 승인에 따라 과거 8개 문서 원본 blob을 보관. 현재 상태/차단/배정과 상세 증거 분리. [보관소](../archive/README.md).
-- 다음: R06 격리된 실제 소재 APK 후보, 최종 검증 및 GPT-06 중단 게이트. 제품 NO-GO.
-- R06: 격리 소재 APK 후보 e1a5f62abbf20cbaa6d9c741251b96d7a6caddd1; [CI](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46082882539) 대기. [보고서](https://github.com/scarlel96-design/AURA-Ultra/blob/e1a5f62abbf20cbaa6d9c741251b96d7a6caddd1/docs/evidence/GPT-06/REPORT-06-MATERIAL-APK.md). 정적 Balanced 재질/원본 기본 표시, 동적 센서/실제 기기 미검증.
-- R05 통합 CI 46082669709 SUCCESS, 301 PASS. [최종 증거](../evidence/GPT-06/REPORT-05-INTEGRATED.md). R06 실행 중. OPS-07 후보 46b22851d401bc5c4db548e1b45a3e9fbbca17b5, CI 46083109875 진행; [보고서](https://github.com/scarlel96-design/AURA-Ultra/blob/46b22851d401bc5c4db548e1b45a3e9fbbca17b5/docs/evidence/OPS-07/REPORT.md).
-- R06 후보 46082882539 SUCCESS 309 PASS/4 소재 APK. OPS-07 46083109875 SUCCESS 308 PASS. 결합 후보 65c45f51bebce19b7df8091e1e55ed2afb4ec312, [CI](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46083441184) 진행; [문서 검사](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46083441202) SUCCESS 7 PASS/12 문서. [R06 증거](https://github.com/scarlel96-design/AURA-Ultra/blob/65c45f51bebce19b7df8091e1e55ed2afb4ec312/docs/evidence/GPT-06/REPORT-06-VERIFIED.md).
-- R06 아티팩트 15238230693 독립 파일 재검사 PASS. [증거](../evidence/GPT-06/REPORT-06-ARTIFACT-READBACK.md). 최종 결합 CI 소재 APK 단계 진행 중.
-- 결합 후보 46083441184 SUCCESS, 316 PASS/0 FAIL/0 SKIP, 4 소재 APK, 12 문서; 46083441202 SUCCESS. 직접 다운로드 artifact 15238376046 검사 PASS. [보고서](../evidence/GPT-06/REPORT-FINAL-INTEGRATION.md). 검증 blob 통합 및 main CI 대기.
+이전 누적 이력: [archive](../archive/README.md). 종료 직전 이력은 [검증 코드 시점](https://github.com/scarlel96-design/AURA-Ultra/blob/53d43d918c3e3c1002b70473f5de843c0f946d8e/docs/operations/WORK_LOG.md)에서 보존한다. 최신 상태는 [STATUS](../STATUS.md).
+- 2026-11-28 R01~R04 소재 기반/링/유리/광학 호스트 생성 및 통합: 293 PASS. [R02](../evidence/GPT-06/REPORT-02-VERIFIED.md).
+- R05 301 PASS, [통합 증거](../evidence/GPT-06/REPORT-05-INTEGRATED.md).
+- R06 309 PASS/4개 소재 APK. OPS-07 7개 검사기 시험, 12개 활성 문서 예산, 원본 8개 blob 아카이브. [결합 증거](../evidence/GPT-06/REPORT-FINAL-INTEGRATION.md).
+- 최종 main 53d43d918c3e3c1002b70473f5de843c0f946d8e: 46083911786 SUCCESS 316 PASS, 46083911794 SUCCESS 7 PASS. 다운로드 무결성 PASS. [전체 종료 보고](../evidence/GPT-06/REPORT-FINAL-CLOSURE.md). GPT-06 독립 준비 종료·중단, 공식 PARTIAL, 출시 NO-GO. GPT-07 미착수. 사용자 별도 승인 대기.
