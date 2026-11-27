@@ -361,13 +361,34 @@ LOCAL_DISPLAY_STATE_PATTERNS = (
     re.compile(r"DisplayDeviceInfo\{[^\n}]*?\bstate\s+([A-Z_]+)\b"),
 )
 GLOBAL_DISPLAY_STATE_RE = re.compile(r"\bmGlobalDisplayState=([A-Z_]+)\b")
+TOP_SECTION_BOUNDARY_RE = re.compile(
+    r"^(?:"
+    r"Logical Display\b.*|"
+    r"Display Power Controller\b.*|"
+    r"Display Manager\b.*|"
+    r"Power Manager\b.*|"
+    r"DisplayDeviceInfo\{.*|"
+    r"Display\s+[^0-9\n].*:|"
+    r"Wake Locks\b.*|"
+    r"Suspend Blockers\b.*|"
+    r"Wireless Charger Detector\b.*|"
+    r"User\s+\d+\s*:.*"
+    r")$"
+)
+GENERIC_SECTION_HEADER_RE = re.compile(r"^[A-Za-z][A-Za-z0-9_/ ()\-\[\]]+:\s*$")
 
 
 def _extract_display_states_by_id(text, source_label):
-    """Map display states explicitly to each Display ID (AG01-AUD-05).
+    """Map display states explicitly to each Display ID without bleeding IDs across section boundaries (AG01-AUD-05 & R07).
 
-    Duplicate observations for the same Display ID are deduplicated into that Display ID's state set
-    and NEVER counted as evidence for a different Display ID.
+    Rules:
+    - Duplicate observations for the same Display ID are deduplicated into that Display ID's state set
+      and NEVER counted as evidence for a different Display ID.
+    - Inline self-contained records (such as `DisplayDeviceInfo{...}`) scope their Display ID strictly to that line
+      and reset `current_display_id = None` immediately after the line.
+    - Blank lines, separator lines (`---`, `===`), outdented lines (`indent < current_header_indent`),
+      or new section headers at `indent <= current_header_indent` that lack a Display ID immediately reset
+      `current_display_id = None` so a previous Display ID never bleeds into subsequent sections.
     """
     declared_ids = set()
     states_by_id = {}
@@ -375,8 +396,20 @@ def _extract_display_states_by_id(text, source_label):
     global_states = set()
     ambiguous_lines = []
     current_display_id = None
+    current_header_indent = None
+    current_header_is_block = False
 
     for raw_line in (text or "").splitlines():
+        stripped = raw_line.strip()
+        if not stripped or stripped.startswith("---") or stripped.startswith("==="):
+            current_display_id = None
+            current_header_indent = None
+            current_header_is_block = False
+            continue
+
+        indent = len(raw_line) - len(raw_line.lstrip())
+        is_inline_device_info = "DisplayDeviceInfo{" in stripped
+
         line_ids = []
         for pat in DISPLAY_ID_PATTERNS:
             for match in pat.finditer(raw_line):
@@ -385,10 +418,6 @@ def _extract_display_states_by_id(text, source_label):
                 states_by_id.setdefault(did, set())
                 line_ids.append(did)
         unique_line_ids = sorted(set(line_ids))
-        if len(unique_line_ids) == 1:
-            current_display_id = unique_line_ids[0]
-        elif len(unique_line_ids) > 1:
-            current_display_id = None
 
         for m_glob in GLOBAL_DISPLAY_STATE_RE.finditer(raw_line):
             global_states.add(m_glob.group(1))
@@ -398,10 +427,58 @@ def _extract_display_states_by_id(text, source_label):
             for match in pat.finditer(raw_line):
                 line_states.append(match.group(1))
 
-        if line_states:
-            if len(unique_line_ids) > 1:
+        if len(unique_line_ids) > 1:
+            current_display_id = None
+            current_header_indent = None
+            current_header_is_block = False
+            if line_states:
                 ambiguous_lines.append((unique_line_ids, line_states))
-            elif current_display_id is not None:
+            continue
+
+        if len(unique_line_ids) == 1:
+            matched_id = unique_line_ids[0]
+            if is_inline_device_info:
+                if line_states:
+                    states_by_id.setdefault(matched_id, set()).update(line_states)
+                current_display_id = None
+                current_header_indent = None
+                current_header_is_block = False
+                continue
+            current_display_id = matched_id
+            current_header_indent = indent
+            current_header_is_block = stripped.endswith(":")
+            if line_states:
+                states_by_id.setdefault(current_display_id, set()).update(line_states)
+            continue
+
+        # No Display ID on this line: check if we crossed a section boundary before applying current_display_id
+        if is_inline_device_info:
+            current_display_id = None
+            current_header_indent = None
+            current_header_is_block = False
+        elif current_display_id is not None:
+            if not line_states and TOP_SECTION_BOUNDARY_RE.match(stripped):
+                current_display_id = None
+                current_header_indent = None
+                current_header_is_block = False
+            elif current_header_indent is not None and indent < current_header_indent:
+                current_display_id = None
+                current_header_indent = None
+                current_header_is_block = False
+            elif (
+                current_header_indent is not None
+                and indent <= current_header_indent
+                and (
+                    (current_header_is_block and indent == current_header_indent)
+                    or (not line_states and GENERIC_SECTION_HEADER_RE.match(stripped))
+                )
+            ):
+                current_display_id = None
+                current_header_indent = None
+                current_header_is_block = False
+
+        if line_states:
+            if current_display_id is not None:
                 states_by_id.setdefault(current_display_id, set()).update(line_states)
             else:
                 unscoped_states.update(line_states)
@@ -500,6 +577,17 @@ def parse_power_and_display_state(dumpsys_power, dumpsys_display="", target_disp
         )
 
     if declared_ids:
+        # If a single dump text declared explicit Display ID(s) AND also had unscoped local display states outside
+        # any Display ID section (e.g. after a section boundary or an ID-less DisplayDeviceInfo), refuse to guess which
+        # display that unscoped state belongs to (R07 Defect 5).
+        for parsed_src in (power_parsed, display_parsed):
+            if parsed_src["declared_ids"] and parsed_src["unscoped_states"]:
+                return _unknown(
+                    f"Dump '{parsed_src['source']}' contains both Display-ID-scoped sections ({sorted(parsed_src['declared_ids'])}) "
+                    f"and unscoped display states ({sorted(parsed_src['unscoped_states'])}) across section boundaries",
+                    wake_val=wakefulness,
+                    disp_val="UNSCOPED_STATE_IN_SCOPED_DUMP",
+                )
         # Every declared Display ID must have at least one explicit state observation (duplicate lines on another ID never count!)
         missing_ids = [did for did in declared_ids if not states_by_id[did]]
         if missing_ids:
@@ -1097,7 +1185,21 @@ def parse_and_validate_mp4_structure(data, min_size_bytes=MP4_MIN_BYTES, max_siz
         if len(stbls) != 1:
             raise RuntimeError("Video 'minf' is missing 'stbl' sample table box")
         stbl_children = _iter_iso_bmff_boxes(raw, stbls[0]["payload_start"], stbls[0]["end"])
-        stbl_by_type = {b["type"]: b for b in stbl_children}
+
+        # R07 Defect 3: Reject duplicate sample table boxes or mutually exclusive box pairs in stbl
+        singular_stbl_types = {b"stsd", b"stsz", b"stz2", b"stsc", b"stco", b"co64", b"stts", b"ctts", b"stss"}
+        stbl_by_type = {}
+        for child in stbl_children:
+            ctype = child["type"]
+            if ctype in singular_stbl_types and ctype in stbl_by_type:
+                raise RuntimeError(
+                    f"Duplicate '{ctype.decode('ascii', errors='replace')}' sample table box inside video 'stbl'"
+                )
+            stbl_by_type[ctype] = child
+        if b"stz2" in stbl_by_type:
+            raise RuntimeError("Unsupported or conflicting 'stz2' compact sample size box in video 'stbl'")
+        if b"stco" in stbl_by_type and b"co64" in stbl_by_type:
+            raise RuntimeError("Conflicting 'stco' and 'co64' chunk offset boxes both present in video 'stbl'")
 
         # Validate stsd (sample description / codec)
         stsd = stbl_by_type.get(b"stsd")
@@ -1107,8 +1209,10 @@ def parse_and_validate_mp4_structure(data, min_size_bytes=MP4_MIN_BYTES, max_siz
         if stsd_entry_count < 1:
             raise RuntimeError("Video 'stsd' declares 0 sample description entries")
         codec_boxes = _iter_iso_bmff_boxes(raw, stsd["payload_start"] + 8, stsd["end"])
-        if not codec_boxes:
-            raise RuntimeError("Video 'stsd' contains no codec entry box")
+        if len(codec_boxes) != stsd_entry_count:
+            raise RuntimeError(
+                f"Video 'stsd' entry_count ({stsd_entry_count}) does not match parsed codec entry boxes ({len(codec_boxes)})"
+            )
         codec_fourcc = codec_boxes[0]["type"].decode("ascii", errors="replace")
 
         # Validate stsz (sample sizes & sample count >= 1)
@@ -1119,24 +1223,26 @@ def parse_and_validate_mp4_structure(data, min_size_bytes=MP4_MIN_BYTES, max_siz
         if sample_count < 1:
             raise RuntimeError("Video track declares 0 samples in 'stsz'")
         if uniform_sample_size > 0:
-            total_sample_bytes = uniform_sample_size * sample_count
-            min_sample_size = uniform_sample_size
+            if (stsz["end"] - stsz["payload_start"]) != 12:
+                raise RuntimeError("Video 'stsz' with non-zero uniform sample_size has unexpected trailing entry bytes")
+            sample_sizes = [uniform_sample_size] * sample_count
         else:
             table_start = stsz["payload_start"] + 12
             table_end = table_start + (4 * sample_count)
-            if table_end > stsz["end"]:
-                raise RuntimeError("Truncated video 'stsz' sample size table")
-            sample_sizes = struct.unpack(f">{sample_count}I", raw[table_start:table_end])
+            if table_end != stsz["end"]:
+                raise RuntimeError(
+                    f"Video 'stsz' sample size table length mismatch: expected end {table_end}, actual box end {stsz['end']}"
+                )
+            sample_sizes = list(struct.unpack(f">{sample_count}I", raw[table_start:table_end]))
             if any(sz == 0 for sz in sample_sizes):
                 raise RuntimeError("Video 'stsz' contains 0-byte sample entry")
-            total_sample_bytes = sum(sample_sizes)
-            min_sample_size = min(sample_sizes)
+        total_sample_bytes = sum(sample_sizes)
         if total_sample_bytes <= 0 or total_sample_bytes > mdat_payload_bytes:
             raise RuntimeError(
                 f"Video sample byte total ({total_sample_bytes}) is invalid relative to 'mdat' payload ({mdat_payload_bytes})"
             )
 
-        # Validate stco / co64 chunk offsets point within mdat payload with room for at least one sample
+        # Validate stco / co64 chunk offsets
         stco = stbl_by_type.get(b"stco")
         co64 = stbl_by_type.get(b"co64")
         if stco is None and co64 is None:
@@ -1146,21 +1252,90 @@ def parse_and_validate_mp4_structure(data, min_size_bytes=MP4_MIN_BYTES, max_siz
             if (stco["end"] - stco["payload_start"]) < 8:
                 raise RuntimeError("Truncated 'stco' box")
             entry_cnt = struct.unpack(">I", raw[stco["payload_start"] + 4:stco["payload_start"] + 8])[0]
-            if entry_cnt < 1 or stco["payload_start"] + 8 + 4 * entry_cnt > stco["end"]:
-                raise RuntimeError("Invalid or empty 'stco' chunk offset table")
-            chunk_offsets.extend(struct.unpack(f">{entry_cnt}I", raw[stco["payload_start"] + 8:stco["payload_start"] + 8 + 4 * entry_cnt]))
+            if entry_cnt < 1 or (stco["payload_start"] + 8 + 4 * entry_cnt) != stco["end"]:
+                raise RuntimeError("Invalid or mismatched 'stco' chunk offset table length")
+            chunk_offsets.extend(struct.unpack(f">{entry_cnt}I", raw[stco["payload_start"] + 8:stco["end"]]))
         if co64 is not None:
             if (co64["end"] - co64["payload_start"]) < 8:
                 raise RuntimeError("Truncated 'co64' box")
             entry_cnt = struct.unpack(">I", raw[co64["payload_start"] + 4:co64["payload_start"] + 8])[0]
-            if entry_cnt < 1 or co64["payload_start"] + 8 + 8 * entry_cnt > co64["end"]:
-                raise RuntimeError("Invalid or empty 'co64' chunk offset table")
-            chunk_offsets.extend(struct.unpack(f">{entry_cnt}Q", raw[co64["payload_start"] + 8:co64["payload_start"] + 8 + 8 * entry_cnt]))
+            if entry_cnt < 1 or (co64["payload_start"] + 8 + 8 * entry_cnt) != co64["end"]:
+                raise RuntimeError("Invalid or mismatched 'co64' chunk offset table length")
+            chunk_offsets.extend(struct.unpack(f">{entry_cnt}Q", raw[co64["payload_start"] + 8:co64["end"]]))
 
-        for off in chunk_offsets:
-            if not any(m_start <= off and (off + min_sample_size) <= m_end for m_start, m_end in mdat_ranges):
+        chunk_count = len(chunk_offsets)
+        if sample_count < chunk_count:
+            raise RuntimeError(
+                f"Invalid MP4 sample-to-chunk count: sample_count ({sample_count}) < chunk_count ({chunk_count})"
+            )
+
+        # Validate stsc (Sample-To-Chunk correspondence) and determine exact sample count per chunk (R07 Defect 3)
+        stsc = stbl_by_type.get(b"stsc")
+        if stsc is not None:
+            if (stsc["end"] - stsc["payload_start"]) < 8:
+                raise RuntimeError("Truncated 'stsc' sample-to-chunk box")
+            stsc_entry_count = struct.unpack(">I", raw[stsc["payload_start"] + 4:stsc["payload_start"] + 8])[0]
+            expected_stsc_end = stsc["payload_start"] + 8 + (12 * stsc_entry_count)
+            if stsc_entry_count < 1 or expected_stsc_end != stsc["end"]:
+                raise RuntimeError("Invalid or truncated 'stsc' sample-to-chunk entry table")
+            stsc_entries = []
+            prev_first_chunk = 0
+            for idx in range(stsc_entry_count):
+                e_off = stsc["payload_start"] + 8 + (12 * idx)
+                first_chunk, samples_per_chunk, sdi = struct.unpack(">III", raw[e_off:e_off + 12])
+                if idx == 0 and first_chunk != 1:
+                    raise RuntimeError(f"Invalid 'stsc': first entry must start at first_chunk=1, got {first_chunk}")
+                if first_chunk <= prev_first_chunk or first_chunk > chunk_count:
+                    raise RuntimeError(
+                        f"Invalid 'stsc' first_chunk={first_chunk} (prev={prev_first_chunk}, chunk_count={chunk_count})"
+                    )
+                if samples_per_chunk < 1:
+                    raise RuntimeError("Invalid 'stsc': samples_per_chunk must be >= 1")
+                if sdi < 1 or sdi > stsd_entry_count:
+                    raise RuntimeError(
+                        f"Invalid 'stsc': sample_description_index={sdi} out of range 1..{stsd_entry_count}"
+                    )
+                stsc_entries.append((first_chunk, samples_per_chunk, sdi))
+                prev_first_chunk = first_chunk
+
+            samples_per_chunk_list = []
+            for idx, (first_chunk, samples_per_chunk, _) in enumerate(stsc_entries):
+                next_first = stsc_entries[idx + 1][0] if (idx + 1) < len(stsc_entries) else (chunk_count + 1)
+                run_chunks = next_first - first_chunk
+                samples_per_chunk_list.extend([samples_per_chunk] * run_chunks)
+
+            mapped_sample_total = sum(samples_per_chunk_list)
+            if mapped_sample_total != sample_count:
                 raise RuntimeError(
-                    f"Video chunk offset {off} (+min_sample={min_sample_size}) falls outside any 'mdat' payload range {mdat_ranges}"
+                    f"MP4 'stsc' mapped sample count ({mapped_sample_total}) does not match 'stsz' sample_count ({sample_count})"
+                )
+        else:
+            if chunk_count > 1:
+                raise RuntimeError(
+                    f"Video 'stbl' has {chunk_count} chunks in 'stco'/'co64' but is missing required 'stsc' sample-to-chunk box"
+                )
+            samples_per_chunk_list = [sample_count]
+
+        # Verify every chunk's exact cumulative sample byte span fits inside a single mdat box without overlapping
+        sample_cursor = 0
+        chunk_spans = []
+        for chunk_idx, (off, n_samples) in enumerate(zip(chunk_offsets, samples_per_chunk_list)):
+            chunk_byte_size = sum(sample_sizes[sample_cursor:sample_cursor + n_samples])
+            sample_cursor += n_samples
+            chunk_end = off + chunk_byte_size
+            if not any(m_start <= off and chunk_end <= m_end for m_start, m_end in mdat_ranges):
+                raise RuntimeError(
+                    f"Video chunk #{chunk_idx + 1} byte span [{off}, {chunk_end}) ({n_samples} samples, {chunk_byte_size} bytes) "
+                    f"overflows 'mdat' payload bounds {mdat_ranges}"
+                )
+            chunk_spans.append((off, chunk_end, chunk_idx + 1))
+
+        sorted_spans = sorted(chunk_spans, key=lambda item: item[0])
+        for prev_span, curr_span in zip(sorted_spans, sorted_spans[1:]):
+            if prev_span[1] > curr_span[0]:
+                raise RuntimeError(
+                    f"Overlapping video chunk byte spans in 'mdat': chunk #{prev_span[2]} [{prev_span[0]}, {prev_span[1]}) "
+                    f"overlaps chunk #{curr_span[2]} [{curr_span[0]}, {curr_span[1]})"
                 )
 
         video_tracks.append({
@@ -1241,7 +1416,7 @@ def verify_mp4_video_artifact(mp4_path, data=None, ffprobe_bin=None, probe_runne
         "v:0",
         "-count_frames",
         "-show_entries",
-        "stream=codec_type,codec_name,width,height,nb_read_frames",
+        "stream=codec_type,codec_name,width,height,nb_frames,nb_read_frames",
         "-of",
         "json",
         str(path),
@@ -1264,17 +1439,32 @@ def verify_mp4_video_artifact(mp4_path, data=None, ffprobe_bin=None, probe_runne
     if proc.returncode != 0:
         raise RuntimeError(f"ffprobe failed (rc={proc.returncode}) on {path}: {(proc.stderr or proc.stdout).strip()}")
 
+    stderr_diag = (proc.stderr or "").strip()
+    if stderr_diag:
+        raise RuntimeError(
+            f"ffprobe reported stream decoding error(s) on stderr for {path} (partial or corrupt video rejected): {stderr_diag}"
+        )
+
     try:
         parsed = json.loads(proc.stdout or "{}")
     except json.JSONDecodeError as exc:
         raise RuntimeError(f"Invalid JSON from ffprobe: {exc}") from exc
 
+    if parsed.get("error"):
+        raise RuntimeError(f"ffprobe reported error payload for {path}: {parsed.get('error')}")
+
     streams = parsed.get("streams") or []
     if not streams:
         raise RuntimeError(f"ffprobe found 0 video streams in {path}")
     vstream = streams[0]
-    if vstream.get("codec_type") and vstream.get("codec_type") != "video":
-        raise RuntimeError(f"ffprobe selected non-video stream codec_type={vstream.get('codec_type')!r}")
+    if vstream.get("codec_type") != "video":
+        raise RuntimeError(
+            f"ffprobe stream is missing or has non-video codec_type={vstream.get('codec_type')!r} (must be explicitly 'video')"
+        )
+    codec_name = (vstream.get("codec_name") or "").strip()
+    if not codec_name or codec_name == "unknown":
+        raise RuntimeError(f"ffprobe stream is missing valid codec_name (got {vstream.get('codec_name')!r})")
+
     width = int(vstream.get("width") or 0)
     height = int(vstream.get("height") or 0)
     raw_frames = vstream.get("nb_read_frames")
@@ -1288,12 +1478,32 @@ def verify_mp4_video_artifact(mp4_path, data=None, ffprobe_bin=None, probe_runne
     if decoded_frames < 1:
         raise RuntimeError(f"ffprobe decoded 0 video frames in {path}")
 
+    expected_container_frames = container["video_tracks"][0]["sample_count"]
+    raw_nb_frames = vstream.get("nb_frames")
+    declared_nb_frames = None
+    if raw_nb_frames not in (None, "", "N/A"):
+        try:
+            declared_nb_frames = int(raw_nb_frames)
+        except (TypeError, ValueError) as exc:
+            raise RuntimeError(f"ffprobe reported invalid nb_frames={raw_nb_frames!r}") from exc
+        if declared_nb_frames != expected_container_frames:
+            raise RuntimeError(
+                f"Video stream nb_frames ({declared_nb_frames}) does not match MP4 container sample_count ({expected_container_frames})"
+            )
+
+    if decoded_frames != expected_container_frames:
+        raise RuntimeError(
+            f"Partial video decoding detected in {path}: decoded {decoded_frames} frame(s), "
+            f"but MP4 container declares {expected_container_frames} frame sample(s)"
+        )
+
     return {
         "status": "VERIFIED",
         "video_verification_status": "PASS",
         "frames_verified": True,
         "decoded_frame_count": decoded_frames,
-        "codec_name": vstream.get("codec_name"),
+        "expected_frame_count": expected_container_frames,
+        "codec_name": codec_name,
         "width": width,
         "height": height,
         "probe_tool": resolved_probe,
@@ -1646,6 +1856,7 @@ def execute_runtime_verification(
         "recovery_scope_entered": False,
         "recorder_spawned": False,
         "recorder_stopped": False,
+        "staged_file_cleaned": False,
         "awake_restored": False,
         "watchface_restored": False,
         "remote_file_removed": False,
@@ -1732,22 +1943,32 @@ def execute_runtime_verification(
     except Exception as exc:
         primary_error = exc
     finally:
-        staged_video.unlink(missing_ok=True)
-
-        # 1. Verify recorder process is fully terminated and reaped (if spawned)
+        # Step R1 (Independent): Verify recorder process is fully terminated and reaped (never blocked by staged unlink)
         if recorder is None:
             recovery_report["recorder_stopped"] = True
         else:
             try:
                 if recorder.poll() is None:
-                    recorder.terminate()
+                    try:
+                        recorder.terminate()
+                    except Exception as term_exc:
+                        recovery_errors.append(f"recorder_terminate_call_failed: {term_exc}")
                     try:
                         recorder.wait(timeout=5)
-                    except subprocess.TimeoutExpired:
-                        recorder.kill()
-                        recorder.wait(timeout=5)
+                    except Exception:
+                        try:
+                            recorder.kill()
+                        except Exception as kill_exc:
+                            recovery_errors.append(f"recorder_kill_call_failed: {kill_exc}")
+                        try:
+                            recorder.wait(timeout=5)
+                        except Exception as wait_exc:
+                            recovery_errors.append(f"recorder_wait_after_kill_failed: {wait_exc}")
                 else:
-                    recorder.wait(timeout=5)
+                    try:
+                        recorder.wait(timeout=5)
+                    except Exception as reap_exc:
+                        recovery_errors.append(f"recorder_reap_wait_failed: {reap_exc}")
                 if recorder.poll() is None:
                     recovery_errors.append("recorder_termination_failed: recorder process is still running after kill+wait")
                 else:
@@ -1755,19 +1976,29 @@ def execute_runtime_verification(
             except Exception as rec_exc:
                 recovery_errors.append(f"recorder_termination_failed: {rec_exc}")
 
-        # 2. Verify final Awake+ON AND active watchface restoration whenever device state was mutated (AG01-AUD-08 & 09)
+        # Step R2 (Independent): Clean up local staged temporary video file without blocking any other recovery step
+        try:
+            staged_video.unlink(missing_ok=True)
+            if staged_video.exists():
+                recovery_errors.append(f"staged_cleanup_failed: staged file still exists at {staged_video}")
+            else:
+                recovery_report["staged_file_cleaned"] = True
+        except Exception as stg_exc:
+            recovery_errors.append(f"staged_cleanup_failed: {stg_exc}")
+
+        # Step R3 & R4 (Independent): Verify final Awake+ON AND active watchface restoration whenever device state was mutated
         if device_state_mutated:
-            if (
-                power_restored is not None
-                and power_restored.get("is_active")
-                and selection_restored is not None
-                and selection_restored.get("selected")
-            ):
+            already_restored_awake = power_restored is not None and bool(power_restored.get("is_active"))
+            already_restored_wf = selection_restored is not None and bool(selection_restored.get("selected"))
+
+            if already_restored_awake:
                 recovery_report["awake_restored"] = True
-                recovery_report["watchface_restored"] = True
             else:
                 try:
                     run_checked_adb(run_fn, ["shell", "input", "keyevent", "KEYCODE_WAKEUP"], timeout=15)
+                except Exception as wake_cmd_exc:
+                    recovery_errors.append(f"awake_recovery_wakeup_failed: {wake_cmd_exc}")
+                try:
                     sleep_fn(0.5)
                     recovered_state = parse_power_and_display_state(
                         run_checked_adb(run_fn, ["shell", "dumpsys", "power"], timeout=30).stdout,
@@ -1781,9 +2012,12 @@ def execute_runtime_verification(
                         recovery_errors.append(
                             f"awake_recovery_failed: emulator did not confirm Awake+ON after recovery wakeup ({recovered_state})"
                         )
-                except Exception as wake_exc:
-                    recovery_errors.append(f"awake_recovery_failed: {wake_exc}")
+                except Exception as wake_state_exc:
+                    recovery_errors.append(f"awake_recovery_failed: {wake_state_exc}")
 
+            if already_restored_wf:
+                recovery_report["watchface_restored"] = True
+            else:
                 try:
                     recovered_wp = run_checked_adb(run_fn, ["shell", "dumpsys", "wallpaper"], timeout=30)
                     recovered_sel = verify_active_watchface_selected(recovered_wp.stdout, package_id)
@@ -1797,14 +2031,22 @@ def execute_runtime_verification(
                 except Exception as wp_exc:
                     recovery_errors.append(f"watchface_recovery_failed: {wp_exc}")
 
-        # 3. Verify remote temporary MP4 deletion whenever recording was attempted (including spawn failure)
+        # Step R5 (Independent): Verify remote temporary MP4 deletion (`rm -f` and `test ! -e` checked independently)
         if recording_attempted:
+            rm_ok = False
+            absence_ok = False
             try:
                 run_checked_adb(run_fn, ["shell", "rm", "-f", remote_video], timeout=15)
-                run_checked_adb(run_fn, ["shell", "test", "!", "-e", remote_video], timeout=15)
-                recovery_report["remote_file_removed"] = True
+                rm_ok = True
             except Exception as rm_exc:
                 recovery_errors.append(f"remote_cleanup_failed: {rm_exc}")
+            try:
+                run_checked_adb(run_fn, ["shell", "test", "!", "-e", remote_video], timeout=15)
+                absence_ok = True
+            except Exception as test_exc:
+                recovery_errors.append(f"remote_cleanup_failed (remote_absence_check_failed): {test_exc}")
+            if rm_ok and absence_ok:
+                recovery_report["remote_file_removed"] = True
         else:
             recovery_report["remote_file_removed"] = True
 

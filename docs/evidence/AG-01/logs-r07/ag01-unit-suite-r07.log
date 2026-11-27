@@ -1,0 +1,61 @@
+test_aud04_four_reproduced_false_positives_are_rejected (test_ag01_suite.Ag01EmulatorInspectionAndSafetyTests.test_aud04_four_reproduced_false_positives_are_rejected) ... ok
+test_execute_runtime_verification_enforces_exit_codes_awake_restore_and_cleanup (test_ag01_suite.Ag01EmulatorInspectionAndSafetyTests.test_execute_runtime_verification_enforces_exit_codes_awake_restore_and_cleanup)
+AG-01-R04 §2, R05 & R06: verify adb rc, timeout, recorder termination, Awake+watchface recovery, remote rm+absence check, PNG & MP4. ... ok
+test_installed_wear_image_alone_without_wear_avd_is_not_ready (test_ag01_suite.Ag01EmulatorInspectionAndSafetyTests.test_installed_wear_image_alone_without_wear_avd_is_not_ready) ... ok
+test_missing_or_failed_or_empty_sdk_tools_return_unknown (test_ag01_suite.Ag01EmulatorInspectionAndSafetyTests.test_missing_or_failed_or_empty_sdk_tools_return_unknown) ... ok
+test_parsers_extract_live_sdk_devices_avds_and_separate_phone_from_wear (test_ag01_suite.Ag01EmulatorInspectionAndSafetyTests.test_parsers_extract_live_sdk_devices_avds_and_separate_phone_from_wear) ... ok
+test_r05_missing_current_user_binding_never_falls_back_to_other_user (test_ag01_suite.Ag01EmulatorInspectionAndSafetyTests.test_r05_missing_current_user_binding_never_falls_back_to_other_user)
+AG-01-R05: when current user has no wallpaper binding, NEVER fall back to another user's binding. ... ok
+test_r05_multi_display_and_conflicting_power_states_return_unknown (test_ag01_suite.Ag01EmulatorInspectionAndSafetyTests.test_r05_multi_display_and_conflicting_power_states_return_unknown)
+AG-01-R05: conflicting power vs display, conflicting multi-display, conflicting wakefulness, or incoherent pairs -> UNKNOWN. ... ok
+test_r05_png_full_structure_and_integrity_validation (test_ag01_suite.Ag01EmulatorInspectionAndSafetyTests.test_r05_png_full_structure_and_integrity_validation)
+AG-01-R05: validate_png_bytes must reject fake 4-byte headers, truncated chunks, CRC corruption, missing IEND, bad IDAT, and trailing garbage. ... ok
+test_r06_aud05_per_display_id_mapping_dedup_and_target_display (test_ag01_suite.Ag01EmulatorInspectionAndSafetyTests.test_r06_aud05_per_display_id_mapping_dedup_and_target_display)
+AG01-AUD-05: explicit Display ID mapping; duplicate observations never count for another display; unknown target display -> UNKNOWN. ... ok
+test_r06_aud06_png_bounds_zlib_eof_interlace_and_chunk_order (test_ag01_suite.Ag01EmulatorInspectionAndSafetyTests.test_r06_aud06_png_bounds_zlib_eof_interlace_and_chunk_order)
+AG01-AUD-06: PNG input/resolution/decompressed bounds, zlib eof/unused_data, interlace rejection, and strict chunk ordering. ... ok
+test_r06_aud07_mp4_box_video_track_frames_and_missing_tool_not_run (test_ag01_suite.Ag01EmulatorInspectionAndSafetyTests.test_r06_aud07_mp4_box_video_track_frames_and_missing_tool_not_run)
+AG01-AUD-07: MP4 box/video-track/sample verification + ffprobe decoded frames; missing probe tool -> NOT RUN. ... ok
+test_r06_aud08_watchface_and_screen_consistency_before_after_captures_and_restore (test_ag01_suite.Ag01EmulatorInspectionAndSafetyTests.test_r06_aud08_watchface_and_screen_consistency_before_after_captures_and_restore)
+AG01-AUD-08: active watchface and screen state must be re-verified before/after Active & AOD captures and at final restore. ... ok
+test_r06_aud09_early_recovery_spawn_failure_capture_failure_and_no_overwrite (test_ag01_suite.Ag01EmulatorInspectionAndSafetyTests.test_r06_aud09_early_recovery_spawn_failure_capture_failure_and_no_overwrite)
+AG01-AUD-09: recovery starts at first device mutation, handles spawn/capture failure, and NEVER overwrites existing evidence. ... ok
+test_r07_display_parser_never_bleeds_previous_display_id_across_section_boundaries (test_ag01_suite.Ag01EmulatorInspectionAndSafetyTests.test_r07_display_parser_never_bleeds_previous_display_id_across_section_boundaries)
+AG-01-R07 §5: display parser must reset current Display ID at blank lines, section headers, outdents, and inline DisplayDeviceInfo. ... ok
+test_r07_ffprobe_missing_codec_type_stderr_decode_errors_and_partial_frame_rejection (test_ag01_suite.Ag01EmulatorInspectionAndSafetyTests.test_r07_ffprobe_missing_codec_type_stderr_decode_errors_and_partial_frame_rejection)
+AG-01-R07 §4: reject missing codec_type, non-empty stderr decode errors, and partial frame decoding (decoded < container samples). ... ok
+test_r07_independent_recovery_steps_collect_all_errors_without_short_circuiting (test_ag01_suite.Ag01EmulatorInspectionAndSafetyTests.test_r07_independent_recovery_steps_collect_all_errors_without_short_circuiting)
+AG-01-R07 §2: every recovery step runs independently so one step's failure never short-circuits subsequent steps. ... ok
+test_r07_mp4_duplicate_sample_tables_stsc_mismatch_and_chunk_span_overflow (test_ag01_suite.Ag01EmulatorInspectionAndSafetyTests.test_r07_mp4_duplicate_sample_tables_stsc_mismatch_and_chunk_span_overflow)
+AG-01-R07 §3: reject duplicate sample tables, sample/chunk count mismatch, stsc mismatch, chunk overflow past mdat, and overlapping chunks. ... ok
+test_r07_staged_unlink_failure_never_blocks_recorder_awake_or_remote_cleanup (test_ag01_suite.Ag01EmulatorInspectionAndSafetyTests.test_r07_staged_unlink_failure_never_blocks_recorder_awake_or_remote_cleanup)
+AG-01-R07 §1: staged_video.unlink failure in finally must never block recorder termination, Awake recovery, or remote rm -f. ... ok
+test_runtime_safety_guards_and_preinstall_apk_checks (test_ag01_suite.Ag01EmulatorInspectionAndSafetyTests.test_runtime_safety_guards_and_preinstall_apk_checks) ... ok
+test_ablation_fixtures_valid_on_wff4_and_wff5 (test_ag01_suite.Ag01OfficialValidatorMatrixTests.test_ablation_fixtures_valid_on_wff4_and_wff5)
+Verify all 4 controlled ablation fixtures pass WFF 4 and WFF 5 validation (8 subtests). ... ok
+test_negative_fixtures_across_all_wff_versions (test_ag01_suite.Ag01OfficialValidatorMatrixTests.test_negative_fixtures_across_all_wff_versions)
+Verify all 7 baseline negative fixtures explicitly fail on invalid versions and pass only where valid (28 subtests). ... ok
+test_positive_pocs_across_all_wff_versions (test_ag01_suite.Ag01OfficialValidatorMatrixTests.test_positive_pocs_across_all_wff_versions)
+Verify all 6 PoCs pass on their supported WFF versions and explicitly fail on lower WFF versions (24 subtests). ... ok
+test_separated_negative_fixtures_across_all_wff_versions (test_ag01_suite.Ag01OfficialValidatorMatrixTests.test_separated_negative_fixtures_across_all_wff_versions)
+AG01-AUD-02: verify separated single-fault duration and Reference-parent fixtures explicitly fail (8 subtests). ... ok
+test_all_poc_files_exist_and_respect_canvas_invariants (test_ag01_suite.Ag01PoCStructureTests.test_all_poc_files_exist_and_respect_canvas_invariants) ... ok
+test_controlled_ablation_fixtures_isolate_clock_count_and_aod_parttext (test_ag01_suite.Ag01PoCStructureTests.test_controlled_ablation_fixtures_isolate_clock_count_and_aod_parttext) ... ok
+test_detects_variant_window_overflow_and_invalid_reference_parent (test_ag01_suite.Ag01PoCStructureTests.test_detects_variant_window_overflow_and_invalid_reference_parent) ... ok
+test_official_tool_pins_match_latest_main (test_ag01_suite.Ag01PoCStructureTests.test_official_tool_pins_match_latest_main) ... ok
+test_separated_single_fault_negative_fixtures_are_mutually_isolated (test_ag01_suite.Ag01PoCStructureTests.test_separated_single_fault_negative_fixtures_are_mutually_isolated) ... ok
+test_single_clock_continuity_object_in_aod_pocs (test_ag01_suite.Ag01PoCStructureTests.test_single_clock_continuity_object_in_aod_pocs) ... ok
+test_wff4_motion_triggers_gyro_and_per_digit_time_formats (test_ag01_suite.Ag01PoCStructureTests.test_wff4_motion_triggers_gyro_and_per_digit_time_formats) ... ok
+test_wff4_reference_unique_names_allowed_parents_and_multi_consumers (test_ag01_suite.Ag01PoCStructureTests.test_wff4_reference_unique_names_allowed_parents_and_multi_consumers) ... ok
+test_wff4_variant_transition_window_and_interpolations (test_ag01_suite.Ag01PoCStructureTests.test_wff4_variant_transition_window_and_interpolations) ... ok
+test_wff5_group_and_complication_slot_blend_modes (test_ag01_suite.Ag01PoCStructureTests.test_wff5_group_and_complication_slot_blend_modes) ... ok
+test_rejects_missing_banner_or_passed_verdict (test_ag01_suite.Ag01StrictValidatorRejectionTests.test_rejects_missing_banner_or_passed_verdict) ... ok
+test_rejects_missing_severe_or_expected_error_outside_severe_line (test_ag01_suite.Ag01StrictValidatorRejectionTests.test_rejects_missing_severe_or_expected_error_outside_severe_line) ... ok
+test_rejects_nonzero_tool_crash_even_if_error_substring_present (test_ag01_suite.Ag01StrictValidatorRejectionTests.test_rejects_nonzero_tool_crash_even_if_error_substring_present) ... ok
+test_rejects_wrong_file_path_or_wrong_wff_version (test_ag01_suite.Ag01StrictValidatorRejectionTests.test_rejects_wrong_file_path_or_wrong_wff_version) ... ok
+test_valid_explicit_rejection_passes (test_ag01_suite.Ag01StrictValidatorRejectionTests.test_valid_explicit_rejection_passes) ... ok
+
+----------------------------------------------------------------------
+Ran 38 tests in 77.500s
+
+OK

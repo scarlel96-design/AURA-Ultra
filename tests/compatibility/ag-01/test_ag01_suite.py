@@ -143,8 +143,8 @@ def _mp4_box(box_type, payload):
     return struct.pack(">I4s", 8 + len(payload), box_type) + payload
 
 
-def _build_valid_mp4_bytes(handler=b"vide", sample_count=2, sample_size=64, codec=b"avc1", bad_offset=None):
-    """Build a structurally valid ISO BMFF MP4 with ftyp + mdat + moov(trak/mdia/hdlr/minf/stbl)."""
+def _build_valid_mp4_bytes(handler=b"vide", sample_count=24, sample_size=64, codec=b"avc1", bad_offset=None, include_stsc=True):
+    """Build a structurally valid ISO BMFF MP4 with ftyp + mdat + moov(trak/mdia/hdlr/minf/stbl[stsd+stsz+stsc+stco])."""
     ftyp = _mp4_box(b"ftyp", b"mp42" + struct.pack(">I", 0) + b"mp42isom")
     mdat_payload = b"\x00\x00\x00\x01\x65" + (b"\xAB" * max(128, sample_count * sample_size))
     mdat_header_offset = len(ftyp)
@@ -158,9 +158,14 @@ def _build_valid_mp4_bytes(handler=b"vide", sample_count=2, sample_size=64, code
         stsz = _mp4_box(b"stsz", b"\x00\x00\x00\x00" + struct.pack(">II", sample_size, sample_count))
     else:
         stsz = _mp4_box(b"stsz", b"\x00\x00\x00\x00" + struct.pack(">II", 0, 0))
+    stsc = (
+        _mp4_box(b"stsc", b"\x00\x00\x00\x00" + struct.pack(">IIII", 1, 1, max(1, sample_count), 1))
+        if include_stsc
+        else b""
+    )
     chunk_off = mdat_payload_offset if bad_offset is None else bad_offset
     stco = _mp4_box(b"stco", b"\x00\x00\x00\x00" + struct.pack(">II", 1, chunk_off))
-    stbl = _mp4_box(b"stbl", stsd + stsz + stco)
+    stbl = _mp4_box(b"stbl", stsd + stsz + stsc + stco)
     minf = _mp4_box(b"minf", stbl)
     mdia = _mp4_box(b"mdia", hdlr + minf)
     trak = _mp4_box(b"trak", mdia)
@@ -1266,10 +1271,10 @@ class Ag01EmulatorInspectionAndSafetyTests(unittest.TestCase):
         with self.assertRaises(RuntimeError):
             parse_and_validate_mp4_structure(_build_valid_mp4_bytes(bad_offset=999999))
 
-        valid_mp4 = _build_valid_mp4_bytes(sample_count=3, sample_size=64)
+        valid_mp4 = _build_valid_mp4_bytes(sample_count=18, sample_size=64)
         meta = parse_and_validate_mp4_structure(valid_mp4)
         self.assertEqual(1, meta["video_track_count"])
-        self.assertEqual(3, meta["sample_count"])
+        self.assertEqual(18, meta["sample_count"])
         self.assertEqual("avc1", meta["video_tracks"][0]["codec"])
 
         with tempfile.TemporaryDirectory() as tmp:
@@ -1353,7 +1358,7 @@ class Ag01EmulatorInspectionAndSafetyTests(unittest.TestCase):
         """AG01-AUD-08: active watchface and screen state must be re-verified before/after Active & AOD captures and at final restore."""
         pkg = "io.github.scarlel96.aura.watchface.wff4"
         valid_png = _build_valid_png_bytes(4, 4)
-        valid_mp4 = _build_valid_mp4_bytes()
+        valid_mp4 = _build_valid_mp4_bytes(sample_count=12)
         good_wp = f"mCurrentUserId=0\n  WallpaperData 0 userId=0\n    mWallpaperComponent=ComponentInfo{{{pkg}/.WatchFace}}\n"
         drifted_wp = "mCurrentUserId=0\n  WallpaperData 0 userId=0\n    mWallpaperComponent=ComponentInfo{com.example.other/.Face}\n"
 
@@ -1540,6 +1545,371 @@ class Ag01EmulatorInspectionAndSafetyTests(unittest.TestCase):
             self.assertEqual(2, sum(1 for c in cmds_spawn if "KEYCODE_WAKEUP" in c))
             self.assertTrue(any("rm -f" in c for c in cmds_spawn))
             self.assertTrue(any("test ! -e" in c for c in cmds_spawn))
+
+    def test_r07_staged_unlink_failure_never_blocks_recorder_awake_or_remote_cleanup(self):
+        """AG-01-R07 §1: staged_video.unlink failure in finally must never block recorder termination, Awake recovery, or remote rm -f."""
+        from unittest.mock import patch
+
+        pkg = "io.github.scarlel96.aura.watchface.wff4"
+        valid_png = _build_valid_png_bytes(4, 4)
+        on_s = "mWakefulness=Awake\nDisplay Id=0\nDisplay Power: state=ON\n"
+        good_wp = f"mCurrentUserId=0\n  WallpaperData 0 userId=0\n    mWallpaperComponent=ComponentInfo{{{pkg}/.WatchFace}}\n"
+
+        class TrackRecorder:
+            def __init__(self):
+                self.terminated = False
+                self.waited = False
+
+            def poll(self):
+                return None if not self.terminated else 0
+
+            def terminate(self):
+                self.terminated = True
+
+            def kill(self):
+                self.terminated = True
+
+            def wait(self, timeout=None):
+                self.waited = True
+                return 0
+
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            apk_path = tmp_path / "wff4.apk"
+            _build_synthetic_resource_only_apk(apk_path)
+            rec = TrackRecorder()
+            cmds = []
+
+            def runner(args, timeout=30, binary=False):
+                cmds.append(" ".join(args))
+                s = " ".join(args)
+                if "ro.boot.qemu.avd_name" in s: return SimpleNamespace(returncode=0, stdout="aura_wear36_round\n", stderr="")
+                if "sys.boot_completed" in s: return SimpleNamespace(returncode=0, stdout="1\n", stderr="")
+                if "ro.build.characteristics" in s: return SimpleNamespace(returncode=0, stdout="watch\n", stderr="")
+                if "ro.build.version.sdk" in s: return SimpleNamespace(returncode=0, stdout="36\n", stderr="")
+                if args[0] == "install": return SimpleNamespace(returncode=0, stdout="Success\n", stderr="")
+                if "pm list packages" in s: return SimpleNamespace(returncode=0, stdout=f"package:{pkg}\n", stderr="")
+                if "dumpsys wallpaper" in s: return SimpleNamespace(returncode=0, stdout=good_wp, stderr="")
+                if "dumpsys power" in s: return SimpleNamespace(returncode=0, stdout=on_s, stderr="")
+                if "screencap" in s: return SimpleNamespace(returncode=0, stdout=valid_png, stderr=b"")
+                if "KEYCODE_SLEEP" in s: return SimpleNamespace(returncode=1, stdout="", stderr="sleep failed")
+                return SimpleNamespace(returncode=0, stdout="", stderr="")
+
+            orig_unlink = Path.unlink
+
+            def fail_tmp_unlink(path_obj, *a, **kw):
+                if path_obj.name.endswith(".tmp"):
+                    raise PermissionError("WinError 32: staged temp file locked")
+                return orig_unlink(path_obj, *a, **kw)
+
+            with patch.object(Path, "unlink", fail_tmp_unlink):
+                with self.assertRaises(RecoveryFailureError) as ctx:
+                    execute_runtime_verification(
+                        adb_bin=Path("adb"),
+                        serial="emulator-5554",
+                        apk_path=apk_path,
+                        package_id=pkg,
+                        wff_version=4,
+                        output_dir=tmp_path / "out_unlink_fail",
+                        expected_avd_name="aura_wear36_round",
+                        runner=runner,
+                        manifest_printer=lambda _: _valid_manifest_xml(pkg=pkg, min_sdk=36, wff_version=4),
+                        recorder_factory=lambda: rec,
+                        sleep_fn=lambda _: None,
+                    )
+
+            # Recorder termination, Awake recovery wakeup, watchface recheck, and remote rm -f + test ! -e ALL ran!
+            self.assertTrue(rec.terminated)
+            self.assertTrue(rec.waited)
+            self.assertTrue(ctx.exception.recovery_report["recorder_stopped"])
+            self.assertTrue(ctx.exception.recovery_report["awake_restored"])
+            self.assertTrue(ctx.exception.recovery_report["watchface_restored"])
+            self.assertTrue(ctx.exception.recovery_report["remote_file_removed"])
+            self.assertFalse(ctx.exception.recovery_report["staged_file_cleaned"])
+            self.assertEqual(2, sum(1 for c in cmds if "KEYCODE_WAKEUP" in c))
+            self.assertTrue(any("rm -f" in c for c in cmds))
+            self.assertTrue(any("test ! -e" in c for c in cmds))
+            self.assertIn("staged_cleanup_failed", " ".join(ctx.exception.recovery_errors))
+
+    def test_r07_independent_recovery_steps_collect_all_errors_without_short_circuiting(self):
+        """AG-01-R07 §2: every recovery step runs independently so one step's failure never short-circuits subsequent steps."""
+        from unittest.mock import patch
+
+        pkg = "io.github.scarlel96.aura.watchface.wff4"
+        valid_png = _build_valid_png_bytes(4, 4)
+        on_s = "mWakefulness=Awake\nDisplay Id=0\nDisplay Power: state=ON\n"
+        good_wp = f"mCurrentUserId=0\n  WallpaperData 0 userId=0\n    mWallpaperComponent=ComponentInfo{{{pkg}/.WatchFace}}\n"
+
+        class BrokenRecorder:
+            def poll(self):
+                return None
+
+            def terminate(self):
+                raise OSError("terminate syscall failed")
+
+            def kill(self):
+                raise OSError("kill syscall failed")
+
+            def wait(self, timeout=None):
+                raise subprocess.TimeoutExpired(cmd="screenrecord", timeout=timeout or 5)
+
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            apk_path = tmp_path / "wff4.apk"
+            _build_synthetic_resource_only_apk(apk_path)
+            cmds = []
+            sleep_seen = {"flag": False}
+
+            def runner_all_fail(args, timeout=30, binary=False):
+                cmds.append(" ".join(args))
+                s = " ".join(args)
+                if "ro.boot.qemu.avd_name" in s: return SimpleNamespace(returncode=0, stdout="aura_wear36_round\n", stderr="")
+                if "sys.boot_completed" in s: return SimpleNamespace(returncode=0, stdout="1\n", stderr="")
+                if "ro.build.characteristics" in s: return SimpleNamespace(returncode=0, stdout="watch\n", stderr="")
+                if "ro.build.version.sdk" in s: return SimpleNamespace(returncode=0, stdout="36\n", stderr="")
+                if args[0] == "install": return SimpleNamespace(returncode=0, stdout="Success\n", stderr="")
+                if "pm list packages" in s: return SimpleNamespace(returncode=0, stdout=f"package:{pkg}\n", stderr="")
+                if "KEYCODE_SLEEP" in s:
+                    sleep_seen["flag"] = True
+                    return SimpleNamespace(returncode=1, stdout="", stderr="sleep failed")
+                if not sleep_seen["flag"]:
+                    if "dumpsys wallpaper" in s: return SimpleNamespace(returncode=0, stdout=good_wp, stderr="")
+                    if "dumpsys power" in s: return SimpleNamespace(returncode=0, stdout=on_s, stderr="")
+                    if "screencap" in s: return SimpleNamespace(returncode=0, stdout=valid_png, stderr=b"")
+                    return SimpleNamespace(returncode=0, stdout="", stderr="")
+                # In recovery after KEYCODE_SLEEP failure, make every recovery sub-step fail independently
+                if "KEYCODE_WAKEUP" in s:
+                    return SimpleNamespace(returncode=1, stdout="", stderr="wakeup failed")
+                if "dumpsys power" in s:
+                    return SimpleNamespace(returncode=0, stdout="mWakefulness=Dozing\nDisplay Id=0\nDisplay Power: state=DOZE\n", stderr="")
+                if "dumpsys wallpaper" in s:
+                    return SimpleNamespace(returncode=0, stdout="mCurrentUserId=0\n  WallpaperData 0 userId=0\n    mWallpaperComponent=ComponentInfo{com.other/.Face}\n", stderr="")
+                if "rm -f" in s:
+                    return SimpleNamespace(returncode=1, stdout="", stderr="rm failed")
+                if "test ! -e" in s:
+                    return SimpleNamespace(returncode=1, stdout="", stderr="file still exists")
+                return SimpleNamespace(returncode=0, stdout="", stderr="")
+
+            orig_unlink = Path.unlink
+
+            def fail_tmp_unlink(path_obj, *a, **kw):
+                if path_obj.name.endswith(".tmp"):
+                    raise PermissionError("staged unlink failed")
+                return orig_unlink(path_obj, *a, **kw)
+
+            with patch.object(Path, "unlink", fail_tmp_unlink):
+                with self.assertRaises(RecoveryFailureError) as ctx:
+                    execute_runtime_verification(
+                        adb_bin=Path("adb"),
+                        serial="emulator-5554",
+                        apk_path=apk_path,
+                        package_id=pkg,
+                        wff_version=4,
+                        output_dir=tmp_path / "out_all_rec_fail",
+                        expected_avd_name="aura_wear36_round",
+                        runner=runner_all_fail,
+                        manifest_printer=lambda _: _valid_manifest_xml(pkg=pkg, min_sdk=36, wff_version=4),
+                        recorder_factory=lambda: BrokenRecorder(),
+                        sleep_fn=lambda _: None,
+                    )
+
+            joined = " | ".join(ctx.exception.recovery_errors)
+            self.assertIn("recorder_terminate_call_failed", joined)
+            self.assertIn("recorder_kill_call_failed", joined)
+            self.assertIn("recorder_termination_failed", joined)
+            self.assertIn("staged_cleanup_failed", joined)
+            self.assertIn("awake_recovery_wakeup_failed", joined)
+            self.assertIn("awake_recovery_failed", joined)
+            self.assertIn("watchface_recovery_failed", joined)
+            self.assertIn("remote_cleanup_failed", joined)
+            self.assertIn("remote_absence_check_failed", joined)
+            self.assertTrue(any("rm -f" in c for c in cmds))
+            self.assertTrue(any("test ! -e" in c for c in cmds))
+
+    def test_r07_mp4_duplicate_sample_tables_stsc_mismatch_and_chunk_span_overflow(self):
+        """AG-01-R07 §3: reject duplicate sample tables, sample/chunk count mismatch, stsc mismatch, chunk overflow past mdat, and overlapping chunks."""
+        ftyp = _mp4_box(b"ftyp", b"mp42\x00\x00\x00\x00mp42isom")
+        mdat = _mp4_box(b"mdat", b"\x00" * 192)
+        mdat_off = len(ftyp) + 8
+        hdlr = _mp4_box(b"hdlr", b"\x00" * 8 + b"vide" + b"\x00" * 12 + b"Video\x00")
+        stsd = _mp4_box(b"stsd", b"\x00" * 4 + struct.pack(">I", 1) + _mp4_box(b"avc1", b"\x00" * 24))
+
+        def wrap_stbl(stbl_payload):
+            return ftyp + mdat + _mp4_box(b"moov", _mp4_box(b"trak", _mp4_box(b"mdia", hdlr + _mp4_box(b"minf", _mp4_box(b"stbl", stbl_payload)))))
+
+        stsz_bad = _mp4_box(b"stsz", b"\x00" * 4 + struct.pack(">II", 0, 0))
+        stsz_2 = _mp4_box(b"stsz", b"\x00" * 4 + struct.pack(">II", 64, 2))
+        stsz_3 = _mp4_box(b"stsz", b"\x00" * 4 + struct.pack(">II", 64, 3))
+        stco_1 = _mp4_box(b"stco", b"\x00" * 4 + struct.pack(">II", 1, mdat_off))
+
+        # 1. Duplicate stsz box -> MUST FAIL
+        with self.assertRaises(RuntimeError):
+            parse_and_validate_mp4_structure(wrap_stbl(stsd + stsz_bad + stsz_2 + stco_1))
+
+        # 2. Both stco and co64 present simultaneously -> MUST FAIL
+        co64_1 = _mp4_box(b"co64", b"\x00" * 4 + struct.pack(">IQ", 1, mdat_off))
+        with self.assertRaises(RuntimeError):
+            parse_and_validate_mp4_structure(wrap_stbl(stsd + stsz_2 + stco_1 + co64_1))
+
+        # 3. Single chunk of 3x64B=192B starting 64B before mdat end (1st sample fits, 2nd & 3rd overflow past mdat) -> MUST FAIL
+        stco_overflow = _mp4_box(b"stco", b"\x00" * 4 + struct.pack(">II", 1, mdat_off + 192 - 64))
+        with self.assertRaises(RuntimeError):
+            parse_and_validate_mp4_structure(wrap_stbl(stsd + stsz_3 + stco_overflow))
+
+        # 4. More chunks (3 chunks) than total samples (2 samples) -> MUST FAIL
+        stco_3 = _mp4_box(b"stco", b"\x00" * 4 + struct.pack(">IIII", 3, mdat_off, mdat_off + 64, mdat_off + 128))
+        with self.assertRaises(RuntimeError):
+            parse_and_validate_mp4_structure(wrap_stbl(stsd + stsz_2 + stco_3))
+
+        # 5. Multiple chunks (2 chunks) missing required stsc box -> MUST FAIL
+        stco_2 = _mp4_box(b"stco", b"\x00" * 4 + struct.pack(">III", 2, mdat_off, mdat_off + 64))
+        with self.assertRaises(RuntimeError):
+            parse_and_validate_mp4_structure(wrap_stbl(stsd + stsz_2 + stco_2))
+
+        # 6. stsc mapped sample total (2 chunks * 2 samples = 4) != stsz sample_count (3) -> MUST FAIL
+        stsc_2_each = _mp4_box(b"stsc", b"\x00" * 4 + struct.pack(">IIII", 1, 1, 2, 1))
+        with self.assertRaises(RuntimeError):
+            parse_and_validate_mp4_structure(wrap_stbl(stsd + stsz_3 + stsc_2_each + stco_2))
+
+        # 7. Overlapping chunk byte spans in mdat (chunk 1 at [mdat_off, mdat_off+128), chunk 2 at [mdat_off+64, mdat_off+128)) -> MUST FAIL
+        stsc_2_then_1 = _mp4_box(b"stsc", b"\x00" * 4 + struct.pack(">IIIIIII", 2, 1, 2, 1, 2, 1, 1))
+        with self.assertRaises(RuntimeError):
+            parse_and_validate_mp4_structure(wrap_stbl(stsd + stsz_3 + stsc_2_then_1 + stco_2))
+
+        # 8. Valid multi-chunk MP4 (chunk 1 has 2 samples [0..128), chunk 2 has 1 sample [128..192)) -> PASS
+        stco_2_valid = _mp4_box(b"stco", b"\x00" * 4 + struct.pack(">III", 2, mdat_off, mdat_off + 128))
+        ok_multi = parse_and_validate_mp4_structure(wrap_stbl(stsd + stsz_3 + stsc_2_then_1 + stco_2_valid))
+        self.assertEqual(3, ok_multi["sample_count"])
+
+    def test_r07_ffprobe_missing_codec_type_stderr_decode_errors_and_partial_frame_rejection(self):
+        """AG-01-R07 §4: reject missing codec_type, non-empty stderr decode errors, and partial frame decoding (decoded < container samples)."""
+        with tempfile.TemporaryDirectory() as tmp:
+            mp4_file = Path(tmp) / "clip24.mp4"
+            mp4_file.write_bytes(_build_valid_mp4_bytes(sample_count=24, sample_size=64))
+
+            # 1. Missing codec_type in ffprobe stream JSON -> MUST FAIL
+            with self.assertRaises(RuntimeError):
+                verify_mp4_video_artifact(
+                    mp4_file,
+                    probe_runner=lambda cmd, timeout=60: SimpleNamespace(
+                        returncode=0,
+                        stdout='{"streams":[{"codec_name":"h264","width":454,"height":454,"nb_read_frames":"24"}]}',
+                        stderr="",
+                    ),
+                )
+
+            # 2. Decode error diagnostic on stderr despite rc=0 and 24 frames -> MUST FAIL
+            with self.assertRaises(RuntimeError):
+                verify_mp4_video_artifact(
+                    mp4_file,
+                    probe_runner=lambda cmd, timeout=60: SimpleNamespace(
+                        returncode=0,
+                        stdout='{"streams":[{"codec_type":"video","codec_name":"h264","width":454,"height":454,"nb_read_frames":"24"}]}',
+                        stderr="[h264 @ 0x1] error while decoding MB 4 8\n",
+                    ),
+                )
+
+            # 3. Partial decoding: container has 24 samples, ffprobe decoded only 5 frames -> MUST FAIL
+            with self.assertRaises(RuntimeError) as partial_ctx:
+                verify_mp4_video_artifact(
+                    mp4_file,
+                    probe_runner=lambda cmd, timeout=60: SimpleNamespace(
+                        returncode=0,
+                        stdout='{"streams":[{"codec_type":"video","codec_name":"h264","width":454,"height":454,"nb_frames":"24","nb_read_frames":"5"}]}',
+                        stderr="",
+                    ),
+                )
+            self.assertIn("Partial video decoding", str(partial_ctx.exception))
+
+            # 4. Header nb_frames (20) disagrees with container stsz sample_count (24) -> MUST FAIL
+            with self.assertRaises(RuntimeError):
+                verify_mp4_video_artifact(
+                    mp4_file,
+                    probe_runner=lambda cmd, timeout=60: SimpleNamespace(
+                        returncode=0,
+                        stdout='{"streams":[{"codec_type":"video","codec_name":"h264","width":454,"height":454,"nb_frames":"20","nb_read_frames":"24"}]}',
+                        stderr="",
+                    ),
+                )
+
+            # 5. Full decoding: all 24 frames decoded with 0 stderr errors and codec_type='video' -> VERIFIED
+            ok = verify_mp4_video_artifact(
+                mp4_file,
+                probe_runner=lambda cmd, timeout=60: SimpleNamespace(
+                    returncode=0,
+                    stdout='{"streams":[{"codec_type":"video","codec_name":"h264","width":454,"height":454,"nb_frames":"24","nb_read_frames":"24"}]}',
+                    stderr="",
+                ),
+            )
+            self.assertEqual("VERIFIED", ok["status"])
+            self.assertEqual(24, ok["decoded_frame_count"])
+            self.assertEqual(24, ok["expected_frame_count"])
+
+    def test_r07_display_parser_never_bleeds_previous_display_id_across_section_boundaries(self):
+        """AG-01-R07 §5: display parser must reset current Display ID at blank lines, section headers, outdents, and inline DisplayDeviceInfo."""
+        # 1. Logical Display 0 has no state; blank line + separate unscoped Display Power Controller has state=ON -> MUST be UNKNOWN
+        bleed_blank = (
+            "mWakefulness=Awake\n"
+            "Logical Display 0:\n"
+            "  mLayerStack=0\n"
+            "\n"
+            "Display Power Controller:\n"
+            "  Display Power: state=ON\n"
+        )
+        r1 = parse_power_and_display_state(bleed_blank)
+        self.assertEqual("UNKNOWN", r1["status"])
+        self.assertFalse(r1["is_active"])
+        self.assertEqual([], r1["display_states_by_id"]["0"])
+        self.assertEqual(["ON"], r1["unscoped_display_states"])
+
+        # 2. Same without blank line: sibling section header 'Display Power Controller:' resets Logical Display 0 scope -> UNKNOWN
+        bleed_header = (
+            "mWakefulness=Awake\n"
+            "Logical Display 0:\n"
+            "  mLayerStack=0\n"
+            "Display Power Controller:\n"
+            "  Display Power: state=ON\n"
+        )
+        r2 = parse_power_and_display_state(bleed_header)
+        self.assertEqual("UNKNOWN", r2["status"])
+        self.assertFalse(r2["is_active"])
+        self.assertEqual([], r2["display_states_by_id"]["0"])
+
+        # 3. Inline DisplayDeviceInfo with displayId 0 followed by inline DisplayDeviceInfo without displayId -> never attributed to 0 -> UNKNOWN
+        inline_bleed = (
+            "mWakefulness=Awake\n"
+            "DisplayDeviceInfo{\"Built-in\": uniqueId=\"local:0\", displayId 0, state ON}\n"
+            "DisplayDeviceInfo{\"HDMI\": uniqueId=\"local:1\", state DOZE}\n"
+        )
+        r3 = parse_power_and_display_state(inline_bleed)
+        self.assertEqual("UNKNOWN", r3["status"])
+        self.assertFalse(r3["is_active"])
+        self.assertEqual(["ON"], r3["display_states_by_id"]["0"])
+        self.assertEqual(["DOZE"], r3["unscoped_display_states"])
+
+        # 4. Outdented state line after indented '  Display Id=0' block -> resets scope -> UNKNOWN
+        outdent_bleed = (
+            "mWakefulness=Awake\n"
+            "  Display Id=0\n"
+            "    mLayerStack=0\n"
+            "Display Power: state=ON\n"
+        )
+        r4 = parse_power_and_display_state(outdent_bleed)
+        self.assertEqual("UNKNOWN", r4["status"])
+        self.assertFalse(r4["is_active"])
+        self.assertEqual([], r4["display_states_by_id"]["0"])
+
+        # 5 (G5 self-review): Indented sub-header inside 'Logical Display 0:' block preserves Display Id=0 scope -> ACTIVE
+        nested_ok = (
+            "mWakefulness=Awake\n"
+            "Logical Display 0:\n"
+            "  SubSection Details:\n"
+            "    Display State: ON\n"
+        )
+        r5 = parse_power_and_display_state(nested_ok)
+        self.assertEqual("ACTIVE", r5["status"])
+        self.assertTrue(r5["is_active"])
+        self.assertEqual(["ON"], r5["display_states_by_id"]["0"])
 
 
 class Ag01OfficialValidatorMatrixTests(unittest.TestCase):

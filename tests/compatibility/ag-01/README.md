@@ -1,6 +1,6 @@
 # AG-01 WFF 2–5 호환성, 모션 연속성 PoC 및 Wear OS 런타임 안전 검증 스위트
 
-이 디렉터리는 `docs/operations/agent-orders/AG-01.md` ~ `AG-01-R04.md` 및 회차 05~06 보완 지시(`AG01-AUD-05` ~ `AG01-AUD-09`)에 따라 WFF 2·3·4·5 호환성 PoC, 단일 변수 통제 비교(Ablation) 픽스처, 음성(Negative) 검출 픽스처, 실시간 SDK/AVD 환경 조사기, 안전한 Wear OS 에뮬레이터 런타임 검증 절차를 포함한다.
+이 디렉터리는 `docs/operations/agent-orders/AG-01.md` ~ `AG-01-R04.md` 및 회차 05~07 보완 지시(`AG01-AUD-05` ~ `AG01-AUD-09` 및 R07 런타임 검증기 최종 안정화)에 따라 WFF 2·3·4·5 호환성 PoC, 단일 변수 통제 비교(Ablation) 픽스처, 음성(Negative) 검출 픽스처, 실시간 SDK/AVD 환경 조사기, 안전한 Wear OS 에뮬레이터 런타임 검증 절차를 포함한다.
 
 ## 디렉터리 구조
 
@@ -15,18 +15,18 @@
 - `run_ag01_verification.py`: 최신 `main` 공식 도구 pin(`wff-validator.jar` `6ef308db...`, `memory-footprint.jar` `1ec68336...`) 검증, 엄격한 `require_rejection`, 실시간 SDK/AVD/ADB 조회 및 후보 분리.
 - `wear_emulator_runtime.py`:
   - 현재 사용자(`mCurrentUserId`) 바인딩 부재 시 타 사용자 fallback 차단(`UNKNOWN`), Active·AOD 캡처 전후 및 최종 복귀 시점의 활성 워치 페이스·화면 상태 6개 체크포인트 검증(`AG01-AUD-08`).
-  - `dumpsys power` 및 `dumpsys display`에서 디스플레이 ID별 상태를 명시적으로 대응하고 중복 관측을 타 디스플레이 상태로 오인하지 않으며, 대상 디스플레이(기본 `0`) 미확정 또는 상충 시 `UNKNOWN` 판정(`AG01-AUD-05`).
+  - `dumpsys power` 및 `dumpsys display`에서 디스플레이 ID별 상태를 명시적으로 대응하고 중복 관측을 타 디스플레이 상태로 오인하지 않으며, 섹션 경계(빈 줄·구분선·상위 들여쓰기·새 섹션 헤더·인라인 `DisplayDeviceInfo`)를 넘어 이전 Display ID가 잘못 적용되는 현상을 차단하고 대상 디스플레이(기본 `0`) 미확정 또는 상충 시 `UNKNOWN` 판정(`AG01-AUD-05` & R07).
   - ISO/IEC 15948 PNG 입력 크기·해상도·압축 해제 크기 상한, `zlib.decompressobj()` `eof`/`unused_data`/`unconsumed_tail`, 미지원 인터레이스(`interlace != 0`) 및 비연속 `IDAT`/알 수 없는 critical·APNG 청크 거부(`AG01-AUD-06`).
-  - ISO BMFF MP4 박스 구조(`ftyp`, `moov`, `mdat`, `trak/mdia/hdlr(vide)`, `stsd`/`stsz`/`stco|co64`) 검증 및 `ffprobe` 기반 실제 디코딩 프레임 검증(검증 도구 부재 시 `NOT RUN`, `AG01-AUD-07`).
-  - 최초 기기 상태 변경 명령부터 단일 `try/finally` 복구 범위 적용, 녹화 프로세스 생성 실패·캡처 실패 복구 및 기존 증거 파일 덮어쓰기 금지(`EvidenceOverwriteError`, `AG01-AUD-09`).
-- `test_ag01_suite.py`: 33개 단위 테스트 메서드(기존 28개 + 회차 06 결함 재현 5개, 68건 공식 validator subtests 포함).
+  - ISO BMFF MP4 박스 구조(`ftyp`, `moov`, `mdat`, `trak/mdia/hdlr(vide)`, `stsd`/`stsz`/`stsc`/`stco|co64`), 중복 샘플 테이블 차단, 샘플-청크 매핑 및 청크별 누적 바이트 범위의 `mdat` 경계/비중복 검증, `ffprobe`의 `codec_type=="video"`·`stderr` 디코딩 오류 부재·전체 프레임 디코딩(`nb_read_frames == sample_count`, 부분 디코딩 거부) 검증(검증 도구 부재 시 `NOT RUN`, `AG01-AUD-07` & R07).
+  - 최초 기기 상태 변경 명령부터 단일 `try/finally` 복구 범위 적용, `staged_video.unlink` 실패를 포함한 모든 복구 하위 단계(프로세스 종료·스테이징 정리·Awake 복귀·워치 페이스 복귀·원격 `rm -f` 및 `test ! -e`)의 독립 실행 및 오류 독립 수집, 기존 증거 파일 덮어쓰기 금지(`EvidenceOverwriteError`, `AG01-AUD-09` & R07).
+- `test_ag01_suite.py`: 38개 단위 테스트 메서드(기존 33개 + 회차 07 안정화 시험 5개, 68건 공식 validator subtests 포함).
 
 ## 실행 방법
 
 ```bash
-# 1. AG-01 전체 단위 및 공식 스키마 매트릭스 회귀 테스트 (33 tests, 68 validator subtests)
+# 1. AG-01 전체 단위 및 공식 스키마 매트릭스 회귀 테스트 (38 tests, 68 validator subtests)
 python -m unittest discover -s tests/compatibility/ag-01 -p "test_*.py" -v
 
 # 2. 최신 공식 도구 pin 기준 60건 스키마 매트릭스 검증
-python tests/compatibility/ag-01/run_ag01_verification.py --mode schema --logs-dir docs/evidence/AG-01/logs-r06
+python tests/compatibility/ag-01/run_ag01_verification.py --mode schema --logs-dir docs/evidence/AG-01/logs-r07
 ```
