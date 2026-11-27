@@ -44,3 +44,6 @@ CI가 실행 중이면 PENDING으로 표시한다. 코드 SHA와 검증 SHA를 �
 ## 매 작업 종료 게이트 (필수)
 [심층 검증 규정](operations/VERIFICATION_PROTOCOL.md)의 G0~G7을 적용한다. 요구사항 추적, 검증 도구 실패 검출, 영향 기반 회귀, 구현 후 별도 검토 및 증거 감사가 필요하다. 문서만 수정한 작업은 적용 가능한 문서 검증을 수행하며 기존 제품 실패를 변경하지 않는다.
 [작업별 기록 규정](operations/TASK_RECORD_PROTOCOL.md) 및 [보고서 양식](operations/TASK_REPORT_TEMPLATE.md)에 따라 기록을 저장한다. 필수 검증 누락·실패를 GO로 판정하지 않는다.
+
+## Signature 개발 기본 페이스 승격
+[실기기 확인 및 승격 게이트](operations/SIGNATURE_DEVICE_GATE.md)의 사전 조건과 승인 기준을 적용한다. 개발 기본 페이스 승격은 정식 출시 GO가 아니다. 자동 검사와 실기기 시각 승인을 구분한다.

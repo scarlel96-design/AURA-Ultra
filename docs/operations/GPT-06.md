@@ -17,6 +17,9 @@ R06 후보 e1a5f62abbf20cbaa6d9c741251b96d7a6caddd1; [CI](https://github.com/sca
 OPS-07 별도 후보 46b22851d401bc5c4db548e1b45a3e9fbbca17b5, CI 46083109875 SUCCESS (308 PASS). 자동 문서 상한, 관련 증거 선택 열람, 실기기 체크 및 제품 승격 게이트. [보고서](https://github.com/scarlel96-design/AURA-Ultra/blob/46b22851d401bc5c4db548e1b45a3e9fbbca17b5/docs/evidence/OPS-07/REPORT.md). R06의 실제 APK 성공과 구분한다. 후보 검증 및 통합 후 규정 적용; 실제 사용자 기기 미변경.
 
 ## 최종 결합 확인
-후보 65c45f51bebce19b7df8091e1e55ed2afb4ec312; [Bootstrap CI](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46083441184) IN_PROGRESS, 전체 예상 316 host tests; [문서 검사](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46083441202) SUCCESS 7 PASS 및 12개 문서 상한 준수. [R06 검증](https://github.com/scarlel96-design/AURA-Ultra/blob/65c45f51bebce19b7df8091e1e55ed2afb4ec312/docs/evidence/GPT-06/REPORT-06-VERIFIED.md). 결합 및 main 회귀 성공 전 GPT-06 완료 판정 금지. 실기기 승인 없이는 제품 승격 금지. 사용자 재확인: GPT-06 전체 결과를 명시적으로 보고하고 중단, GPT-07 자동 착수 금지.
+후보 65c45f51bebce19b7df8091e1e55ed2afb4ec312; [Bootstrap CI](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46083441184) SUCCESS, 316 host PASS; [문서 검사](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46083441202) SUCCESS 7 PASS 및 12개 문서 상한 준수. [R06 검증](https://github.com/scarlel96-design/AURA-Ultra/blob/65c45f51bebce19b7df8091e1e55ed2afb4ec312/docs/evidence/GPT-06/REPORT-06-VERIFIED.md). 결합 및 main 회귀 성공 전 GPT-06 완료 판정 금지. 실기기 승인 없이는 제품 승격 금지. 사용자 재확인: GPT-06 전체 결과를 명시적으로 보고하고 중단, GPT-07 자동 착수 금지.
 
-R06 artifact 15238230693 직접 다운로드 및 파일 검사 PASS. [검증](../evidence/GPT-06/REPORT-06-ARTIFACT-READBACK.md). 결합 CI 46083441184 소재 APK 단계 IN_PROGRESS. 최신 main과 후보 보호 경로 38개 blob 일치. 최종 결합 결과 확인 및 통합 전 전체 종료 판정 금지.
+R06 artifact 15238230693 직접 다운로드 및 파일 검사 PASS. [검증](../evidence/GPT-06/REPORT-06-ARTIFACT-READBACK.md). 결합 CI 46083441184 SUCCESS, 316 PASS. 최신 main과 후보 보호 경로 38개 blob 일치. main 회귀 완료 전 전체 종료 판정 금지.
+
+## 최종 결합 통합
+[검증](../evidence/GPT-06/REPORT-FINAL-INTEGRATION.md), [실기기·승격 게이트](SIGNATURE_DEVICE_GATE.md). 결합 CI https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46083441184 및 https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46083441202 모두 성공; 실제 다운로드 파일 검사도 성공. 14개 정확한 검증 blob과 최신 운영 문서 반영. 최신 main 두 CI 확인 후 GPT-06 전체 종료 감사. 실기기 설치/승격은 별도 승인·증거 필요. GPT-07 금지.
