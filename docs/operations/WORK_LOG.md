@@ -64,3 +64,6 @@
 코드 51b39ab1064b4284e772e4330cd7dee744e7e5d0, [CI 46002330942](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46002330942), job 140516863415: FAILURE. Wrapper digest/구조 및 40 단위 시험 PASS. SDK 설치 실패: Warning: Failed to find package 'platforms;android-37', exit 1. 이후 모든 build/validator/APK/memory/signature 단계 SKIP. 외부 공개 Flutter SDK 지침(https://flutter.googlesource.com/mirrors/flutter/+/refs/heads/fuchsia_f32.1/.agents/skills/updating-android-sdk/SKILL.md)은 API37의 실제 패키지 식별자로 platforms;android-37.0을 명시한다. 설치 경로 및 source.properties 검사 변경. SDK 폴더 강제 이동/복제/비공식 다운로드 금지. compileSdk=37은 공식 Android 17 SDK 안내의 설정을 유지하며 실제 AGP 해석 결과를 확인한다. 새 CI 대기. main 코드 미변경.
 
 - GPT-02 회차 02 최종: f284b1bd69a767ef0f7285449fe7c45f05895e53, CI 46002470824 SUCCESS. 이전 SDK 패키지 실패 해결(android-37.0), Gradle9.3.1/AGP9.1.1/SDK37.0/Build Tools36.0.0. 40 PASS/0 FAIL, WFF2~5 schema 및 invalid 4/4, 4 APK build/raw XML/manifest/memory/signature PASS. Artifact 15199096968. GPT-02 개발 기반 GO, 2/12 GPT 완료, WO-01 PARTIAL, 출시 NO-GO. 다음 GPT-03. 증거 REPORT-02. main 반영은 fast-forward 및 최종 확인 후 판정.
+
+## 2026-11-27 / 외부 에이전트 1차 배정
+- 기준 main c1c66b76b7af4a20bb7a08a369fb5962d28b973f 실제 조회 및 활성 GPT-03 확인. GB-01/AG-01 지시서와 소유권 배정표 등록. 사용자 직접 CLI 실행 전 상태 READY. 제품 코드 변경 없음. 기존 GPT/WO/출시 판정 유지. 병행 작업 증거는 독립 보고서로 수신 후 검토한다.

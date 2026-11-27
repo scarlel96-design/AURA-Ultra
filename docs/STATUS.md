@@ -186,3 +186,6 @@ Artifact [15199096968](https://github.com/scarlel96-design/AURA-Ultra/actions/ru
 G0 PASS; G1 현재 작업 범위 PASS; G2 40 단위 및 공식 negative probe PASS; G3 격리 최종 코드 전체 CI PASS; G4 4 APK/스키마/메모리/서명 PASS, 실기기·전용 WFF5 기능·실제 flavor override·Release NOT RUN; G5 별도 자기 재검토(원격 diff, wrapper blob/실행 모드, 설정, 앱 리소스 불변 확인), 독립 에이전트 미실시; G6 최종 코드 SHA, 로그, Artifact 일치 PASS; G7 기록 및 main 반영 재확인 대상.
 판정: GPT-02 GO (빌드·호환성 개발 기반 범위). WO-01 PARTIAL 및 정식 WO 0/38 유지. GPT 완료 2/12. 출시 NO-GO. B-003의 SDK/빌드 차단 해결; 실제 WFF5 런타임/기기 지원은 B-002/B-004 및 B-003 잔여로 계속 추적. B-007 정식 ID/배포 정책 승인 미실시. 기존 B-001/B-010 재발 없음. SDK37 전환을 main에 fast-forward할 수 있는 근거 확보. 문서만 변경하는 종료 커밋은 [skip ci], 코드 검증은 격리 SHA의 동일한 코드에 대한 증거다.
 다음: GPT-03 독립 준비 작업 — 그래픽 자산 및 WFF 생성 자동화. WO-09/10의 선행 PoC는 아직 미충족이므로 공통 토큰/재현 가능한 생성·검증 기반에 한정한다. 프리미엄 소재 품질과 실제 모션을 확정하지 않는다. [GPT-03 명세](operations/GPT-03.md).
+
+## 외부 에이전트 1차 병행 준비
+[배정표](operations/agent-orders/README.md), [GB-01](operations/agent-orders/GB-01.md), [AG-01](operations/agent-orders/AG-01.md) 등록. Grok Build 순수 Kotlin 도메인 계약, Antigravity CLI WFF4/5 PoC. 상태 READY(실행 미확인), 별도 브랜치 및 파일 소유권. GPT-03 활성 유지, 중앙 문서는 총괄 담당자만 갱신한다. 제품 코드/판정 변경 없음.

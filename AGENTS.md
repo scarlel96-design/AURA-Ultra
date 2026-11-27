@@ -40,6 +40,8 @@
 ## 작업 통제
 GPT는 안전하게 검증 가능한 코드·테스트·CI·설계·문서를 최대한 선행한다. Codex는 고난도 구현, 로컬 통합, 실기기 검증을 담당한다. Grok Build와 Antigravity CLI는 독립 모듈 또는 검토를 담당한다. 동일 파일을 병렬 수정하지 않는다. 각 작업자는 GPT/WO ID, 소유 파일, 기준 SHA, 인터페이스 계약을 기록한다.
 
+외부 에이전트 분리 작업은 [배정표](docs/operations/agent-orders/README.md)의 소유권과 브랜치 규칙을 따른다. 중앙 STATUS/WORK_LOG/BLOCKERS는 총괄 담당자가 병합 후 갱신한다. 외부 에이전트는 중앙 문서 갱신 제안과 실제 검증 증거를 자기 보고서에 기록한다. 이 경우 중앙 문서를 동시에 직접 수정하지 않는다.
+
 ## 품질 및 보고
 - 매 작업 시작 전에 docs/operations/TASK_RECORD_PROTOCOL.md와 VERIFICATION_PROTOCOL.md를 읽고 적용한다. TASK_REPORT_TEMPLATE.md를 사용한다.
 - 매 작업마다 요구사항-구현-시험-증거를 연결한다. 변경 전 기준 상태, 영향 범위, 정상·오류·경계·회귀 시험을 확인한다.
