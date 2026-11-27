@@ -10,3 +10,6 @@ PRE-FLIGHT: AGENTS, STATUS, README, MASTER_ARCHITECTURE, REQUIREMENTS, QUALITY_G
 | R-25 | R8/리소스 정책 유지, raw XML 검사 분리 | 일치/누락/불일치 fixture, 4 APK 실물 검사 |
 | R-20 | memory tool 유지 | 4 APK 평가 예산 |
 명령: python tools/check_foundation.py; python -m unittest discover -s tests/unit -p 'test_*.py' -v; python tools/verify_wff.py; python tools/build_profiles.py assemble; python tools/check_apk.py; python tools/verify_memory.py; python tools/build_profiles.py signatures. CI 결과 PENDING. 기존 main은 유지. 실패 시 원인 기록, 검증 브랜치에서 수정. 모든 필수 검사 성공 및 HEAD 대조 후에만 main fast-forward 검토. G1 후보, G2~G6 대기, G7 기록/반영 확인 예정. 실기기/Release/최종 그래픽 미실시. 제품 NO-GO.
+
+## 첫 격리 CI 실패와 수정 후보
+코드 51b39ab1064b4284e772e4330cd7dee744e7e5d0, [CI 46002330942](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46002330942), job 140516863415: FAILURE. Wrapper digest/구조 및 40 단위 시험 PASS. SDK 설치 실패: Warning: Failed to find package 'platforms;android-37', exit 1. 이후 모든 build/validator/APK/memory/signature 단계 SKIP. 외부 공개 Flutter SDK 지침(https://flutter.googlesource.com/mirrors/flutter/+/refs/heads/fuchsia_f32.1/.agents/skills/updating-android-sdk/SKILL.md)은 API37의 실제 패키지 식별자로 platforms;android-37.0을 명시한다. 설치 경로 및 source.properties 검사 변경. SDK 폴더 강제 이동/복제/비공식 다운로드 금지. compileSdk=37은 공식 Android 17 SDK 안내의 설정을 유지하며 실제 AGP 해석 결과를 확인한다. 새 CI 대기. main 코드 미변경.

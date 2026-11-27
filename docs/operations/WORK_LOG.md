@@ -59,3 +59,6 @@
 
 ## 2026-11-27 / GPT-02 회차 02
 - 기준 bfe56169a60eea1a40e71ba6db4a679a6192595b. PRE-FLIGHT 및 CI 46001149417 확인. 공식 AGP9.1.1 호환 표와 Gradle9.3.1 checksum, 공식 wrapper JAR·스크립트 확인. 격리 브랜치 gpt-02-api37에서 WFF5 포함 4 APK 후보 및 검사기 회귀 작성. CI PENDING. main 유지. REPORT-02 참조.
+
+## 첫 격리 CI 실패와 수정 후보
+코드 51b39ab1064b4284e772e4330cd7dee744e7e5d0, [CI 46002330942](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46002330942), job 140516863415: FAILURE. Wrapper digest/구조 및 40 단위 시험 PASS. SDK 설치 실패: Warning: Failed to find package 'platforms;android-37', exit 1. 이후 모든 build/validator/APK/memory/signature 단계 SKIP. 외부 공개 Flutter SDK 지침(https://flutter.googlesource.com/mirrors/flutter/+/refs/heads/fuchsia_f32.1/.agents/skills/updating-android-sdk/SKILL.md)은 API37의 실제 패키지 식별자로 platforms;android-37.0을 명시한다. 설치 경로 및 source.properties 검사 변경. SDK 폴더 강제 이동/복제/비공식 다운로드 금지. compileSdk=37은 공식 Android 17 SDK 안내의 설정을 유지하며 실제 AGP 해석 결과를 확인한다. 새 CI 대기. main 코드 미변경.
