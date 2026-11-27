@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "translationEnd": 250,
+  "ambientTime": [
+    85,
+    183,
+    280,
+    84
+  ],
+  "ambientMarker": [
+    180,
+    275,
+    90,
+    18
+  ],
+  "ambientFont": 81,
+  "ringInnerRadius": 210,
+  "ringOuterStart": 211,
+  "ringOuterEnd": 212,
+  "ringStartDegrees": -150,
+  "ringStartSweep": 60,
+  "highlightStartDegrees": -135,
+  "highlightMaxSweep": 25
+}

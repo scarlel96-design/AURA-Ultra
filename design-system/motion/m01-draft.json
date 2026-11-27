@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "progressMax": 1000,
+  "windows": {
+    "time": [
+      0,
+      850
+    ],
+    "ring": [
+      100,
+      1000
+    ],
+    "highlight": [
+      150,
+      800
+    ],
+    "panel": [
+      250,
+      900
+    ],
+    "secondary": [
+      450,
+      1000
+    ]
+  },
+  "panelInset": 8,
+  "secondaryInset": 4
+}

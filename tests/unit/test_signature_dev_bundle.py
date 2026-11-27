@@ -4,6 +4,7 @@ import sys
 import tempfile
 import unittest
 import warnings
+from unittest.mock import patch
 import zipfile
 from pathlib import Path
 
@@ -86,3 +87,30 @@ class DevBundleTests(unittest.TestCase):
             with self.assertRaises(FileExistsError):
                 write_new(path,b"replacement")
             self.assertEqual(path.read_bytes(),self.data)
+
+    def test_readback_exact(self):
+        with tempfile.TemporaryDirectory() as d:
+            path=Path(d)/"bundle.zip"
+            self.assertEqual(write_new(path,self.data),self.data)
+            self.assertEqual(verify_bundle(path.read_bytes(),FACE,SHA),self.meta)
+
+    def test_readback_mismatch_rejected(self):
+        with tempfile.TemporaryDirectory() as d:
+            path=Path(d)/"bundle.zip"
+            original=Path.open
+            def corrupt(target,mode="r",*args,**kwargs):
+                if target == path and mode == "rb":
+                    return io.BytesIO(b"corrupt")
+                return original(target,mode,*args,**kwargs)
+            with patch.object(Path,"open",corrupt):
+                with self.assertRaisesRegex(ValueError,"Stored bundle bytes mismatch"):
+                    write_new(path,self.data)
+            self.assertFalse(path.exists())
+
+    def test_sync_failure_cleanup(self):
+        with tempfile.TemporaryDirectory() as d:
+            path=Path(d)/"bundle.zip"
+            with patch("signature_dev_bundle.os.fsync",side_effect=OSError("fixture")):
+                with self.assertRaises(OSError):
+                    write_new(path,self.data)
+            self.assertFalse(path.exists())
