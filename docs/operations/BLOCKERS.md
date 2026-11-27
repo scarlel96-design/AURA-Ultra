@@ -79,3 +79,5 @@ GPT-04 회차 02: 124/124 합성 호스트 글꼴 조합 fit; 기기 font/실제
 OPS-06: GPT04-D1 OPEN/P0 후보 Group name 필수 속성 누락(46060479503), 수정 374dec9 재검증 CI 46062170635. AG01-AUD-04 OPEN/P1 runtime package/display 오판 4종 분리 함수 재현. AG 원격 환경 0 Wear AVD, 실제 실행 NOT RUN. AG 기존 pin CI 실패; main pin 해결 유지. GB-01 통합 완료, GB-02 READY.
 
 GPT04-D1 RESOLVED: CI 46062170635 SUCCESS, 100 host and 12 APK PASS. Runtime/locale/glyph/AOD pixel verification still pending. No product or external owner edits.
+
+GPT04-D2 OPEN/P0(후보 검증): 초기 프리뷰 46064026867 실패, percent regex 수정 82fef7c, CI 46064080195 재검증 중. 실제 기기/AMPM/글꼴 검증 미실시 유지. GPT04-D1 해결 유지. 외부 소유권 및 기존 product 변경 없음.
