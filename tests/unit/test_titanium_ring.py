@@ -31,6 +31,8 @@ class TitaniumRingTests(unittest.TestCase):
     def test_matrix(self):
         self.assertEqual(self.report["assetCount"],16)
         self.assertEqual(self.report["regionChecks"],36)
+        self.assertEqual(self.report["tickRegionChecks"],2160)
+        self.assertEqual(self.report["shortenedMajorIndices"],[10,50])
         self.assertEqual(set(self.outputs),{(d,p) for d in DIAMETERS for p in PROFILES})
         self.assertEqual(self.report["runtimeVerification"],"NOT RUN")
         print("TITANIUM_RING_RESULT "+json.dumps(self.report,sort_keys=True))
@@ -71,7 +73,7 @@ class TitaniumRingTests(unittest.TestCase):
         r=ET.fromstring(self.outputs[(498,"BALANCED")])
         for i,line in enumerate(r.findall(".//"+NS+"line")):
             v=line.attrib
-            inner=205 if i%5==0 else 207
+            inner=207 if i in (10,50) or i%5 else 205
             for a,b,radius in (("x1","y1",inner),("x2","y2",209)):
                 x,y=Fraction(v[a])-225,Fraction(v[b])-225
                 self.assertLess(abs(x*x+y*y-radius*radius),Fraction(1,2))
@@ -142,3 +144,37 @@ class TitaniumRingTests(unittest.TestCase):
         self.assertEqual(json.loads(result.stdout),self.report)
         result=subprocess.run(cmd+["--svg","498","ECO"],cwd=ROOT,capture_output=True,check=True,timeout=30)
         self.assertEqual(result.stdout,self.outputs[(498,"ECO")])
+
+    def test_original_unshortened_ticks_rejected(self):
+        t=copy.deepcopy(self.t)
+        t["ticks"]["shortenedMajorIndices"]=[]
+        for d in DIAMETERS:
+            with self.assertRaisesRegex(ValueError,"Tick 10 intersects reserved information bounds: time"):
+                geometry(t,self.l,self.o,self.m,d)
+        t["ticks"]["shortenedMajorIndices"]=[10]
+        for d in DIAMETERS:
+            with self.assertRaisesRegex(ValueError,"Tick 50 intersects reserved information bounds: time"):
+                geometry(t,self.l,self.o,self.m,d)
+
+    def test_shortening_contract_rejects_invalid_indices(self):
+        for indices in ([10,10],[50,10],[1],[60],[True],"10"):
+            t=copy.deepcopy(self.t)
+            t["ticks"]["shortenedMajorIndices"]=indices
+            with self.assertRaises(ValueError):
+                parse(json.dumps(t))
+
+    def test_serialized_all_tick_clearances(self):
+        # Independently check the actual serialized line endpoints, in pixels.
+        from round_layout import project_layout
+        for d in DIAMETERS:
+            boxes=project_layout(self.l,d)["regions"]
+            root=ET.fromstring(self.outputs[(d,"ULTRA")])
+            scale=Fraction(d,450)
+            for line in root.findall(".//"+NS+"line"):
+                a=line.attrib
+                x1,y1,x2,y2=(Fraction(a[k])*scale for k in ("x1","y1","x2","y2"))
+                margin=Fraction(a["stroke-width"])*scale/2+1
+                for name,(x,y,w,h) in boxes.items():
+                    self.assertTrue(max(x1,x2)+margin<x or min(x1,x2)-margin>x+w
+                                    or max(y1,y2)+margin<y or min(y1,y2)-margin>y+h,
+                                    (d,a["id"],name))

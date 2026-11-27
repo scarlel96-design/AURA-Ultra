@@ -107,7 +107,8 @@ def parse(raw):
         color(c)
     ticks=t["ticks"]
     exact_keys(ticks,{"count","majorEvery","innerMajor","innerMinor","outer",
-                     "majorWidthMilli","minorWidthMilli","majorColor","minorColor"},"ticks")
+                     "majorWidthMilli","minorWidthMilli","majorColor","minorColor",
+                     "shortenedMajorIndices","shortenedMajorInner"},"ticks")
     integer(ticks["count"],60,60,"tick count")
     integer(ticks["majorEvery"],5,5,"major interval")
     integer(ticks["innerMajor"],200,ring["innerRadius"]-3,"major inner")
@@ -115,6 +116,13 @@ def parse(raw):
     integer(ticks["outer"],ticks["innerMinor"]+1,ring["innerRadius"]-1,"tick outer")
     integer(ticks["majorWidthMilli"],500,1200,"major width")
     integer(ticks["minorWidthMilli"],200,ticks["majorWidthMilli"]-1,"minor width")
+    indices=ticks["shortenedMajorIndices"]
+    if (type(indices) is not list or any(type(i) is not int or not 0<=i<60
+            or i%ticks["majorEvery"] for i in indices)
+            or indices!=sorted(set(indices))):
+        raise ValueError("Invalid shortened major indices")
+    integer(ticks["shortenedMajorInner"],ticks["innerMajor"]+1,
+            ticks["outer"]-1,"shortened major inner")
     color(ticks["majorColor"])
     color(ticks["minorColor"])
     h=t["highlight"]
@@ -126,6 +134,26 @@ def parse(raw):
     integer(h["opacityPermille"],1,600,"highlight opacity")
     color(h["color"])
     return t
+
+
+def tick_inner(ticks,index):
+    if index in ticks["shortenedMajorIndices"]:
+        return ticks["shortenedMajorInner"]
+    return ticks["innerMajor"] if index%ticks["majorEvery"]==0 else ticks["innerMinor"]
+
+
+def tick_bounds(ticks,index,diameter):
+    """Enclose the stroked segment and a one-pixel clearance margin."""
+    scale=Fraction(diameter,450)
+    center=Fraction(diameter,2)
+    dx,dy=DIRECTIONS[index]
+    inner=tick_inner(ticks,index)
+    outer=ticks["outer"]
+    width=ticks["majorWidthMilli"] if index%ticks["majorEvery"]==0 else ticks["minorWidthMilli"]
+    margin=(Fraction(width,2000)+Fraction(1,1000))*scale+1
+    x1,x2=(center+Fraction(r*dx,SCALE)*scale for r in (inner,outer))
+    y1,y2=(center+Fraction(r*dy,SCALE)*scale for r in (inner,outer))
+    return min(x1,x2)-margin,min(y1,y2)-margin,max(x1,x2)+margin,max(y1,y2)+margin
 
 
 def geometry(t,layout,objects,material,diameter):
@@ -156,13 +184,18 @@ def geometry(t,layout,objects,material,diameter):
     outer=Fraction(r["outerRadius"])*scale
     if outer>center-projected["inset"]:
         raise ValueError("Ring outside round safe area")
-    limit=(inner*scale-1)**2
-    if inner*scale<=1:
-        raise ValueError("Invalid ring clearance")
-    for x,y,w,h in projected["regions"].values():
+    # The continuous metal annulus and individual ticks require different bounds.
+    limit=(r["innerRadius"]*scale-1)**2
+    for name,(x,y,w,h) in projected["regions"].items():
         if any((u-center)**2+(v-center)**2>=limit for u in (x,x+w) for v in (y,y+h)):
-            raise ValueError("Ring intersects reserved information bounds")
+            raise ValueError("Ring intersects reserved information bounds: "+name)
+    for i in range(len(DIRECTIONS)):
+        left,top,right,bottom=tick_bounds(k,i,diameter)
+        for name,(x,y,w,h) in projected["regions"].items():
+            if not (right<x or left>x+w or bottom<y or top>y+h):
+                raise ValueError(f"Tick {i} intersects reserved information bounds: {name}")
     return {"diameter":diameter,"regionChecks":len(projected["regions"]),
+            "tickRegionChecks":len(DIRECTIONS)*len(projected["regions"]),
             "innerBoundMilli":int(inner*1000),"outerRadius":r["outerRadius"],
             "clearancePixels":1}
 
@@ -200,7 +233,7 @@ def svg(t,diameter,profile):
         lines+=['</g>','<g id="ticks" fill="none" stroke-linecap="butt">']
         for i,direction in enumerate(DIRECTIONS):
             major=i%k["majorEvery"]==0
-            start=point(k["innerMajor"] if major else k["innerMinor"],direction)
+            start=point(tick_inner(k,i),direction)
             end=point(k["outer"],direction)
             width=k["majorWidthMilli"] if major else k["minorWidthMilli"]
             shade=k["majorColor"] if major else k["minorColor"]
@@ -233,7 +266,8 @@ def generate(root=ROOT):
                          "hypotheticalFullBitmapRgbaBytes":d*d*4}
     return {"schemaVersion":1,"sourceSha256":{p:hashlib.sha256(v).hexdigest() for p,v in raw.items()},
             "assetCount":len(outputs),"regionChecks":sum(x["geometry"]["regionChecks"] for x in screens.values()),
-            "tickCount":60,"majorTicks":12,"screens":screens,
+            "tickCount":60,"majorTicks":12,"shortenedMajorIndices":t["ticks"]["shortenedMajorIndices"],
+            "tickRegionChecks":sum(x["geometry"]["tickRegionChecks"] for x in screens.values()),"screens":screens,
             "scope":"host vector reference; no data gauge, raster or WFF resource",
             "runtimeVerification":"NOT RUN"},outputs
 

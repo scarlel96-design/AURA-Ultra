@@ -26,7 +26,12 @@
     "majorWidthMilli": 1000,
     "minorWidthMilli": 600,
     "majorColor": "#8F9FAE",
-    "minorColor": "#536575"
+    "minorColor": "#536575",
+    "shortenedMajorIndices": [
+      10,
+      50
+    ],
+    "shortenedMajorInner": 207
   },
   "highlight": {
     "startDegrees": -135,
