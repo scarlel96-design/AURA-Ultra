@@ -1,0 +1,46 @@
+name: Domain Kotlin
+on:
+  push:
+    paths:
+      - 'modules/domain/**'
+      - 'gradle/wrapper/**'
+      - 'gradlew'
+      - '.github/workflows/domain-kotlin.yml'
+  pull_request:
+    paths:
+      - 'modules/domain/**'
+      - 'gradle/wrapper/**'
+      - 'gradlew'
+      - '.github/workflows/domain-kotlin.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: domain-kotlin-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify Gradle wrapper
+        run: echo "b3a875ddc1f044746e1b1a55f645584505f4a10438c1afea9f15e92a7c42ec13  gradle/wrapper/gradle-wrapper.jar" | sha256sum -c -
+      - name: Clean Kotlin domain tests
+        run: ./gradlew -p modules/domain clean test --rerun-tasks --no-build-cache --no-daemon
+      - name: Validate JUnit evidence
+        run: python tools/check_domain_results.py modules/domain/build/test-results/test
+      - name: Upload JUnit XML
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: domain-junit-xml
+          path: modules/domain/build/test-results/test/*.xml
+          if-no-files-found: error
