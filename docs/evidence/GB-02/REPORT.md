@@ -58,7 +58,7 @@ PRE-FLIGHT: 최신 `origin/main` `50937487e790323daf947d5a6b10b912302d635c`에�
 
 환경 및 도구 버전: Windows. 테스트 JVM은 Eclipse Temurin 17.0.20.1+1, `C:\Users\scarl\.jdks\temurin-17`. 로그 한 줄은 `TEST_JVM version=17 vendor=Eclipse Temurin path=C:\Users\scarl\.jdks\temurin-17`. Gradle을 띄운 JVM은 Adoptium 21.0.5.11. Kotlin 2.4.21. Gradle 9.3.1. ASCII worktree `C:\Users\scarl\AppData\Local\Temp\aura-gb02-wt`.
 총 시험 수, PASS, FAIL, SKIP, NOT RUN, PENDING: intelligence 28 PASS / 0 FAIL / 0 SKIP / 0 ERROR. 구성은 Gate 4, Machine 17, Policy 5, SourceScan 2. 도메인 회귀 81 PASS / 0 FAIL / 0 SKIP / 0 ERROR. 실기기·실공급원·그래픽·모듈 CI는 NOT RUN.
-CI 실행 ID / head SHA / job / step: 이 보고서 시점의 모듈 시험은 로컬이다. PR 공통 파이프라인 결과는 푸시 후에만 확인할 수 있다. 그 파이프라인은 `modules/intelligence` 시험을 실행하지 않는다.
+CI 실행 ID / head SHA / job / step: head `930ffd233538bf9bebb3c111725fa514f27e1dd2`. push [46066982767](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46066982767), job `140734564245`, conclusion success. pull_request [46066988024](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46066988024), job `140734582870`, 같은 head, conclusion success. 두 실행 모두 wrapper, 구조 검사, validation tool regression, SDK 설치와 확인, 공식 WFF validation, debug APK build, APK 내용, 메모리 평가, debug 서명, artifact 업로드가 success였다. 이 워크플로는 `modules/intelligence` 시험을 실행하지 않는다. 그 28개는 로컬 clean 증거다.
 Artifact 파일명·해시·재생성 명령(해당 시): 이 모듈은 APK를 만들지 않는다. JUnit XML은 [junit](junit)에 있다. 재실행은 `.\gradlew -p modules/intelligence clean test --rerun-tasks`.
 정상/실패/경계/회귀 시험 증거: 15는 LOW, 19는 직전이 LOW일 때만 LOW, 20은 NORMAL. 70은 PRECIP, 50은 NORMAL, 60은 직전 ALERT 다음에서 PRECIP가 아니다. 59초는 유지되고 60초에 반영된다. 경보 진입과 충전 전환은 1초 뒤에도 반영된다. 만료 시각과 같은 기준 시각, STALE, DENIED, ERROR, UNAVAILABLE, NaN, 스케일 밖, 다른 단위, `commute`/`exercise`/`WORK` 토큰은 신선한 운동이나 0이 아니다. 오프라인은 CONTEXT다. 저전력은 입자를 끄고 신선한 강수 숫자를 공개한다. 시계 역전은 숫자를 공개하지 않는다. 첫 revision은 1이다.
 검사 도구의 실패 검출 시험: SourceScanTest는 `Instant.now(`와 `import java.net`이 들어 있는 문자열을 실패로 보고, 빈 시계 호출은 보고하지 않는다. 정책 거절 시험은 진입과 해제가 같은 정책을 `PolicyRejected`로 끝낸다. 사용할 수 없는 배터리 시험은 공개 값이 null인지 확인한다.
@@ -93,7 +93,7 @@ Artifact 파일명·해시·재생성 명령(해당 시): 이 모듈은 APK를 �
 | G3 시험/회귀 | PASS | 28 PASS, 도메인 81 PASS. 모듈 GitHub CI는 NOT RUN |
 | G4 분야별 검증 | PASS, 데이터/FSM 범위 | 그래픽·성능 실측·건강 네트워크는 NOT RUN |
 | G5 별도 재검토 | PASS, 자기 재검토 | 독립 검토자는 NOT RUN. GB02-D1~D4는 증거 실행 전 수정 |
-| G6 증거 및 판정 | PASS, 로컬 증거 | 코드 SHA `779f8aa`. 공통 PR CI는 이 문서 작성 후 푸시 결과로 남긴다. 제품 GO로 올리지 않음 |
+| G6 증거 및 판정 | PASS | 코드 SHA `779f8aa`. 공통 CI head `930ffd2`, push 46066982767과 PR 46066988024 모두 success. 제품 GO로 올리지 않음 |
 | G7 문서/재개 | PASS, 제한 적용 | 중앙 STATUS/WORK_LOG/BLOCKERS는 지시대로 수정하지 않았다. 제안만 아래에 둔다 |
 
 최종 작업 판정 및 이유: 독립 모듈 제출 GO. 요구한 상태 머신과 로컬 시험이 있고, 도메인 계약 파일을 바꾸지 않았다. 총괄 통합 판정은 이 보고서의 권한이 아니다.
