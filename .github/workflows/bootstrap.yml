@@ -82,3 +82,11 @@ jobs:
           name: aura-bootstrap-debug-apks
           path: apps/watchface/build/outputs/apk/*/debug/*.apk
           if-no-files-found: error
+      - name: Isolated Signature material APKs
+        run: python tools/check_signature_material_build.py --output "$RUNNER_TEMP/aura-signature-material"
+      - name: Upload Signature material development evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: aura-signature-material-development
+          path: ${{ runner.temp }}/aura-signature-material/
+          if-no-files-found: error
