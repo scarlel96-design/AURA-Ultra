@@ -58,3 +58,6 @@ WFF 3+ 혼합 모드, WFF 4 색상 변환, WFF 5 확장 혼합 기능을 지원 
 
 ## Signature layout draft (GPT-04)
 `design-system/layouts/signature-draft.json` defines eight proposed regions, including time, date, battery, weather, heart, steps and rain. This is not the shipping face. Generate four host-only SVG wireframes and a JSON geometry report using `python tools/round_layout.py --write`. Run `--check` to detect missing or stale output. Pixel edges round outward, safe inset rounds upward, and the projected minimum gap accounts for up to two pixels of rounding. Geometry checks do not measure glyphs, actual lit pixels, or runtime layout. The ambient draft reserves date and time in their active positions. No new data source or rendering support is claimed.
+
+## Conditional AM/PM region (GPT-04 R05)
+Layout schema 2 reserves nine regions. Preserve the earlier time and date rectangles. Place the conditional AM/PM marker below the time at [180,242,90,18], font size 16. Move weather, heart, steps and rain lower to preserve clearance. Use the WFF1 sources IS_24_HOUR_MODE and AMPM_STRING. Omit the marker in 24-hour mode; keep it in AOD for 12-hour mode. The ambient geometry includes the reserved marker, not an unconditional visible element. Actual locale, glyph fit, time setting changes and AOD pixels remain runtime verification targets.

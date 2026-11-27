@@ -31,8 +31,15 @@ jobs:
         run: |
           python tools/round_layout.py --write
           python tools/round_layout.py --check
+          python tools/generate_basic_face.py --write
+          python tools/generate_basic_face.py --check
+          python tools/signature_preview.py --write
+          python tools/signature_preview.py --check
+          python tools/check_layout_reproduction.py
       - name: Check project invariants
         run: python tools/check_foundation.py
+      - name: M01 synthetic motion evidence
+        run: python tools/motion_storyboard.py --check
       - name: Validation tool regression tests
         run: python -m unittest discover -s tests/unit -p 'test_*.py' -v
       - name: Install Android SDK
@@ -59,6 +66,16 @@ jobs:
         run: python tools/build_profiles.py signatures
       - name: Isolated generated flavor regression
         run: python tools/check_flavor_isolation.py
+      - name: Isolated Signature basic display
+        run: |
+          python tools/check_basic_face_build.py --development-bundle "$RUNNER_TEMP/aura-signature-development.zip"
+          test -s "$RUNNER_TEMP/aura-signature-development.zip"
+      - name: Upload layout development evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: aura-layout-development-evidence
+          path: assets/generated/layouts/
+          if-no-files-found: error
       - name: Upload debug APKs
         uses: actions/upload-artifact@v4
         with:
