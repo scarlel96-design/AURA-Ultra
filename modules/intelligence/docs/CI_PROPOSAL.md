@@ -13,9 +13,19 @@
 
 Windows의 비ASCII 경로는 JDK 17 테스트 워커 `@argfile`을 MS949로 읽어 `ClassNotFoundException`이 난다. 로컬 통과 증거는 ASCII worktree에서 만든다. Ubuntu 러너는 그 문제를 재현하지 않으며, 이 제안이 그 제한의 해결은 아니다.
 
+`push`는 `main`에 위 경로가 들어올 때도 같은 시험을 실행한다. pull request만 통과하고 main 푸시가 빠지는 구성을 두지 않는다. 공통 `bootstrap.yml`의 성공은 이 시험의 성공이 아니다.
+
+JUnit XML이 없거나, XML의 `tests`가 0이거나, intelligence가 파일 6개·시험 47개·실패 0·오류 0·건너뜀 0이 아니거나, domain이 파일 7개·시험 81개·실패 0·오류 0·건너뜀 0이 아니면 그 단계는 실패한다. 47과 81은 회차 03의 수량이다. 시험을 추가하면 제안의 기대 수량도 함께 올린다. 수량을 낮추는 변경은 시험 미발견을 통과시키지 못한다.
+
 ```yaml
 name: intelligence-kotlin
 on:
+  push:
+    branches: [main]
+    paths:
+      - "modules/intelligence/**"
+      - "modules/domain/**"
+      - ".github/workflows/intelligence-kotlin.yml"
   pull_request:
     paths:
       - "modules/intelligence/**"
@@ -43,6 +53,36 @@ jobs:
         run: ./gradlew -p modules/intelligence test --rerun-tasks --no-daemon
       - name: Domain regression
         run: ./gradlew -p modules/domain test --rerun-tasks --no-daemon
+      - name: Reject missing or short JUnit results
+        run: |
+          python3 - <<'PY'
+          import glob
+          import sys
+          import xml.etree.ElementTree as ET
+
+          def tally(pattern: str) -> tuple[int, int, int, int, int]:
+              files = sorted(glob.glob(pattern))
+              if not files:
+                  sys.exit(f"no JUnit XML: {pattern}")
+              tests = failures = errors = skipped = 0
+              for name in files:
+                  root = ET.parse(name).getroot()
+                  count = int(root.attrib.get("tests", "0"))
+                  if count <= 0:
+                      sys.exit(f"discovered no tests in {name}")
+                  tests += count
+                  failures += int(root.attrib.get("failures", "0"))
+                  errors += int(root.attrib.get("errors", "0"))
+                  skipped += int(root.attrib.get("skipped", "0"))
+              return len(files), tests, failures, errors, skipped
+
+          intelligence = tally("modules/intelligence/build/test-results/test/*.xml")
+          domain = tally("modules/domain/build/test-results/test/*.xml")
+          if intelligence != (6, 47, 0, 0, 0):
+              sys.exit(f"intelligence JUnit {intelligence}, expected 6 files, 47 tests, no failures")
+          if domain != (7, 81, 0, 0, 0):
+              sys.exit(f"domain JUnit {domain}, expected 7 files, 81 tests, no failures")
+          PY
       - name: Upload JUnit XML
         if: always()
         uses: actions/upload-artifact@v4

@@ -37,13 +37,15 @@
 
 `MachineState.committedAt`은 전원·날씨·활동을 마지막으로 확정한 시각이다. `processedAt`은 마지막으로 받아들인 `referenceTime`이다. 밝기·연결·사용자 모드만 바뀌어도 `processedAt`은 그 샘플 시각이 되고 `committedAt`은 그대로다.
 
-시계 역전은 `referenceTime < processedAt`이다. 축이 그대로인 뒤의 더 이른 입력도 역전이다. 같은 시각은 역전이 아니다. 역전 결과는 두 시각, 센서 축, 보류를 유지하고 배터리·강수 숫자를 공개하지 않는다. 데이터 품질은 `DEGRADED`다.
+관측 순서와 설정 순서는 다르다. 시계 역전은 `referenceTime < processedAt`이다. 축이 그대로인 뒤의 더 이른 입력도 역전이다. 같은 시각은 역전이 아니다. 역전 결과는 두 시각, 센서 축, 보류를 유지하고 배터리·강수 숫자를 공개하지 않는다. 데이터 품질은 `DEGRADED`다.
 
-`revision`은 1에서 시작한다. 축, 포커스, 공개 내용이 바뀔 때만 1 증가한다. 이전 값이 `Long.MAX_VALUE`이고 그 증가가 필요하면 `StepResult.LimitReached`다. `reason`은 `REVISION_EXHAUSTED`이고 `state`는 호출자가 넘긴 이전 상태다. 증가가 필요 없으면 `Advanced`이며 revision은 최댓값을 유지한다.
+모션 감소와 항상 표시는 `CallerSettings`다. `referenceTime >= processedAt`인 샘플은 그 설정을 호출 순서대로 교체한다. 같은 시각의 나중 호출도 교체한다. 더 이른 샘플은 저장된 보호를 해제하지 못하고, 없던 보호만 올릴 수 있다.
 
-유지·디바운스 기한은 `committedAt` 또는 보류 시작 시각에 정책을 더한 값이다. 그 덧셈이 시각 범위를 벗어나면 기한은 경과하지 않은 것으로 보고, 예외는 `step` 밖으로 나가지 않는다. `Duration.ofSeconds(Long.MAX_VALUE)`는 음수가 아니므로 받을 수 있다. 긴급 진입과 충전 예외는 그 기한이 없어도 확정한다.
+`revision`은 1에서 시작한다. 축, 포커스, 공개 내용이 바뀔 때만 1 증가한다. 이전 값이 `Long.MAX_VALUE`이고 보호가 늘지 않는데 다른 내용이 바뀌면 `StepResult.LimitReached`다. `reason`은 `REVISION_EXHAUSTED`이고 `state`는 호출자가 넘긴 이전 상태다. 모션 감소나 항상 표시가 켜지면 그 상한에서도 `Advanced`로 반영하고 revision은 최댓값을 유지한다. 함께 있던 다른 변경은 버리며, 그때 이유에 `REVISION_EXHAUSTED`가 들어간다. 상한에서는 이미 켜진 보호를 끄지 않는다.
 
-확정된 `CHARGING`은 충전 관측이 빠지거나 `Fresh`가 아니면 유지한다. 신선한 충전 거짓만 이탈을 만든다.
+유지·디바운스 기한은 공유 `committedAt` 또는 보류 시작 시각에 정책을 더한 값이다. 그 덧셈이 시각 범위를 벗어나면 기한은 경과하지 않은 것으로 보고, 예외는 `step` 밖으로 나가지 않는다. `Duration.ofSeconds(Long.MAX_VALUE)`는 음수가 아니므로 받을 수 있다. 경보 진입은 날씨와 그 샘플의 목표 전원을 그 기한 없이 확정한다. 충전 예외는 전원만 그 기한 없이 확정한다. 활동은 그 예외들로 기한을 건너뛰지 않는다. 날씨는 충전 예외로 기한을 건너뛰지 않는다.
+
+확정된 `CHARGING`은 충전 관측이 빠지거나 `Fresh`가 아니면 유지한다. 신선한 충전 거짓만 이탈을 만든다. 그 상태에서 신선한 낮은 배터리가 있어도 축은 `CHARGING`이고 품질은 Eco로 내려가지 않는다. 전원 축에 값을 추가하지 않는다.
 
 ## 포커스와 표현
 
