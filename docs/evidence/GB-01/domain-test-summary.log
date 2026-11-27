@@ -1,0 +1,34 @@
+command: .\gradlew -p modules/domain test --rerun-tasks --offline --console=plain --no-daemon
+worktree: C:\Users\scarl\AppData\Local\Temp\aura-gb01-wt
+git HEAD at execution: 098dd35e1d7111a5ece9f8417142cf1c6ecc2fd3
+started XML timestamps: 2026-11-27T13:43:17.978Z
+result: BUILD SUCCESSFUL in 34s
+exit code: 0
+suites:
+DraftContractTest tests=12 skipped=0 failures=0 errors=0
+FreshnessTest tests=11 skipped=0 failures=0 errors=0
+IdentityTest tests=5 skipped=0 failures=0 errors=0
+PipelineTest tests=2 skipped=0 failures=0 errors=0
+RevisionGateTest tests=15 skipped=0 failures=0 errors=0
+SourceScanTest tests=1 skipped=0 failures=0 errors=0
+ValidationTest tests=24 skipped=0 failures=0 errors=0
+total: 70 PASS, 0 FAIL, 0 SKIP, 0 ERROR
+
+compile probe from a later --info compileKotlin on the same commit:
+JAVA_HOME=C:\Users\scarl\.jdks\temurin-17
+JAVA_VERSION=17.0.20.1
+Kotlin compilation jdkHome=C:\Users\scarl\.jdks\temurin-17
+
+host regression on the same worktree after the domain test:
+python -m unittest discover -s tests/unit -p test_*.py
+Ran 40 tests in 0.048s
+OK
+python tools/check_foundation.py
+PASS: resource-only manifest, XML structure, AOD invariant, preview, flavor matrix, tokens
+NOT RUN: official WFF schema, renderer, memory, battery, device compatibility
+
+pre-commit failure, not part of 098dd35:
+ASCII junction test run found ValidationTest.negativeZeroIsAnActualZero FAILED
+expected 0.0 but was -0.0 because Double.equals keeps the sign bit.
+The committed test asserts the sign bit is preserved and that the same revision conflicts.
+That run exited non-zero. BUILD FAILED.

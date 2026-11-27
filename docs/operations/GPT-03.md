@@ -1,5 +1,5 @@
 # GPT-03 — 결정적 그래픽 자산 및 WFF 생성 기반
-상태: READY / 독립 준비 작업. 관련 WO-09/10, WO-02/03 준비, R-02/R-05/R-10/R-20/R-22/R-25. GPT-02 개발 기반 GO, WO-01 PARTIAL. WO-09/10 공식 선행 조건 미충족 상태를 유지한다.
+상태: PARTIAL / 독립 준비 작업. 생성 및 공통 빌드 CI PASS; 실제 flavor override 격리 검증 남음. 관련 WO-09/10, WO-02/03 준비, R-02/R-05/R-10/R-20/R-22/R-25. GPT-02 개발 기반 GO, WO-01 PARTIAL. WO-09/10 공식 선행 조건 미충족 상태를 유지한다.
 ## 작업 전
 AGENTS PRE-FLIGHT 수행. 최신 프로필 계약과 4 APK CI 46002470824 확인. DESIGN_SYSTEM, MOTION_SPEC, PERFORMANCE, bootstrap tokens 및 실제 WFF XML, preview asset, 생성 대상의 소유권을 읽는다. 기존 초기 얼굴과 기준 자산을 보존한다.
 ## 작업

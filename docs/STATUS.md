@@ -8,12 +8,12 @@
 | 항목 | 현재 값 |
 |---|---|
 | 정본 브랜치 | main |
-| 확인한 코드 SHA | f284b1bd69a767ef0f7285449fe7c45f05895e53 |
-| 활성 GPT 작업 | GPT-03 PARTIAL / GB-01 독립 CI PASS / 도구 갱신 후보 |
+| 확인한 코드 SHA | 0cec62250a2dc05cd02773f6969726867946fe4f (통합 후보 검증 완료) |
+| 활성 GPT 작업 | GPT-03 PARTIAL / GB-01 통합 승인 / flavor override 시험 |
 | 활성 WO | WO-01 PARTIAL; WO-02·04 준비 작업만 일부 구현 |
-| 다음 안전한 행동 | 통합 후보 0cec622의 공식 도구 갱신 CI 확인 → 전체 검증 후 통합; AG-01-R03 |
+| 다음 안전한 행동 | GPT-03 별도 flavor override 격리 검증; GB-02 독립 착수 가능 |
 | 다음 실행 명세 | operations/GPT-03.md |
-| 현재 차단 | B-003 SDK/빌드 해결; B-002/003 런타임/004/007 미해결 |
+| 현재 차단 | B-011 도구 불일치 해결; B-002/003 런타임/004/005/006/007/008 유지 |
 | 공식 WO GO | 0/38 |
 | GPT 묶음 완료 | 2/12 |
 | 실제 제품 완성도 | 미확정; 초기 빌드 토대 |
@@ -228,3 +228,6 @@ G0 PASS; G1 현재 작업 범위 PASS; G2 40 단위 및 공식 negative probe PA
 - Bootstrap [46056345651](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46056345651), job 140699646086, FAILURE. 독립 프로세스 --write/--check/missing/stale/repair/byte equality PASS, host 68 PASS/0 FAIL, SDK PASS. 공식 validator 단계 'Validator download size or digest mismatch. Review the official release before updating the pin.' exit 1. 이후 schema/build/APK/memory/signature/Artifact SKIP. 실제 스키마 위반으로 판정하지 않는다.
 - B-011 OPEN/P0: 공식 Google watchface 가변 release 태그에서 JAR 두 개 교체. 공식 [release](https://github.com/google/watchface/releases/tag/release) ID 460768397 published 2026-11-27T15:21:34Z, tag commit 18d3844de1729f0c5128f59cfa359b0e34b66612. [PR 118](https://github.com/google/watchface/pull/118)의 XML DOM parser 설정 통합 변경 파일 및 핵심 diff 확인. validator asset 800984124 SHA256 6ef308dbc306a9187b5b1f4997a662eb57e26ac3650cebbf2ab583cd38bb609e; memory asset 800984064 SHA256 1ec683365aee86627f0eb502b52fc71f71eff1872776edc5bc6ef7c7b37d28bc. 이전 공식 pin과 다름. 공식 release API 메타데이터를 확인했으며 독립 바이너리/소스 재현은 하지 않았다. 정확한 해시 검증을 유지한 새 pin 후보 0cec62250a2dc05cd02773f6969726867946fe4f를 integration/gpt03-gb01에만 반영. 기존 main과 에이전트 증거의 이전 pin은 보존. 도구 실행 버전, 출력, 정상/실패 schema 및 4 APK/메모리/서명 전체 성공 전 병합 금지.
 - 신규 후보 CI: AURA Bootstrap 46056609237 in_progress/PENDING. 최종 원본 로그 미확인. Kotlin 소스는 c6ae812와 동일; 새 SHA에서 도메인 재실행 여부 구분. AG-01-R03은 현재 자기 브랜치의 고정 도구를 사용하며 새 도구 전환은 중앙 승인 이후. B-011 해결은 후보 전체 게이트 및 SHA 대조 후 판정. GPT-03 PARTIAL/GB-01 독립 CI PASS/AG-01 PARTIAL, 정식 WO 0/38, 출시 NO-GO.
+
+## GPT-03 회차 02 — 검증된 공통 기반 통합 승인
+기준 main a9664b2e3eb72f99a06c2d973259cb80d7cc4337; 통합 코드 0cec62250a2dc05cd02773f6969726867946fe4f. 2026-11-28 KST. [CI 46056609237](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46056609237), job 140700517415 SUCCESS: 독립 생성/누락·stale/재생성 검사 PASS, 68 host tests OK, WFF2~5 명시적 PASSED 및 invalid fixture FAILED 각 4건, clean build 1m 7s, 리소스 전용 4 APK/원본 XML/manifest/메모리/서명 PASS. memory-footprint 1.5.1 hash 18d3844; 모든 profile active/ambient 2371712 bytes. Artifact 15225539840, 79010 bytes, digest sha256:a8d89d87ba5ce8adf041b5d773ef60cda61219ee5191cc848544394502c22c75, expired=false. 원본 CI 및 artifact metadata 확인, 독립 APK 재다운로드 미실시. 기존 Kotlin CI 46056345699의 81 PASS/0 FAIL/0 ERROR/0 SKIP은 c6ae812 코드에 대한 증거. c6ae812→0cec622 변경은 tools/verify_wff.py, tools/verify_memory.py 및 INTEGRATION_PLAN.md뿐이다. 모듈/도메인 workflow 동일. B-011의 현행 도구 불일치 해결; 가변 upstream release 재갱신 위험 유지. 중앙 기록을 최신 main에서 보존하고 검증 후보 코드와 GB-01 원본 blob을 변경 없이 병합한다. 외부 AG 소유 경로는 제외. GB-01 독립 모듈 통합 승인, GB-02 READY(새 소유 경로만). GPT-03은 실제 격리 flavor override 검증 전 PARTIAL. main 통합 SHA 자체 CI는 별도로 확인한다. 정식 WO 0/38 및 출시 NO-GO 유지. 다음: GPT-03 공통 빌드 격리 검사; AG-01 런타임 PoC 중복 금지.
