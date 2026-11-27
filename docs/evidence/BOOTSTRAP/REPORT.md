@@ -7,3 +7,6 @@ Decisions: provisional debug namespace, API36 compile/target, flavor application
 
 ## CI attempt 1
 https://github.com/scarlel96-design/AURA-Ultra/actions/runs/45997002132 : wrapper SHA-256 and project invariants PASS. SDK setup FAIL (sdkmanager command not found, exit 127); official schema and APK assembly skipped. Add pinned android-actions/setup-android v4.0.3 and explicit SDK verification. Follow-up run pending; no build success claimed.
+
+## CI attempt 2 (verified)
+https://github.com/scarlel96-design/AURA-Ultra/actions/runs/45997124733, job 140499204563, code SHA 544a7010f4bed515d667bfa6a9bbda1389f5bc92. SDK setup/verification, wrapper integrity, project invariants, official WFF validation and WFF2/3/4 assembly PASS. Gradle log: BUILD SUCCESSFUL in 54s. APK contents check FAIL: executable payload in watchface-wff2-debug.apk. The exact entry name and cause were not printed. WFF3/4 contents NOT RUN; upload SKIP. Overall conclusion failure. See operations/BLOCKERS.md B-001 and operations/GPT-01.md for the next diagnostic. Memory/device tests NOT RUN.

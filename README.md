@@ -10,7 +10,8 @@ AURA는 고급 시계의 금속·유리 소재, 정밀한 데이터 시각화, A
 1. [AGENTS.md](AGENTS.md)를 읽는다.
 2. [전체 설계도](docs/MASTER_ARCHITECTURE.md)와 [요구사항](docs/REQUIREMENTS.md)을 읽는다.
 3. [개발 로드맵](docs/ROADMAP.md)과 [현재 상태](docs/STATUS.md)를 확인한다.
-4. [WO-01](docs/work-orders/WO-01.md)만 수행한다. 승인 전 후속 WO를 시작하지 않는다.
+4. [재개 규정](docs/operations/RESUME_PROTOCOL.md)과 [GPT 작업 계획](docs/operations/GPT_EXECUTION_PLAN.md)을 읽는다.
+5. STATUS의 활성 작업을 수행한다. 사용자 지시가 '다음 작업'이면 규정에 따라 안전한 작업을 자율 선정한다.
 
 ## 기술 문서
 | 문서 | 목적 |
@@ -31,3 +32,7 @@ AURA는 고급 시계의 금속·유리 소재, 정밀한 데이터 시각화, A
 ## 초기 빌드 토대
 [BUILD_GUIDE.md](docs/BUILD_GUIDE.md) · [WO-01 예비 증거](docs/evidence/WO-01/REPORT.md) · [Bootstrap 증거](docs/evidence/BOOTSTRAP/REPORT.md)
 WFF2/3/4 debug variant, Gradle Wrapper, SDK36, 자동 검사 및 CI를 구성했다. WFF5와 프리미엄 그래픽은 후속 PoC 대상이다.
+
+## 세션 독립형 개발 운영
+[핵심 요구사항 보존표](docs/operations/PROJECT_INVARIANTS.md) · [차단점](docs/operations/BLOCKERS.md) · [작업 이력](docs/operations/WORK_LOG.md) · [진행률 기준](docs/operations/PROGRESS_MODEL.md) · [인수인계](docs/operations/HANDOFF.md) · [GPT-01](docs/operations/GPT-01.md)
+현재 작업과 실제 검증 결과는 STATUS를 참조한다. 이전 대화를 기억하지 않아도 저장소를 읽어 재개할 수 있게 유지한다.
