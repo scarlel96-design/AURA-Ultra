@@ -9,9 +9,9 @@
 |---|---|
 | 정본 브랜치 | main |
 | 확인한 코드 SHA | 320ca1b02a2153a8b9dce35f0123ecaf358c12d0 (GPT-05 R03 통합 CI 성공) |
-| 활성 GPT 작업 | GPT-04 PARTIAL / 통합 CI 성공; GPT-05 PARTIAL R04 후보 성공·통합 |
+| 활성 GPT 작업 | GPT-04 PARTIAL / 통합 CI 성공; GPT-05 PARTIAL R04 후보 성공·통합 / R05 이벤트 모션 후보 검증 대기 |
 | 활성 WO | WO-01 PARTIAL; WO-02·04 준비 작업만 일부 구현 |
-| 다음 안전한 행동 | R04 통합 CI 확인 및 R05 독립 이벤트 모션 준비 |
+| 다음 안전한 행동 | R04 통합 CI 46073229954 및 R05 후보 CI 46073330047 확인 → 통합 검토 |
 | 다음 실행 명세 | operations/GPT-05.md 및 operations/GPT-04.md |
 | 현재 차단 | B-011 도구 불일치 해결; B-002/003 런타임/004/005/006/007/008 유지 |
 | 공식 WO GO | 0/38 |
@@ -373,3 +373,9 @@ PRE-FLIGHT: main 209d69d311bf2ce3fa56a36c802a4909c2f85555, candidate 59c01a69b41
 - Both runs XML 4bbe6db1a6a215538ea8e0d37509c35132845ad845a0fb42efb78c19f8f11313, asset estimates active/ambient 2371712/3181712 bytes each. Expected stale WFF4 negative fixture detected. Artifact metadata unexpired, download/rehash NOT RUN. Node20/setup-java v4 warnings remain. Integrate exactly two tested blobs; preserve main reports. G1/G2/G3/G4/G6 candidate PASS, G5 self-review, G7 ref verification. Combined CI PENDING. No product/runtime change.
 - External audit checkpoint (prior read-only review): PR2 AG R05, PR3 GB R02 open/unmerged; AG 60 schema/6 memory/6 signature log counts, 28 unit/68 subtests reported; GB JUnit 40 PASS and domain 81 PASS, 5 pre-fix FAIL. HOLD pending AG01-AUD-05..09 (per-display identity, bounded PNG, actual video, selection rechecks, recovery scope) and GB02-AUD-05..08 (old policy flags, unrelated sensor commit, charging/low-power policy review, module CI) plus revision-limit protection. Static review findings, new repro NOT RUN. No agent changes or runtime setup authorization; do not assume next external rounds started.
 - GPT-04/05 PARTIAL, GPT 3/12, WO GO 0/38, release NO-GO. Next independent M05/M09/M13/M14 event arbitration reference; avoid GB/AG source ownership.
+
+
+## GPT-05 R05 — event arbitration checkpoint (2026-11-28 KST)
+- R04 integration 966c5583877476967787bc8266bb66e318e201b2, two exact tested blobs verified in main, [CI 46073229954](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46073229954) IN_PROGRESS at observation. New candidate e0f38960590ebc3ed0232e14a71adb2f57492c22, branch gpt-05-event-arbitration, [CI 46073330047](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46073330047) PENDING at observation. Four paths: tools/motion_events.py, tests/unit/test_motion_events.py, docs/operations/GPT-05.md, docs/evidence/GPT-05/REPORT-05-EVENTS.md. Confirmed 15 test method definitions, not execution. Expected 226 host tests, 2048 combination cases, 60 starts. G2/G3/G4/G6 pending; G5 self-review only, G7 records.
+- R05 reference: M05 350 ms, M09 550 ms, M13 950 ms, M14 750 ms; simultaneous priority M14>M13>M09>M05, one effect, no decorative preemption or queue, 1500 ms global start interval. Cancel when source changes or becomes unavailable, or protective policy/profile changes. Static snapshot immediately retained. No replay after policy reentry or missing-source recovery. Goal crossing needs same day and target, once per day even when suppressed. Strict serialized monotonic tick, rejected old/conflicting equal ticks; caller responsible for ordering policy updates and fresh data. No real WFF trigger/renderer/cancellation, persistent day latch, sensor validation, power, video or glyph claim. Draft priority/durations/cooldown/tokens not product approval. No product, workflow, dependency or agent path changes.
+- Next verify R04 integration and R05 exact candidate CI, 211/226 host counts, MOTION_EVENT_RESULT 2048/60, all prior motion, preview, APK/bundle gates, and only then integrate. B-005 and runtime blockers remain. External PR2/3 HOLD; prior static review findings recorded in REPORT-05.md; new agent rounds not confirmed. No emulator setup or install. GPT-04/05 PARTIAL, GPT 3/12, WO GO 0/38, release NO-GO.
