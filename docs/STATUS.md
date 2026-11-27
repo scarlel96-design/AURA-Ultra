@@ -9,7 +9,7 @@
 |---|---|
 | 정본 브랜치 | main |
 | 확인한 코드 SHA | f284b1bd69a767ef0f7285449fe7c45f05895e53 |
-| 활성 GPT 작업 | GPT-03 READY / GPT-02 GO(개발 기반) |
+| 활성 GPT 작업 | GPT-03 회차 01 후보 / GPT-02 GO |
 | 활성 WO | WO-01 PARTIAL; WO-02·04 준비 작업만 일부 구현 |
 | 다음 안전한 행동 | GPT-03: 공통 토큰 기반 결정적 WFF·그래픽 자산 생성 및 검증 도구 준비 |
 | 다음 실행 명세 | operations/GPT-03.md |
@@ -189,3 +189,6 @@ G0 PASS; G1 현재 작업 범위 PASS; G2 40 단위 및 공식 negative probe PA
 
 ## 외부 에이전트 1차 병행 준비
 [배정표](operations/agent-orders/README.md), [GB-01](operations/agent-orders/GB-01.md), [AG-01](operations/agent-orders/AG-01.md) 등록. Grok Build 순수 Kotlin 도메인 계약, Antigravity CLI WFF4/5 PoC. 상태 READY(실행 미확인), 별도 브랜치 및 파일 소유권. GPT-03 활성 유지, 중앙 문서는 총괄 담당자만 갱신한다. 제품 코드/판정 변경 없음.
+
+## GPT-03 회차 01 후보
+격리 브랜치 gpt-03-generator: 기존 XML/preview 보존, 토큰 계약, template 생성, palette SVG, SHA-256 manifest 및 stale 검사, 신규 시험. CI PENDING. 외부 GB-01/AG-01 소유 파일 변경 없음. 다음 행동은 CI 결과 확인 및 실제 flavor override 격리 시험. [REPORT-01](evidence/GPT-03/REPORT-01.md).

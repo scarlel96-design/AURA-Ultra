@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Bootstrap face. Premium assets and motion require separate PoC approval. -->
+<WatchFace width="{{size}}" height="{{size}}">
+    <Metadata key="CLOCK_TYPE" value="DIGITAL" />
+    <Metadata key="PREVIEW_TIME" value="10:08:00" />
+    <Scene backgroundColor="{{colors.background}}">
+        <Group name="ActiveDecoration" x="0" y="0" width="{{size}}" height="{{size}}">
+            <Variant mode="AMBIENT" target="alpha" value="0" />
+            <PartDraw x="0" y="0" width="{{size}}" height="{{size}}">
+                <Ellipse x="{{decoration.outerRing.0}}" y="{{decoration.outerRing.1}}" width="{{decoration.outerRing.2}}" height="{{decoration.outerRing.3}}">
+                    <Stroke color="{{colors.ring}}" thickness="{{decoration.outerStroke}}" />
+                </Ellipse>
+                <Ellipse x="{{decoration.innerRing.0}}" y="{{decoration.innerRing.1}}" width="{{decoration.innerRing.2}}" height="{{decoration.innerRing.3}}">
+                    <Stroke color="{{colors.innerRing}}" thickness="{{decoration.innerStroke}}" />
+                </Ellipse>
+                <RoundRectangle x="{{decoration.batteryPanel.0}}" y="{{decoration.batteryPanel.1}}" width="{{decoration.batteryPanel.2}}" height="{{decoration.batteryPanel.3}}" cornerRadiusX="{{decoration.panelRadius}}" cornerRadiusY="{{decoration.panelRadius}}">
+                    <Fill color="{{colors.panel}}" />
+                    <Stroke color="{{colors.ring}}" thickness="{{decoration.panelStroke}}" />
+                </RoundRectangle>
+            </PartDraw>
+            <PartText x="{{layout.brand.0}}" y="{{layout.brand.1}}" width="{{layout.brand.2}}" height="{{layout.brand.3}}">
+                <Text align="CENTER"><Font family="SYNC_TO_DEVICE" size="{{typography.brand}}" color="{{colors.accent}}">AURA ULTRA</Font></Text>
+            </PartText>
+            <PartText x="{{layout.date.0}}" y="{{layout.date.1}}" width="{{layout.date.2}}" height="{{layout.date.3}}">
+                <Text align="CENTER">
+                    <Font family="SYNC_TO_DEVICE" size="{{typography.date}}" color="{{colors.secondary}}">
+                        <Template>%s.%s · %s<Parameter expression="[MONTH_Z]" /><Parameter expression="[DAY_Z]" /><Parameter expression="[DAY_OF_WEEK_S]" /></Template>
+                    </Font>
+                </Text>
+            </PartText>
+            <PartText x="{{layout.battery.0}}" y="{{layout.battery.1}}" width="{{layout.battery.2}}" height="{{layout.battery.3}}">
+                <Text align="CENTER">
+                    <Font family="SYNC_TO_DEVICE" size="{{typography.battery}}" color="{{colors.accent}}">
+                        <Template>%s%%<Parameter expression="[BATTERY_PERCENT]" /></Template>
+                    </Font>
+                </Text>
+            </PartText>
+            <PartText x="{{layout.steps.0}}" y="{{layout.steps.1}}" width="{{layout.steps.2}}" height="{{layout.steps.3}}">
+                <Text align="CENTER">
+                    <Font family="SYNC_TO_DEVICE" size="{{typography.steps}}" color="{{colors.secondary}}">
+                        <Template>%s / %s<Parameter expression="[STEP_COUNT]" /><Parameter expression="[STEP_GOAL]" /></Template>
+                    </Font>
+                </Text>
+            </PartText>
+        </Group>
+        <DigitalClock x="{{layout.time.0}}" y="{{layout.time.1}}" width="{{layout.time.2}}" height="{{layout.time.3}}">
+            <TimeText x="0" y="0" width="{{layout.time.2}}" height="{{layout.time.3}}" format="hh:mm" hourFormat="SYNC_TO_DEVICE" align="CENTER" alpha="255">
+                <Variant mode="AMBIENT" target="alpha" value="0" />
+                <Font family="SYNC_TO_DEVICE" size="{{typography.time}}" weight="NORMAL" color="{{colors.primary}}" />
+            </TimeText>
+            <TimeText x="0" y="0" width="{{layout.time.2}}" height="{{layout.time.3}}" format="hh:mm" hourFormat="SYNC_TO_DEVICE" align="CENTER" alpha="0">
+                <Variant mode="AMBIENT" target="alpha" value="255" />
+                <Font family="SYNC_TO_DEVICE" size="{{typography.time}}" weight="THIN" color="{{colors.ambient}}" />
+            </TimeText>
+        </DigitalClock>
+    </Scene>
+</WatchFace>

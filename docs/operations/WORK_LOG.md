@@ -67,3 +67,6 @@
 
 ## 2026-11-27 / 외부 에이전트 1차 배정
 - 기준 main c1c66b76b7af4a20bb7a08a369fb5962d28b973f 실제 조회 및 활성 GPT-03 확인. GB-01/AG-01 지시서와 소유권 배정표 등록. 사용자 직접 CLI 실행 전 상태 READY. 제품 코드 변경 없음. 기존 GPT/WO/출시 판정 유지. 병행 작업 증거는 독립 보고서로 수신 후 검토한다.
+
+## 2026-11-27 / GPT-03 회차 01
+- 기준 main fe4e19d7c6e97c043e4f31cb5960bdb430fd507b, 이전 코드 f284b1b 및 CI 46002470824 SUCCESS 재확인. 외부 두 브랜치 원격 미등록 확인(로컬 진행 여부 unknown). GPT-03 소유 경로만 변경. 토큰 및 template, 원본 preview, palette, deterministic generation/stale check, 시험 및 CI 후보. REPORT-01 참조. 새 CI PENDING.

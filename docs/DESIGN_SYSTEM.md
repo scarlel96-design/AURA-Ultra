@@ -52,3 +52,6 @@ WFF 3+ 혼합 모드, WFF 4 색상 변환, WFF 5 확장 혼합 기능을 지원 
 
 ## 검수
 각 테마의 AOD/활성/절전/오류/고대비 상태 스크린샷을 수집한다. 작은 화면, 긴 한국어, 12시간제, 최대/최소 숫자 및 터치 영역을 검사한다. 광원 불일치, 밴딩, 픽셀 깨짐, 잘림, 눈부심, 정보 가림, 의미 없는 발광을 결함으로 기록한다. 콘셉트 이미지를 실제 렌더링 증거로 사용하지 않는다.
+
+## Bootstrap token contract
+`design-system/tokens/bootstrap.json` is the initial generator input, not the final design system. Opaque ARGB colors, integer logical coordinates, 450×450 canvas and 12–18 logical-unit inset are enforced. Text rectangles are checked against the circle, not actual glyphs. Ring and panel geometry are explicit tokens. Existing bootstrap visuals remain unchanged; final material and responsive layout await later PoCs.
