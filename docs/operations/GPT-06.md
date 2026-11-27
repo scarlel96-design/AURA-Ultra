@@ -11,3 +11,5 @@ Run python tools/material_foundation.py --check; --manifest; --png 480 glass (re
 격리된 WFF2~5 실제 APK에 Signature basic 시간·정보와 검증된 유리 패널, 정밀 링을 통합한다. 공식 validator와 memory evaluator, APK 내용·리소스 참조·서명, AOD 장식 숨김, 원본 불변을 검증한다. 정적 fallback 우선. 실시간 Gyro, fluid digits, profile switching은 실제 검증 전 미구현으로 유지한다. 제품 파일 직접 덮어쓰기 및 사용자 기기 설치 금지. 생성/빌드 재현 경로, 정확한 SHA와 실제 아티팩트를 보고한다. GPT-06 준비 종료/소진 시 반드시 사용자에게 보고하고 중단한다. 제품 NO-GO 유지.
 
 [원본 기록](https://github.com/scarlel96-design/AURA-Ultra/blob/c4791149928ce1d90fadc31dcb7af73403e6d02f/docs/operations/GPT-06.md); [archive](../archive/README.md).
+
+R06 후보 e1a5f62abbf20cbaa6d9c741251b96d7a6caddd1; [CI](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46082882539) QUEUED; [실행 보고](https://github.com/scarlel96-design/AURA-Ultra/blob/e1a5f62abbf20cbaa6d9c741251b96d7a6caddd1/docs/evidence/GPT-06/REPORT-06-MATERIAL-APK.md). 기존 검사 단계 보존, 신규 격리 빌드·증거 업로드 단계 추가. 검증 전 통합 금지. 다음 턴 실제 CI 로그, 309 예상 시험, MATERIAL_APK_RESULT 및 네 APK의 메모리/서명/리소스 해시와 artifact 검증. 실패 시 수정·재시험. 현재 제품 NO-GO.
