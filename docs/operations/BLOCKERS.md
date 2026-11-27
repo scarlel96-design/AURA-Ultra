@@ -54,3 +54,5 @@ B-003: SDK 패키지 android-37.0 설치, 네 APK build/스키마/메모리/서�
 GPT-03 회차 01 후보 CI 46006560829 진행 중. 기존 차단점 유지, 신규 결함 확정 없음. 실제 flavor override 및 독립 생성 프로세스 시험 후속. REPORT-01 참조.
 
 외부 작업 접수: GB-01은 독립 재실행·통합 전 검토 보완 필요. 비ASCII Windows Gradle 테스트 워커 ClassNotFoundException은 환경 제한 GB01-E1, 제품 차단 추가 아님. AG-01 원격 SHA 미확인; push 후 증거 확인. B-002/003/004/005/006/007/008 유지. GPT-03 후보 CI 성공, main 통합 및 재생성/override 시험 남음.
+
+2026-11-28 OPS-05: GB01-D2/D3 수정 코드 및 JUnit 81건 증거 확인. 독립 CI 46056345699 진행. GB01-E1 비ASCII Windows 제한 유지. AG 원격 접근 해소; AG01-AUD-01/02/03의 증거 및 검사기 보완, 실제 Wear runtime NOT RUN. B-002/003/005 유지. 4분할 시계 자체가 아니라 가시 PartText 추가 layer 810000 bytes (공식 평가기 조건). B-001/010 해결 유지. GPT03/GB01 통합 CI 46056345651/46056345699 확인 후 판정.
