@@ -2,16 +2,16 @@
 
 > [!IMPORTANT]
 > 매 작업 턴 시작 시 [루트 AGENTS.md](../AGENTS.md)의 PRE-FLIGHT를 먼저 수행한다. 이 문서만 읽고 작업을 시작하지 않는다. 최신 HEAD, 필수 규정, 활성 작업 및 실제 CI 증거를 확인한다.
-기준일: 2026-11-27. 이 문서는 매 작업 종료 시 업데이트한다.
+기준일: 2026-11-28. 이 문서는 매 작업 종료 시 업데이트한다.
 현재 목표: GPT 선행 개발 최대화(작업량 추정 목표 65%, 조건부 상한 75%). 최종 프리미엄 품질 유지. Codex 중복 작업 최소화.
 
 | 항목 | 현재 값 |
 |---|---|
 | 정본 브랜치 | main |
-| 확인한 코드 SHA | 0cec62250a2dc05cd02773f6969726867946fe4f (통합 후보 검증 완료) |
-| 활성 GPT 작업 | GPT-03 PARTIAL / GB-01 통합 승인 / flavor override 시험 |
+| 확인한 코드 SHA | 5c26135b5347da38edb5e0ab69c0561710d69733 (검증 코드와 동일, 중앙 문서 병합) |
+| 활성 GPT 작업 | GPT-03 PARTIAL / 격리 flavor 후보 CI 진행 / GB-01 통합 완료 |
 | 활성 WO | WO-01 PARTIAL; WO-02·04 준비 작업만 일부 구현 |
-| 다음 안전한 행동 | GPT-03 별도 flavor override 격리 검증; GB-02 독립 착수 가능 |
+| 다음 안전한 행동 | CI 46059108841 및 46059190750 최종 로그 확인 → GPT-03 후보 통합 판단 → GPT-04 |
 | 다음 실행 명세 | operations/GPT-03.md |
 | 현재 차단 | B-011 도구 불일치 해결; B-002/003 런타임/004/005/006/007/008 유지 |
 | 공식 WO GO | 0/38 |
@@ -231,3 +231,11 @@ G0 PASS; G1 현재 작업 범위 PASS; G2 40 단위 및 공식 negative probe PA
 
 ## GPT-03 회차 02 — 검증된 공통 기반 통합 승인
 기준 main a9664b2e3eb72f99a06c2d973259cb80d7cc4337; 통합 코드 0cec62250a2dc05cd02773f6969726867946fe4f. 2026-11-28 KST. [CI 46056609237](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46056609237), job 140700517415 SUCCESS: 독립 생성/누락·stale/재생성 검사 PASS, 68 host tests OK, WFF2~5 명시적 PASSED 및 invalid fixture FAILED 각 4건, clean build 1m 7s, 리소스 전용 4 APK/원본 XML/manifest/메모리/서명 PASS. memory-footprint 1.5.1 hash 18d3844; 모든 profile active/ambient 2371712 bytes. Artifact 15225539840, 79010 bytes, digest sha256:a8d89d87ba5ce8adf041b5d773ef60cda61219ee5191cc848544394502c22c75, expired=false. 원본 CI 및 artifact metadata 확인, 독립 APK 재다운로드 미실시. 기존 Kotlin CI 46056345699의 81 PASS/0 FAIL/0 ERROR/0 SKIP은 c6ae812 코드에 대한 증거. c6ae812→0cec622 변경은 tools/verify_wff.py, tools/verify_memory.py 및 INTEGRATION_PLAN.md뿐이다. 모듈/도메인 workflow 동일. B-011의 현행 도구 불일치 해결; 가변 upstream release 재갱신 위험 유지. 중앙 기록을 최신 main에서 보존하고 검증 후보 코드와 GB-01 원본 blob을 변경 없이 병합한다. 외부 AG 소유 경로는 제외. GB-01 독립 모듈 통합 승인, GB-02 READY(새 소유 경로만). GPT-03은 실제 격리 flavor override 검증 전 PARTIAL. main 통합 SHA 자체 CI는 별도로 확인한다. 정식 WO 0/38 및 출시 NO-GO 유지. 다음: GPT-03 공통 빌드 격리 검사; AG-01 런타임 PoC 중복 금지.
+
+## GPT-03 회차 02 — 통합 재확인 및 격리 생성 후보
+- main 통합 SHA 5c26135b5347da38edb5e0ab69c0561710d69733. 검증 후보 0cec62250a2dc05cd02773f6969726867946fe4f와 비교한 차이 10개 모두 문서. GB-01 PR #1 merged=true 확인. AG-01 PR #2 open, head 2749e35cd6f061dc61dcdd57e855d430ef9dbe38, 미병합. AG-01/GB-02 소유권 유지.
+- main 독립 Kotlin [CI 46059108810](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46059108810), job 140708749839 SUCCESS. JDK17 Temurin, BUILD SUCCESSFUL in 52s, DOMAIN_RESULT 81 PASS/0 FAIL/0 ERROR/0 SKIP. Artifact 15227089416, 5198 bytes, digest sha256:ff0e6075574f3a57808ff8346eb2adefbc8f8f9187726c1cfbac6ab93de82149, expired=false; 원본 로그/메타데이터 확인, 재다운로드 미실시. GB-02 READY. 기존 bootstrap 재실행은 아래 기록.
+- 신규 후보 020d2e835a474e1785f1fbe82d8eb159e514b7bb, branch gpt-03-flavor-isolation. [실행 명세](https://github.com/scarlel96-design/AURA-Ultra/blob/020d2e835a474e1785f1fbe82d8eb159e514b7bb/docs/evidence/GPT-03/FLAVOR-ISOLATION.md). 변경 5개: tools/check_flavor_isolation.py, tests/unit/test_flavor_isolation.py, bootstrap.yml, ASSET_GENERATION.md, FLAVOR-ISOLATION.md. 외부 소유 경로 및 제품 apps/watchface 변경 0. 기존 생성기에서 색상만 변경한 XML을 임시 WFF4 override로 생성. WFF2/3/5 공통 원본 유지. 격리 Gradle clean build, 실제 source/hash/ZIP XML 일치, 공식 메모리·서명, 변경된 expected XML로 WFF4만 정확한 mismatch 검출, 복구 후 재확인. 임시 APK 업로드 금지. 6개 새 단위 fixture. CI 74 host tests 기대; 실제 개수는 최종 원본 로그 대조 후 확정. 고급 WFF 기능 자체·센서·실기기 시험은 AG/Codex 범위, 중복 작업 없음.
+- [CI 46059108841](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46059108841), job 140708750567, in_progress/PENDING: Set up job: success; Verify Gradle wrapper: success; Reproduce bootstrap assets: success; Independent bootstrap regeneration: success; Check project invariants: success; Validation tool regression tests: success; Install Android SDK: success; Confirm Android SDK tools: success; Official WFF validation: success; Build debug APKs: success; Check APK contents: success; Official asset memory evaluation: in_progress; Verify debug APK signatures: pending; Upload debug APKs: pending.
+- [CI 46059190750](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46059190750), job 140709019984, in_progress/PENDING: Set up job: success; Verify Gradle wrapper: success; Reproduce bootstrap assets: success; Independent bootstrap regeneration: success; Check project invariants: success; Validation tool regression tests: success; Install Android SDK: success; Confirm Android SDK tools: success; Official WFF validation: success; Build debug APKs: in_progress; Check APK contents: pending; Official asset memory evaluation: pending; Verify debug APK signatures: pending; Isolated generated flavor regression: pending; Upload debug APKs: pending.
+- G5 별도 자기 정적 검토: 외부 파일 변경 없음, 기존 제품 APK 원본 유지, 임시 workspace 및 exact negative 판정. 현재 fixture는 common-only bootstrap 및 4개 enabled profile을 전제로 한다. 실제 제품 override 도입 전 이 시험을 독립 기준 fixture로 일반화하고 관련 회귀 시험을 수행한다. G2/G3/G4/G6 최종 CI 원본 로그 대기. 실기기 미실시. G7 main 문서 기록 및 반영 확인 대상. GPT-03 PARTIAL, GPT 완료 2/12, WO GO 0/38, 출시 NO-GO. 다음 행동: 두 bootstrap CI 원본 로그/Artifact 확인. 후보의 실제 FLAVOR_RESULT 4개×2회, 정확한 WFF4 실패와 나머지 3개 PASS, 정상 복원 및 최종 artifact 확인 후 안전한 통합. 그 후 GPT-04 공통 레이아웃 준비. 도구 pin 자동 변경 금지. 신규 의존성/실제 사용자 기기 변경 없음.

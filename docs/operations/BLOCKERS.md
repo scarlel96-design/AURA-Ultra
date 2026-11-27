@@ -65,3 +65,5 @@ GPT-03 회차 01 후보 CI 46006560829 진행 중. 기존 차단점 유지, 신�
 - 신규 후보 CI: AURA Bootstrap 46056609237 in_progress/PENDING. 최종 원본 로그 미확인. Kotlin 소스는 c6ae812와 동일; 새 SHA에서 도메인 재실행 여부 구분. AG-01-R03은 현재 자기 브랜치의 고정 도구를 사용하며 새 도구 전환은 중앙 승인 이후. B-011 해결은 후보 전체 게이트 및 SHA 대조 후 판정. GPT-03 PARTIAL/GB-01 독립 CI PASS/AG-01 PARTIAL, 정식 WO 0/38, 출시 NO-GO.
 
 B-011 RESOLVED(현재 도구 버전): CI 46056609237 공식 validator 및 evaluator 신규 pin, 4 APK 전체 PASS. 가변 release에 따른 재발 가능성은 남는다. 이전 실패 로그 유지. GB01-E1 및 AG01-AUD 항목 유지. 실제 Wear OS runtime 미실시.
+
+GPT-03 회차 02: B-011 현재 pin 해결 유지, main GB01 독립 CI 81 PASS 재확인. 격리 flavor 후보 CI 46059190750 및 main CI 46059108841 진행/최종 확인 대기. 향후 실제 제품 override 도입 전 현재 common-only fixture를 일반화한다. B-002/003/004/005/006/007/008 및 GB01-E1 유지. AG-01 소유권 유지, PR #2 미병합.
