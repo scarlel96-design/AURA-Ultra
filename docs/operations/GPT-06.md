@@ -13,3 +13,6 @@ Run python tools/material_foundation.py --check; --manifest; --png 480 glass (re
 [원본 기록](https://github.com/scarlel96-design/AURA-Ultra/blob/c4791149928ce1d90fadc31dcb7af73403e6d02f/docs/operations/GPT-06.md); [archive](../archive/README.md).
 
 R06 후보 e1a5f62abbf20cbaa6d9c741251b96d7a6caddd1; [CI](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46082882539) QUEUED; [실행 보고](https://github.com/scarlel96-design/AURA-Ultra/blob/e1a5f62abbf20cbaa6d9c741251b96d7a6caddd1/docs/evidence/GPT-06/REPORT-06-MATERIAL-APK.md). 기존 검사 단계 보존, 신규 격리 빌드·증거 업로드 단계 추가. 검증 전 통합 금지. 다음 턴 실제 CI 로그, 309 예상 시험, MATERIAL_APK_RESULT 및 네 APK의 메모리/서명/리소스 해시와 artifact 검증. 실패 시 수정·재시험. 현재 제품 NO-GO.
+
+## R06 승격 기준 및 실기기 확인
+[실기기 확인 절차와 승격 게이트](SIGNATURE_DEVICE_GATE.md)를 적용한다. 자동 검사 성공은 개발 후보 승인만 의미한다. 실기기 확인/사용자 명시 승인/실제 후보 프리뷰/롤백 및 단일 생성 경로 확보 전 main 제품 리소스 승격 금지. GPT-06 독립 준비 종료 시 미실행 실기기 항목을 명시하고 중단한다.
