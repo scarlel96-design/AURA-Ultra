@@ -1,0 +1,73 @@
+{
+  "schemaVersion": 1,
+  "logicalSize": 450,
+  "lighting": {
+    "origin": "upper-left",
+    "angleDegrees": 45
+  },
+  "seed": 296,
+  "assets": {
+    "titanium": {
+      "size": [
+        120,
+        32
+      ],
+      "radius": 6,
+      "base": [
+        107,
+        119,
+        131
+      ],
+      "grain": 19,
+      "light": 36
+    },
+    "glass": {
+      "size": [
+        158,
+        52
+      ],
+      "radius": 12,
+      "base": [
+        13,
+        24,
+        36
+      ],
+      "edge": [
+        89,
+        127,
+        156
+      ],
+      "reflection": 30
+    },
+    "highlight": {
+      "size": [
+        80,
+        12
+      ],
+      "radius": 6,
+      "base": [
+        208,
+        233,
+        249
+      ],
+      "peakAlpha": 128
+    }
+  },
+  "profiles": {
+    "ULTRA": [
+      "titanium",
+      "glass",
+      "highlight"
+    ],
+    "BALANCED": [
+      "titanium",
+      "glass",
+      "highlight"
+    ],
+    "ECO": [
+      "titanium",
+      "glass"
+    ],
+    "AOD": []
+  }
+}
