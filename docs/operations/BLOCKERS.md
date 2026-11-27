@@ -50,3 +50,30 @@ GPT-02 회차 02: B-003 API37 전환 후보 격리 검증 중. 스키마 PASS만
 
 ## GPT-02 회차 02 최종
 B-003: SDK 패키지 android-37.0 설치, 네 APK build/스키마/메모리/서명 PASS. 도구 전환 차단 해결. 실제 설치·기능 확인은 남음. B-002/004/007 유지. B-001/010 재발 없음. CI 46002470824, REPORT-02. 첫 CI 46002330942 실패도 보존.
+
+GPT-03 회차 01 후보 CI 46006560829 진행 중. 기존 차단점 유지, 신규 결함 확정 없음. 실제 flavor override 및 독립 생성 프로세스 시험 후속. REPORT-01 참조.
+
+외부 작업 접수: GB-01은 독립 재실행·통합 전 검토 보완 필요. 비ASCII Windows Gradle 테스트 워커 ClassNotFoundException은 환경 제한 GB01-E1, 제품 차단 추가 아님. AG-01 원격 SHA 미확인; push 후 증거 확인. B-002/003/004/005/006/007/008 유지. GPT-03 후보 CI 성공, main 통합 및 재생성/override 시험 남음.
+
+2026-11-28 OPS-05: GB01-D2/D3 수정 코드 및 JUnit 81건 증거 확인. 독립 CI 46056345699 진행. GB01-E1 비ASCII Windows 제한 유지. AG 원격 접근 해소; AG01-AUD-01/02/03의 증거 및 검사기 보완, 실제 Wear runtime NOT RUN. B-002/003/005 유지. 4분할 시계 자체가 아니라 가시 PartText 추가 layer 810000 bytes (공식 평가기 조건). B-001/010 해결 유지. GPT03/GB01 통합 CI 46056345651/46056345699 확인 후 판정.
+
+
+## OPS-05 독립 CI 최종 및 공식 도구 갱신 후보
+- 통합 코드 c6ae81217641dda75b7b3e3fbc0063fd11469c6c: Kotlin CI [46056345699](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46056345699), job 140699646163, SUCCESS. 로그 JDK17 Eclipse Temurin, BUILD SUCCESSFUL in 50s, DOMAIN_RESULT 81 PASS / 0 FAIL / 0 ERROR / 0 SKIP. Artifact [15226378043](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46056345699/artifacts/15226378043), 5180 bytes, digest sha256:a3fec194673e455f63b3a12103ea24c00b20d294ab6a227b6628644d47c5320f, expired=false. 메타데이터 확인, 재다운로드/재해시 미실시. GB-01 독립 CI PASS; main 통합은 아래 공통 게이트 실패로 보류.
+- Bootstrap [46056345651](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46056345651), job 140699646086, FAILURE. 독립 프로세스 --write/--check/missing/stale/repair/byte equality PASS, host 68 PASS/0 FAIL, SDK PASS. 공식 validator 단계 'Validator download size or digest mismatch. Review the official release before updating the pin.' exit 1. 이후 schema/build/APK/memory/signature/Artifact SKIP. 실제 스키마 위반으로 판정하지 않는다.
+- B-011 OPEN/P0: 공식 Google watchface 가변 release 태그에서 JAR 두 개 교체. 공식 [release](https://github.com/google/watchface/releases/tag/release) ID 460768397 published 2026-11-27T15:21:34Z, tag commit 18d3844de1729f0c5128f59cfa359b0e34b66612. [PR 118](https://github.com/google/watchface/pull/118)의 XML DOM parser 설정 통합 변경 파일 및 핵심 diff 확인. validator asset 800984124 SHA256 6ef308dbc306a9187b5b1f4997a662eb57e26ac3650cebbf2ab583cd38bb609e; memory asset 800984064 SHA256 1ec683365aee86627f0eb502b52fc71f71eff1872776edc5bc6ef7c7b37d28bc. 이전 공식 pin과 다름. 공식 release API 메타데이터를 확인했으며 독립 바이너리/소스 재현은 하지 않았다. 정확한 해시 검증을 유지한 새 pin 후보 0cec62250a2dc05cd02773f6969726867946fe4f를 integration/gpt03-gb01에만 반영. 기존 main과 에이전트 증거의 이전 pin은 보존. 도구 실행 버전, 출력, 정상/실패 schema 및 4 APK/메모리/서명 전체 성공 전 병합 금지.
+- 신규 후보 CI: AURA Bootstrap 46056609237 in_progress/PENDING. 최종 원본 로그 미확인. Kotlin 소스는 c6ae812와 동일; 새 SHA에서 도메인 재실행 여부 구분. AG-01-R03은 현재 자기 브랜치의 고정 도구를 사용하며 새 도구 전환은 중앙 승인 이후. B-011 해결은 후보 전체 게이트 및 SHA 대조 후 판정. GPT-03 PARTIAL/GB-01 독립 CI PASS/AG-01 PARTIAL, 정식 WO 0/38, 출시 NO-GO.
+
+B-011 RESOLVED(현재 도구 버전): CI 46056609237 공식 validator 및 evaluator 신규 pin, 4 APK 전체 PASS. 가변 release에 따른 재발 가능성은 남는다. 이전 실패 로그 유지. GB01-E1 및 AG01-AUD 항목 유지. 실제 Wear OS runtime 미실시.
+
+GPT-03 회차 02: B-011 현재 pin 해결 유지, main GB01 독립 CI 81 PASS 재확인. 격리 flavor 후보 CI 46059190750 및 main CI 46059108841 진행/최종 확인 대기. 향후 실제 제품 override 도입 전 현재 common-only fixture를 일반화한다. B-002/003/004/005/006/007/008 및 GB01-E1 유지. AG-01 소유권 유지, PR #2 미병합.
+
+GPT-03 회차 03: CI 46059190750 SUCCESS, 격리 source precedence 및 stale APK 검출·복원 PASS. B-011 해결 유지. 기존 실기기/외부 데이터/정식 배포 차단 유지. 제품 override 확장 전 fixture 일반화.
+
+GPT-04 회차 01: 정적 원형 기하 4화면 PASS; 후보 전체 CI 46059943214 최종 확인 대기. 신규 확정 제품 결함 없음. 실제 글리프/렌더링/해상도 검증은 B-002/004/008 유지. GB-02/AG-01 변경 없음.
+
+GPT-04 회차 01 전체 CI 성공; 기하 후보 통합 승인. 기존 실기기·글리프·공급원 차단 유지.
+
+GPT-04 회차 02: 124/124 합성 호스트 글꼴 조합 fit; 기기 font/실제 표시 및 locale·native HR/날씨 runtime 미실시, 기존 B-002/004/006/008 유지. 후보 전체 CI 46060479503 최종 확인 대기. AG/GB 소유권 및 기존 main 제품 유지.
+
+OPS-06: GPT04-D1 OPEN/P0 후보 Group name 필수 속성 누락(46060479503), 수정 374dec9 재검증 CI 46062170635. AG01-AUD-04 OPEN/P1 runtime package/display 오판 4종 분리 함수 재현. AG 원격 환경 0 Wear AVD, 실제 실행 NOT RUN. AG 기존 pin CI 실패; main pin 해결 유지. GB-01 통합 완료, GB-02 READY.

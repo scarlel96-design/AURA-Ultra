@@ -1,0 +1,56 @@
+GB-01 round 02 domain test summary
+Verified code before this evidence commit: 46caded706c54f7eb501dd5d8385fc52bca961b1
+Worktree: C:\Users\scarl\AppData\Local\Temp\aura-gb01-wt
+Command: gradlew -p modules/domain clean test dependencies --configuration testRuntimeClasspath --rerun-tasks --offline --console=plain --no-daemon
+Result: BUILD SUCCESSFUL in 41s
+TEST_JVM version=17 vendor=Eclipse Temurin path=C:\Users\scarl\.jdks\temurin-17
+java -version: openjdk 17.0.20.1 2026-08-18, Temurin-17.0.20.1+1
+file.encoding=MS949 sun.jnu.encoding=MS949 os=Windows 11
+Gradle launcher JVM seen in --info: Eclipse Adoptium jdk-21.0.5.11-hotspot
+Wrapper SHA-256: b3a875ddc1f044746e1b1a55f645584505f4a10438c1afea9f15e92a7c42ec13
+
+JUnit XML timestamp sample: 2026-11-27T14:24:54.596Z (ValidationTest)
+DraftContractTest 12
+FreshnessTest 11
+IdentityTest 5
+PipelineTest 5
+RevisionGateTest 15
+SourceScanTest 1
+ValidationTest 32
+TOTAL 81 tests, 0 failures, 0 skipped, 0 errors
+
+Reproduction before the fix, same new fixtures, validation logic not yet changed:
+81 tests completed, 6 failed
+- ValidationTest.internalWhitespaceInUnitIsRejectedEvenWhenExpectedMatches: expected [UNIT_PADDED] but was []
+- ValidationTest.internalWhitespaceThatIsAlsoAControlCharacterIsRejected: expected [UNIT_PADDED] but was []
+- ValidationTest.nonWhitespaceControlCharacterInUnitIsRejected: expected [UNIT_CONTROL] but was []
+- ValidationTest.exclusiveAdjacentLongRangeIsEmpty: DomainParse.Accepted was not Rejected
+- ValidationTest.exclusiveExtremeWithNoRepresentableLongIsEmpty: DomainParse.Accepted was not Rejected
+- PipelineTest.corruptUnitDoesNotReplaceStoredReading: deriveStatus returned Unchanged, not Rejected
+The other 75 tests passed, including the original 70.
+
+Host: python -m unittest discover -s tests/unit -p test_*.py
+Ran 40 tests in 0.042s OK
+python tools/check_foundation.py PASS
+That script prints NOT RUN for official WFF schema, renderer, memory, battery, and device compatibility.
+
+testRuntimeClasspath:
+org.jetbrains.kotlin:kotlin-stdlib:2.4.21
+org.jetbrains:annotations:13.0
+org.jetbrains.kotlin:kotlin-test-junit5:2.4.21
+org.jetbrains.kotlin:kotlin-test:2.4.21
+org.junit.jupiter:junit-jupiter-api:5.10.1
+org.junit.jupiter:junit-jupiter-engine:5.10.1
+org.junit.platform:junit-platform-engine:1.10.1
+org.junit.platform:junit-platform-commons:1.10.1
+org.junit.platform:junit-platform-launcher:1.10.1
+org.opentest4j:opentest4j:1.3.0
+Repositories: mavenCentral and Gradle Plugin Portal. Foojay resolver convention 1.0.0.
+
+Non-ASCII reproduction: junction C:\Users\scarl\AppData\Local\Temp\코딩-gb01 to the ASCII worktree.
+IdentityTest failed: ClassNotFoundException from the JDK 17 test worker AppClassLoader.
+Worker command used Temurin 17 and @gradle-worker-classpath argfile.
+Argfile bytes for the Korean path segment: EC BD 94 EB 94 A9 (UTF-8).
+UTF-8 decode of that classpath entry exists. MS949 decode does not.
+Same JDK: a class named in a UTF-8 @argfile was not found. The same class in an MS949 @argfile printed PROBE_OK.
+-Dfile.encoding=UTF-8 is on the worker command after the @argfile and does not change launcher decoding.

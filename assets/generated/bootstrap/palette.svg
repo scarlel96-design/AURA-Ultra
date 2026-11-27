@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+  <title>AURA bootstrap palette reference</title>
+  <rect width="256" height="256" fill="#000000"/>
+  <rect x="8" y="4" width="56" height="24" fill="#79D4F2"/>
+  <text x="76" y="20" fill="#FFFFFF" font-size="12">accent #FF79D4F2</text>
+  <rect x="8" y="36" width="56" height="24" fill="#B7C0C9"/>
+  <text x="76" y="52" fill="#FFFFFF" font-size="12">ambient #FFB7C0C9</text>
+  <rect x="8" y="68" width="56" height="24" fill="#000000"/>
+  <text x="76" y="84" fill="#FFFFFF" font-size="12">background #FF000000</text>
+  <rect x="8" y="100" width="56" height="24" fill="#172C39"/>
+  <text x="76" y="116" fill="#FFFFFF" font-size="12">innerRing #FF172C39</text>
+  <rect x="8" y="132" width="56" height="24" fill="#101E2A"/>
+  <text x="76" y="148" fill="#FFFFFF" font-size="12">panel #FF101E2A</text>
+  <rect x="8" y="164" width="56" height="24" fill="#F3F7FA"/>
+  <text x="76" y="180" fill="#FFFFFF" font-size="12">primary #FFF3F7FA</text>
+  <rect x="8" y="196" width="56" height="24" fill="#314B60"/>
+  <text x="76" y="212" fill="#FFFFFF" font-size="12">ring #FF314B60</text>
+  <rect x="8" y="228" width="56" height="24" fill="#A9BACB"/>
+  <text x="76" y="244" fill="#FFFFFF" font-size="12">secondary #FFA9BACB</text>
+</svg>

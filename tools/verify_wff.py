@@ -10,7 +10,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 CACHE = ROOT / ".aura-tools"
 URL = "https://github.com/google/watchface/releases/download/release/wff-validator.jar"
-SHA256 = "0e2204137fca618264e82f9a053c6c9ec6d4fad08d2b56aa8a57d75c0508a804"
+# Official release 460768397, source commit 18d3844 (2026-11-27).
+SHA256 = "6ef308dbc306a9187b5b1f4997a662eb57e26ac3650cebbf2ab583cd38bb609e"
 
 PASS = re.compile(
     r"^INFO:\s*(?:✅\s*)?PASSED\s*:\s*(.+?) is valid against watch face format version #(\d+)\s*$"

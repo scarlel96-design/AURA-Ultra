@@ -47,3 +47,6 @@ Run `python tools/build_profiles.py assemble` and `python tools/build_profiles.p
 
 ## API37 verified baseline
 Use SDK Manager package `platforms;android-37.0`, not `platforms;android-37`. Use `compileSdk = 37` and `targetSdk = 37`. Install build-tools 36.0.0, JDK17. CI 46002470824 verified Gradle9.3.1/AGP9.1.1, all four debug APKs, 40 unit tests, schemas, asset memory and signatures. Artifact 15199096968. The initial CI 46002330942 failed due to the package identifier. Real device and release builds remain unverified.
+
+## Bootstrap generation
+Run `python tools/generate_bootstrap.py --write` after editing tokens or the XML template. Run `python tools/generate_bootstrap.py --check` to verify deterministic output and SHA-256 manifest (printed to stdout). `assets/source/bootstrap/preview.png` preserves the original preview; it is copied byte for byte. The generated palette SVG is a development reference, not an APK resource. Do not edit generated face, preview or palette directly. See [generation contract](ASSET_GENERATION.md).

@@ -8,7 +8,8 @@
     "ring": "#FF314B60",
     "accent": "#FF79D4F2",
     "panel": "#FF101E2A",
-    "ambient": "#FFB7C0C9"
+    "ambient": "#FFB7C0C9",
+    "innerRing": "#FF172C39"
   },
   "layout": {
     "time": [
@@ -48,5 +49,30 @@
     "battery": 24,
     "steps": 22,
     "brand": 15
-  }
+  },
+  "decoration": {
+    "outerRing": [
+      15,
+      15,
+      420,
+      420
+    ],
+    "innerRing": [
+      23,
+      23,
+      404,
+      404
+    ],
+    "batteryPanel": [
+      98,
+      247,
+      254,
+      42
+    ],
+    "outerStroke": 2,
+    "innerStroke": 1,
+    "panelStroke": 1,
+    "panelRadius": 21
+  },
+  "safeInset": 12
 }

@@ -9,7 +9,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 CACHE = ROOT / ".aura-tools"
 URL = "https://github.com/google/watchface/releases/download/release/memory-footprint.jar"
-SHA256 = "503c5f7bc9209ec4d4d4974f973cf66ad6fbb435e8422c310aac5b820f1f991a"
+# Official release 460768397, source commit 18d3844 (2026-11-27).
+SHA256 = "1ec683365aee86627f0eb502b52fc71f71eff1872776edc5bc6ef7c7b37d28bc"
 MIB = 1024 * 1024
 LIMITS = {"maxActiveBytes": 70 * MIB, "maxAmbientBytes": 7 * MIB}
 FIELDS = {"totalBytes", *LIMITS}

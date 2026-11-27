@@ -23,6 +23,14 @@ jobs:
           python-version: '3.12'
       - name: Verify Gradle wrapper
         run: echo 'b3a875ddc1f044746e1b1a55f645584505f4a10438c1afea9f15e92a7c42ec13  gradle/wrapper/gradle-wrapper.jar' | sha256sum -c -
+      - name: Reproduce bootstrap assets
+        run: python tools/generate_bootstrap.py --check
+      - name: Independent bootstrap regeneration
+        run: python tools/check_bootstrap_reproduction.py
+      - name: Round layout geometry
+        run: |
+          python tools/round_layout.py --write
+          python tools/round_layout.py --check
       - name: Check project invariants
         run: python tools/check_foundation.py
       - name: Validation tool regression tests
@@ -49,6 +57,8 @@ jobs:
         run: python tools/verify_memory.py
       - name: Verify debug APK signatures
         run: python tools/build_profiles.py signatures
+      - name: Isolated generated flavor regression
+        run: python tools/check_flavor_isolation.py
       - name: Upload debug APKs
         uses: actions/upload-artifact@v4
         with:
