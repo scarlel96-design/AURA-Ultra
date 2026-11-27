@@ -1,5 +1,5 @@
 # GPT-04 — 원형 레이아웃 및 가독성 준비
-상태: PARTIAL / 독립 준비 작업. 회차 03 기본 페이스 격리 CI 성공. 관련 WO-03/04/09/16, R-01/03/10/17/18/20/22/26. GPT-03 GO. WO-01/02 PARTIAL; 정식 WO 완료 아님.
+상태: PARTIAL / 독립 준비 작업. 회차 05 AM/PM 후보 CI 진행. 관련 WO-03/04/09/16, R-01/03/10/17/18/20/22/26. GPT-03 GO. WO-01/02 PARTIAL; 정식 WO 완료 아님.
 ## 범위
 1. 450 논리 좌표의 원형 안전 영역과 정보 영역 사이 간격을 정량화한다. 432/438/480/498 화면에 투영한다. 실제 설치 OS와 화면을 확인한 것으로 간주하지 않는다.
 2. 공통 시간·날짜·배터리·걸음과 향후 심박/날씨용 영역을 명시한다. 표시되지 않은 값은 합성 예시로만 사용한다. 기존 제품 XML 유지. 글리프 너비와 실제 런타임 시험을 기하 시험과 구분한다.
@@ -26,3 +26,5 @@
 
 ## GPT-04 회차 04 최종 검증 (2026-11-28 KST)
 기준 main 39f14e870ceba497d8c75c2227b5669f4e5dd662; 검증 후보 82fef7c381c96152c70ce103bff633b79a722e27. main 이전 merge [CI 46063887321](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46063887321) job 140724447115 SUCCESS, 100 host, 12 APK PASS, artifact 15230711024/15230311497. [후보 CI 46064080195](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46064080195) job 140725076568 SUCCESS, 120 host PASS/0 FAIL, independent generation/missing/stale/repair PASS. 40 SVG+1 manifest, PREVIEW_RESULT 82행의 write/check 41개씩 순서 및 해시 동일 확인. manifest SHA d34e91fc9512d8488d2399c674a7a59f84801785326e6444cf104f23cf8a9ab3. 12 APK clean build 및 공식 WFF 검사/negative fixture/manifest/ZIP/XML/memory/v2 signature PASS. Basic XML SHA 00faf8b87e45744ef1a549fb1a2e6a38fe11007594f08c01515f48ceedfa3c29 유지, active 2371712 B / ambient 3181712 B. Evidence artifact 15230227158, 35604 bytes, sha256:0b1d2f247b338b2ae31c20352e9b04b81631bddbf8346826168a88f660946e4b; bootstrap APK artifact 15230476575, 79015 bytes, sha256:db95bad364141499cd56bd15455aba8e0c3df884380fa6190a67326c694d2e8e. Logs/metadata verified; archive download NOT RUN. GPT04-D2 RESOLVED. Previous failure preserved. Merge only verified development tools; product and other-agent ownership unchanged. G5 self review; G7 ref confirmation required. GPT-04 PARTIAL; official SourceType documentation now confirms IS_24_HOUR_MODE Boolean (WFF1), AMPM_STRING AM/PM (WFF1). Correct earlier unconfirmed statement; implement marker using these sources in next isolated candidate. Actual runtime and glyph/visual tests remain NOT RUN. GPT 3/12, WO GO 0/38, release NO-GO.
+
+회차 05 후보 2fe3551d3279630a86571df3b6f6eee499027ee5, CI 46065067806. [REPORT-05](../evidence/GPT-04/REPORT-05.md). 공식 WFF1 데이터 소스와 optional Default로 12시간 모드 AM/PM 구현. 실제 기기 및 전체 후보 검증 전 GO 금지.

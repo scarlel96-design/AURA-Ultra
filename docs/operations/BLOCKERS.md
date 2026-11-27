@@ -83,3 +83,5 @@ GPT04-D1 RESOLVED: CI 46062170635 SUCCESS, 100 host and 12 APK PASS. Runtime/loc
 GPT04-D2 OPEN/P0(후보 검증): 초기 프리뷰 46064026867 실패, percent regex 수정 82fef7c, CI 46064080195 재검증 중. 실제 기기/AMPM/글꼴 검증 미실시 유지. GPT04-D1 해결 유지. 외부 소유권 및 기존 product 변경 없음.
 
 GPT04-D2 RESOLVED: CI 46064080195 SUCCESS, 120 host/12 APK and 40 synthetic preview outputs. Runtime blockers unchanged. Official IS_24_HOUR_MODE WFF1 identified, marker implementation pending.
+
+GPT-04 R05: 공식 12/24시간 설정 표현식 확인 및 조건부 AM/PM 후보 구현. 4해상도 기하 PASS. 전체 CI 46065067806 최종 확인 대기. 실제 렌더링/글리프/발광/설정 변경 시험 미실시. GPT04-D1/D2 해결 유지. 외부 소유 경로 변경 없음.
