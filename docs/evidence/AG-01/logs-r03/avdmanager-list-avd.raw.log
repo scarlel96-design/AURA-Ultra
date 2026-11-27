@@ -1,0 +1,19 @@
+================================================================================
+LIVE avdmanager list avd RAW OUTPUT
+Command:     C:\Users\scarl\AppData\Local\Android\Sdk\cmdline-tools\latest\bin\avdmanager.bat list avd
+Tool Status: OK
+Exit Code:   0
+Error Note:  
+================================================================================
+--- STDOUT ---
+Available Android Virtual Devices:
+    Name: Medium_Phone_API_36.1
+  Device: medium_phone (Generic)
+    Path: C:\Users\scarl\.android\avd\Medium_Phone.avd
+  Target: Google Play (Google Inc.)
+          Based on: Android API 0 Tag/ABI: google_apis_playstore/x86_64
+    Skin: 1080x2400
+  Sdcard: 512M
+
+--- STDERR ---
+

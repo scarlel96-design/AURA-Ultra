@@ -1,4 +1,4 @@
-"""AG-01 end-to-end verification runner for WFF 2-5 PoC XMLs, isolated APK builds, memory ablation evaluation, raw log preservation, and emulator readiness."""
+"""AG-01 end-to-end verification runner for WFF 2-5 PoC XMLs, isolated APK builds, memory ablation evaluation, raw log preservation, and live Wear OS emulator environment inspection."""
 import argparse
 import hashlib
 import json
@@ -18,14 +18,60 @@ sys.path.insert(0, str(ROOT / "tools"))
 from check_apk import analyzer_path, inspect_entries, inspect_face, inspect_manifest
 from profile_contract import load_profiles
 from verify_memory import LIMITS, SHA256 as MEMORY_SHA256, enforce_limits, get_jar as get_memory_jar, parse_report
-from verify_wff import FAILURE, PASS, SHA256 as VALIDATOR_SHA256, require_pass
+from verify_wff import PASS, SHA256 as VALIDATOR_SHA256, require_pass
+from wear_emulator_runtime import RECOMMENDED_WEAR_AVD_PLANS, build_safe_setup_commands
 
 AG01_DIR = Path(__file__).resolve().parent
 FIXTURES_DIR = AG01_DIR / "fixtures"
 VALIDATOR_JAR = ROOT / ".aura-tools" / "wff-validator.jar"
-DEFAULT_LOGS_DIR = ROOT / "docs" / "evidence" / "AG-01" / "logs"
 
 JAVA_UTF8_OPTS = "-Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8"
+
+# Strict WFF validator rejection patterns (AG01-AUD-02)
+VALIDATOR_BANNER = re.compile(r"^INFO:\s*WFF Validation Application Version\s+\S+")
+FAIL_VERDICT = re.compile(
+    r"^INFO:\s*(?:❌\s*)?FAILED\s*:\s*(.+?) is NOT valid against watch face format version #(\d+)\s*$"
+)
+SCHEMA_SEVERE = re.compile(r"^SEVERE:\s*\[Line \d+:Column \d+\]:\s*(.+)$")
+
+# Estimated Wear OS system image candidates (STRICTLY SEPARATED from live `sdkmanager --list` observations; AG01-AUD-01)
+ESTIMATED_WEAR_IMAGE_CANDIDATES = [
+    {
+        "package_id": "system-images;android-36;android-wear-signed;x86_64",
+        "target_wff_version": 4,
+        "target_api_level": "36",
+        "estimated_download_and_avd_gib": "~3.0 GiB (est.)",
+        "priority": "P0 (Primary WFF 4)",
+    },
+    {
+        "package_id": "system-images;android-37.0;android-wear-signed;x86_64",
+        "target_wff_version": 5,
+        "target_api_level": "37.0",
+        "estimated_download_and_avd_gib": "~3.2 GiB (est.)",
+        "priority": "P0 (Primary WFF 5)",
+    },
+    {
+        "package_id": "system-images;android-36.1;android-wear-signed;x86_64",
+        "target_wff_version": 4,
+        "target_api_level": "36.1",
+        "estimated_download_and_avd_gib": "~3.0 GiB (est.)",
+        "priority": "P2 (Optional WFF 4 minor)",
+    },
+    {
+        "package_id": "system-images;android-35-ext15;android-wear;x86_64",
+        "target_wff_version": 3,
+        "target_api_level": "35-ext15",
+        "estimated_download_and_avd_gib": "~2.8 GiB (est.)",
+        "priority": "P1 (Optional WFF 3 expansion)",
+    },
+    {
+        "package_id": "system-images;android-34;android-wear;x86_64",
+        "target_wff_version": 2,
+        "target_api_level": "34",
+        "estimated_download_and_avd_gib": "~2.6 GiB (est.)",
+        "priority": "P1 (Optional WFF 2 expansion)",
+    },
+]
 
 POC_SPECS = [
     {
@@ -127,7 +173,27 @@ NEGATIVE_SPECS = [
         "fail_versions": [2, 3, 4, 5],
         "pass_versions": [],
         "expected_error": "1.35",
-        "description": "Detect out-of-range Variant duration (>1.0) and illegal Reference under DigitalClock in all versions",
+        "description": "Combined fixture preserved from R01/R02 (Variant duration > 1.0 and Reference under DigitalClock)",
+    },
+]
+
+# Separated single-fault negative fixtures added in R03 (AG01-AUD-02)
+SEPARATED_NEGATIVE_SPECS = [
+    {
+        "id": "neg_wff4_variant_duration_out_of_range",
+        "path": FIXTURES_DIR / "negative" / "neg_wff4_variant_duration_out_of_range.xml",
+        "fail_versions": [2, 3, 4, 5],
+        "pass_versions": [],
+        "expected_error": "1.35",
+        "description": "Single-fault fixture: Variant duration='1.35' violates maxInclusive '1.0E0' on WFF 4/5",
+    },
+    {
+        "id": "neg_wff4_reference_invalid_parent",
+        "path": FIXTURES_DIR / "negative" / "neg_wff4_reference_invalid_parent.xml",
+        "fail_versions": [2, 3, 4, 5],
+        "pass_versions": [],
+        "expected_error": "Reference",
+        "description": "Single-fault fixture: <Reference> directly under prohibited parent <DigitalClock> on WFF 4/5",
     },
 ]
 
@@ -209,22 +275,63 @@ def run_validator_utf8(jar, face_path, version):
     )
 
 
-def require_rejection(returncode, output, expected_error=None):
-    if any(PASS.fullmatch(line) for line in output.splitlines()):
+def require_rejection(returncode, output, face, version, expected_error=None):
+    """Require an explicit WFF schema FAILED verdict for the exact requested XML file and WFF version.
+
+    Tool execution errors (non-zero JVM exit code, missing banner, crash/timeout, wrong path, wrong version,
+    or missing `[Line:Column]` SEVERE schema diagnostics) are strictly rejected as ValueError rather than
+    misclassified as expected schema failures (AG01-AUD-02).
+    """
+    lines = output.splitlines()
+    if returncode != 0:
+        raise ValueError(
+            f"Validator process exited abnormally with returncode={returncode} (tool crash/invocation error, not a clean schema rejection)"
+        )
+    if not any(VALIDATOR_BANNER.match(line) for line in lines):
+        raise ValueError("Missing official WFF Validation Application banner in validator output")
+    if any(PASS.fullmatch(line) for line in lines):
         raise ValueError("Fixture unexpectedly produced a PASSED verdict")
-    if returncode == 0 and not FAILURE.search(output):
-        raise ValueError("Inconclusive validator rejection: returncode 0 without FAILURE/SEVERE")
-    if expected_error and expected_error not in output:
-        raise ValueError(f"Expected error substring '{expected_error}' not found in validator output: {output.strip()}")
+
+    fail_matches = [match for line in lines if (match := FAIL_VERDICT.fullmatch(line))]
+    if len(fail_matches) != 1:
+        raise ValueError(
+            f"Expected exactly 1 explicit FAILED verdict line, found {len(fail_matches)}"
+        )
+    actual_path, actual_version = fail_matches[0].groups()
+    if Path(actual_path).resolve() != Path(face).resolve():
+        raise ValueError(
+            f"FAILED verdict path mismatch: expected {Path(face).resolve()}, got {Path(actual_path).resolve()}"
+        )
+    if int(actual_version) != int(version):
+        raise ValueError(
+            f"FAILED verdict WFF version mismatch: expected #{version}, got #{actual_version}"
+        )
+
+    severe_messages = [match.group(1) for line in lines if (match := SCHEMA_SEVERE.match(line))]
+    if not severe_messages:
+        raise ValueError("Missing schema SEVERE [Line:Column] diagnostic line alongside FAILED verdict")
+    if expected_error and not any(expected_error in msg for msg in severe_messages):
+        raise ValueError(
+            f"Expected schema error substring '{expected_error}' not found in SEVERE diagnostics: {severe_messages}"
+        )
+    return severe_messages
 
 
-def verify_schemas(logs_dir=None):
+def verify_schemas(logs_dir=None, include_separated=True):
     jar = ensure_validator_jar()
-    results = {"positive_matrix": [], "negative_matrix": []}
+    results = {"positive_matrix": [], "negative_matrix": [], "separated_negative_matrix": []}
+    neg_groups = [("NEGATIVE MATRIX", NEGATIVE_SPECS, "negative_matrix")]
+    if include_separated:
+        neg_groups.append(("SEPARATED NEGATIVE MATRIX (R03)", SEPARATED_NEGATIVE_SPECS, "separated_negative_matrix"))
+
+    total_cases = (len(POC_SPECS) + sum(len(g[1]) for g in neg_groups)) * 4
     log_lines = [
         "================================================================================",
-        "AG-01 OFFICIAL WFF VALIDATOR 52-CASE SCHEMA MATRIX RAW LOG",
+        f"AG-01 OFFICIAL WFF VALIDATOR {total_cases}-CASE SCHEMA MATRIX RAW LOG (R03 STRICT REJECTION)",
         f"Validator JAR: .aura-tools/wff-validator.jar (SHA-256: {VALIDATOR_SHA256})",
+        "Rejection rule: rc == 0, official banner present, 0 PASSED lines, exactly 1 explicit",
+        "  FAILED line matching exact resolved XML path and WFF version, >=1 SEVERE [Line:Column]",
+        "  schema diagnostic containing expected_error.",
         "================================================================================",
         "",
     ]
@@ -244,7 +351,7 @@ def verify_schemas(logs_dir=None):
                 require_pass(proc.returncode, proc.stdout, xml_path, version)
                 verdict = "PASS_EXPECTED_VALID"
             else:
-                require_rejection(proc.returncode, proc.stdout)
+                require_rejection(proc.returncode, proc.stdout, xml_path, version)
                 verdict = "PASS_EXPECTED_REJECTED_ON_LOWER_VERSION"
             raw_clean = proc.stdout.replace(str(xml_path.resolve()), rel_xml).replace(str(xml_path), rel_xml).strip()
             results["positive_matrix"].append({
@@ -259,66 +366,68 @@ def verify_schemas(logs_dir=None):
                 "output_tail": [line for line in raw_clean.splitlines() if "INFO:" in line or "SEVERE:" in line],
             })
             log_lines.extend([
-                f"--- [CASE {case_index:02d}/52] POSITIVE MATRIX: {spec['id']} @ WFF#{version} ---",
+                f"--- [CASE {case_index:02d}/{total_cases}] POSITIVE MATRIX: {spec['id']} @ WFF#{version} ---",
                 f"File: {rel_xml}",
                 f"File SHA-256: {xml_sha256}",
                 f"Command: java -jar .aura-tools/wff-validator.jar {version} {rel_xml}",
-                f"Expected: {'VALID (PASS)' if should_pass else 'INVALID ON LOWER VERSION (REJECT)'}",
+                f"Expected: {'VALID (PASS)' if should_pass else 'INVALID ON LOWER VERSION (EXPLICIT FAILED + SEVERE)'}",
                 f"Exit Code: {proc.returncode}",
                 f"Verdict: {verdict}",
                 "Raw Output:",
                 raw_clean,
                 "",
             ])
-            print(f"[SCHEMA] ({case_index:02d}/52) {spec['id']} @ WFF#{version}: {verdict}")
+            print(f"[SCHEMA] ({case_index:02d}/{total_cases}) {spec['id']} @ WFF#{version}: {verdict}")
 
-    for spec in NEGATIVE_SPECS:
-        xml_path = spec["path"]
-        if not xml_path.is_file():
-            raise FileNotFoundError(f"Missing negative fixture: {xml_path}")
-        xml_sha256 = hashlib.sha256(xml_path.read_bytes()).hexdigest()
-        rel_xml = xml_path.relative_to(ROOT).as_posix()
-        for version in (2, 3, 4, 5):
-            case_index += 1
-            proc = run_validator_utf8(jar, xml_path, version)
-            if version in spec["fail_versions"]:
-                expected_err = spec["expected_error"] if version == max(spec["fail_versions"]) else None
-                require_rejection(proc.returncode, proc.stdout, expected_err)
-                verdict = "PASS_DETECTED_INVALID"
-            elif version in spec["pass_versions"]:
-                require_pass(proc.returncode, proc.stdout, xml_path, version)
-                verdict = "PASS_VALID_ON_HIGHER_VERSION"
-            else:
-                raise ValueError(f"Version {version} unclassified for {spec['id']}")
-            raw_clean = proc.stdout.replace(str(xml_path.resolve()), rel_xml).replace(str(xml_path), rel_xml).strip()
-            results["negative_matrix"].append({
-                "case_number": case_index,
-                "id": spec["id"],
-                "xml_path": rel_xml,
-                "xml_sha256": xml_sha256,
-                "version": version,
-                "verdict": verdict,
-                "returncode": proc.returncode,
-                "output_tail": [line for line in raw_clean.splitlines() if "INFO:" in line or "SEVERE:" in line],
-            })
-            log_lines.extend([
-                f"--- [CASE {case_index:02d}/52] NEGATIVE MATRIX: {spec['id']} @ WFF#{version} ---",
-                f"File: {rel_xml}",
-                f"File SHA-256: {xml_sha256}",
-                f"Command: java -jar .aura-tools/wff-validator.jar {version} {rel_xml}",
-                f"Expected: {'REJECT (' + (spec['expected_error'] if version == max(spec['fail_versions']) else 'schema violation') + ')' if version in spec['fail_versions'] else 'VALID ON HIGHER VERSION (PASS)'}",
-                f"Exit Code: {proc.returncode}",
-                f"Verdict: {verdict}",
-                "Raw Output:",
-                raw_clean,
-                "",
-            ])
-            print(f"[NEGATIVE] ({case_index:02d}/52) {spec['id']} @ WFF#{version}: {verdict}")
+    for label, specs, result_key in neg_groups:
+        for spec in specs:
+            xml_path = spec["path"]
+            if not xml_path.is_file():
+                raise FileNotFoundError(f"Missing negative fixture: {xml_path}")
+            xml_sha256 = hashlib.sha256(xml_path.read_bytes()).hexdigest()
+            rel_xml = xml_path.relative_to(ROOT).as_posix()
+            for version in (2, 3, 4, 5):
+                case_index += 1
+                proc = run_validator_utf8(jar, xml_path, version)
+                if version in spec["fail_versions"]:
+                    expected_err = spec["expected_error"] if version == max(spec["fail_versions"]) else None
+                    require_rejection(proc.returncode, proc.stdout, xml_path, version, expected_err)
+                    verdict = "PASS_DETECTED_INVALID"
+                elif version in spec["pass_versions"]:
+                    require_pass(proc.returncode, proc.stdout, xml_path, version)
+                    verdict = "PASS_VALID_ON_HIGHER_VERSION"
+                else:
+                    raise ValueError(f"Version {version} unclassified for {spec['id']}")
+                raw_clean = proc.stdout.replace(str(xml_path.resolve()), rel_xml).replace(str(xml_path), rel_xml).strip()
+                results[result_key].append({
+                    "case_number": case_index,
+                    "id": spec["id"],
+                    "xml_path": rel_xml,
+                    "xml_sha256": xml_sha256,
+                    "version": version,
+                    "verdict": verdict,
+                    "returncode": proc.returncode,
+                    "output_tail": [line for line in raw_clean.splitlines() if "INFO:" in line or "SEVERE:" in line],
+                })
+                log_lines.extend([
+                    f"--- [CASE {case_index:02d}/{total_cases}] {label}: {spec['id']} @ WFF#{version} ---",
+                    f"File: {rel_xml}",
+                    f"File SHA-256: {xml_sha256}",
+                    f"Command: java -jar .aura-tools/wff-validator.jar {version} {rel_xml}",
+                    f"Expected: {'EXPLICIT FAILED + SEVERE (' + (spec['expected_error'] if version == max(spec['fail_versions']) else 'schema violation') + ')' if version in spec['fail_versions'] else 'VALID ON HIGHER VERSION (PASS)'}",
+                    f"Exit Code: {proc.returncode}",
+                    f"Verdict: {verdict}",
+                    "Raw Output:",
+                    raw_clean,
+                    "",
+                ])
+                print(f"[NEGATIVE] ({case_index:02d}/{total_cases}) {spec['id']} @ WFF#{version}: {verdict}")
 
     if logs_dir:
         logs_dir.mkdir(parents=True, exist_ok=True)
-        (logs_dir / "schema-matrix-52.log").write_text("\n".join(log_lines), encoding="utf-8")
-        print(f"[LOG] Wrote 52-case schema matrix log to {logs_dir / 'schema-matrix-52.log'}")
+        out_name = f"schema-matrix-{total_cases}-r03.log"
+        (logs_dir / out_name).write_text("\n".join(log_lines), encoding="utf-8")
+        print(f"[LOG] Wrote {total_cases}-case strict schema matrix log to {logs_dir / out_name}")
 
     return results
 
@@ -382,7 +491,6 @@ def evaluate_memory_utf8(memory_jar, apk_path, version):
     if verbose_proc.returncode != 0:
         raise RuntimeError(f"memory-footprint.jar --verbose failed for {apk_path.name}: {verbose_proc.stderr or verbose_proc.stdout}")
 
-    # Normalize nondeterministic evaluation duration line in verbose output for deterministic log artifacts
     verbose_clean = re.sub(r"Watch face layout evaluation took \d+ ms", "Watch face layout evaluation took <elapsed> ms", verbose_proc.stdout.strip())
     return report, report_proc.stdout.strip(), verbose_clean
 
@@ -464,9 +572,9 @@ def inspect_single_apk(apk_path, profile, expected_xml_bytes, analyzer, signer, 
 
 def format_apk_evidence_block(index, total, res, rel_xml_path):
     return [
-        f"================================================================================",
+        "================================================================================",
         f"[APK {index}/{total}] {res['poc_id']} (profile={res['profile']}, WFF#{res['wff_version']}, minSdk={res['min_sdk']})",
-        f"================================================================================",
+        "================================================================================",
         f"Source XML Path:          {rel_xml_path}",
         f"Source XML SHA-256:       {res['source_xml_sha256']}",
         f"Packaged XML SHA-256:     {res['packaged_xml_sha256']}",
@@ -475,7 +583,7 @@ def format_apk_evidence_block(index, total, res, rel_xml_path):
         f"APK Size (bytes):         {res['apk_size_bytes']}",
         f"APK SHA-256:              {res['apk_sha256']}",
         f"ZIP Entries ({len(res['zip_entries'])}):         {', '.join(res['zip_entries'])}",
-        f"Resource-Only Check:      PASS (0 .dex, 0 .so, 0 assets/)",
+        "Resource-Only Check:      PASS (0 .dex, 0 .so, 0 assets/)",
         "",
         "--- [1] Compiled AndroidManifest.xml (apkanalyzer manifest print) ---",
         res["manifest_raw"],
@@ -515,7 +623,6 @@ def verify_isolated_apks(logs_dir=None):
         app_dir = temp_root / "apps" / "watchface"
         wrapper = temp_root / ("gradlew.bat" if os.name == "nt" else "gradlew")
 
-        # Round 1: Build primary 4-profile matrix (wff2, wff3, wff4 continuity, wff5 blend)
         round1_map = {
             "wff2": next(s for s in POC_SPECS if s["id"] == "poc_wff2_static_aod"),
             "wff3": next(s for s in POC_SPECS if s["id"] == "poc_wff3_part_blend_aod"),
@@ -542,7 +649,6 @@ def verify_isolated_apks(logs_dir=None):
             log_lines.extend(format_apk_evidence_block(len(apk_results), len(POC_SPECS), res, spec["path"].relative_to(ROOT).as_posix()))
             print(f"[APK-PASS] {spec['id']} ({pname}): SHA-256={res['apk_sha256']} memory={res['memory_report']}")
 
-        # Round 2 & 3: Build remaining WFF 4 PoCs (poc_wff4_reference_complication and poc_wff4_motion_triggers)
         for extra_id in ("poc_wff4_reference_complication", "poc_wff4_motion_triggers"):
             spec = next(s for s in POC_SPECS if s["id"] == extra_id)
             override_path = app_dir / "src" / "wff4" / "res" / "raw" / "watchface.xml"
@@ -580,17 +686,17 @@ def verify_aod_memory_ablation(logs_dir=None):
     ablation_results = []
     log_lines = [
         "================================================================================",
-        "AG-01 CONTROLLED AOD MEMORY ABLATION STUDY (SINGLE CLOCK vs 4 PER-DIGIT CLOCKS vs AOD PARTTEXT)",
+        "AG-01 CONTROLLED AOD MEMORY ABLATION STUDY (EVALUATOR MODEL SCOPE ONLY)",
         f"Memory Evaluator JAR: .aura-tools/memory-footprint.jar (SHA-256: {MEMORY_SHA256})",
         "Formula in AmbientMemoryFootprintCalculator.computeAmbientMemoryFootprint(450, 450):",
         "  maxAmbientBytes = (450 * 450 * numLayers * 4) + maximumResourceUsage",
         "  where 1 fullscreen RGBA8888 layer = 450 * 450 * 4 = 810,000 bytes,",
-        "  and maximumResourceUsage (SYNC_TO_DEVICE font baseline) = 2,371,712 bytes.",
+        "  and maximumResourceUsage (SYNC_TO_DEVICE -> Roboto fallback estimate) = 2,371,712 bytes.",
+        "Scope note: Static evaluator asset estimation only; does NOT prove real device RAM/power/rendering.",
         "================================================================================",
         "",
     ]
 
-    # Compare the 4 controlled ablation fixtures plus the 2 reference WFF4 PoCs
     study_specs = [
         *ABLATION_SPECS,
         {
@@ -696,158 +802,523 @@ def verify_aod_memory_ablation(logs_dir=None):
     return ablation_results
 
 
-def inspect_emulator_environment(logs_dir=None):
-    sdk = Path(os.environ.get("ANDROID_HOME") or os.environ.get("ANDROID_SDK_ROOT") or "")
+# ---------------------------------------------------------------------------
+# Live Android SDK / AVD / ADB query & parsing helpers (AG01-AUD-01)
+# ---------------------------------------------------------------------------
+
+def _default_tool_runner(cmd, timeout=60):
+    try:
+        proc = subprocess.run(
+            cmd,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=timeout,
+            check=False,
+        )
+        return {
+            "command": cmd,
+            "status": "OK" if proc.returncode == 0 else "ERROR",
+            "returncode": proc.returncode,
+            "stdout": proc.stdout or "",
+            "stderr": proc.stderr or "",
+            "error": "" if proc.returncode == 0 else f"Non-zero exit code {proc.returncode}",
+        }
+    except FileNotFoundError as exc:
+        return {
+            "command": cmd,
+            "status": "MISSING",
+            "returncode": None,
+            "stdout": "",
+            "stderr": "",
+            "error": f"Executable not found: {exc}",
+        }
+    except subprocess.TimeoutExpired as exc:
+        return {
+            "command": cmd,
+            "status": "TIMEOUT",
+            "returncode": None,
+            "stdout": (exc.stdout or "") if isinstance(exc.stdout, str) else "",
+            "stderr": (exc.stderr or "") if isinstance(exc.stderr, str) else "",
+            "error": f"Command timed out after {timeout}s",
+        }
+
+
+def resolve_cmdline_tool(sdk_root, name):
+    suffix = ".bat" if os.name == "nt" else ""
+    candidates = [
+        sdk_root / "cmdline-tools" / "latest" / "bin" / f"{name}{suffix}",
+        sdk_root / "tools" / "bin" / f"{name}{suffix}",
+    ]
+    cmdline_dir = sdk_root / "cmdline-tools"
+    if cmdline_dir.is_dir():
+        for child in sorted(cmdline_dir.iterdir(), reverse=True):
+            candidates.append(child / "bin" / f"{name}{suffix}")
+    for path in candidates:
+        if path.is_file():
+            return path
+    found = shutil.which(name)
+    return Path(found) if found else None
+
+
+def parse_sdkmanager_list(stdout):
+    """Parse live `sdkmanager --list` output into Installed and Available package tables."""
+    installed = []
+    available = []
+    section = None
+    for raw_line in (stdout or "").splitlines():
+        line = raw_line.strip()
+        if not line:
+            continue
+        lower = line.lower()
+        if lower.startswith("installed packages:"):
+            section = "installed"
+            continue
+        if lower.startswith("available packages:"):
+            section = "available"
+            continue
+        if lower.startswith("available updates:"):
+            section = "updates"
+            continue
+        if "|" not in line or line.startswith("Path") or line.startswith("---"):
+            continue
+        cols = [col.strip() for col in line.split("|")]
+        if len(cols) < 3:
+            continue
+        entry = {
+            "package_id": cols[0],
+            "version": cols[1],
+            "description": cols[2],
+            "location": cols[3] if len(cols) >= 4 else "",
+        }
+        if section == "installed":
+            installed.append(entry)
+        elif section == "available":
+            available.append(entry)
+    return {"installed": installed, "available": available}
+
+
+def parse_avdmanager_devices(stdout):
+    """Parse live `avdmanager list device` output into structured device profile records."""
+    devices = []
+    current = None
+    for raw_line in (stdout or "").splitlines():
+        line = raw_line.strip()
+        if not line or line.startswith("Available devices"):
+            continue
+        if line.startswith("---------"):
+            if current:
+                devices.append(current)
+                current = None
+            continue
+        id_match = re.match(r'^id:\s*(\d+)\s+or\s+"([^"]+)"', line)
+        if id_match:
+            if current:
+                devices.append(current)
+            current = {
+                "numeric_id": int(id_match.group(1)),
+                "id": id_match.group(2),
+                "name": "",
+                "oem": "",
+                "tag": "",
+            }
+            continue
+        if current is None:
+            continue
+        if line.startswith("Name:"):
+            current["name"] = line.split(":", 1)[1].strip()
+        elif line.startswith("OEM"):
+            current["oem"] = line.split(":", 1)[1].strip()
+        elif line.startswith("Tag"):
+            current["tag"] = line.split(":", 1)[1].strip()
+    if current:
+        devices.append(current)
+    return devices
+
+
+def parse_avdmanager_avds(stdout):
+    """Parse live `avdmanager list avd` output and separate Wear OS AVDs from phone/tablet AVDs."""
+    avds = []
+    current = None
+    for raw_line in (stdout or "").splitlines():
+        line = raw_line.strip()
+        if not line or line.startswith("Available Android Virtual Devices:"):
+            continue
+        if line.startswith("The following Android Virtual Devices could not be loaded"):
+            break
+        if line.startswith("---------"):
+            if current:
+                avds.append(current)
+                current = None
+            continue
+        if line.startswith("Name:"):
+            if current:
+                avds.append(current)
+            current = {
+                "name": line.split(":", 1)[1].strip(),
+                "device": "",
+                "path": "",
+                "target": "",
+                "tag_abi": "",
+                "skin": "",
+            }
+            continue
+        if current is None:
+            continue
+        if line.startswith("Device:"):
+            current["device"] = line.split(":", 1)[1].strip()
+        elif line.startswith("Path:"):
+            current["path"] = line.split(":", 1)[1].strip()
+        elif line.startswith("Target:"):
+            current["target"] = line.split(":", 1)[1].strip()
+        elif "Tag/ABI:" in line:
+            current["tag_abi"] = line.split("Tag/ABI:", 1)[1].strip()
+        elif line.startswith("Skin:"):
+            current["skin"] = line.split(":", 1)[1].strip()
+    if current:
+        avds.append(current)
+
+    wear_avds = []
+    non_wear_avds = []
+    unknown_avds = []
+    for avd in avds:
+        tag_abi = avd["tag_abi"].lower()
+        device = avd["device"].lower()
+        if "android-wear" in tag_abi or "wearos" in device:
+            avd["classification"] = "wear_os"
+            wear_avds.append(avd)
+        elif tag_abi or device:
+            avd["classification"] = "non_wear"
+            non_wear_avds.append(avd)
+        else:
+            avd["classification"] = "unknown"
+            unknown_avds.append(avd)
+    return {
+        "all": avds,
+        "wear_avds": wear_avds,
+        "non_wear_avds": non_wear_avds,
+        "unknown_avds": unknown_avds,
+    }
+
+
+def parse_adb_devices(stdout):
+    """Parse `adb devices -l` and strictly separate emulator serials from physical devices."""
+    emulators = []
+    physical_devices = []
+    for raw_line in (stdout or "").splitlines():
+        line = raw_line.strip()
+        if not line or line.startswith("List of devices") or line.startswith("* daemon"):
+            continue
+        parts = line.split()
+        if len(parts) < 2:
+            continue
+        serial, state = parts[0], parts[1]
+        record = {"serial": serial, "state": state, "raw": line}
+        if re.fullmatch(r"emulator-\d+", serial):
+            emulators.append(record)
+        else:
+            physical_devices.append(record)
+    return {"emulators": emulators, "physical_devices": physical_devices}
+
+
+def reconcile_wear_candidates(candidates, observed_installed, observed_available):
+    """Compare static candidate estimates against live `sdkmanager --list` observations."""
+    installed_by_id = {pkg["package_id"]: pkg for pkg in observed_installed}
+    available_by_id = {pkg["package_id"]: pkg for pkg in observed_available}
+    reconciled = []
+    for cand in candidates:
+        pid = cand["package_id"]
+        inst = installed_by_id.get(pid)
+        avail = available_by_id.get(pid)
+        reconciled.append({
+            **cand,
+            "installed": inst is not None,
+            "observed_in_available_catalog": avail is not None,
+            "observed_revision": (inst or avail or {}).get("version", "NOT_OBSERVED"),
+            "observed_description": (inst or avail or {}).get("description", "NOT_OBSERVED"),
+        })
+    return reconciled
+
+
+def determine_emulator_readiness(
+    tool_runs,
+    installed_wear_images,
+    wear_avds,
+    running_wear_emulators,
+):
+    """Determine strict Wear OS emulator readiness: READY, NOT RUN, or UNKNOWN.
+
+    - Any missing/failed/timed-out/empty critical SDK/AVD/ADB query -> UNKNOWN (unless a verified running Wear emulator exists).
+    - Physical ADB devices or non-Wear phone AVDs NEVER promote status to READY.
+    - Installed Wear images alone WITHOUT a Wear OS AVD (or vice versa) stay NOT RUN.
+    - Only a verified running Wear emulator OR (installed Wear image + configured Wear AVD + emulator & adb tools OK) yields READY.
+    """
+    if running_wear_emulators:
+        return "READY", f"Verified running Wear OS emulator(s): {[e['serial'] for e in running_wear_emulators]}"
+
+    critical_issues = []
+    for tool_name in ("sdkmanager", "avdmanager_devices", "avdmanager_avds", "emulator", "adb"):
+        run = tool_runs.get(tool_name, {})
+        st = run.get("status")
+        if st in ("MISSING", "ERROR", "TIMEOUT", "EMPTY"):
+            critical_issues.append(f"{tool_name}={st} ({run.get('error', '')})")
+    if critical_issues:
+        return "UNKNOWN", "Cannot establish Wear OS emulator readiness due to tool failures: " + "; ".join(critical_issues)
+
+    if installed_wear_images and wear_avds:
+        return "READY", f"Wear OS system image(s) and Wear OS AVD(s) ({[a['name'] for a in wear_avds]}) are installed locally."
+
+    reasons = []
+    if not installed_wear_images:
+        reasons.append("no Wear OS system image (android-wear / android-wear-signed) is installed locally")
+    if not wear_avds:
+        reasons.append("no Wear OS AVD is configured (non-Wear phone AVDs and physical devices are excluded)")
+    reasons.append("downloading new SDK system images or creating AVDs without explicit user approval is prohibited")
+    return "NOT RUN", "; ".join(reasons)
+
+
+def inspect_emulator_environment(logs_dir=None, sdk_root=None, runner=None):
+    """Inspect local Android SDK, live sdkmanager/avdmanager catalogs, AVDs, and ADB devices without mutating state."""
+    run_fn = runner or _default_tool_runner
+    sdk = Path(sdk_root) if sdk_root is not None else Path(os.environ.get("ANDROID_HOME") or os.environ.get("ANDROID_SDK_ROOT") or "")
+
+    sdkmanager_bin = resolve_cmdline_tool(sdk, "sdkmanager") if sdk.is_dir() else None
+    avdmanager_bin = resolve_cmdline_tool(sdk, "avdmanager") if sdk.is_dir() else None
+    emulator_bin = sdk / "emulator" / ("emulator.exe" if os.name == "nt" else "emulator")
+    adb_bin = sdk / "platform-tools" / ("adb.exe" if os.name == "nt" else "adb")
+
+    tool_runs = {}
+
+    # 1. Live `sdkmanager --list` (read-only query; never downloads packages)
+    if sdkmanager_bin and sdkmanager_bin.is_file():
+        sm_run = run_fn([str(sdkmanager_bin), "--list"], timeout=90)
+        if sm_run["status"] == "OK" and not sm_run["stdout"].strip():
+            sm_run["status"] = "EMPTY"
+            sm_run["error"] = "sdkmanager --list returned empty stdout"
+    else:
+        sm_run = {"command": ["sdkmanager", "--list"], "status": "MISSING", "returncode": None, "stdout": "", "stderr": "", "error": "sdkmanager binary not found"}
+    tool_runs["sdkmanager"] = sm_run
+
+    parsed_sdk = parse_sdkmanager_list(sm_run["stdout"]) if sm_run["status"] == "OK" else {"installed": [], "available": []}
+    if sm_run["status"] == "OK" and not parsed_sdk["installed"] and not parsed_sdk["available"]:
+        sm_run["status"] = "EMPTY"
+        sm_run["error"] = "sdkmanager --list stdout contained no parseable Installed or Available package rows"
+
+    observed_installed_wear = [
+        pkg for pkg in parsed_sdk["installed"]
+        if "android-wear" in pkg["package_id"].lower()
+    ]
+    observed_available_wear = [
+        pkg for pkg in parsed_sdk["available"]
+        if "android-wear" in pkg["package_id"].lower()
+    ]
+    reconciled_candidates = reconcile_wear_candidates(
+        ESTIMATED_WEAR_IMAGE_CANDIDATES,
+        parsed_sdk["installed"],
+        parsed_sdk["available"],
+    )
+
+    # 2. Live `avdmanager list device`
+    if avdmanager_bin and avdmanager_bin.is_file():
+        dev_run = run_fn([str(avdmanager_bin), "list", "device"], timeout=60)
+        if dev_run["status"] == "OK" and not dev_run["stdout"].strip():
+            dev_run["status"] = "EMPTY"
+            dev_run["error"] = "avdmanager list device returned empty stdout"
+    else:
+        dev_run = {"command": ["avdmanager", "list", "device"], "status": "MISSING", "returncode": None, "stdout": "", "stderr": "", "error": "avdmanager binary not found"}
+    tool_runs["avdmanager_devices"] = dev_run
+
+    all_devices = parse_avdmanager_devices(dev_run["stdout"]) if dev_run["status"] == "OK" else []
+    if dev_run["status"] == "OK" and not all_devices:
+        dev_run["status"] = "EMPTY"
+        dev_run["error"] = "avdmanager list device stdout contained no parseable device definitions"
+    observed_wear_device_profiles = [
+        d for d in all_devices
+        if "android-wear" in d["tag"].lower() or "wearos" in d["id"].lower()
+    ]
+
+    # 3. Live `avdmanager list avd` (separates Wear AVDs from phone/tablet AVDs)
+    if avdmanager_bin and avdmanager_bin.is_file():
+        avd_run = run_fn([str(avdmanager_bin), "list", "avd"], timeout=60)
+        if avd_run["status"] == "OK" and not avd_run["stdout"].strip():
+            avd_run["status"] = "EMPTY"
+            avd_run["error"] = "avdmanager list avd returned empty stdout"
+    else:
+        avd_run = {"command": ["avdmanager", "list", "avd"], "status": "MISSING", "returncode": None, "stdout": "", "stderr": "", "error": "avdmanager binary not found"}
+    tool_runs["avdmanager_avds"] = avd_run
+    parsed_avds = parse_avdmanager_avds(avd_run["stdout"]) if avd_run["status"] == "OK" else {"all": [], "wear_avds": [], "non_wear_avds": [], "unknown_avds": []}
+
+    # 4. Live `emulator -list-avds`
+    if emulator_bin.is_file():
+        emu_run = run_fn([str(emulator_bin), "-list-avds"], timeout=30)
+    else:
+        emu_run = {"command": ["emulator", "-list-avds"], "status": "MISSING", "returncode": None, "stdout": "", "stderr": "", "error": f"emulator binary not found at {emulator_bin}"}
+    tool_runs["emulator"] = emu_run
+    emulator_listed_avds = [line.strip() for line in emu_run["stdout"].splitlines() if line.strip()] if emu_run["status"] == "OK" else []
+
+    # 5. Live `adb devices -l` + Wear emulator verification (never counts physical devices as Wear emulators)
+    if adb_bin.is_file():
+        adb_run = run_fn([str(adb_bin), "devices", "-l"], timeout=30)
+    else:
+        adb_run = {"command": ["adb", "devices", "-l"], "status": "MISSING", "returncode": None, "stdout": "", "stderr": "", "error": f"adb binary not found at {adb_bin}"}
+    tool_runs["adb"] = adb_run
+    parsed_adb = parse_adb_devices(adb_run["stdout"]) if adb_run["status"] == "OK" else {"emulators": [], "physical_devices": []}
+
+    running_wear_emulators = []
+    running_non_wear_emulators = []
+    for emu in parsed_adb["emulators"]:
+        if emu["state"] != "device":
+            continue
+        char_run = run_fn([str(adb_bin), "-s", emu["serial"], "shell", "getprop", "ro.build.characteristics"], timeout=15)
+        chars = char_run["stdout"].strip() if char_run["status"] == "OK" else ""
+        emu_entry = {**emu, "characteristics": chars}
+        if "watch" in {c.strip().lower() for c in chars.split(",") if c.strip()}:
+            running_wear_emulators.append(emu_entry)
+        else:
+            running_non_wear_emulators.append(emu_entry)
+
+    # Also inspect local filesystem system-images directory for independent cross-check
+    fs_installed_images = []
+    fs_installed_wear_images = []
     sys_images_dir = sdk / "system-images" if sdk.is_dir() else None
-    installed_images = []
-    wear_images = []
     if sys_images_dir and sys_images_dir.is_dir():
         for prop in sorted(sys_images_dir.rglob("source.properties")):
             rel = str(prop.parent.relative_to(sdk))
-            installed_images.append(rel)
+            fs_installed_images.append(rel)
             if "wear" in rel.lower():
-                wear_images.append(rel)
+                fs_installed_wear_images.append(rel)
 
-    emulator_bin = sdk / "emulator" / ("emulator.exe" if os.name == "nt" else "emulator")
-    avds = []
-    if emulator_bin.is_file():
-        proc = subprocess.run([str(emulator_bin), "-list-avds"], capture_output=True, text=True, check=False)
-        if proc.returncode == 0:
-            avds = [line.strip() for line in proc.stdout.splitlines() if line.strip()]
-
-    adb_bin = sdk / "platform-tools" / ("adb.exe" if os.name == "nt" else "adb")
-    connected_devices = []
-    adb_note = ""
-    if adb_bin.is_file():
-        proc = subprocess.run([str(adb_bin), "devices", "-l"], capture_output=True, text=True, check=False)
-        if proc.returncode == 0:
-            for line in proc.stdout.splitlines()[1:]:
-                if line.strip():
-                    connected_devices.append(line.strip())
-        else:
-            adb_note = proc.stderr.strip()
+    status, reason = determine_emulator_readiness(
+        tool_runs=tool_runs,
+        installed_wear_images=observed_installed_wear,
+        wear_avds=parsed_avds["wear_avds"],
+        running_wear_emulators=running_wear_emulators,
+    )
 
     disk_free_gib = round(shutil.disk_usage(sdk if sdk.is_dir() else ROOT).free / (1024 ** 3), 2)
 
-    status = "NOT RUN" if (not wear_images and not connected_devices) else "READY"
+    safe_setup_commands = []
+    for plan in RECOMMENDED_WEAR_AVD_PLANS[:2]:
+        safe_setup_commands.extend(build_safe_setup_commands(plan))
+
     info = {
         "status": status,
+        "reason": reason,
         "sdk_root": str(sdk),
         "disk_free_gib": disk_free_gib,
-        "installed_system_images": installed_images,
-        "installed_wear_system_images": wear_images,
-        "available_wear_system_image_packages": [
-            {
-                "package_id": "system-images;android-34;android-wear;x86_64",
-                "api_level": "34",
-                "wear_os_version": "Wear OS 5.0",
-                "supported_wff_version": 2,
-                "revision": 1,
-                "estimated_size_gib": "1.6 - 2.0 GiB",
-            },
-            {
-                "package_id": "system-images;android-35-ext15;android-wear;x86_64",
-                "api_level": "35 (ext15)",
-                "wear_os_version": "Wear OS 5.1",
-                "supported_wff_version": 3,
-                "revision": 1,
-                "estimated_size_gib": "1.7 - 2.1 GiB",
-            },
-            {
-                "package_id": "system-images;android-36;android-wear-signed;x86_64",
-                "api_level": "36.0",
-                "wear_os_version": "Wear OS 6.0 (signed)",
-                "supported_wff_version": 4,
-                "revision": 1,
-                "estimated_size_gib": "1.8 - 2.3 GiB",
-            },
-            {
-                "package_id": "system-images;android-36.1;android-wear-signed;x86_64",
-                "api_level": "36.1",
-                "wear_os_version": "Wear OS 6.1 (signed)",
-                "supported_wff_version": 4,
-                "revision": 1,
-                "estimated_size_gib": "1.8 - 2.3 GiB",
-            },
-            {
-                "package_id": "system-images;android-37.0;android-wear-signed;x86_64",
-                "api_level": "37.0",
-                "wear_os_version": "Wear OS 7.0 (signed)",
-                "supported_wff_version": 5,
-                "revision": 1,
-                "estimated_size_gib": "1.9 - 2.4 GiB",
-            },
-        ],
-        "available_wear_device_profiles": [
-            {"id": "wearos_large_round", "numeric_id": 59, "oem": "Google", "tag": "android-wear", "recommended_for": "450x450 circular canvas primary testing"},
-            {"id": "wearos_small_round", "numeric_id": 61, "oem": "Google", "tag": "android-wear", "recommended_for": "small circular DPI scaling verification"},
-            {"id": "wearos_square", "numeric_id": 62, "oem": "Google", "tag": "android-wear", "recommended_for": "square layout compatibility"},
-            {"id": "wearos_rect", "numeric_id": 60, "oem": "Google", "tag": "android-wear", "recommended_for": "rectangular layout compatibility"},
-        ],
-        "configured_avds": avds,
-        "connected_adb_devices": connected_devices,
-        "adb_note": adb_note,
-        "reason": "No isolated Wear OS system image (android-wear / android-wear-signed) or Wear OS AVD is installed locally, and downloading new SDK/emulator images without user approval is prohibited by AG-01 / AG-01-R02.",
-        "reproduction_commands": [
-            "sdkmanager \"system-images;android-34;android-wear;x86_64\" \"system-images;android-35-ext15;android-wear;x86_64\" \"system-images;android-36;android-wear-signed;x86_64\" \"system-images;android-37.0;android-wear-signed;x86_64\"",
-            "avdmanager create avd -n aura_wear36_round -k \"system-images;android-36;android-wear-signed;x86_64\" -d wearos_large_round",
-            "avdmanager create avd -n aura_wear37_round -k \"system-images;android-37.0;android-wear-signed;x86_64\" -d wearos_large_round",
-            "emulator -avd aura_wear36_round -no-snapshot -no-boot-anim",
-            "adb wait-for-device",
-            "adb install -r watchface-wff4-debug.apk",
-            "adb exec-out screencap -p > active_wff4.png",
-            "adb shell input keyevent KEYCODE_SLEEP",
-            "adb exec-out screencap -p > ambient_wff4.png",
-            "adb shell input keyevent KEYCODE_WAKEUP",
-        ],
+        "tool_runs": {
+            k: {"status": v["status"], "returncode": v["returncode"], "error": v["error"]}
+            for k, v in tool_runs.items()
+        },
+        "filesystem_installed_system_images": fs_installed_images,
+        "filesystem_installed_wear_images": fs_installed_wear_images,
+        "observed_sdkmanager_installed_packages_count": len(parsed_sdk["installed"]),
+        "observed_sdkmanager_installed_wear_images": observed_installed_wear,
+        "observed_sdkmanager_available_wear_images": observed_available_wear,
+        "estimated_candidates_reconciled_with_live_catalog": reconciled_candidates,
+        "observed_avdmanager_wear_device_profiles": observed_wear_device_profiles,
+        "observed_avds_wear": parsed_avds["wear_avds"],
+        "observed_avds_non_wear": parsed_avds["non_wear_avds"],
+        "observed_avds_unknown": parsed_avds["unknown_avds"],
+        "emulator_list_avds_raw": emulator_listed_avds,
+        "adb_running_wear_emulators": running_wear_emulators,
+        "adb_running_non_wear_emulators": running_non_wear_emulators,
+        "adb_physical_devices_excluded": parsed_adb["physical_devices"],
+        "safe_setup_commands_after_approval": safe_setup_commands,
     }
 
     if logs_dir:
         logs_dir.mkdir(parents=True, exist_ok=True)
+        # Preserve separate verbatim tool output logs
+        for filename, key, title in (
+            ("sdkmanager-list.raw.log", "sdkmanager", "LIVE sdkmanager --list RAW OUTPUT"),
+            ("avdmanager-list-device.raw.log", "avdmanager_devices", "LIVE avdmanager list device RAW OUTPUT"),
+            ("avdmanager-list-avd.raw.log", "avdmanager_avds", "LIVE avdmanager list avd RAW OUTPUT"),
+        ):
+            tr = tool_runs[key]
+            raw_doc = [
+                "================================================================================",
+                title,
+                f"Command:     {' '.join(tr['command'])}",
+                f"Tool Status: {tr['status']}",
+                f"Exit Code:   {tr['returncode']}",
+                f"Error Note:  {tr['error']}",
+                "================================================================================",
+                "--- STDOUT ---",
+                tr["stdout"].rstrip(),
+                "",
+                "--- STDERR ---",
+                tr["stderr"].rstrip(),
+                "",
+            ]
+            (logs_dir / filename).write_text("\n".join(raw_doc), encoding="utf-8")
+
         java_proc = subprocess.run(["java", "-version"], capture_output=True, text=True, encoding="utf-8", check=False)
         java_ver = (java_proc.stderr or java_proc.stdout).strip()
-        env_lines = [
+        summary_lines = [
             "================================================================================",
-            "AG-01 ENVIRONMENT, TOOL HASHES & WEAR OS EMULATOR READINESS LOG",
+            "AG-01 R03 LIVE ENVIRONMENT, TOOL HASHES & WEAR OS EMULATOR READINESS LOG",
             "================================================================================",
-            f"OS Platform:                  {platform.platform()} ({platform.machine()})",
-            f"Python Version:               {sys.version.splitlines()[0]}",
+            f"OS Platform:                         {platform.platform()} ({platform.machine()})",
+            f"Python Version:                      {sys.version.splitlines()[0]}",
             "Java Version:",
             java_ver,
-            f"WFF Validator JAR:            .aura-tools/wff-validator.jar (v1.7.0, SHA-256: {VALIDATOR_SHA256})",
-            f"Memory Evaluator JAR:         .aura-tools/memory-footprint.jar (v1.5.1, SHA-256: {MEMORY_SHA256})",
-            f"Android SDK Root:             {info['sdk_root']}",
-            f"Available Free Disk Space:    {info['disk_free_gib']} GiB",
-            f"Installed System Images:      {info['installed_system_images']}",
-            f"Installed Wear System Images: {info['installed_wear_system_images']}",
-            f"Configured AVDs:              {info['configured_avds']}",
-            f"Connected ADB Devices:        {info['connected_adb_devices']}",
-            f"ADB Note:                     {info['adb_note']}",
-            f"Emulator Verification Status: {info['status']}",
-            f"Reason:                       {info['reason']}",
+            f"WFF Validator JAR:                   .aura-tools/wff-validator.jar (v1.7.0, SHA-256: {VALIDATOR_SHA256})",
+            f"Memory Evaluator JAR:                .aura-tools/memory-footprint.jar (v1.5.1, SHA-256: {MEMORY_SHA256})",
+            f"Android SDK Root:                    {info['sdk_root']}",
+            f"Available Free Disk Space:           {info['disk_free_gib']} GiB",
+            f"Wear Emulator Readiness Status:      {info['status']}",
+            f"Readiness Reason:                    {info['reason']}",
             "",
-            "--- Available Wear OS System Image Packages (queried read-only via sdkmanager --list) ---",
+            "--- Live Tool Execution Status ---",
+            *[
+                f"  * {name}: status={meta['status']}, rc={meta['returncode']}, error='{meta['error']}'"
+                for name, meta in info["tool_runs"].items()
+            ],
+            "",
+            "--- Live Observed Installed Wear OS Images (sdkmanager --list) ---",
+            *(
+                [f"  * {p['package_id']} | rev {p['version']} | {p['description']}" for p in observed_installed_wear]
+                or ["  (none)"]
+            ),
+            "",
+            "--- Live Observed Available Wear OS Images (sdkmanager --list, verbatim parsed rows) ---",
+            *(
+                [f"  * {p['package_id']} | rev {p['version']} | {p['description']}" for p in observed_available_wear]
+                or ["  (none observed or sdkmanager failed)"]
+            ),
+            "",
+            "--- Estimated Candidates Reconciled Against Live Catalog (Candidate != Live Fact) ---",
+            *[
+                f"  * {c['package_id']} | WFF#{c['target_wff_version']} | {c['priority']} | est={c['estimated_download_and_avd_gib']} | "
+                f"installed={c['installed']} | in_live_catalog={c['observed_in_available_catalog']} | live_rev={c['observed_revision']}"
+                for c in reconciled_candidates
+            ],
+            "",
+            "--- Live Observed Wear OS AVD Device Profiles (avdmanager list device) ---",
+            *(
+                [f"  * {d['id']} (numeric_id={d['numeric_id']}, Name={d['name']}, OEM={d['oem']}, Tag={d['tag']})" for d in observed_wear_device_profiles]
+                or ["  (none observed or avdmanager failed)"]
+            ),
+            "",
+            "--- Live Configured AVDs Separated by Type (avdmanager list avd) ---",
+            f"  * Wear OS AVDs ({len(parsed_avds['wear_avds'])}): {[a['name'] for a in parsed_avds['wear_avds']]}",
+            f"  * Non-Wear Phone/Tablet AVDs ({len(parsed_avds['non_wear_avds'])}): "
+            f"{[(a['name'], a['device'], a['tag_abi']) for a in parsed_avds['non_wear_avds']]}",
+            f"  * Unknown AVDs ({len(parsed_avds['unknown_avds'])}): {[a['name'] for a in parsed_avds['unknown_avds']]}",
+            "",
+            "--- Live ADB Devices Separated by Type (adb devices -l) ---",
+            f"  * Running Verified Wear Emulators ({len(running_wear_emulators)}): {running_wear_emulators}",
+            f"  * Running Non-Wear Emulators ({len(running_non_wear_emulators)}): {running_non_wear_emulators}",
+            f"  * Physical Devices (EXCLUDED FROM AUTOMATION) ({len(parsed_adb['physical_devices'])}): {parsed_adb['physical_devices']}",
+            "",
+            "--- Safe Setup Commands (ONLY AFTER EXPLICIT USER APPROVAL; NO --force) ---",
+            *[f"  {cmd}" for cmd in safe_setup_commands],
+            "",
         ]
-        for pkg in info["available_wear_system_image_packages"]:
-            env_lines.append(
-                f"  * {pkg['package_id']} | API {pkg['api_level']} | {pkg['wear_os_version']} | WFF#{pkg['supported_wff_version']} | rev {pkg['revision']} | est. {pkg['estimated_size_gib']}"
-            )
-        env_lines.extend([
-            "",
-            "--- Available Official Wear OS AVD Device Profiles (avdmanager list device) ---",
-        ])
-        for prof in info["available_wear_device_profiles"]:
-            env_lines.append(
-                f"  * {prof['id']} (numeric id={prof['numeric_id']}, OEM={prof['oem']}, Tag={prof['tag']}) -> {prof['recommended_for']}"
-            )
-        env_lines.extend([
-            "",
-            "--- Exact Reproduction Commands (upon approval) ---",
-            *[f"  {cmd}" for cmd in info["reproduction_commands"]],
-            "",
-        ])
-        (logs_dir / "environment-and-emulator.log").write_text("\n".join(env_lines), encoding="utf-8")
-        print(f"[LOG] Wrote environment & emulator readiness log to {logs_dir / 'environment-and-emulator.log'}")
+        (logs_dir / "emulator-readiness-r03.log").write_text("\n".join(summary_lines), encoding="utf-8")
+        print(f"[LOG] Wrote live R03 emulator readiness & raw SDK/AVD logs to {logs_dir}")
 
     return info
 
@@ -856,7 +1327,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--mode", choices=("all", "schema", "apk", "ablation", "emulator"), default="all")
     parser.add_argument("--json-out", type=Path, default=None)
-    parser.add_argument("--logs-dir", type=Path, default=None, help="Directory to write raw verification logs (e.g. docs/evidence/AG-01/logs)")
+    parser.add_argument("--logs-dir", type=Path, default=None, help="Directory to write raw verification logs (e.g. docs/evidence/AG-01/logs-r03)")
     args = parser.parse_args()
 
     summary = {}
@@ -868,7 +1339,12 @@ def main():
         summary["ablation"] = verify_aod_memory_ablation(logs_dir=args.logs_dir)
     if args.mode in ("all", "emulator"):
         summary["emulator"] = inspect_emulator_environment(logs_dir=args.logs_dir)
-        print(f"[EMULATOR] status={summary['emulator']['status']} wear_images={summary['emulator']['installed_wear_system_images']} avds={summary['emulator']['configured_avds']}")
+        print(
+            f"[EMULATOR] status={summary['emulator']['status']} "
+            f"wear_images={len(summary['emulator']['observed_sdkmanager_installed_wear_images'])} "
+            f"wear_avds={[a['name'] for a in summary['emulator']['observed_avds_wear']]} "
+            f"non_wear_avds={[a['name'] for a in summary['emulator']['observed_avds_non_wear']]}"
+        )
 
     if args.json_out:
         args.json_out.parent.mkdir(parents=True, exist_ok=True)

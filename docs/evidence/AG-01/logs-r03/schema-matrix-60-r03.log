@@ -1,0 +1,763 @@
+================================================================================
+AG-01 OFFICIAL WFF VALIDATOR 60-CASE SCHEMA MATRIX RAW LOG (R03 STRICT REJECTION)
+Validator JAR: .aura-tools/wff-validator.jar (SHA-256: 0e2204137fca618264e82f9a053c6c9ec6d4fad08d2b56aa8a57d75c0508a804)
+Rejection rule: rc == 0, official banner present, 0 PASSED lines, exactly 1 explicit
+  FAILED line matching exact resolved XML path and WFF version, >=1 SEVERE [Line:Column]
+  schema diagnostic containing expected_error.
+================================================================================
+
+--- [CASE 01/60] POSITIVE MATRIX: poc_wff2_static_aod @ WFF#2 ---
+File: tests/compatibility/ag-01/fixtures/wff2/poc_wff2_static_aod.xml
+File SHA-256: 2b77582a27a201c96925e631f8d6cd9147d207258b6161613fee063deb62f401
+Command: java -jar .aura-tools/wff-validator.jar 2 tests/compatibility/ag-01/fixtures/wff2/poc_wff2_static_aod.xml
+Expected: VALID (PASS)
+Exit Code: 0
+Verdict: PASS_EXPECTED_VALID
+Raw Output:
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8
+INFO: WFF Validation Application Version 1.7.0. Maximum Supported Format Version #5
+INFO: ✅  PASSED : tests/compatibility/ag-01/fixtures/wff2/poc_wff2_static_aod.xml is valid against watch face format version #2
+
+--- [CASE 02/60] POSITIVE MATRIX: poc_wff2_static_aod @ WFF#3 ---
+File: tests/compatibility/ag-01/fixtures/wff2/poc_wff2_static_aod.xml
+File SHA-256: 2b77582a27a201c96925e631f8d6cd9147d207258b6161613fee063deb62f401
+Command: java -jar .aura-tools/wff-validator.jar 3 tests/compatibility/ag-01/fixtures/wff2/poc_wff2_static_aod.xml
+Expected: VALID (PASS)
+Exit Code: 0
+Verdict: PASS_EXPECTED_VALID
+Raw Output:
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8
+INFO: WFF Validation Application Version 1.7.0. Maximum Supported Format Version #5
+INFO: ✅  PASSED : tests/compatibility/ag-01/fixtures/wff2/poc_wff2_static_aod.xml is valid against watch face format version #3
+
+--- [CASE 03/60] POSITIVE MATRIX: poc_wff2_static_aod @ WFF#4 ---
+File: tests/compatibility/ag-01/fixtures/wff2/poc_wff2_static_aod.xml
+File SHA-256: 2b77582a27a201c96925e631f8d6cd9147d207258b6161613fee063deb62f401
+Command: java -jar .aura-tools/wff-validator.jar 4 tests/compatibility/ag-01/fixtures/wff2/poc_wff2_static_aod.xml
+Expected: VALID (PASS)
+Exit Code: 0
+Verdict: PASS_EXPECTED_VALID
+Raw Output:
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8
+INFO: WFF Validation Application Version 1.7.0. Maximum Supported Format Version #5
+INFO: ✅  PASSED : tests/compatibility/ag-01/fixtures/wff2/poc_wff2_static_aod.xml is valid against watch face format version #4
+
+--- [CASE 04/60] POSITIVE MATRIX: poc_wff2_static_aod @ WFF#5 ---
+File: tests/compatibility/ag-01/fixtures/wff2/poc_wff2_static_aod.xml
+File SHA-256: 2b77582a27a201c96925e631f8d6cd9147d207258b6161613fee063deb62f401
+Command: java -jar .aura-tools/wff-validator.jar 5 tests/compatibility/ag-01/fixtures/wff2/poc_wff2_static_aod.xml
+Expected: VALID (PASS)
+Exit Code: 0
+Verdict: PASS_EXPECTED_VALID
+Raw Output:
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8
+INFO: WFF Validation Application Version 1.7.0. Maximum Supported Format Version #5
+INFO: ✅  PASSED : tests/compatibility/ag-01/fixtures/wff2/poc_wff2_static_aod.xml is valid against watch face format version #5
+
+--- [CASE 05/60] POSITIVE MATRIX: poc_wff3_part_blend_aod @ WFF#2 ---
+File: tests/compatibility/ag-01/fixtures/wff3/poc_wff3_part_blend_aod.xml
+File SHA-256: 4914c959de127803753c93609d79ed27e51006416129b6221adc3ce2331c7a5d
+Command: java -jar .aura-tools/wff-validator.jar 2 tests/compatibility/ag-01/fixtures/wff3/poc_wff3_part_blend_aod.xml
+Expected: INVALID ON LOWER VERSION (EXPLICIT FAILED + SEVERE)
+Exit Code: 0
+Verdict: PASS_EXPECTED_REJECTED_ON_LOWER_VERSION
+Raw Output:
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8
+INFO: WFF Validation Application Version 1.7.0. Maximum Supported Format Version #5
+SEVERE: [Line 9:Column 105]: cvc-complex-type.3.2.2: Attribute 'blendMode' is not allowed to appear in element 'PartDraw'.
+INFO: ❌  FAILED : tests/compatibility/ag-01/fixtures/wff3/poc_wff3_part_blend_aod.xml is NOT valid against watch face format version #2
+
+--- [CASE 06/60] POSITIVE MATRIX: poc_wff3_part_blend_aod @ WFF#3 ---
+File: tests/compatibility/ag-01/fixtures/wff3/poc_wff3_part_blend_aod.xml
+File SHA-256: 4914c959de127803753c93609d79ed27e51006416129b6221adc3ce2331c7a5d
+Command: java -jar .aura-tools/wff-validator.jar 3 tests/compatibility/ag-01/fixtures/wff3/poc_wff3_part_blend_aod.xml
+Expected: VALID (PASS)
+Exit Code: 0
+Verdict: PASS_EXPECTED_VALID
+Raw Output:
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8
+INFO: WFF Validation Application Version 1.7.0. Maximum Supported Format Version #5
+INFO: ✅  PASSED : tests/compatibility/ag-01/fixtures/wff3/poc_wff3_part_blend_aod.xml is valid against watch face format version #3
+
+--- [CASE 07/60] POSITIVE MATRIX: poc_wff3_part_blend_aod @ WFF#4 ---
+File: tests/compatibility/ag-01/fixtures/wff3/poc_wff3_part_blend_aod.xml
+File SHA-256: 4914c959de127803753c93609d79ed27e51006416129b6221adc3ce2331c7a5d
+Command: java -jar .aura-tools/wff-validator.jar 4 tests/compatibility/ag-01/fixtures/wff3/poc_wff3_part_blend_aod.xml
+Expected: VALID (PASS)
+Exit Code: 0
+Verdict: PASS_EXPECTED_VALID
+Raw Output:
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8
+INFO: WFF Validation Application Version 1.7.0. Maximum Supported Format Version #5
+INFO: ✅  PASSED : tests/compatibility/ag-01/fixtures/wff3/poc_wff3_part_blend_aod.xml is valid against watch face format version #4
+
+--- [CASE 08/60] POSITIVE MATRIX: poc_wff3_part_blend_aod @ WFF#5 ---
+File: tests/compatibility/ag-01/fixtures/wff3/poc_wff3_part_blend_aod.xml
+File SHA-256: 4914c959de127803753c93609d79ed27e51006416129b6221adc3ce2331c7a5d
+Command: java -jar .aura-tools/wff-validator.jar 5 tests/compatibility/ag-01/fixtures/wff3/poc_wff3_part_blend_aod.xml
+Expected: VALID (PASS)
+Exit Code: 0
+Verdict: PASS_EXPECTED_VALID
+Raw Output:
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8
+INFO: WFF Validation Application Version 1.7.0. Maximum Supported Format Version #5
+INFO: ✅  PASSED : tests/compatibility/ag-01/fixtures/wff3/poc_wff3_part_blend_aod.xml is valid against watch face format version #5
+
+--- [CASE 09/60] POSITIVE MATRIX: poc_wff4_continuity @ WFF#2 ---
+File: tests/compatibility/ag-01/fixtures/wff4/poc_wff4_continuity.xml
+File SHA-256: f70f8ef90b3f3418381f1b749c8fd6ef3cb01a88dc5302008f560d045b04c582
+Command: java -jar .aura-tools/wff-validator.jar 2 tests/compatibility/ag-01/fixtures/wff4/poc_wff4_continuity.xml
+Expected: INVALID ON LOWER VERSION (EXPLICIT FAILED + SEVERE)
+Exit Code: 0
+Verdict: PASS_EXPECTED_REJECTED_ON_LOWER_VERSION
+Raw Output:
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8
+INFO: WFF Validation Application Version 1.7.0. Maximum Supported Format Version #5
+SEVERE: [Line 18:Column 161]: cvc-complex-type.3.2.2: Attribute 'startOffset' is not allowed to appear in element 'Variant'.
+INFO: ❌  FAILED : tests/compatibility/ag-01/fixtures/wff4/poc_wff4_continuity.xml is NOT valid against watch face format version #2
+
+--- [CASE 10/60] POSITIVE MATRIX: poc_wff4_continuity @ WFF#3 ---
+File: tests/compatibility/ag-01/fixtures/wff4/poc_wff4_continuity.xml
+File SHA-256: f70f8ef90b3f3418381f1b749c8fd6ef3cb01a88dc5302008f560d045b04c582
+Command: java -jar .aura-tools/wff-validator.jar 3 tests/compatibility/ag-01/fixtures/wff4/poc_wff4_continuity.xml
+Expected: INVALID ON LOWER VERSION (EXPLICIT FAILED + SEVERE)
+Exit Code: 0
+Verdict: PASS_EXPECTED_REJECTED_ON_LOWER_VERSION
+Raw Output:
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8
+INFO: WFF Validation Application Version 1.7.0. Maximum Supported Format Version #5
+SEVERE: [Line 18:Column 161]: cvc-complex-type.3.2.2: Attribute 'startOffset' is not allowed to appear in element 'Variant'.
+INFO: ❌  FAILED : tests/compatibility/ag-01/fixtures/wff4/poc_wff4_continuity.xml is NOT valid against watch face format version #3
+
+--- [CASE 11/60] POSITIVE MATRIX: poc_wff4_continuity @ WFF#4 ---
+File: tests/compatibility/ag-01/fixtures/wff4/poc_wff4_continuity.xml
+File SHA-256: f70f8ef90b3f3418381f1b749c8fd6ef3cb01a88dc5302008f560d045b04c582
+Command: java -jar .aura-tools/wff-validator.jar 4 tests/compatibility/ag-01/fixtures/wff4/poc_wff4_continuity.xml
+Expected: VALID (PASS)
+Exit Code: 0
+Verdict: PASS_EXPECTED_VALID
+Raw Output:
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8
+INFO: WFF Validation Application Version 1.7.0. Maximum Supported Format Version #5
+INFO: ✅  PASSED : tests/compatibility/ag-01/fixtures/wff4/poc_wff4_continuity.xml is valid against watch face format version #4
+
+--- [CASE 12/60] POSITIVE MATRIX: poc_wff4_continuity @ WFF#5 ---
+File: tests/compatibility/ag-01/fixtures/wff4/poc_wff4_continuity.xml
+File SHA-256: f70f8ef90b3f3418381f1b749c8fd6ef3cb01a88dc5302008f560d045b04c582
+Command: java -jar .aura-tools/wff-validator.jar 5 tests/compatibility/ag-01/fixtures/wff4/poc_wff4_continuity.xml
+Expected: VALID (PASS)
+Exit Code: 0
+Verdict: PASS_EXPECTED_VALID
+Raw Output:
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8
+INFO: WFF Validation Application Version 1.7.0. Maximum Supported Format Version #5
+INFO: ✅  PASSED : tests/compatibility/ag-01/fixtures/wff4/poc_wff4_continuity.xml is valid against watch face format version #5
+
+--- [CASE 13/60] POSITIVE MATRIX: poc_wff4_reference_complication @ WFF#2 ---
+File: tests/compatibility/ag-01/fixtures/wff4/poc_wff4_reference_complication.xml
+File SHA-256: e7abd38b9c36efde20c1b40923aeed2a244750e1e0b7a5d77c2c58b4187a6f6d
+Command: java -jar .aura-tools/wff-validator.jar 2 tests/compatibility/ag-01/fixtures/wff4/poc_wff4_reference_complication.xml
+Expected: INVALID ON LOWER VERSION (EXPLICIT FAILED + SEVERE)
+Exit Code: 0
+Verdict: PASS_EXPECTED_REJECTED_ON_LOWER_VERSION
+Raw Output:
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8
+INFO: WFF Validation Application Version 1.7.0. Maximum Supported Format Version #5
+SEVERE: [Line 21:Column 124]: cvc-complex-type.3.2.2: Attribute 'startOffset' is not allowed to appear in element 'Variant'.
+INFO: ❌  FAILED : tests/compatibility/ag-01/fixtures/wff4/poc_wff4_reference_complication.xml is NOT valid against watch face format version #2
+
+--- [CASE 14/60] POSITIVE MATRIX: poc_wff4_reference_complication @ WFF#3 ---
+File: tests/compatibility/ag-01/fixtures/wff4/poc_wff4_reference_complication.xml
+File SHA-256: e7abd38b9c36efde20c1b40923aeed2a244750e1e0b7a5d77c2c58b4187a6f6d
+Command: java -jar .aura-tools/wff-validator.jar 3 tests/compatibility/ag-01/fixtures/wff4/poc_wff4_reference_complication.xml
+Expected: INVALID ON LOWER VERSION (EXPLICIT FAILED + SEVERE)
+Exit Code: 0
+Verdict: PASS_EXPECTED_REJECTED_ON_LOWER_VERSION
+Raw Output:
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8
+INFO: WFF Validation Application Version 1.7.0. Maximum Supported Format Version #5
+SEVERE: [Line 21:Column 124]: cvc-complex-type.3.2.2: Attribute 'startOffset' is not allowed to appear in element 'Variant'.
+INFO: ❌  FAILED : tests/compatibility/ag-01/fixtures/wff4/poc_wff4_reference_complication.xml is NOT valid against watch face format version #3
+
+--- [CASE 15/60] POSITIVE MATRIX: poc_wff4_reference_complication @ WFF#4 ---
+File: tests/compatibility/ag-01/fixtures/wff4/poc_wff4_reference_complication.xml
+File SHA-256: e7abd38b9c36efde20c1b40923aeed2a244750e1e0b7a5d77c2c58b4187a6f6d
+Command: java -jar .aura-tools/wff-validator.jar 4 tests/compatibility/ag-01/fixtures/wff4/poc_wff4_reference_complication.xml
+Expected: VALID (PASS)
+Exit Code: 0
+Verdict: PASS_EXPECTED_VALID
+Raw Output:
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8
+INFO: WFF Validation Application Version 1.7.0. Maximum Supported Format Version #5
+INFO: ✅  PASSED : tests/compatibility/ag-01/fixtures/wff4/poc_wff4_reference_complication.xml is valid against watch face format version #4
+
+--- [CASE 16/60] POSITIVE MATRIX: poc_wff4_reference_complication @ WFF#5 ---
+File: tests/compatibility/ag-01/fixtures/wff4/poc_wff4_reference_complication.xml
+File SHA-256: e7abd38b9c36efde20c1b40923aeed2a244750e1e0b7a5d77c2c58b4187a6f6d
+Command: java -jar .aura-tools/wff-validator.jar 5 tests/compatibility/ag-01/fixtures/wff4/poc_wff4_reference_complication.xml
+Expected: VALID (PASS)
+Exit Code: 0
+Verdict: PASS_EXPECTED_VALID
+Raw Output:
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8
+INFO: WFF Validation Application Version 1.7.0. Maximum Supported Format Version #5
+INFO: ✅  PASSED : tests/compatibility/ag-01/fixtures/wff4/poc_wff4_reference_complication.xml is valid against watch face format version #5
+
+--- [CASE 17/60] POSITIVE MATRIX: poc_wff4_motion_triggers @ WFF#2 ---
+File: tests/compatibility/ag-01/fixtures/wff4/poc_wff4_motion_triggers.xml
+File SHA-256: 745df3951f3d0333f3baef8e7cc2e405fa6e8cba69ff052510f6a21d7ab507d3
+Command: java -jar .aura-tools/wff-validator.jar 2 tests/compatibility/ag-01/fixtures/wff4/poc_wff4_motion_triggers.xml
+Expected: INVALID ON LOWER VERSION (EXPLICIT FAILED + SEVERE)
+Exit Code: 0
+Verdict: PASS_EXPECTED_REJECTED_ON_LOWER_VERSION
+Raw Output:
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8
+INFO: WFF Validation Application Version 1.7.0. Maximum Supported Format Version #5
+SEVERE: [Line 12:Column 124]: cvc-complex-type.3.2.2: Attribute 'startOffset' is not allowed to appear in element 'Variant'.
+INFO: ❌  FAILED : tests/compatibility/ag-01/fixtures/wff4/poc_wff4_motion_triggers.xml is NOT valid against watch face format version #2
+
+--- [CASE 18/60] POSITIVE MATRIX: poc_wff4_motion_triggers @ WFF#3 ---
+File: tests/compatibility/ag-01/fixtures/wff4/poc_wff4_motion_triggers.xml
+File SHA-256: 745df3951f3d0333f3baef8e7cc2e405fa6e8cba69ff052510f6a21d7ab507d3
+Command: java -jar .aura-tools/wff-validator.jar 3 tests/compatibility/ag-01/fixtures/wff4/poc_wff4_motion_triggers.xml
+Expected: INVALID ON LOWER VERSION (EXPLICIT FAILED + SEVERE)
+Exit Code: 0
+Verdict: PASS_EXPECTED_REJECTED_ON_LOWER_VERSION
+Raw Output:
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8
+INFO: WFF Validation Application Version 1.7.0. Maximum Supported Format Version #5
+SEVERE: [Line 12:Column 124]: cvc-complex-type.3.2.2: Attribute 'startOffset' is not allowed to appear in element 'Variant'.
+INFO: ❌  FAILED : tests/compatibility/ag-01/fixtures/wff4/poc_wff4_motion_triggers.xml is NOT valid against watch face format version #3
+
+--- [CASE 19/60] POSITIVE MATRIX: poc_wff4_motion_triggers @ WFF#4 ---
+File: tests/compatibility/ag-01/fixtures/wff4/poc_wff4_motion_triggers.xml
+File SHA-256: 745df3951f3d0333f3baef8e7cc2e405fa6e8cba69ff052510f6a21d7ab507d3
+Command: java -jar .aura-tools/wff-validator.jar 4 tests/compatibility/ag-01/fixtures/wff4/poc_wff4_motion_triggers.xml
+Expected: VALID (PASS)
+Exit Code: 0
+Verdict: PASS_EXPECTED_VALID
+Raw Output:
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8
+INFO: WFF Validation Application Version 1.7.0. Maximum Supported Format Version #5
+INFO: ✅  PASSED : tests/compatibility/ag-01/fixtures/wff4/poc_wff4_motion_triggers.xml is valid against watch face format version #4
+
+--- [CASE 20/60] POSITIVE MATRIX: poc_wff4_motion_triggers @ WFF#5 ---
+File: tests/compatibility/ag-01/fixtures/wff4/poc_wff4_motion_triggers.xml
+File SHA-256: 745df3951f3d0333f3baef8e7cc2e405fa6e8cba69ff052510f6a21d7ab507d3
+Command: java -jar .aura-tools/wff-validator.jar 5 tests/compatibility/ag-01/fixtures/wff4/poc_wff4_motion_triggers.xml
+Expected: VALID (PASS)
+Exit Code: 0
+Verdict: PASS_EXPECTED_VALID
+Raw Output:
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8
+INFO: WFF Validation Application Version 1.7.0. Maximum Supported Format Version #5
+INFO: ✅  PASSED : tests/compatibility/ag-01/fixtures/wff4/poc_wff4_motion_triggers.xml is valid against watch face format version #5
+
+--- [CASE 21/60] POSITIVE MATRIX: poc_wff5_blend_features @ WFF#2 ---
+File: tests/compatibility/ag-01/fixtures/wff5/poc_wff5_blend_features.xml
+File SHA-256: 72b280c1f5579a05460dc5ea18164fae4a3125dd8ef0825034fb013164136f47
+Command: java -jar .aura-tools/wff-validator.jar 2 tests/compatibility/ag-01/fixtures/wff5/poc_wff5_blend_features.xml
+Expected: INVALID ON LOWER VERSION (EXPLICIT FAILED + SEVERE)
+Exit Code: 0
+Verdict: PASS_EXPECTED_REJECTED_ON_LOWER_VERSION
+Raw Output:
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8
+INFO: WFF Validation Application Version 1.7.0. Maximum Supported Format Version #5
+SEVERE: [Line 12:Column 110]: cvc-complex-type.3.2.2: Attribute 'blendMode' is not allowed to appear in element 'Group'.
+INFO: ❌  FAILED : tests/compatibility/ag-01/fixtures/wff5/poc_wff5_blend_features.xml is NOT valid against watch face format version #2
+
+--- [CASE 22/60] POSITIVE MATRIX: poc_wff5_blend_features @ WFF#3 ---
+File: tests/compatibility/ag-01/fixtures/wff5/poc_wff5_blend_features.xml
+File SHA-256: 72b280c1f5579a05460dc5ea18164fae4a3125dd8ef0825034fb013164136f47
+Command: java -jar .aura-tools/wff-validator.jar 3 tests/compatibility/ag-01/fixtures/wff5/poc_wff5_blend_features.xml
+Expected: INVALID ON LOWER VERSION (EXPLICIT FAILED + SEVERE)
+Exit Code: 0
+Verdict: PASS_EXPECTED_REJECTED_ON_LOWER_VERSION
+Raw Output:
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8
+INFO: WFF Validation Application Version 1.7.0. Maximum Supported Format Version #5
+SEVERE: [Line 12:Column 110]: cvc-complex-type.3.2.2: Attribute 'blendMode' is not allowed to appear in element 'Group'.
+INFO: ❌  FAILED : tests/compatibility/ag-01/fixtures/wff5/poc_wff5_blend_features.xml is NOT valid against watch face format version #3
+
+--- [CASE 23/60] POSITIVE MATRIX: poc_wff5_blend_features @ WFF#4 ---
+File: tests/compatibility/ag-01/fixtures/wff5/poc_wff5_blend_features.xml
+File SHA-256: 72b280c1f5579a05460dc5ea18164fae4a3125dd8ef0825034fb013164136f47
+Command: java -jar .aura-tools/wff-validator.jar 4 tests/compatibility/ag-01/fixtures/wff5/poc_wff5_blend_features.xml
+Expected: INVALID ON LOWER VERSION (EXPLICIT FAILED + SEVERE)
+Exit Code: 0
+Verdict: PASS_EXPECTED_REJECTED_ON_LOWER_VERSION
+Raw Output:
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8
+INFO: WFF Validation Application Version 1.7.0. Maximum Supported Format Version #5
+SEVERE: [Line 12:Column 110]: cvc-complex-type.3.2.2: Attribute 'blendMode' is not allowed to appear in element 'Group'.
+INFO: ❌  FAILED : tests/compatibility/ag-01/fixtures/wff5/poc_wff5_blend_features.xml is NOT valid against watch face format version #4
+
+--- [CASE 24/60] POSITIVE MATRIX: poc_wff5_blend_features @ WFF#5 ---
+File: tests/compatibility/ag-01/fixtures/wff5/poc_wff5_blend_features.xml
+File SHA-256: 72b280c1f5579a05460dc5ea18164fae4a3125dd8ef0825034fb013164136f47
+Command: java -jar .aura-tools/wff-validator.jar 5 tests/compatibility/ag-01/fixtures/wff5/poc_wff5_blend_features.xml
+Expected: VALID (PASS)
+Exit Code: 0
+Verdict: PASS_EXPECTED_VALID
+Raw Output:
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8
+INFO: WFF Validation Application Version 1.7.0. Maximum Supported Format Version #5
+INFO: ✅  PASSED : tests/compatibility/ag-01/fixtures/wff5/poc_wff5_blend_features.xml is valid against watch face format version #5
+
+--- [CASE 25/60] NEGATIVE MATRIX: neg_wff3_part_blend_in_wff2 @ WFF#2 ---
+File: tests/compatibility/ag-01/fixtures/negative/neg_wff3_part_blend_in_wff2.xml
+File SHA-256: 375b3886074763807ed4d3bc921bfd32452620bb992f407c2e8c8aae57f18638
+Command: java -jar .aura-tools/wff-validator.jar 2 tests/compatibility/ag-01/fixtures/negative/neg_wff3_part_blend_in_wff2.xml
+Expected: EXPLICIT FAILED + SEVERE (blendMode)
+Exit Code: 0
+Verdict: PASS_DETECTED_INVALID
+Raw Output:
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8
+INFO: WFF Validation Application Version 1.7.0. Maximum Supported Format Version #5
+SEVERE: [Line 7:Column 79]: cvc-complex-type.3.2.2: Attribute 'blendMode' is not allowed to appear in element 'PartDraw'.
+INFO: ❌  FAILED : tests/compatibility/ag-01/fixtures/negative/neg_wff3_part_blend_in_wff2.xml is NOT valid against watch face format version #2
+
+--- [CASE 26/60] NEGATIVE MATRIX: neg_wff3_part_blend_in_wff2 @ WFF#3 ---
+File: tests/compatibility/ag-01/fixtures/negative/neg_wff3_part_blend_in_wff2.xml
+File SHA-256: 375b3886074763807ed4d3bc921bfd32452620bb992f407c2e8c8aae57f18638
+Command: java -jar .aura-tools/wff-validator.jar 3 tests/compatibility/ag-01/fixtures/negative/neg_wff3_part_blend_in_wff2.xml
+Expected: VALID ON HIGHER VERSION (PASS)
+Exit Code: 0
+Verdict: PASS_VALID_ON_HIGHER_VERSION
+Raw Output:
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8
+INFO: WFF Validation Application Version 1.7.0. Maximum Supported Format Version #5
+INFO: ✅  PASSED : tests/compatibility/ag-01/fixtures/negative/neg_wff3_part_blend_in_wff2.xml is valid against watch face format version #3
+
+--- [CASE 27/60] NEGATIVE MATRIX: neg_wff3_part_blend_in_wff2 @ WFF#4 ---
+File: tests/compatibility/ag-01/fixtures/negative/neg_wff3_part_blend_in_wff2.xml
+File SHA-256: 375b3886074763807ed4d3bc921bfd32452620bb992f407c2e8c8aae57f18638
+Command: java -jar .aura-tools/wff-validator.jar 4 tests/compatibility/ag-01/fixtures/negative/neg_wff3_part_blend_in_wff2.xml
+Expected: VALID ON HIGHER VERSION (PASS)
+Exit Code: 0
+Verdict: PASS_VALID_ON_HIGHER_VERSION
+Raw Output:
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8
+INFO: WFF Validation Application Version 1.7.0. Maximum Supported Format Version #5
+INFO: ✅  PASSED : tests/compatibility/ag-01/fixtures/negative/neg_wff3_part_blend_in_wff2.xml is valid against watch face format version #4
+
+--- [CASE 28/60] NEGATIVE MATRIX: neg_wff3_part_blend_in_wff2 @ WFF#5 ---
+File: tests/compatibility/ag-01/fixtures/negative/neg_wff3_part_blend_in_wff2.xml
+File SHA-256: 375b3886074763807ed4d3bc921bfd32452620bb992f407c2e8c8aae57f18638
+Command: java -jar .aura-tools/wff-validator.jar 5 tests/compatibility/ag-01/fixtures/negative/neg_wff3_part_blend_in_wff2.xml
+Expected: VALID ON HIGHER VERSION (PASS)
+Exit Code: 0
+Verdict: PASS_VALID_ON_HIGHER_VERSION
+Raw Output:
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8
+INFO: WFF Validation Application Version 1.7.0. Maximum Supported Format Version #5
+INFO: ✅  PASSED : tests/compatibility/ag-01/fixtures/negative/neg_wff3_part_blend_in_wff2.xml is valid against watch face format version #5
+
+--- [CASE 29/60] NEGATIVE MATRIX: neg_wff4_variant_transition_in_wff3 @ WFF#2 ---
+File: tests/compatibility/ag-01/fixtures/negative/neg_wff4_variant_transition_in_wff3.xml
+File SHA-256: 4f811993d67f5efe55357f487dd1a0e0c2be5972aa9104d6bba72636e4756894
+Command: java -jar .aura-tools/wff-validator.jar 2 tests/compatibility/ag-01/fixtures/negative/neg_wff4_variant_transition_in_wff3.xml
+Expected: EXPLICIT FAILED + SEVERE (schema violation)
+Exit Code: 0
+Verdict: PASS_DETECTED_INVALID
+Raw Output:
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8
+INFO: WFF Validation Application Version 1.7.0. Maximum Supported Format Version #5
+SEVERE: [Line 6:Column 124]: cvc-complex-type.3.2.2: Attribute 'startOffset' is not allowed to appear in element 'Variant'.
+INFO: ❌  FAILED : tests/compatibility/ag-01/fixtures/negative/neg_wff4_variant_transition_in_wff3.xml is NOT valid against watch face format version #2
+
+--- [CASE 30/60] NEGATIVE MATRIX: neg_wff4_variant_transition_in_wff3 @ WFF#3 ---
+File: tests/compatibility/ag-01/fixtures/negative/neg_wff4_variant_transition_in_wff3.xml
+File SHA-256: 4f811993d67f5efe55357f487dd1a0e0c2be5972aa9104d6bba72636e4756894
+Command: java -jar .aura-tools/wff-validator.jar 3 tests/compatibility/ag-01/fixtures/negative/neg_wff4_variant_transition_in_wff3.xml
+Expected: EXPLICIT FAILED + SEVERE (Variant)
+Exit Code: 0
+Verdict: PASS_DETECTED_INVALID
+Raw Output:
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8
+INFO: WFF Validation Application Version 1.7.0. Maximum Supported Format Version #5
+SEVERE: [Line 6:Column 124]: cvc-complex-type.3.2.2: Attribute 'startOffset' is not allowed to appear in element 'Variant'.
+INFO: ❌  FAILED : tests/compatibility/ag-01/fixtures/negative/neg_wff4_variant_transition_in_wff3.xml is NOT valid against watch face format version #3
+
+--- [CASE 31/60] NEGATIVE MATRIX: neg_wff4_variant_transition_in_wff3 @ WFF#4 ---
+File: tests/compatibility/ag-01/fixtures/negative/neg_wff4_variant_transition_in_wff3.xml
+File SHA-256: 4f811993d67f5efe55357f487dd1a0e0c2be5972aa9104d6bba72636e4756894
+Command: java -jar .aura-tools/wff-validator.jar 4 tests/compatibility/ag-01/fixtures/negative/neg_wff4_variant_transition_in_wff3.xml
+Expected: VALID ON HIGHER VERSION (PASS)
+Exit Code: 0
+Verdict: PASS_VALID_ON_HIGHER_VERSION
+Raw Output:
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8
+INFO: WFF Validation Application Version 1.7.0. Maximum Supported Format Version #5
+INFO: ✅  PASSED : tests/compatibility/ag-01/fixtures/negative/neg_wff4_variant_transition_in_wff3.xml is valid against watch face format version #4
+
+--- [CASE 32/60] NEGATIVE MATRIX: neg_wff4_variant_transition_in_wff3 @ WFF#5 ---
+File: tests/compatibility/ag-01/fixtures/negative/neg_wff4_variant_transition_in_wff3.xml
+File SHA-256: 4f811993d67f5efe55357f487dd1a0e0c2be5972aa9104d6bba72636e4756894
+Command: java -jar .aura-tools/wff-validator.jar 5 tests/compatibility/ag-01/fixtures/negative/neg_wff4_variant_transition_in_wff3.xml
+Expected: VALID ON HIGHER VERSION (PASS)
+Exit Code: 0
+Verdict: PASS_VALID_ON_HIGHER_VERSION
+Raw Output:
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8
+INFO: WFF Validation Application Version 1.7.0. Maximum Supported Format Version #5
+INFO: ✅  PASSED : tests/compatibility/ag-01/fixtures/negative/neg_wff4_variant_transition_in_wff3.xml is valid against watch face format version #5
+
+--- [CASE 33/60] NEGATIVE MATRIX: neg_wff4_reference_in_wff3 @ WFF#2 ---
+File: tests/compatibility/ag-01/fixtures/negative/neg_wff4_reference_in_wff3.xml
+File SHA-256: d009a0629d018506ca00a1c9478be1daeada5f9e3ee51979235889a917a6dcbd
+Command: java -jar .aura-tools/wff-validator.jar 2 tests/compatibility/ag-01/fixtures/negative/neg_wff4_reference_in_wff3.xml
+Expected: EXPLICIT FAILED + SEVERE (schema violation)
+Exit Code: 0
+Verdict: PASS_DETECTED_INVALID
+Raw Output:
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8
+INFO: WFF Validation Application Version 1.7.0. Maximum Supported Format Version #5
+SEVERE: [Line 8:Column 72]: cvc-complex-type.2.4.a: Invalid content was found starting with element 'Reference'. One of '{Localization, Gyro, Launch, Group, PartText, PartImage, PartAnimatedImage, PartDraw, ScreenReader, Condition, ListConfiguration, BooleanConfiguration, AnalogClock, DigitalClock}' is expected.
+INFO: ❌  FAILED : tests/compatibility/ag-01/fixtures/negative/neg_wff4_reference_in_wff3.xml is NOT valid against watch face format version #2
+
+--- [CASE 34/60] NEGATIVE MATRIX: neg_wff4_reference_in_wff3 @ WFF#3 ---
+File: tests/compatibility/ag-01/fixtures/negative/neg_wff4_reference_in_wff3.xml
+File SHA-256: d009a0629d018506ca00a1c9478be1daeada5f9e3ee51979235889a917a6dcbd
+Command: java -jar .aura-tools/wff-validator.jar 3 tests/compatibility/ag-01/fixtures/negative/neg_wff4_reference_in_wff3.xml
+Expected: EXPLICIT FAILED + SEVERE (Reference)
+Exit Code: 0
+Verdict: PASS_DETECTED_INVALID
+Raw Output:
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8
+INFO: WFF Validation Application Version 1.7.0. Maximum Supported Format Version #5
+SEVERE: [Line 8:Column 72]: cvc-complex-type.2.4.a: Invalid content was found starting with element 'Reference'. One of '{Localization, Gyro, Launch, Group, PartText, PartImage, PartAnimatedImage, PartDraw, ScreenReader, Condition, ListConfiguration, BooleanConfiguration, AnalogClock, DigitalClock}' is expected.
+INFO: ❌  FAILED : tests/compatibility/ag-01/fixtures/negative/neg_wff4_reference_in_wff3.xml is NOT valid against watch face format version #3
+
+--- [CASE 35/60] NEGATIVE MATRIX: neg_wff4_reference_in_wff3 @ WFF#4 ---
+File: tests/compatibility/ag-01/fixtures/negative/neg_wff4_reference_in_wff3.xml
+File SHA-256: d009a0629d018506ca00a1c9478be1daeada5f9e3ee51979235889a917a6dcbd
+Command: java -jar .aura-tools/wff-validator.jar 4 tests/compatibility/ag-01/fixtures/negative/neg_wff4_reference_in_wff3.xml
+Expected: VALID ON HIGHER VERSION (PASS)
+Exit Code: 0
+Verdict: PASS_VALID_ON_HIGHER_VERSION
+Raw Output:
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8
+INFO: WFF Validation Application Version 1.7.0. Maximum Supported Format Version #5
+INFO: ✅  PASSED : tests/compatibility/ag-01/fixtures/negative/neg_wff4_reference_in_wff3.xml is valid against watch face format version #4
+
+--- [CASE 36/60] NEGATIVE MATRIX: neg_wff4_reference_in_wff3 @ WFF#5 ---
+File: tests/compatibility/ag-01/fixtures/negative/neg_wff4_reference_in_wff3.xml
+File SHA-256: d009a0629d018506ca00a1c9478be1daeada5f9e3ee51979235889a917a6dcbd
+Command: java -jar .aura-tools/wff-validator.jar 5 tests/compatibility/ag-01/fixtures/negative/neg_wff4_reference_in_wff3.xml
+Expected: VALID ON HIGHER VERSION (PASS)
+Exit Code: 0
+Verdict: PASS_VALID_ON_HIGHER_VERSION
+Raw Output:
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8
+INFO: WFF Validation Application Version 1.7.0. Maximum Supported Format Version #5
+INFO: ✅  PASSED : tests/compatibility/ag-01/fixtures/negative/neg_wff4_reference_in_wff3.xml is valid against watch face format version #5
+
+--- [CASE 37/60] NEGATIVE MATRIX: neg_wff5_group_blend_in_wff4 @ WFF#2 ---
+File: tests/compatibility/ag-01/fixtures/negative/neg_wff5_group_blend_in_wff4.xml
+File SHA-256: cf17eb33f7e688c9e615409d4e95d3fc85ad20c4208646703f3753b09463e9e9
+Command: java -jar .aura-tools/wff-validator.jar 2 tests/compatibility/ag-01/fixtures/negative/neg_wff5_group_blend_in_wff4.xml
+Expected: EXPLICIT FAILED + SEVERE (schema violation)
+Exit Code: 0
+Verdict: PASS_DETECTED_INVALID
+Raw Output:
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8
+INFO: WFF Validation Application Version 1.7.0. Maximum Supported Format Version #5
+SEVERE: [Line 5:Column 96]: cvc-complex-type.3.2.2: Attribute 'blendMode' is not allowed to appear in element 'Group'.
+INFO: ❌  FAILED : tests/compatibility/ag-01/fixtures/negative/neg_wff5_group_blend_in_wff4.xml is NOT valid against watch face format version #2
+
+--- [CASE 38/60] NEGATIVE MATRIX: neg_wff5_group_blend_in_wff4 @ WFF#3 ---
+File: tests/compatibility/ag-01/fixtures/negative/neg_wff5_group_blend_in_wff4.xml
+File SHA-256: cf17eb33f7e688c9e615409d4e95d3fc85ad20c4208646703f3753b09463e9e9
+Command: java -jar .aura-tools/wff-validator.jar 3 tests/compatibility/ag-01/fixtures/negative/neg_wff5_group_blend_in_wff4.xml
+Expected: EXPLICIT FAILED + SEVERE (schema violation)
+Exit Code: 0
+Verdict: PASS_DETECTED_INVALID
+Raw Output:
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8
+INFO: WFF Validation Application Version 1.7.0. Maximum Supported Format Version #5
+SEVERE: [Line 5:Column 96]: cvc-complex-type.3.2.2: Attribute 'blendMode' is not allowed to appear in element 'Group'.
+INFO: ❌  FAILED : tests/compatibility/ag-01/fixtures/negative/neg_wff5_group_blend_in_wff4.xml is NOT valid against watch face format version #3
+
+--- [CASE 39/60] NEGATIVE MATRIX: neg_wff5_group_blend_in_wff4 @ WFF#4 ---
+File: tests/compatibility/ag-01/fixtures/negative/neg_wff5_group_blend_in_wff4.xml
+File SHA-256: cf17eb33f7e688c9e615409d4e95d3fc85ad20c4208646703f3753b09463e9e9
+Command: java -jar .aura-tools/wff-validator.jar 4 tests/compatibility/ag-01/fixtures/negative/neg_wff5_group_blend_in_wff4.xml
+Expected: EXPLICIT FAILED + SEVERE (blendMode)
+Exit Code: 0
+Verdict: PASS_DETECTED_INVALID
+Raw Output:
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8
+INFO: WFF Validation Application Version 1.7.0. Maximum Supported Format Version #5
+SEVERE: [Line 5:Column 96]: cvc-complex-type.3.2.2: Attribute 'blendMode' is not allowed to appear in element 'Group'.
+INFO: ❌  FAILED : tests/compatibility/ag-01/fixtures/negative/neg_wff5_group_blend_in_wff4.xml is NOT valid against watch face format version #4
+
+--- [CASE 40/60] NEGATIVE MATRIX: neg_wff5_group_blend_in_wff4 @ WFF#5 ---
+File: tests/compatibility/ag-01/fixtures/negative/neg_wff5_group_blend_in_wff4.xml
+File SHA-256: cf17eb33f7e688c9e615409d4e95d3fc85ad20c4208646703f3753b09463e9e9
+Command: java -jar .aura-tools/wff-validator.jar 5 tests/compatibility/ag-01/fixtures/negative/neg_wff5_group_blend_in_wff4.xml
+Expected: VALID ON HIGHER VERSION (PASS)
+Exit Code: 0
+Verdict: PASS_VALID_ON_HIGHER_VERSION
+Raw Output:
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8
+INFO: WFF Validation Application Version 1.7.0. Maximum Supported Format Version #5
+INFO: ✅  PASSED : tests/compatibility/ag-01/fixtures/negative/neg_wff5_group_blend_in_wff4.xml is valid against watch face format version #5
+
+--- [CASE 41/60] NEGATIVE MATRIX: neg_wff5_complicationslot_blend_in_wff4 @ WFF#2 ---
+File: tests/compatibility/ag-01/fixtures/negative/neg_wff5_complicationslot_blend_in_wff4.xml
+File SHA-256: d871d14b92c758748ba2b0383ea905264264edb7c42387fd8111fcdbba54c673
+Command: java -jar .aura-tools/wff-validator.jar 2 tests/compatibility/ag-01/fixtures/negative/neg_wff5_complicationslot_blend_in_wff4.xml
+Expected: EXPLICIT FAILED + SEVERE (schema violation)
+Exit Code: 0
+Verdict: PASS_DETECTED_INVALID
+Raw Output:
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8
+INFO: WFF Validation Application Version 1.7.0. Maximum Supported Format Version #5
+SEVERE: [Line 6:Column 98]: cvc-complex-type.3.2.2: Attribute 'blendMode' is not allowed to appear in element 'ComplicationSlot'.
+INFO: ❌  FAILED : tests/compatibility/ag-01/fixtures/negative/neg_wff5_complicationslot_blend_in_wff4.xml is NOT valid against watch face format version #2
+
+--- [CASE 42/60] NEGATIVE MATRIX: neg_wff5_complicationslot_blend_in_wff4 @ WFF#3 ---
+File: tests/compatibility/ag-01/fixtures/negative/neg_wff5_complicationslot_blend_in_wff4.xml
+File SHA-256: d871d14b92c758748ba2b0383ea905264264edb7c42387fd8111fcdbba54c673
+Command: java -jar .aura-tools/wff-validator.jar 3 tests/compatibility/ag-01/fixtures/negative/neg_wff5_complicationslot_blend_in_wff4.xml
+Expected: EXPLICIT FAILED + SEVERE (schema violation)
+Exit Code: 0
+Verdict: PASS_DETECTED_INVALID
+Raw Output:
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8
+INFO: WFF Validation Application Version 1.7.0. Maximum Supported Format Version #5
+SEVERE: [Line 6:Column 98]: cvc-complex-type.3.2.2: Attribute 'blendMode' is not allowed to appear in element 'ComplicationSlot'.
+INFO: ❌  FAILED : tests/compatibility/ag-01/fixtures/negative/neg_wff5_complicationslot_blend_in_wff4.xml is NOT valid against watch face format version #3
+
+--- [CASE 43/60] NEGATIVE MATRIX: neg_wff5_complicationslot_blend_in_wff4 @ WFF#4 ---
+File: tests/compatibility/ag-01/fixtures/negative/neg_wff5_complicationslot_blend_in_wff4.xml
+File SHA-256: d871d14b92c758748ba2b0383ea905264264edb7c42387fd8111fcdbba54c673
+Command: java -jar .aura-tools/wff-validator.jar 4 tests/compatibility/ag-01/fixtures/negative/neg_wff5_complicationslot_blend_in_wff4.xml
+Expected: EXPLICIT FAILED + SEVERE (blendMode)
+Exit Code: 0
+Verdict: PASS_DETECTED_INVALID
+Raw Output:
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8
+INFO: WFF Validation Application Version 1.7.0. Maximum Supported Format Version #5
+SEVERE: [Line 6:Column 98]: cvc-complex-type.3.2.2: Attribute 'blendMode' is not allowed to appear in element 'ComplicationSlot'.
+INFO: ❌  FAILED : tests/compatibility/ag-01/fixtures/negative/neg_wff5_complicationslot_blend_in_wff4.xml is NOT valid against watch face format version #4
+
+--- [CASE 44/60] NEGATIVE MATRIX: neg_wff5_complicationslot_blend_in_wff4 @ WFF#5 ---
+File: tests/compatibility/ag-01/fixtures/negative/neg_wff5_complicationslot_blend_in_wff4.xml
+File SHA-256: d871d14b92c758748ba2b0383ea905264264edb7c42387fd8111fcdbba54c673
+Command: java -jar .aura-tools/wff-validator.jar 5 tests/compatibility/ag-01/fixtures/negative/neg_wff5_complicationslot_blend_in_wff4.xml
+Expected: VALID ON HIGHER VERSION (PASS)
+Exit Code: 0
+Verdict: PASS_VALID_ON_HIGHER_VERSION
+Raw Output:
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8
+INFO: WFF Validation Application Version 1.7.0. Maximum Supported Format Version #5
+INFO: ✅  PASSED : tests/compatibility/ag-01/fixtures/negative/neg_wff5_complicationslot_blend_in_wff4.xml is valid against watch face format version #5
+
+--- [CASE 45/60] NEGATIVE MATRIX: neg_wff5_stroke_join_font_minsize_in_wff4 @ WFF#2 ---
+File: tests/compatibility/ag-01/fixtures/negative/neg_wff5_stroke_join_font_minsize_in_wff4.xml
+File SHA-256: b7854925c66f21b71985276d18fdbb3e73beca61951cdc063a1a1326992e62ff
+Command: java -jar .aura-tools/wff-validator.jar 2 tests/compatibility/ag-01/fixtures/negative/neg_wff5_stroke_join_font_minsize_in_wff4.xml
+Expected: EXPLICIT FAILED + SEVERE (schema violation)
+Exit Code: 0
+Verdict: PASS_DETECTED_INVALID
+Raw Output:
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8
+INFO: WFF Validation Application Version 1.7.0. Maximum Supported Format Version #5
+SEVERE: [Line 9:Column 76]: cvc-complex-type.3.2.2: Attribute 'join' is not allowed to appear in element 'Stroke'.
+INFO: ❌  FAILED : tests/compatibility/ag-01/fixtures/negative/neg_wff5_stroke_join_font_minsize_in_wff4.xml is NOT valid against watch face format version #2
+
+--- [CASE 46/60] NEGATIVE MATRIX: neg_wff5_stroke_join_font_minsize_in_wff4 @ WFF#3 ---
+File: tests/compatibility/ag-01/fixtures/negative/neg_wff5_stroke_join_font_minsize_in_wff4.xml
+File SHA-256: b7854925c66f21b71985276d18fdbb3e73beca61951cdc063a1a1326992e62ff
+Command: java -jar .aura-tools/wff-validator.jar 3 tests/compatibility/ag-01/fixtures/negative/neg_wff5_stroke_join_font_minsize_in_wff4.xml
+Expected: EXPLICIT FAILED + SEVERE (schema violation)
+Exit Code: 0
+Verdict: PASS_DETECTED_INVALID
+Raw Output:
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8
+INFO: WFF Validation Application Version 1.7.0. Maximum Supported Format Version #5
+SEVERE: [Line 9:Column 76]: cvc-complex-type.3.2.2: Attribute 'join' is not allowed to appear in element 'Stroke'.
+INFO: ❌  FAILED : tests/compatibility/ag-01/fixtures/negative/neg_wff5_stroke_join_font_minsize_in_wff4.xml is NOT valid against watch face format version #3
+
+--- [CASE 47/60] NEGATIVE MATRIX: neg_wff5_stroke_join_font_minsize_in_wff4 @ WFF#4 ---
+File: tests/compatibility/ag-01/fixtures/negative/neg_wff5_stroke_join_font_minsize_in_wff4.xml
+File SHA-256: b7854925c66f21b71985276d18fdbb3e73beca61951cdc063a1a1326992e62ff
+Command: java -jar .aura-tools/wff-validator.jar 4 tests/compatibility/ag-01/fixtures/negative/neg_wff5_stroke_join_font_minsize_in_wff4.xml
+Expected: EXPLICIT FAILED + SEVERE (join)
+Exit Code: 0
+Verdict: PASS_DETECTED_INVALID
+Raw Output:
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8
+INFO: WFF Validation Application Version 1.7.0. Maximum Supported Format Version #5
+SEVERE: [Line 9:Column 76]: cvc-complex-type.3.2.2: Attribute 'join' is not allowed to appear in element 'Stroke'.
+INFO: ❌  FAILED : tests/compatibility/ag-01/fixtures/negative/neg_wff5_stroke_join_font_minsize_in_wff4.xml is NOT valid against watch face format version #4
+
+--- [CASE 48/60] NEGATIVE MATRIX: neg_wff5_stroke_join_font_minsize_in_wff4 @ WFF#5 ---
+File: tests/compatibility/ag-01/fixtures/negative/neg_wff5_stroke_join_font_minsize_in_wff4.xml
+File SHA-256: b7854925c66f21b71985276d18fdbb3e73beca61951cdc063a1a1326992e62ff
+Command: java -jar .aura-tools/wff-validator.jar 5 tests/compatibility/ag-01/fixtures/negative/neg_wff5_stroke_join_font_minsize_in_wff4.xml
+Expected: VALID ON HIGHER VERSION (PASS)
+Exit Code: 0
+Verdict: PASS_VALID_ON_HIGHER_VERSION
+Raw Output:
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8
+INFO: WFF Validation Application Version 1.7.0. Maximum Supported Format Version #5
+INFO: ✅  PASSED : tests/compatibility/ag-01/fixtures/negative/neg_wff5_stroke_join_font_minsize_in_wff4.xml is valid against watch face format version #5
+
+--- [CASE 49/60] NEGATIVE MATRIX: neg_wff4_invalid_variant_and_reference_parent @ WFF#2 ---
+File: tests/compatibility/ag-01/fixtures/negative/neg_wff4_invalid_variant_and_reference_parent.xml
+File SHA-256: 1f686be34957a34bccdb14a4a5dc1f2fa76c62f60b8b00a0de4a362b6babf993
+Command: java -jar .aura-tools/wff-validator.jar 2 tests/compatibility/ag-01/fixtures/negative/neg_wff4_invalid_variant_and_reference_parent.xml
+Expected: EXPLICIT FAILED + SEVERE (schema violation)
+Exit Code: 0
+Verdict: PASS_DETECTED_INVALID
+Raw Output:
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8
+INFO: WFF Validation Application Version 1.7.0. Maximum Supported Format Version #5
+SEVERE: [Line 6:Column 125]: cvc-complex-type.3.2.2: Attribute 'startOffset' is not allowed to appear in element 'Variant'.
+INFO: ❌  FAILED : tests/compatibility/ag-01/fixtures/negative/neg_wff4_invalid_variant_and_reference_parent.xml is NOT valid against watch face format version #2
+
+--- [CASE 50/60] NEGATIVE MATRIX: neg_wff4_invalid_variant_and_reference_parent @ WFF#3 ---
+File: tests/compatibility/ag-01/fixtures/negative/neg_wff4_invalid_variant_and_reference_parent.xml
+File SHA-256: 1f686be34957a34bccdb14a4a5dc1f2fa76c62f60b8b00a0de4a362b6babf993
+Command: java -jar .aura-tools/wff-validator.jar 3 tests/compatibility/ag-01/fixtures/negative/neg_wff4_invalid_variant_and_reference_parent.xml
+Expected: EXPLICIT FAILED + SEVERE (schema violation)
+Exit Code: 0
+Verdict: PASS_DETECTED_INVALID
+Raw Output:
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8
+INFO: WFF Validation Application Version 1.7.0. Maximum Supported Format Version #5
+SEVERE: [Line 6:Column 125]: cvc-complex-type.3.2.2: Attribute 'startOffset' is not allowed to appear in element 'Variant'.
+INFO: ❌  FAILED : tests/compatibility/ag-01/fixtures/negative/neg_wff4_invalid_variant_and_reference_parent.xml is NOT valid against watch face format version #3
+
+--- [CASE 51/60] NEGATIVE MATRIX: neg_wff4_invalid_variant_and_reference_parent @ WFF#4 ---
+File: tests/compatibility/ag-01/fixtures/negative/neg_wff4_invalid_variant_and_reference_parent.xml
+File SHA-256: 1f686be34957a34bccdb14a4a5dc1f2fa76c62f60b8b00a0de4a362b6babf993
+Command: java -jar .aura-tools/wff-validator.jar 4 tests/compatibility/ag-01/fixtures/negative/neg_wff4_invalid_variant_and_reference_parent.xml
+Expected: EXPLICIT FAILED + SEVERE (schema violation)
+Exit Code: 0
+Verdict: PASS_DETECTED_INVALID
+Raw Output:
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8
+INFO: WFF Validation Application Version 1.7.0. Maximum Supported Format Version #5
+SEVERE: [Line 6:Column 125]: cvc-maxInclusive-valid: Value '1.35' is not facet-valid with respect to maxInclusive '1.0E0' for type '#AnonType_durationVariant'.
+INFO: ❌  FAILED : tests/compatibility/ag-01/fixtures/negative/neg_wff4_invalid_variant_and_reference_parent.xml is NOT valid against watch face format version #4
+
+--- [CASE 52/60] NEGATIVE MATRIX: neg_wff4_invalid_variant_and_reference_parent @ WFF#5 ---
+File: tests/compatibility/ag-01/fixtures/negative/neg_wff4_invalid_variant_and_reference_parent.xml
+File SHA-256: 1f686be34957a34bccdb14a4a5dc1f2fa76c62f60b8b00a0de4a362b6babf993
+Command: java -jar .aura-tools/wff-validator.jar 5 tests/compatibility/ag-01/fixtures/negative/neg_wff4_invalid_variant_and_reference_parent.xml
+Expected: EXPLICIT FAILED + SEVERE (1.35)
+Exit Code: 0
+Verdict: PASS_DETECTED_INVALID
+Raw Output:
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8
+INFO: WFF Validation Application Version 1.7.0. Maximum Supported Format Version #5
+SEVERE: [Line 6:Column 125]: cvc-maxInclusive-valid: Value '1.35' is not facet-valid with respect to maxInclusive '1.0E0' for type '#AnonType_durationVariant'.
+INFO: ❌  FAILED : tests/compatibility/ag-01/fixtures/negative/neg_wff4_invalid_variant_and_reference_parent.xml is NOT valid against watch face format version #5
+
+--- [CASE 53/60] SEPARATED NEGATIVE MATRIX (R03): neg_wff4_variant_duration_out_of_range @ WFF#2 ---
+File: tests/compatibility/ag-01/fixtures/negative/neg_wff4_variant_duration_out_of_range.xml
+File SHA-256: bbe08715884690dd4bce12332795b5ebd6011f7890e48b5bf0729d479271c51a
+Command: java -jar .aura-tools/wff-validator.jar 2 tests/compatibility/ag-01/fixtures/negative/neg_wff4_variant_duration_out_of_range.xml
+Expected: EXPLICIT FAILED + SEVERE (schema violation)
+Exit Code: 0
+Verdict: PASS_DETECTED_INVALID
+Raw Output:
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8
+INFO: WFF Validation Application Version 1.7.0. Maximum Supported Format Version #5
+SEVERE: [Line 11:Column 124]: cvc-complex-type.3.2.2: Attribute 'startOffset' is not allowed to appear in element 'Variant'.
+INFO: ❌  FAILED : tests/compatibility/ag-01/fixtures/negative/neg_wff4_variant_duration_out_of_range.xml is NOT valid against watch face format version #2
+
+--- [CASE 54/60] SEPARATED NEGATIVE MATRIX (R03): neg_wff4_variant_duration_out_of_range @ WFF#3 ---
+File: tests/compatibility/ag-01/fixtures/negative/neg_wff4_variant_duration_out_of_range.xml
+File SHA-256: bbe08715884690dd4bce12332795b5ebd6011f7890e48b5bf0729d479271c51a
+Command: java -jar .aura-tools/wff-validator.jar 3 tests/compatibility/ag-01/fixtures/negative/neg_wff4_variant_duration_out_of_range.xml
+Expected: EXPLICIT FAILED + SEVERE (schema violation)
+Exit Code: 0
+Verdict: PASS_DETECTED_INVALID
+Raw Output:
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8
+INFO: WFF Validation Application Version 1.7.0. Maximum Supported Format Version #5
+SEVERE: [Line 11:Column 124]: cvc-complex-type.3.2.2: Attribute 'startOffset' is not allowed to appear in element 'Variant'.
+INFO: ❌  FAILED : tests/compatibility/ag-01/fixtures/negative/neg_wff4_variant_duration_out_of_range.xml is NOT valid against watch face format version #3
+
+--- [CASE 55/60] SEPARATED NEGATIVE MATRIX (R03): neg_wff4_variant_duration_out_of_range @ WFF#4 ---
+File: tests/compatibility/ag-01/fixtures/negative/neg_wff4_variant_duration_out_of_range.xml
+File SHA-256: bbe08715884690dd4bce12332795b5ebd6011f7890e48b5bf0729d479271c51a
+Command: java -jar .aura-tools/wff-validator.jar 4 tests/compatibility/ag-01/fixtures/negative/neg_wff4_variant_duration_out_of_range.xml
+Expected: EXPLICIT FAILED + SEVERE (schema violation)
+Exit Code: 0
+Verdict: PASS_DETECTED_INVALID
+Raw Output:
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8
+INFO: WFF Validation Application Version 1.7.0. Maximum Supported Format Version #5
+SEVERE: [Line 11:Column 124]: cvc-maxInclusive-valid: Value '1.35' is not facet-valid with respect to maxInclusive '1.0E0' for type '#AnonType_durationVariant'.
+INFO: ❌  FAILED : tests/compatibility/ag-01/fixtures/negative/neg_wff4_variant_duration_out_of_range.xml is NOT valid against watch face format version #4
+
+--- [CASE 56/60] SEPARATED NEGATIVE MATRIX (R03): neg_wff4_variant_duration_out_of_range @ WFF#5 ---
+File: tests/compatibility/ag-01/fixtures/negative/neg_wff4_variant_duration_out_of_range.xml
+File SHA-256: bbe08715884690dd4bce12332795b5ebd6011f7890e48b5bf0729d479271c51a
+Command: java -jar .aura-tools/wff-validator.jar 5 tests/compatibility/ag-01/fixtures/negative/neg_wff4_variant_duration_out_of_range.xml
+Expected: EXPLICIT FAILED + SEVERE (1.35)
+Exit Code: 0
+Verdict: PASS_DETECTED_INVALID
+Raw Output:
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8
+INFO: WFF Validation Application Version 1.7.0. Maximum Supported Format Version #5
+SEVERE: [Line 11:Column 124]: cvc-maxInclusive-valid: Value '1.35' is not facet-valid with respect to maxInclusive '1.0E0' for type '#AnonType_durationVariant'.
+INFO: ❌  FAILED : tests/compatibility/ag-01/fixtures/negative/neg_wff4_variant_duration_out_of_range.xml is NOT valid against watch face format version #5
+
+--- [CASE 57/60] SEPARATED NEGATIVE MATRIX (R03): neg_wff4_reference_invalid_parent @ WFF#2 ---
+File: tests/compatibility/ag-01/fixtures/negative/neg_wff4_reference_invalid_parent.xml
+File SHA-256: 320ae29c42c02f39e63e49a6a76f2b52e9996f021202f6c44bc638b5ca64758c
+Command: java -jar .aura-tools/wff-validator.jar 2 tests/compatibility/ag-01/fixtures/negative/neg_wff4_reference_invalid_parent.xml
+Expected: EXPLICIT FAILED + SEVERE (schema violation)
+Exit Code: 0
+Verdict: PASS_DETECTED_INVALID
+Raw Output:
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8
+INFO: WFF Validation Application Version 1.7.0. Maximum Supported Format Version #5
+SEVERE: [Line 11:Column 125]: cvc-complex-type.3.2.2: Attribute 'startOffset' is not allowed to appear in element 'Variant'.
+INFO: ❌  FAILED : tests/compatibility/ag-01/fixtures/negative/neg_wff4_reference_invalid_parent.xml is NOT valid against watch face format version #2
+
+--- [CASE 58/60] SEPARATED NEGATIVE MATRIX (R03): neg_wff4_reference_invalid_parent @ WFF#3 ---
+File: tests/compatibility/ag-01/fixtures/negative/neg_wff4_reference_invalid_parent.xml
+File SHA-256: 320ae29c42c02f39e63e49a6a76f2b52e9996f021202f6c44bc638b5ca64758c
+Command: java -jar .aura-tools/wff-validator.jar 3 tests/compatibility/ag-01/fixtures/negative/neg_wff4_reference_invalid_parent.xml
+Expected: EXPLICIT FAILED + SEVERE (schema violation)
+Exit Code: 0
+Verdict: PASS_DETECTED_INVALID
+Raw Output:
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8
+INFO: WFF Validation Application Version 1.7.0. Maximum Supported Format Version #5
+SEVERE: [Line 11:Column 125]: cvc-complex-type.3.2.2: Attribute 'startOffset' is not allowed to appear in element 'Variant'.
+INFO: ❌  FAILED : tests/compatibility/ag-01/fixtures/negative/neg_wff4_reference_invalid_parent.xml is NOT valid against watch face format version #3
+
+--- [CASE 59/60] SEPARATED NEGATIVE MATRIX (R03): neg_wff4_reference_invalid_parent @ WFF#4 ---
+File: tests/compatibility/ag-01/fixtures/negative/neg_wff4_reference_invalid_parent.xml
+File SHA-256: 320ae29c42c02f39e63e49a6a76f2b52e9996f021202f6c44bc638b5ca64758c
+Command: java -jar .aura-tools/wff-validator.jar 4 tests/compatibility/ag-01/fixtures/negative/neg_wff4_reference_invalid_parent.xml
+Expected: EXPLICIT FAILED + SEVERE (schema violation)
+Exit Code: 0
+Verdict: PASS_DETECTED_INVALID
+Raw Output:
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8
+INFO: WFF Validation Application Version 1.7.0. Maximum Supported Format Version #5
+SEVERE: [Line 12:Column 93]: cvc-complex-type.2.4.a: Invalid content was found starting with element 'Reference'. One of '{Localization, TimeText}' is expected.
+INFO: ❌  FAILED : tests/compatibility/ag-01/fixtures/negative/neg_wff4_reference_invalid_parent.xml is NOT valid against watch face format version #4
+
+--- [CASE 60/60] SEPARATED NEGATIVE MATRIX (R03): neg_wff4_reference_invalid_parent @ WFF#5 ---
+File: tests/compatibility/ag-01/fixtures/negative/neg_wff4_reference_invalid_parent.xml
+File SHA-256: 320ae29c42c02f39e63e49a6a76f2b52e9996f021202f6c44bc638b5ca64758c
+Command: java -jar .aura-tools/wff-validator.jar 5 tests/compatibility/ag-01/fixtures/negative/neg_wff4_reference_invalid_parent.xml
+Expected: EXPLICIT FAILED + SEVERE (Reference)
+Exit Code: 0
+Verdict: PASS_DETECTED_INVALID
+Raw Output:
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8
+INFO: WFF Validation Application Version 1.7.0. Maximum Supported Format Version #5
+SEVERE: [Line 12:Column 93]: cvc-complex-type.2.4.a: Invalid content was found starting with element 'Reference'. One of '{Localization, TimeText}' is expected.
+INFO: ❌  FAILED : tests/compatibility/ag-01/fixtures/negative/neg_wff4_reference_invalid_parent.xml is NOT valid against watch face format version #5
