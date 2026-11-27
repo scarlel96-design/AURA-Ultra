@@ -1,0 +1,323 @@
+================================================================================
+AG-01 CONTROLLED AOD MEMORY ABLATION STUDY (EVALUATOR MODEL SCOPE ONLY)
+Memory Evaluator JAR: .aura-tools/memory-footprint.jar (SHA-256: 1ec683365aee86627f0eb502b52fc71f71eff1872776edc5bc6ef7c7b37d28bc)
+Formula in AmbientMemoryFootprintCalculator.computeAmbientMemoryFootprint(450, 450):
+  maxAmbientBytes = (450 * 450 * numLayers * 4) + maximumResourceUsage
+  where 1 fullscreen RGBA8888 layer = 450 * 450 * 4 = 810,000 bytes,
+  and maximumResourceUsage (SYNC_TO_DEVICE -> Roboto fallback estimate) = 2,371,712 bytes.
+Scope note: Static evaluator asset estimation only; does NOT prove real device RAM/power/rendering.
+================================================================================
+
+--- [ABLATION 1/6] ablation_a_single_clock_only ---
+Description:              1 DigitalClock (hh:mm) + 0 AOD-visible PartText nodes (ActiveDecoration identical to poc_wff4_motion_triggers)
+Source XML Path:          tests/compatibility/ag-01/fixtures/ablation/ablation_a_single_clock_only.xml
+Source XML SHA-256:       cc556dccfc1f870ab87b31343591c0b9a56c369a9271454dbc00cfe1608d6ffa
+Isolated APK SHA-256:     008880ab32888f529aa5ee372c8c5a98b9a2c86d38e7518856df346fdc6d4347
+DigitalClock Count:       1
+AOD-Visible Part* Nodes:  0
+Evaluated Ambient Layers: 0
+maxActiveBytes:           2371712 bytes
+maxAmbientBytes:          2371712 bytes (Delta vs 2,371,712 baseline: +0 bytes)
+Raw memory-footprint.jar --report:
+{
+  "totalBytes": 2371712,
+  "maxActiveBytes": 2371712,
+  "maxAmbientBytes": 2371712
+}
+Raw memory-footprint.jar --verbose:
+Starting memory footprint test with C:\Users\scarl\AppData\Local\Temp\aura-ag01-ablation-crguvs0q\apps\watchface\build\outputs\apk\wff4\debug\watchface-wff4-debug.apk
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+>> Starting active evaluation
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Watch face has 0 configs
+Using system default font for unknown font family SYNC_TO_DEVICE
+Counting resource Roboto; 2371712 bytes, 2.2618408203125 mb, 0 x 0 ARGB8888
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+>> Starting ambient evaluation
+Using system default font for unknown font family SYNC_TO_DEVICE
+Watch face has 0 configs
+Using system default font for unknown font family SYNC_TO_DEVICE
+Counting resource Roboto; 2371712 bytes, 2.2618408203125 mb, 0 x 0 ARGB8888
+Number of layers: 0, maximumResourceUsage: 2371712
+Finished memory computation in 90 ms
+Number of supported layouts: 1
+Total images memory footprint: 2.26 MB
+Max memory footprint in active: 2.26 MB
+Max memory footprint in ambient: 2.26 MB
+Test report:
+[MEMORY_FOOTPRINT]: ✅PASS✅ Watch Face has passed the memory footprint test. ✅
+
+--- [ABLATION 2/6] ablation_b_four_clocks_only ---
+Description:              4 per-digit DigitalClocks (hh_10, hh_1, mm_10, mm_1) + 0 AOD-visible PartText nodes (ClockColon removed)
+Source XML Path:          tests/compatibility/ag-01/fixtures/ablation/ablation_b_four_clocks_only.xml
+Source XML SHA-256:       87bfef608cbcf050f0b3ed330de0f7b2d93fe0ccbb2bd3609e4097714a366541
+Isolated APK SHA-256:     d3f77548320cdb6c71e6b0f01363e3a4acac2fbdefb91987758b9a631e74097b
+DigitalClock Count:       4
+AOD-Visible Part* Nodes:  0
+Evaluated Ambient Layers: 0
+maxActiveBytes:           2371712 bytes
+maxAmbientBytes:          2371712 bytes (Delta vs 2,371,712 baseline: +0 bytes)
+Raw memory-footprint.jar --report:
+{
+  "totalBytes": 2371712,
+  "maxActiveBytes": 2371712,
+  "maxAmbientBytes": 2371712
+}
+Raw memory-footprint.jar --verbose:
+Starting memory footprint test with C:\Users\scarl\AppData\Local\Temp\aura-ag01-ablation-crguvs0q\apps\watchface\build\outputs\apk\wff4\debug\watchface-wff4-debug.apk
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+>> Starting active evaluation
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Watch face has 0 configs
+Using system default font for unknown font family SYNC_TO_DEVICE
+Counting resource Roboto; 2371712 bytes, 2.2618408203125 mb, 0 x 0 ARGB8888
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+>> Starting ambient evaluation
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Watch face has 0 configs
+Using system default font for unknown font family SYNC_TO_DEVICE
+Counting resource Roboto; 2371712 bytes, 2.2618408203125 mb, 0 x 0 ARGB8888
+Using system default font for unknown font family SYNC_TO_DEVICE
+Number of layers: 0, maximumResourceUsage: 2371712
+Finished memory computation in 87 ms
+Number of supported layouts: 1
+Total images memory footprint: 2.26 MB
+Max memory footprint in active: 2.26 MB
+Max memory footprint in ambient: 2.26 MB
+Test report:
+[MEMORY_FOOTPRINT]: ✅PASS✅ Watch Face has passed the memory footprint test. ✅
+
+--- [ABLATION 3/6] ablation_c_single_clock_plus_parttext ---
+Description:              1 DigitalClock (hh:mm) + 1 AOD-visible PartText (ClockColon without AMBIENT alpha=0)
+Source XML Path:          tests/compatibility/ag-01/fixtures/ablation/ablation_c_single_clock_plus_parttext.xml
+Source XML SHA-256:       dc6bab7f94fe323619e3e0e3ca6dea2cc3f2d09b0d2b5b38ba2401344d2d5d49
+Isolated APK SHA-256:     8fb7d10449eed27d51c753233209833c1b02b2e666e600a11c1872b543753cdf
+DigitalClock Count:       1
+AOD-Visible Part* Nodes:  1
+Evaluated Ambient Layers: 1
+maxActiveBytes:           2371712 bytes
+maxAmbientBytes:          3181712 bytes (Delta vs 2,371,712 baseline: +810000 bytes)
+Raw memory-footprint.jar --report:
+{
+  "totalBytes": 2371712,
+  "maxActiveBytes": 2371712,
+  "maxAmbientBytes": 3181712
+}
+Raw memory-footprint.jar --verbose:
+Starting memory footprint test with C:\Users\scarl\AppData\Local\Temp\aura-ag01-ablation-crguvs0q\apps\watchface\build\outputs\apk\wff4\debug\watchface-wff4-debug.apk
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+>> Starting active evaluation
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Watch face has 0 configs
+Using system default font for unknown font family SYNC_TO_DEVICE
+Counting resource Roboto; 2371712 bytes, 2.2618408203125 mb, 0 x 0 ARGB8888
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+>> Starting ambient evaluation
+Layer 1 starts at: #document/WatchFace/Scene/Group name = "FluidClockContainer"/PartText name = "ClockColon"
+Using system default font for unknown font family SYNC_TO_DEVICE
+Watch face has 0 configs
+Using system default font for unknown font family SYNC_TO_DEVICE
+Counting resource Roboto; 2371712 bytes, 2.2618408203125 mb, 0 x 0 ARGB8888
+Number of layers: 1, maximumResourceUsage: 2371712
+Finished memory computation in 67 ms
+Number of supported layouts: 1
+Total images memory footprint: 2.26 MB
+Max memory footprint in active: 2.26 MB
+Max memory footprint in ambient: 3.03 MB
+Test report:
+[MEMORY_FOOTPRINT]: ✅PASS✅ Watch Face has passed the memory footprint test. ✅
+
+--- [ABLATION 4/6] ablation_d_four_clocks_plus_ambient_hidden_parttext ---
+Description:              4 per-digit DigitalClocks + 1 PartText (ClockColon hidden in AMBIENT via Variant alpha=0)
+Source XML Path:          tests/compatibility/ag-01/fixtures/ablation/ablation_d_four_clocks_plus_ambient_hidden_parttext.xml
+Source XML SHA-256:       ad22841911a9952572871de8b3e5861b4d9eea97274ef6aa46b91e9724fc7e42
+Isolated APK SHA-256:     6ef78d02866774cc86923382f5a8c93c2a0190bf2faffebf18343b62f58b42a3
+DigitalClock Count:       4
+AOD-Visible Part* Nodes:  0
+Evaluated Ambient Layers: 0
+maxActiveBytes:           2371712 bytes
+maxAmbientBytes:          2371712 bytes (Delta vs 2,371,712 baseline: +0 bytes)
+Raw memory-footprint.jar --report:
+{
+  "totalBytes": 2371712,
+  "maxActiveBytes": 2371712,
+  "maxAmbientBytes": 2371712
+}
+Raw memory-footprint.jar --verbose:
+Starting memory footprint test with C:\Users\scarl\AppData\Local\Temp\aura-ag01-ablation-crguvs0q\apps\watchface\build\outputs\apk\wff4\debug\watchface-wff4-debug.apk
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+>> Starting active evaluation
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Watch face has 0 configs
+Using system default font for unknown font family SYNC_TO_DEVICE
+Counting resource Roboto; 2371712 bytes, 2.2618408203125 mb, 0 x 0 ARGB8888
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+>> Starting ambient evaluation
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Watch face has 0 configs
+Using system default font for unknown font family SYNC_TO_DEVICE
+Counting resource Roboto; 2371712 bytes, 2.2618408203125 mb, 0 x 0 ARGB8888
+Using system default font for unknown font family SYNC_TO_DEVICE
+Number of layers: 0, maximumResourceUsage: 2371712
+Finished memory computation in 76 ms
+Number of supported layouts: 1
+Total images memory footprint: 2.26 MB
+Max memory footprint in active: 2.26 MB
+Max memory footprint in ambient: 2.26 MB
+Test report:
+[MEMORY_FOOTPRINT]: ✅PASS✅ Watch Face has passed the memory footprint test. ✅
+
+--- [ABLATION 5/6] poc_wff4_continuity ---
+Description:              Reference PoC: single DigitalClock (hh:mm) + ActiveDecoration hidden in AMBIENT
+Source XML Path:          tests/compatibility/ag-01/fixtures/wff4/poc_wff4_continuity.xml
+Source XML SHA-256:       f70f8ef90b3f3418381f1b749c8fd6ef3cb01a88dc5302008f560d045b04c582
+Isolated APK SHA-256:     cd2732fb26bbf3a6d22f7e459fbaba8ea4047f9b6530051005ce8c135afb8da7
+DigitalClock Count:       1
+AOD-Visible Part* Nodes:  0
+Evaluated Ambient Layers: 0
+maxActiveBytes:           2371712 bytes
+maxAmbientBytes:          2371712 bytes (Delta vs 2,371,712 baseline: +0 bytes)
+Raw memory-footprint.jar --report:
+{
+  "totalBytes": 2371712,
+  "maxActiveBytes": 2371712,
+  "maxAmbientBytes": 2371712
+}
+Raw memory-footprint.jar --verbose:
+Starting memory footprint test with C:\Users\scarl\AppData\Local\Temp\aura-ag01-ablation-crguvs0q\apps\watchface\build\outputs\apk\wff4\debug\watchface-wff4-debug.apk
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+>> Starting active evaluation
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Watch face has 0 configs
+Using system default font for unknown font family SYNC_TO_DEVICE
+Counting resource Roboto; 2371712 bytes, 2.2618408203125 mb, 0 x 0 ARGB8888
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+>> Starting ambient evaluation
+Using system default font for unknown font family SYNC_TO_DEVICE
+Watch face has 0 configs
+Using system default font for unknown font family SYNC_TO_DEVICE
+Counting resource Roboto; 2371712 bytes, 2.2618408203125 mb, 0 x 0 ARGB8888
+Number of layers: 0, maximumResourceUsage: 2371712
+Finished memory computation in 87 ms
+Number of supported layouts: 1
+Total images memory footprint: 2.26 MB
+Max memory footprint in active: 2.26 MB
+Max memory footprint in ambient: 2.26 MB
+Test report:
+[MEMORY_FOOTPRINT]: ✅PASS✅ Watch Face has passed the memory footprint test. ✅
+
+--- [ABLATION 6/6] poc_wff4_motion_triggers ---
+Description:              Reference PoC: 4 per-digit DigitalClocks + 1 AOD-visible PartText (ClockColon)
+Source XML Path:          tests/compatibility/ag-01/fixtures/wff4/poc_wff4_motion_triggers.xml
+Source XML SHA-256:       745df3951f3d0333f3baef8e7cc2e405fa6e8cba69ff052510f6a21d7ab507d3
+Isolated APK SHA-256:     3dd6808d06baa48024139ecf6193111d3ceae3baa8be3efe19794c13fa0291e9
+DigitalClock Count:       4
+AOD-Visible Part* Nodes:  1
+Evaluated Ambient Layers: 1
+maxActiveBytes:           2371712 bytes
+maxAmbientBytes:          3181712 bytes (Delta vs 2,371,712 baseline: +810000 bytes)
+Raw memory-footprint.jar --report:
+{
+  "totalBytes": 2371712,
+  "maxActiveBytes": 2371712,
+  "maxAmbientBytes": 3181712
+}
+Raw memory-footprint.jar --verbose:
+Starting memory footprint test with C:\Users\scarl\AppData\Local\Temp\aura-ag01-ablation-crguvs0q\apps\watchface\build\outputs\apk\wff4\debug\watchface-wff4-debug.apk
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+>> Starting active evaluation
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Watch face has 0 configs
+Using system default font for unknown font family SYNC_TO_DEVICE
+Counting resource Roboto; 2371712 bytes, 2.2618408203125 mb, 0 x 0 ARGB8888
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+>> Starting ambient evaluation
+Layer 1 starts at: #document/WatchFace/Scene/Group name = "FluidClockContainer"/PartText name = "ClockColon"
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Watch face has 0 configs
+Using system default font for unknown font family SYNC_TO_DEVICE
+Counting resource Roboto; 2371712 bytes, 2.2618408203125 mb, 0 x 0 ARGB8888
+Using system default font for unknown font family SYNC_TO_DEVICE
+Number of layers: 1, maximumResourceUsage: 2371712
+Finished memory computation in 81 ms
+Number of supported layouts: 1
+Total images memory footprint: 2.26 MB
+Max memory footprint in active: 2.26 MB
+Max memory footprint in ambient: 3.03 MB
+Test report:
+[MEMORY_FOOTPRINT]: ✅PASS✅ Watch Face has passed the memory footprint test. ✅

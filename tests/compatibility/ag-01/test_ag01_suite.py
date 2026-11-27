@@ -1,9 +1,13 @@
-"""Unit, schema, validator-strictness, emulator-inspection, and runtime-safety regression suite for AG-01."""
+"""Unit, schema, validator-strictness, emulator-inspection, and runtime-safety regression suite for AG-01 (R04)."""
+import hashlib
+import subprocess
 import sys
 import tempfile
 import unittest
 import xml.etree.ElementTree as ET
+import zipfile
 from pathlib import Path
+from types import SimpleNamespace
 
 AG01_DIR = Path(__file__).resolve().parent
 ROOT = AG01_DIR.parents[2]
@@ -13,9 +17,11 @@ sys.path.insert(0, str(AG01_DIR))
 from run_ag01_verification import (
     ABLATION_SPECS,
     ESTIMATED_WEAR_IMAGE_CANDIDATES,
+    MEMORY_SHA256,
     NEGATIVE_SPECS,
     POC_SPECS,
     SEPARATED_NEGATIVE_SPECS,
+    VALIDATOR_SHA256,
     determine_emulator_readiness,
     ensure_validator_jar,
     inspect_emulator_environment,
@@ -27,17 +33,23 @@ from run_ag01_verification import (
     require_rejection,
     run_validator_utf8,
 )
+from verify_memory import get_jar as get_memory_jar
 from verify_wff import require_pass
 from wear_emulator_runtime import (
     RECOMMENDED_WEAR_AVD_PLANS,
+    RuntimeVerificationIncompleteError,
     UnsafeTargetError,
     build_safe_runtime_verification_plan,
     build_safe_setup_commands,
+    execute_runtime_verification,
     parse_power_and_display_state,
+    validate_dedicated_wear_avd_name,
     validate_emulator_serial,
+    validate_mp4_bytes,
     validate_wear_avd_record,
     validate_wear_device_properties,
     verify_active_watchface_selected,
+    verify_local_apk_before_install,
 )
 
 ALLOWED_INTERPOLATIONS = {"LINEAR", "EASE_IN", "EASE_OUT", "EASE_IN_OUT", "OVERSHOOT", "CUBIC_BEZIER"}
@@ -54,6 +66,9 @@ PROHIBITED_REFERENCE_PARENTS = {
     "DigitalClock", "TimeText", "AnalogClock", "HourHand", "MinuteHand", "SecondHand",
     "ComplicationSlot", "Complication",
 }
+
+EXPECTED_MAIN_VALIDATOR_SHA256 = "6ef308dbc306a9187b5b1f4997a662eb57e26ac3650cebbf2ab583cd38bb609e"
+EXPECTED_MAIN_MEMORY_SHA256 = "1ec683365aee86627f0eb502b52fc71f71eff1872776edc5bc6ef7c7b37d28bc"
 
 SAMPLE_SDKMANAGER_STDOUT = """Installed packages:
   Path                                                    | Version | Description                                | Location
@@ -104,7 +119,37 @@ SAMPLE_AVDMANAGER_AVDS_MIXED = SAMPLE_AVDMANAGER_AVDS_PHONE_ONLY + """---------
 """
 
 
+def _build_synthetic_resource_only_apk(path, watchface_xml="<WatchFace width=\"450\" height=\"450\"><Scene/></WatchFace>", extra_entry=None):
+    with zipfile.ZipFile(path, "w") as zf:
+        zf.writestr("AndroidManifest.xml", "<manifest/>")
+        zf.writestr("resources.arsc", "arsc")
+        zf.writestr("res/drawable-nodpi-v4/preview.png", b"\x89PNG\r\n\x1a\npreview")
+        zf.writestr("res/xml/watch_face_info.xml", "<WatchFaceInfo/>")
+        zf.writestr("res/raw/watchface.xml", watchface_xml.encode("utf-8"))
+        if extra_entry:
+            zf.writestr(extra_entry[0], extra_entry[1])
+
+
+def _valid_manifest_xml(pkg="io.github.scarlel96.aura.watchface.wff4", min_sdk=36, wff_version=4, has_code="false"):
+    return f"""<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="{pkg}">
+    <uses-sdk android:minSdkVersion="{min_sdk}" android:targetSdkVersion="37" />
+    <application android:hasCode="{has_code}">
+        <property android:name="com.google.wear.watchface.format.version" android:value="{wff_version}" />
+    </application>
+</manifest>"""
+
+
 class Ag01PoCStructureTests(unittest.TestCase):
+    def test_official_tool_pins_match_latest_main(self):
+        """AG-01-R04 §3: verify validator and memory evaluator pins and local cached binaries match latest main."""
+        self.assertEqual(EXPECTED_MAIN_VALIDATOR_SHA256, VALIDATOR_SHA256)
+        self.assertEqual(EXPECTED_MAIN_MEMORY_SHA256, MEMORY_SHA256)
+        v_jar = ensure_validator_jar()
+        m_jar = get_memory_jar()
+        self.assertEqual(EXPECTED_MAIN_VALIDATOR_SHA256, hashlib.sha256(v_jar.read_bytes()).hexdigest())
+        self.assertEqual(EXPECTED_MAIN_MEMORY_SHA256, hashlib.sha256(m_jar.read_bytes()).hexdigest())
+
     def test_all_poc_files_exist_and_respect_canvas_invariants(self):
         self.assertEqual(6, len(POC_SPECS))
         for spec in POC_SPECS:
@@ -252,7 +297,6 @@ class Ag01PoCStructureTests(unittest.TestCase):
                 self.assertEqual(spec["aod_visible_part_nodes"], len(aod_visible_parts))
 
     def test_separated_single_fault_negative_fixtures_are_mutually_isolated(self):
-        """AG01-AUD-02: ensure duration-range and Reference-parent fixtures each carry only their own fault."""
         dur_spec = next(s for s in SEPARATED_NEGATIVE_SPECS if s["id"] == "neg_wff4_variant_duration_out_of_range")
         ref_spec = next(s for s in SEPARATED_NEGATIVE_SPECS if s["id"] == "neg_wff4_reference_invalid_parent")
 
@@ -351,7 +395,7 @@ class Ag01StrictValidatorRejectionTests(unittest.TestCase):
 
 
 class Ag01EmulatorInspectionAndSafetyTests(unittest.TestCase):
-    """AG01-AUD-01 & Runtime Safety regression tests (tool missing/error/empty, phone vs Wear AVD, physical ADB exclusion)."""
+    """AG01-AUD-01, AG01-AUD-04 & Runtime Safety regression tests."""
 
     def test_parsers_extract_live_sdk_devices_avds_and_separate_phone_from_wear(self):
         parsed_sdk = parse_sdkmanager_list(SAMPLE_SDKMANAGER_STDOUT)
@@ -384,11 +428,9 @@ class Ag01EmulatorInspectionAndSafetyTests(unittest.TestCase):
 
     def test_missing_or_failed_or_empty_sdk_tools_return_unknown(self):
         with tempfile.TemporaryDirectory() as tmp:
-            # No tools exist inside tmp -> MISSING -> UNKNOWN
             info_missing = inspect_emulator_environment(sdk_root=Path(tmp))
             self.assertEqual("UNKNOWN", info_missing["status"])
 
-        # Prepare fake tool binaries so inspect_emulator_environment invokes mocked runner
         with tempfile.TemporaryDirectory() as tmp:
             sdk = Path(tmp)
             for rel in (
@@ -405,7 +447,6 @@ class Ag01EmulatorInspectionAndSafetyTests(unittest.TestCase):
                 p.parent.mkdir(parents=True, exist_ok=True)
                 p.write_text("stub", encoding="utf-8")
 
-            # Case 1: sdkmanager returns nonzero error -> UNKNOWN
             def runner_sm_error(cmd, timeout=60):
                 if "sdkmanager" in cmd[0]:
                     return {"command": cmd, "status": "ERROR", "returncode": 1, "stdout": "", "stderr": "network failed", "error": "exit 1"}
@@ -415,7 +456,6 @@ class Ag01EmulatorInspectionAndSafetyTests(unittest.TestCase):
             self.assertEqual("UNKNOWN", res_err["status"])
             self.assertEqual([], res_err["observed_sdkmanager_available_wear_images"])
 
-            # Case 2: avdmanager returns empty output -> UNKNOWN
             def runner_avd_empty(cmd, timeout=60):
                 if "sdkmanager" in cmd[0]:
                     return {"command": cmd, "status": "OK", "returncode": 0, "stdout": SAMPLE_SDKMANAGER_STDOUT, "stderr": "", "error": ""}
@@ -426,7 +466,6 @@ class Ag01EmulatorInspectionAndSafetyTests(unittest.TestCase):
             res_empty = inspect_emulator_environment(sdk_root=sdk, runner=runner_avd_empty)
             self.assertEqual("UNKNOWN", res_empty["status"])
 
-            # Case 3: Phone AVD + physical watch connected via ADB -> MUST stay NOT RUN (never READY!)
             def runner_phone_and_physical(cmd, timeout=60):
                 if "sdkmanager" in cmd[0]:
                     return {"command": cmd, "status": "OK", "returncode": 0, "stdout": SAMPLE_SDKMANAGER_STDOUT, "stderr": "", "error": ""}
@@ -464,7 +503,77 @@ class Ag01EmulatorInspectionAndSafetyTests(unittest.TestCase):
         )
         self.assertEqual("READY", status_ready)
 
-    def test_runtime_safety_guards_block_physical_devices_phone_avds_and_force_overwrite(self):
+    def test_aud04_four_reproduced_false_positives_are_rejected(self):
+        """AG01-AUD-04: directly reproduce and verify all 4 OPS-06 synthetic false-positive fixtures."""
+        target_pkg = "io.github.scarlel96.aura.watchface.wff4"
+
+        # 1. Inactive previousPackage reference while another watch face is active -> MUST be selected=False
+        dump_inactive_ref = (
+            "mCurrentUserId=0\n"
+            "  WallpaperData 0 userId=0\n"
+            "    mWallpaperComponent=ComponentInfo{com.example.default/.Face}\n"
+            f"    previousPackage={target_pkg}\n"
+        )
+        res1 = verify_active_watchface_selected(dump_inactive_ref, target_pkg)
+        self.assertFalse(res1["selected"])
+        self.assertEqual("NOT_SELECTED", res1["status"])
+        self.assertEqual("com.example.default", res1["active_package"])
+
+        # 2. Suffix collision (<target_pkg>.other/.Face) -> MUST be selected=False
+        dump_suffix_collision = (
+            f"  mWallpaperComponent=ComponentInfo{{{target_pkg}.other/.Face}}\n"
+        )
+        res2 = verify_active_watchface_selected(dump_suffix_collision, target_pkg)
+        self.assertFalse(res2["selected"])
+        self.assertEqual("NOT_SELECTED", res2["status"])
+        self.assertEqual(f"{target_pkg}.other", res2["active_package"])
+
+        # 3. mWakefulness=Awake ONLY (missing/UNKNOWN display state) -> MUST be display_state=UNKNOWN, is_active=False
+        state3 = parse_power_and_display_state("mWakefulness=Awake\n")
+        self.assertEqual("UNKNOWN", state3["display_state"])
+        self.assertEqual("UNKNOWN", state3["status"])
+        self.assertFalse(state3["is_active"])
+        self.assertFalse(state3["is_aod"])
+
+        # 4. mWakefulness=Dozing + Display Power: state=OFF -> MUST be is_aod=False (screen is OFF, not in AOD DOZE)
+        state4 = parse_power_and_display_state("mWakefulness=Dozing\nDisplay Power: state=OFF\n")
+        self.assertEqual("OFF", state4["display_state"])
+        self.assertEqual("TRANSITION_OR_OFF", state4["status"])
+        self.assertFalse(state4["is_active"])
+        self.assertFalse(state4["is_aod"])
+
+        # Also verify unknown WFF host format without explicit boundWatchFacePackage returns UNKNOWN, selected=False
+        dump_unknown_host = "  mWallpaperComponent=ComponentInfo{com.google.wear.watchface.runtime/.DwfHostService}\n"
+        res_host_unknown = verify_active_watchface_selected(dump_unknown_host, target_pkg)
+        self.assertFalse(res_host_unknown["selected"])
+        self.assertEqual("UNKNOWN", res_host_unknown["status"])
+
+        # Exact match or WFF host with confirmed boundWatchFacePackage==target_pkg -> selected=True
+        dump_exact = f"  mWallpaperComponent=ComponentInfo{{{target_pkg}/.WatchFace}}\n"
+        res_exact = verify_active_watchface_selected(dump_exact, target_pkg)
+        self.assertTrue(res_exact["selected"])
+        self.assertEqual("SELECTED", res_exact["status"])
+
+        dump_host_bound = (
+            "  mWallpaperComponent=ComponentInfo{com.google.wear.watchface.runtime/.DwfHostService}\n"
+            f"  boundWatchFacePackage={target_pkg}\n"
+        )
+        res_host_bound = verify_active_watchface_selected(dump_host_bound, target_pkg)
+        self.assertTrue(res_host_bound["selected"])
+        self.assertEqual("SELECTED", res_host_bound["status"])
+
+        # Valid Active (Awake + ON) and AOD (Dozing + DOZE / DOZE_SUSPEND)
+        awake_on = parse_power_and_display_state("mWakefulness=Awake\nDisplay Power: state=ON\n")
+        self.assertEqual("ACTIVE", awake_on["status"])
+        self.assertTrue(awake_on["is_active"])
+        self.assertFalse(awake_on["is_aod"])
+
+        doze_on = parse_power_and_display_state("mWakefulness=Dozing\nDisplay Power: state=DOZE_SUSPEND\n")
+        self.assertEqual("AOD", doze_on["status"])
+        self.assertFalse(doze_on["is_active"])
+        self.assertTrue(doze_on["is_aod"])
+
+    def test_runtime_safety_guards_and_preinstall_apk_checks(self):
         with self.assertRaises(UnsafeTargetError):
             validate_emulator_serial("R5CX1234567")
         with self.assertRaises(UnsafeTargetError):
@@ -472,43 +581,257 @@ class Ag01EmulatorInspectionAndSafetyTests(unittest.TestCase):
         self.assertEqual("emulator-5554", validate_emulator_serial("emulator-5554"))
 
         with self.assertRaises(UnsafeTargetError):
+            validate_dedicated_wear_avd_name("Medium_Phone_API_36.1")
+        with self.assertRaises(UnsafeTargetError):
+            validate_dedicated_wear_avd_name("unknown_custom_avd")
+        with self.assertRaises(UnsafeTargetError):
+            validate_dedicated_wear_avd_name("aura_wear36_round", expected_avd_name="aura_wear37_round")
+        self.assertEqual("aura_wear36_round", validate_dedicated_wear_avd_name("aura_wear36_round", expected_avd_name="aura_wear36_round"))
+
+        with self.assertRaises(UnsafeTargetError):
             validate_wear_avd_record({"name": "Medium_Phone_API_36.1", "device": "medium_phone (Generic)", "tag_abi": "google_apis_playstore/x86_64"})
-        self.assertEqual(
-            "aura_wear36_round",
-            validate_wear_avd_record({"name": "aura_wear36_round", "device": "wearos_large_round (Google)", "tag_abi": "android-wear-signed/x86_64"}),
-        )
 
         with self.assertRaises(UnsafeTargetError):
             validate_wear_device_properties("nosdcard,default", "36", 36)
         with self.assertRaises(UnsafeTargetError):
             validate_wear_device_properties("watch,nosdcard", "34", 36)
-        self.assertEqual(36, validate_wear_device_properties("watch,nosdcard", "36", 36))
+        with self.assertRaises(UnsafeTargetError):
+            validate_wear_device_properties("watch,nosdcard", "37", 36, expected_api_level=36)
+        self.assertEqual(36, validate_wear_device_properties("watch,nosdcard", "36", 36, expected_api_level=36))
 
         for plan in RECOMMENDED_WEAR_AVD_PLANS:
-            cmds = build_safe_setup_commands(plan)
-            for cmd in cmds:
-                self.assertNotIn("--force", cmd, "AVD creation commands must never include --force")
+            for cmd in build_safe_setup_commands(plan):
+                self.assertNotIn("--force", cmd)
 
-        runtime_plan = build_safe_runtime_verification_plan(
-            "emulator-5554", "watchface-wff4-debug.apk", "io.github.scarlel96.aura.watchface.wff4", 4, "docs/evidence/AG-01/runtime-wff4"
-        )
-        for step in runtime_plan["steps"]:
-            for cmd in step["commands"]:
-                if cmd.startswith("adb "):
-                    self.assertIn("-s emulator-5554", cmd)
+        # Pre-install local APK verification failure fixtures
+        with tempfile.TemporaryDirectory() as tmp:
+            apk_path = Path(tmp) / "test-wff4.apk"
+            _build_synthetic_resource_only_apk(apk_path)
+            true_sha = hashlib.sha256(apk_path.read_bytes()).hexdigest()
 
-        awake = parse_power_and_display_state("mWakefulness=Awake\nDisplay Power: state=ON\n")
-        self.assertTrue(awake["is_active"])
-        self.assertFalse(awake["is_aod"])
+            # Valid precheck passes
+            meta = verify_local_apk_before_install(
+                apk_path,
+                "io.github.scarlel96.aura.watchface.wff4",
+                4,
+                expected_apk_sha256=true_sha,
+                manifest_printer=lambda _: _valid_manifest_xml(),
+            )
+            self.assertEqual(true_sha, meta["apk_sha256"])
 
-        doze = parse_power_and_display_state("mWakefulness=Dozing\nDisplay Power: state=DOZE_SUSPEND\n")
-        self.assertFalse(doze["is_active"])
-        self.assertTrue(doze["is_aod"])
+            # Wrong SHA-256 fails
+            with self.assertRaises(UnsafeTargetError):
+                verify_local_apk_before_install(
+                    apk_path,
+                    "io.github.scarlel96.aura.watchface.wff4",
+                    4,
+                    expected_apk_sha256="0" * 64,
+                    manifest_printer=lambda _: _valid_manifest_xml(),
+                )
 
-        sel_ok = verify_active_watchface_selected("mWallpaperComponent=ComponentInfo{io.github.scarlel96.aura.watchface.wff4/.WatchFace}", "io.github.scarlel96.aura.watchface.wff4")
-        self.assertTrue(sel_ok["selected"])
-        sel_miss = verify_active_watchface_selected("mWallpaperComponent=ComponentInfo{com.google.android.wearable.watchface/.Default}", "io.github.scarlel96.aura.watchface.wff4")
-        self.assertFalse(sel_miss["selected"])
+            # Wrong package in manifest fails
+            with self.assertRaises(UnsafeTargetError):
+                verify_local_apk_before_install(
+                    apk_path,
+                    "io.github.scarlel96.aura.watchface.wff4",
+                    4,
+                    manifest_printer=lambda _: _valid_manifest_xml(pkg="io.github.scarlel96.aura.watchface.wff5"),
+                )
+
+            # Wrong WFF version in manifest fails
+            with self.assertRaises(UnsafeTargetError):
+                verify_local_apk_before_install(
+                    apk_path,
+                    "io.github.scarlel96.aura.watchface.wff4",
+                    4,
+                    manifest_printer=lambda _: _valid_manifest_xml(wff_version=3),
+                )
+
+            # Non-resource-only APK containing classes.dex fails
+            dex_apk = Path(tmp) / "bad-dex.apk"
+            _build_synthetic_resource_only_apk(dex_apk, extra_entry=("classes.dex", b"dex"))
+            with self.assertRaises(UnsafeTargetError):
+                verify_local_apk_before_install(
+                    dex_apk,
+                    "io.github.scarlel96.aura.watchface.wff4",
+                    4,
+                    manifest_printer=lambda _: _valid_manifest_xml(),
+                )
+
+        # MP4 validation failure fixtures
+        with self.assertRaises(RuntimeError):
+            validate_mp4_bytes(b"")
+        with self.assertRaises(RuntimeError):
+            validate_mp4_bytes(b"0" * 2048)
+        valid_mp4 = b"\x00\x00\x00\x18ftypmp42" + (b"\x00" * 2048)
+        self.assertEqual(len(valid_mp4), validate_mp4_bytes(valid_mp4))
+
+    def test_execute_runtime_verification_enforces_exit_codes_awake_restore_and_cleanup(self):
+        """AG-01-R04 §2: verify end-to-end runtime execution checks every adb rc, Awake restoration, MP4, and finally cleanup."""
+        pkg = "io.github.scarlel96.aura.watchface.wff4"
+        valid_png = b"\x89PNG\r\n\x1a\n" + (b"\x00" * 128)
+        valid_mp4 = b"\x00\x00\x00\x18ftypmp42" + (b"\x00" * 2048)
+
+        class FakeRecorder:
+            def __init__(self, rc=0):
+                self.rc = rc
+                self.terminated = False
+
+            def poll(self):
+                return 0 if self.terminated else self.rc
+
+            def wait(self, timeout=None):
+                return self.rc
+
+            def terminate(self):
+                self.terminated = True
+
+            def kill(self):
+                self.terminated = True
+
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            apk_path = tmp_path / "watchface-wff4-debug.apk"
+            _build_synthetic_resource_only_apk(apk_path)
+            apk_sha = hashlib.sha256(apk_path.read_bytes()).hexdigest()
+            out_dir = tmp_path / "out"
+
+            # 1. Successful full workflow with Awake -> AOD -> Awake restoration and remote cleanup
+            power_states = [
+                "mWakefulness=Awake\nDisplay Power: state=ON\n",
+                "mWakefulness=Dozing\nDisplay Power: state=DOZE_SUSPEND\n",
+                "mWakefulness=Awake\nDisplay Power: state=ON\n",
+            ]
+            commands_log = []
+
+            def make_runner(override_fn=None):
+                state_idx = {"i": 0}
+
+                def runner(args, timeout=30, binary=False):
+                    commands_log.append(args)
+                    if override_fn:
+                        ov = override_fn(args, binary)
+                        if ov is not None:
+                            return ov
+                    cmd_str = " ".join(args)
+                    if "ro.boot.qemu.avd_name" in cmd_str:
+                        return SimpleNamespace(returncode=0, stdout="aura_wear36_round\n", stderr="")
+                    if "sys.boot_completed" in cmd_str:
+                        return SimpleNamespace(returncode=0, stdout="1\n", stderr="")
+                    if "ro.build.characteristics" in cmd_str:
+                        return SimpleNamespace(returncode=0, stdout="watch,nosdcard\n", stderr="")
+                    if "ro.build.version.sdk" in cmd_str:
+                        return SimpleNamespace(returncode=0, stdout="36\n", stderr="")
+                    if args[0] == "install":
+                        return SimpleNamespace(returncode=0, stdout="Performing Streamed Install\nSuccess\n", stderr="")
+                    if "pm list packages" in cmd_str:
+                        return SimpleNamespace(returncode=0, stdout=f"package:{pkg}\n", stderr="")
+                    if "dumpsys wallpaper" in cmd_str:
+                        return SimpleNamespace(returncode=0, stdout=f"  mWallpaperComponent=ComponentInfo{{{pkg}/.WatchFace}}\n", stderr="")
+                    if "dumpsys power" in cmd_str:
+                        idx = min(state_idx["i"], len(power_states) - 1)
+                        state_idx["i"] += 1
+                        return SimpleNamespace(returncode=0, stdout=power_states[idx], stderr="")
+                    if "dumpsys display" in cmd_str:
+                        return SimpleNamespace(returncode=0, stdout="", stderr="")
+                    if "screencap" in cmd_str:
+                        return SimpleNamespace(returncode=0, stdout=valid_png, stderr=b"")
+                    if args[0] == "pull":
+                        Path(args[2]).write_bytes(valid_mp4)
+                        return SimpleNamespace(returncode=0, stdout="1 file pulled\n", stderr="")
+                    return SimpleNamespace(returncode=0, stdout="", stderr="")
+
+                return runner
+
+            res = execute_runtime_verification(
+                adb_bin=Path("adb"),
+                serial="emulator-5554",
+                apk_path=apk_path,
+                package_id=pkg,
+                wff_version=4,
+                output_dir=out_dir,
+                expected_avd_name="aura_wear36_round",
+                expected_api_level=36,
+                expected_apk_sha256=apk_sha,
+                runner=make_runner(),
+                manifest_printer=lambda _: _valid_manifest_xml(pkg=pkg, min_sdk=36, wff_version=4),
+                recorder_factory=lambda: FakeRecorder(rc=0),
+                sleep_fn=lambda _: None,
+            )
+            self.assertTrue(res["active_state"]["is_active"])
+            self.assertTrue(res["aod_state"]["is_aod"])
+            self.assertTrue(res["restored_active_state"]["is_active"])
+            self.assertTrue(any("rm" in cmd and "-f" in cmd for cmd in commands_log))
+
+            # 2. Failure fixture: post-AOD wakeup fails to restore Awake (stays Dozing) -> MUST raise RuntimeError
+            power_states_stuck_doze = [
+                "mWakefulness=Awake\nDisplay Power: state=ON\n",
+                "mWakefulness=Dozing\nDisplay Power: state=DOZE\n",
+                "mWakefulness=Dozing\nDisplay Power: state=DOZE\n",
+            ]
+            power_states[:] = power_states_stuck_doze
+            with self.assertRaises(RuntimeError):
+                execute_runtime_verification(
+                    adb_bin=Path("adb"),
+                    serial="emulator-5554",
+                    apk_path=apk_path,
+                    package_id=pkg,
+                    wff_version=4,
+                    output_dir=out_dir,
+                    expected_avd_name="aura_wear36_round",
+                    runner=make_runner(),
+                    manifest_printer=lambda _: _valid_manifest_xml(pkg=pkg, min_sdk=36, wff_version=4),
+                    recorder_factory=lambda: FakeRecorder(rc=0),
+                    sleep_fn=lambda _: None,
+                )
+
+            # 3. Failure fixture: UNKNOWN wallpaper host format -> MUST raise RuntimeVerificationIncompleteError
+            power_states[:] = [
+                "mWakefulness=Awake\nDisplay Power: state=ON\n",
+                "mWakefulness=Dozing\nDisplay Power: state=DOZE\n",
+                "mWakefulness=Awake\nDisplay Power: state=ON\n",
+            ]
+            with self.assertRaises(RuntimeVerificationIncompleteError):
+                execute_runtime_verification(
+                    adb_bin=Path("adb"),
+                    serial="emulator-5554",
+                    apk_path=apk_path,
+                    package_id=pkg,
+                    wff_version=4,
+                    output_dir=out_dir,
+                    expected_avd_name="aura_wear36_round",
+                    runner=make_runner(
+                        lambda args, _: SimpleNamespace(returncode=0, stdout="no wallpaper component here\n", stderr="")
+                        if "wallpaper" in args else None
+                    ),
+                    manifest_printer=lambda _: _valid_manifest_xml(pkg=pkg, min_sdk=36, wff_version=4),
+                    recorder_factory=lambda: FakeRecorder(rc=0),
+                    sleep_fn=lambda _: None,
+                )
+
+            # 4. Failure fixture: non-zero adb command returncode -> MUST raise RuntimeError AND still run finally cleanup (WAKEUP + rm -f)
+            commands_log.clear()
+            active_recorder = FakeRecorder(rc=None)
+            with self.assertRaises(RuntimeError):
+                execute_runtime_verification(
+                    adb_bin=Path("adb"),
+                    serial="emulator-5554",
+                    apk_path=apk_path,
+                    package_id=pkg,
+                    wff_version=4,
+                    output_dir=out_dir,
+                    expected_avd_name="aura_wear36_round",
+                    runner=make_runner(
+                        lambda args, _: SimpleNamespace(returncode=1, stdout="", stderr="input service dead")
+                        if "KEYCODE_SLEEP" in args else None
+                    ),
+                    manifest_printer=lambda _: _valid_manifest_xml(pkg=pkg, min_sdk=36, wff_version=4),
+                    recorder_factory=lambda: active_recorder,
+                    sleep_fn=lambda _: None,
+                )
+            self.assertTrue(active_recorder.terminated, "Active screenrecord process must be terminated in finally on mid-run failure")
+            self.assertTrue(any("rm" in cmd and "-f" in cmd for cmd in commands_log), "Remote temp MP4 must be removed in finally even on mid-run failure")
+            self.assertGreaterEqual(sum(1 for cmd in commands_log if "KEYCODE_WAKEUP" in cmd), 2, "Recovery KEYCODE_WAKEUP must be sent in finally on mid-run failure")
 
 
 class Ag01OfficialValidatorMatrixTests(unittest.TestCase):

@@ -425,7 +425,7 @@ def verify_schemas(logs_dir=None, include_separated=True):
 
     if logs_dir:
         logs_dir.mkdir(parents=True, exist_ok=True)
-        out_name = f"schema-matrix-{total_cases}-r03.log"
+        out_name = f"schema-matrix-{total_cases}-r04.log" if logs_dir.name.endswith("r04") else f"schema-matrix-{total_cases}-r03.log"
         (logs_dir / out_name).write_text("\n".join(log_lines), encoding="utf-8")
         print(f"[LOG] Wrote {total_cases}-case strict schema matrix log to {logs_dir / out_name}")
 
@@ -1256,16 +1256,22 @@ def inspect_emulator_environment(logs_dir=None, sdk_root=None, runner=None):
 
         java_proc = subprocess.run(["java", "-version"], capture_output=True, text=True, encoding="utf-8", check=False)
         java_ver = (java_proc.stderr or java_proc.stdout).strip()
+        mem_jar_path = ROOT / ".aura-tools" / "memory-footprint.jar"
+        mem_ver_str = "unknown"
+        if mem_jar_path.is_file():
+            mv_proc = subprocess.run(["java", "-jar", str(mem_jar_path), "--version"], capture_output=True, text=True, encoding="utf-8", check=False)
+            mem_ver_str = (mv_proc.stdout or mv_proc.stderr).strip()
+        summary_name = "emulator-readiness-r04.log" if logs_dir.name.endswith("r04") else "emulator-readiness-r03.log"
         summary_lines = [
             "================================================================================",
-            "AG-01 R03 LIVE ENVIRONMENT, TOOL HASHES & WEAR OS EMULATOR READINESS LOG",
+            "AG-01 LIVE ENVIRONMENT, PINNED TOOL HASHES & WEAR OS EMULATOR READINESS LOG",
             "================================================================================",
             f"OS Platform:                         {platform.platform()} ({platform.machine()})",
             f"Python Version:                      {sys.version.splitlines()[0]}",
             "Java Version:",
             java_ver,
             f"WFF Validator JAR:                   .aura-tools/wff-validator.jar (v1.7.0, SHA-256: {VALIDATOR_SHA256})",
-            f"Memory Evaluator JAR:                .aura-tools/memory-footprint.jar (v1.5.1, SHA-256: {MEMORY_SHA256})",
+            f"Memory Evaluator JAR:                .aura-tools/memory-footprint.jar ({mem_ver_str}, SHA-256: {MEMORY_SHA256})",
             f"Android SDK Root:                    {info['sdk_root']}",
             f"Available Free Disk Space:           {info['disk_free_gib']} GiB",
             f"Wear Emulator Readiness Status:      {info['status']}",
@@ -1317,8 +1323,8 @@ def inspect_emulator_environment(logs_dir=None, sdk_root=None, runner=None):
             *[f"  {cmd}" for cmd in safe_setup_commands],
             "",
         ]
-        (logs_dir / "emulator-readiness-r03.log").write_text("\n".join(summary_lines), encoding="utf-8")
-        print(f"[LOG] Wrote live R03 emulator readiness & raw SDK/AVD logs to {logs_dir}")
+        (logs_dir / summary_name).write_text("\n".join(summary_lines), encoding="utf-8")
+        print(f"[LOG] Wrote live emulator readiness & raw SDK/AVD logs to {logs_dir / summary_name}")
 
     return info
 
