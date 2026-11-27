@@ -2,14 +2,14 @@
 
 상태: GO (독립 모듈 제출). 제품 출시 NO-GO. PR #3은 병합하지 않는다. 외부 PR 통합 HOLD는 유지한다.
 일자, 작업자, 검토자: 2026-11-28, Grok Build, 자기 재검토. 독립 검토자 없음.
-기준 브랜치/HEAD: 작업 브랜치 `agent/grok/GB-02`. PR #3. 착수 전 원격 PR HEAD는 `3d5840937e94f6fa6c0454f3426c3913e2e5fa8e`였다. 최신 `origin/main`은 `fdc461600556bb059d8bdfbbfea3531648bda4ab`다. 재기반과 강제 푸시 없이 병합 커밋 `1271d5a870dac494b0c12ecf80f0215c939a3be3`로 그 main을 브랜치에 반영했다.
-PRE-FLIGHT: 최신 `origin/main` `fdc461600556bb059d8bdfbbfea3531648bda4ab`의 `docs/STATUS.md`, `docs/operations/agent-orders/README.md`, `docs/operations/BLOCKERS.md`를 확인했다. 기준일 2026-11-28. 확인한 코드 SHA는 `e01f48b7732a1f2196c2c5b4b318f7fdd79fd76a`다. 활성 작업은 GPT-04 PARTIAL, GPT-05 PARTIAL이다. GPT-05 R06 CI는 성공했고 병합은 보류되어 있으며, R07 보호 정책 보완 후보가 있다. 다음 안전한 행동은 R07 후보 CI `46074851113` 검증 뒤 통합 검토, 그다음 GPT-06 독립 준비다. 이 순서는 GB-02 소유 경로의 회차 03을 철회하지 않는다. 담당 표는 GB-02를 `R02 제출, R03 보완 필요 (HOLD)`로 적고, 소유 경로는 `modules/intelligence/**`와 `docs/evidence/GB-02/**`다. 외부 감사 메모는 GB02-AUD-05..08과 revision 상한 보호를 정적 발견으로 적고, 그 시점의 재현은 NOT RUN이다. 제품 출시 NO-GO, 공식 WO GO 0/38, GPT 묶음 3/12. B-011의 현재 pin 불일치는 해결로 적혀 있고 B-002/B-003/B-004/B-005/B-006/B-007/B-008은 유지된다. `origin/main` 대비 `modules/domain`과 `.github` diff는 비어 있다. 병합으로 들어온 GPT-05 호스트 도구와 중앙 문서는 수정하지 않았다. PRE-FLIGHT PASS. 제품 출시 NO-GO와 PR 병합 금지는 유지한다.
+기준 브랜치/HEAD: 작업 브랜치 `agent/grok/GB-02`. PR #3. 착수 전 원격 PR HEAD는 `3d5840937e94f6fa6c0454f3426c3913e2e5fa8e`였다. 구현 직전 `origin/main`은 `fdc461600556bb059d8bdfbbfea3531648bda4ab`였고, 재기반과 강제 푸시 없이 병합 커밋 `1271d5a870dac494b0c12ecf80f0215c939a3be3`로 반영했다. 그 뒤 `origin/main`은 `c6fca7a3c95a735bb2a05b0cc420d138177c6e6d`로 이동했다. 같은 방식으로 병합 커밋 `9cb41003480bf8a8332b3d3c54cb55df6e2cff81`로 반영했다. 두 병합은 `modules/domain`, `.github`, `apps`를 추가로 수정하지 않았다.
+PRE-FLIGHT: 최신 `origin/main` `c6fca7a3c95a735bb2a05b0cc420d138177c6e6d`의 `docs/STATUS.md`, `docs/operations/agent-orders/README.md`, `docs/operations/BLOCKERS.md`를 확인했다. 기준일 2026-11-28. 확인한 코드 SHA는 `b3b4c001ff2961434f9d2a53f2829a95380a9522`다. 활성 작업은 GPT-04 PARTIAL, GPT-05 PARTIAL R07 검증·통합, GPT-06 PARTIAL R01 소재 후보다. 다음 안전한 행동은 GPT-05 R07 통합 CI `46075293496`과 GPT-06 R01 CI `46075399378`을 검증한 뒤 R02 소재 정밀화다. 이 순서는 GB-02 소유 경로의 회차 03을 철회하지 않는다. 담당 표는 GB-02를 `R02 제출, R03 보완 필요 (HOLD)`로 적고, 소유 경로는 `modules/intelligence/**`와 `docs/evidence/GB-02/**`다. 외부 감사 메모는 GB02-AUD-05..08과 revision 상한 보호를 정적 발견으로 적고, 그 시점의 재현은 NOT RUN이다. 제품 출시 NO-GO, 공식 WO GO 0/38, GPT 묶음 3/12. B-011의 현재 pin 불일치는 해결로 적혀 있고 B-002/B-003/B-004/B-005/B-006/B-007/B-008은 유지된다. `origin/main` 대비 `modules/domain`과 `.github` diff는 비어 있다. 병합으로 들어온 GPT-05 호스트 도구와 중앙 문서는 수정하지 않았다. PRE-FLIGHT PASS. 제품 출시 NO-GO와 PR 병합 금지는 유지한다.
 검증 대상 코드 SHA: `c554ab06feb5cec50244eb9525b22203eba72c93`
 관련 요구사항 / WO / GPT ID: R-12, R-17, R-22의 상태 머신 경계. GPT-07과 WO-21/22/23의 정식 선행 조건은 해제하지 않는다.
 관련 정본 문서: `docs/operations/agent-orders/GB-02.md`, `docs/DATA_INTELLIGENCE.md`, `docs/PERFORMANCE.md`, `modules/domain/docs/INTERFACE_CONTRACT.md`, `modules/intelligence/docs/INTERFACE_CONTRACT.md`
 작업 목표, 포함/제외 범위: GB02-AUD-05를 재현하고 고친다. GB02-AUD-06을 재현하고 축별 전환으로 고친다. GB02-AUD-07은 검토하고 전원 축을 늘리지 않는다. revision 상한의 보호 정책 누락을 고친다. 누락, 만료, 권한 철회, 시각 역전, 동일 시각, 빠른 반복의 조합 시험을 추가한다. 기존 intelligence 40개와 domain 81개를 유지한다. 독립 CI 제안만 보완한다. 구현 커밋은 `modules/intelligence/**`만 바꾼다. 증거는 `docs/evidence/GB-02/**`만 추가한다. 도메인 계약, 루트 Gradle, WFF, 공통 `.github/workflows`, 중앙 STATUS/WORK_LOG/BLOCKERS, GPT-04와 GPT-05 파일은 수정하지 않는다.
 선행 조건 및 이전 실패: 회차 01 코드 `779f8aa`, 회차 02 코드 `487b2f0a6a92b33ef89273c07080c7d0f7c8b816`, 증거 `b3e00f07bdff2623bdd7755d4f7898a519dc2994`, CI 기록 `3d5840937e94f6fa6c0454f3426c3913e2e5fa8e`. 공통 bootstrap은 head `b3e00f0`에서 push `46072293234`, pull_request `46072300468`가 success였고 intelligence 시험은 실행하지 않았다. 회차 01과 회차 02 보고서와 JUnit XML은 삭제하지 않았다. 외부 감사의 회차 03 재현은 그 기록 시점에 NOT RUN이었다.
-변경 파일 소유권 / 변경 영향: 작업 트리는 `C:\Users\scarl\AppData\Local\Temp\aura-gb02-wt`. 병합 커밋이 가져온 GPT-05 파일은 수정하지 않았다. 구현 diff는 intelligence 소스, 시험, 모듈 문서 5개 파일이다.
+변경 파일 소유권 / 변경 영향: 작업 트리는 `C:\Users\scarl\AppData\Local\Temp\aura-gb02-wt`. 병합 커밋이 가져온 GPT-05와 GPT-06 파일은 수정하지 않았다. 구현 diff는 intelligence 소스, 시험, 모듈 문서 5개 파일이다.
 참조 자료(정확한 URL·버전·확인일): 2026-11-28. Kotlin 2.4.21, https://kotlinlang.org/docs/releases.html, Apache-2.0, https://github.com/JetBrains/kotlin/blob/v2.4.21/license/LICENSE.txt. JUnit Jupiter 5.10.1 / Platform 1.10.1, EPL-2.0, https://junit.org/junit5/. Gradle Wrapper 9.3.1, Apache-2.0. Foojay toolchain resolver 1.0.0, Apache-2.0. 의존 구성은 회차 01 [test-runtime-classpath.log](test-runtime-classpath.log)와 같다. 이번 회차는 의존성을 추가하지 않았다.
 가정 / 위험 / 승인 필요 사항: [modules/intelligence/docs/ASSUMPTIONS.md](../../../modules/intelligence/docs/ASSUMPTIONS.md)의 GB02-A1~A28. 15/20, 70/50, 60초는 제품 상수가 아니다. 관측 순서와 설정 순서는 분리한다. 긴급 샘플의 목표 전원은 기존 시험 계약대로 경보와 함께 확정한다. 충전 미확인 저전력을 별도 전력 제한 표현으로 나누는 결정은 하지 않았다.
 성공 기준 / 롤백 방법: 수정 전 네 결함이 재현되고, 수정 후 clean JDK 17에서 기존 40개와 추가 시험이 실패 0이며, 도메인 81개가 유지된다. 롤백은 이 브랜치를 main에 병합하지 않으면 된다.
@@ -100,7 +100,7 @@ Artifact 파일명·해시·재생성 명령(해당 시): 이 모듈은 APK를 �
 
 | 게이트 | 결과 | 증거 또는 미적용 사유 |
 |---|---|---|
-| G0 사전 검증 | PASS | 최신 main `fdc4616`, 원격 PR HEAD `3d58409`, 소유 경로 유지, 제품 NO-GO, 도메인과 `.github` diff 없음 |
+| G0 사전 검증 | PASS | 최신 main `c6fca7a`, 원격 PR HEAD `3d58409`, 소유 경로 유지, 제품 NO-GO, 도메인과 `.github` diff 없음 |
 | G1 구현/요구사항 | PASS | AUD-05, AUD-06, 상한 보호, 조합 시험. AUD-07은 검토 후 동작 유지. AUD-08은 제안만 |
 | G2 검증 도구 | PASS | 수정 전 4 FAIL, SourceScan, 기존 정책 거절 |
 | G3 시험/회귀 | PASS | 47 PASS, 도메인 81 PASS. 모듈 GitHub CI는 NOT RUN |
@@ -113,13 +113,13 @@ Artifact 파일명·해시·재생성 명령(해당 시): 이 모듈은 APK를 �
 제품 출시 판정(별도): NO-GO. 실기기, 실공급원, 그래픽, 확정 임계값이 없다.
 미해결 장애 / 이관 및 해결 조건: B-002/B-003/B-004/B-005/B-006/B-007/B-008 유지. PR #3 통합 HOLD 유지. 임계값과 이유 코드 어휘는 승인 전 후보다. 새 차단은 만들지 않았다.
 
-다음 작업 ID, 읽을 문서, 첫 행동·명령, 기대 결과: 총괄이 PR #3을 검토한다. 먼저 이 보고서와 `modules/intelligence/docs/INTERFACE_CONTRACT.md`, `modules/intelligence/docs/CI_PROPOSAL.md`를 읽는다. main 병합과 공통 워크플로 수정은 하지 않는다. 기대 결과는 총괄의 통합 판정이며, 제품 출시 GO가 아니다. 다음 안전한 중앙 행동은 STATUS에 적힌 R07 후보 CI 확인이다.
+다음 작업 ID, 읽을 문서, 첫 행동·명령, 기대 결과: 총괄이 PR #3을 검토한다. 먼저 이 보고서와 `modules/intelligence/docs/INTERFACE_CONTRACT.md`, `modules/intelligence/docs/CI_PROPOSAL.md`를 읽는다. main 병합과 공통 워크플로 수정은 하지 않는다. 기대 결과는 총괄의 통합 판정이며, 제품 출시 GO가 아니다. 다음 안전한 중앙 행동은 STATUS에 적힌 GPT-05 R07 통합 CI와 GPT-06 R01 CI 확인이다.
 
 STATUS / WORK_LOG / BLOCKERS / evidence / 정본 문서 갱신 여부: 회차 03 evidence와 모듈 문서만 갱신했다. 회차 01 `REPORT.md`와 회차 02 `REPORT-02.md`는 유지했다. 중앙 문서 제안은 적용하지 않았다.
 
 중앙 문서 제안:
 
-- STATUS: 다음 안전한 행동을 GPT-05 R07에서 빼지 않는다. GB-02 PR #3에 회차 03이 추가됐고 로컬 intelligence 47 PASS, 도메인 81 PASS, 실기기와 모듈 CI는 NOT RUN, 제품 NO-GO, PR은 미병합이라고 한 줄 추가할 수 있다.
+- STATUS: 다음 안전한 행동인 GPT-05 R07 통합 CI와 GPT-06 R01 CI 확인을 빼지 않는다. GB-02 PR #3에 회차 03이 추가됐고 로컬 intelligence 47 PASS, 도메인 81 PASS, 실기기와 모듈 CI는 NOT RUN, 제품 NO-GO, PR은 미병합이라고 한 줄 추가할 수 있다.
 - WORK_LOG: 같은 한 줄을 추가할 수 있다.
 - BLOCKERS: 변경하지 않는다.
 - DATA_INTELLIGENCE: 변경하지 않는다. 후보 규칙은 모듈 가정에 있다.
