@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Negative Fixture 7: Invalid Variant duration > 1.0 and prohibited Reference child directly under DigitalClock (must FAIL in all WFF 2~5). -->
+<WatchFace width="450" height="450">
+    <Scene backgroundColor="#FF000000">
+        <DigitalClock x="40" y="131" width="370" height="118">
+            <Variant mode="AMBIENT" target="y" value="166" startOffset="0.20" duration="1.35" interpolation="EASE_IN_OUT" />
+            <Reference name="illegal_clock_ref" source="y" defaultValue="131" />
+            <TimeText x="0" y="0" width="370" height="118" format="hh:mm" hourFormat="SYNC_TO_DEVICE" align="CENTER">
+                <Font family="SYNC_TO_DEVICE" size="96" color="#FFF3F7FA" />
+            </TimeText>
+        </DigitalClock>
+    </Scene>
+</WatchFace>

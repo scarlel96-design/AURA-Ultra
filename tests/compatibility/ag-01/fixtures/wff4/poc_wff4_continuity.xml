@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  AG-01 PoC (WFF 4): Continuous AOD transition using WFF 4 Variant attributes
+  (duration, startOffset, interpolation, controls, angleDirection).
+  Implements MOTION_SPEC.md staged continuity windows while enforcing startOffset + duration <= 1.0:
+  - Time object:        0~85%  -> startOffset="0.00" duration="0.85" (same DigitalClock moves & scales)
+  - Outer ring:        10~100% -> startOffset="0.10" duration="0.90"
+  - Material highlight:15~80%  -> startOffset="0.15" duration="0.65"
+  - Info panel:        25~90%  -> startOffset="0.25" duration="0.65"
+  - Secondary info:    45~100% -> startOffset="0.45" duration="0.55"
+-->
+<WatchFace width="450" height="450">
+    <Metadata key="CLOCK_TYPE" value="DIGITAL" />
+    <Metadata key="PREVIEW_TIME" value="10:08:00" />
+    <Scene backgroundColor="#FF000000">
+        <!-- Stage 2 (10~100%): Outer Precision Ring contracts and fades cleanly -->
+        <Group name="OuterPrecisionRing" x="0" y="0" width="450" height="450" pivotX="0.5" pivotY="0.5" scaleX="1.0" scaleY="1.0" alpha="255">
+            <Variant mode="AMBIENT" target="scaleX" value="0.92" startOffset="0.10" duration="0.90" interpolation="CUBIC_BEZIER" controls="0.22 1.0 0.36 1.0" />
+            <Variant mode="AMBIENT" target="scaleY" value="0.92" startOffset="0.10" duration="0.90" interpolation="CUBIC_BEZIER" controls="0.22 1.0 0.36 1.0" />
+            <Variant mode="AMBIENT" target="alpha" value="0" startOffset="0.10" duration="0.90" interpolation="EASE_OUT" />
+            <PartDraw x="0" y="0" width="450" height="450">
+                <Ellipse x="15" y="15" width="420" height="420">
+                    <Stroke color="#FF314B60" thickness="2" />
+                </Ellipse>
+                <Ellipse x="23" y="23" width="404" height="404">
+                    <Stroke color="#FF172C39" thickness="1" />
+                </Ellipse>
+                <Arc centerX="225" centerY="225" width="412" height="412" startAngle="0" endAngle="240" direction="CLOCKWISE">
+                    <Stroke color="#FF81D7AF" thickness="3" cap="ROUND" />
+                </Arc>
+            </PartDraw>
+        </Group>
+
+        <!-- Stage 3 (15~80%): Material Highlight sweeps and dissolves -->
+        <Group name="MaterialHighlight" x="0" y="0" width="450" height="450" pivotX="0.5" pivotY="0.5" angle="0" alpha="220">
+            <Variant mode="AMBIENT" target="angle" value="24" startOffset="0.15" duration="0.65" interpolation="EASE_IN_OUT" angleDirection="CLOCKWISE" />
+            <Variant mode="AMBIENT" target="alpha" value="0" startOffset="0.15" duration="0.65" interpolation="LINEAR" />
+            <PartDraw x="45" y="45" width="360" height="360" blendMode="SCREEN">
+                <Arc centerX="180" centerY="180" width="340" height="340" startAngle="300" endAngle="350" direction="CLOCKWISE">
+                    <Stroke color="#FF79D4F2" thickness="2" cap="ROUND" />
+                </Arc>
+            </PartDraw>
+            <PartText x="145" y="52" width="160" height="28">
+                <Text align="CENTER">
+                    <Font family="SYNC_TO_DEVICE" size="15" color="#FF79D4F2">AURA ULTRA</Font>
+                </Text>
+            </PartText>
+            <PartText x="90" y="90" width="270" height="34">
+                <Text align="CENTER">
+                    <Font family="SYNC_TO_DEVICE" size="22" color="#FFA9BACB">
+                        <Template>%s.%s · %s<Parameter expression="[MONTH_Z]" /><Parameter expression="[DAY_Z]" /><Parameter expression="[DAY_OF_WEEK_S]" /></Template>
+                    </Font>
+                </Text>
+            </PartText>
+        </Group>
+
+        <!-- Stage 4 (25~90%): Glass Info Panel interpolates position, scale, and opacity -->
+        <Group name="PrimaryInfoPanel" x="85" y="242" width="280" height="48" pivotX="0.5" pivotY="0.5" scaleX="1.0" scaleY="1.0" alpha="255">
+            <Variant mode="AMBIENT" target="y" value="262" startOffset="0.25" duration="0.65" interpolation="OVERSHOOT" />
+            <Variant mode="AMBIENT" target="scaleX" value="0.90" startOffset="0.25" duration="0.65" interpolation="EASE_IN_OUT" />
+            <Variant mode="AMBIENT" target="scaleY" value="0.85" startOffset="0.25" duration="0.65" interpolation="EASE_IN_OUT" />
+            <Variant mode="AMBIENT" target="alpha" value="0" startOffset="0.25" duration="0.65" interpolation="EASE_OUT" />
+            <PartDraw x="0" y="0" width="280" height="48">
+                <RoundRectangle x="0" y="0" width="280" height="48" cornerRadiusX="24" cornerRadiusY="24">
+                    <Fill color="#FF101E2A" />
+                    <Stroke color="#FF314B60" thickness="1" />
+                </RoundRectangle>
+            </PartDraw>
+            <PartText x="20" y="7" width="240" height="34">
+                <Text align="CENTER">
+                    <Font family="SYNC_TO_DEVICE" size="22" color="#FF79D4F2">
+                        <Template>BAT %s%% · HR %s<Parameter expression="[BATTERY_PERCENT]" /><Parameter expression="[HEART_RATE_Z]" /></Template>
+                    </Font>
+                </Text>
+            </PartText>
+        </Group>
+
+        <!-- Stage 5 (45~100%): Secondary Info settles out -->
+        <Group name="SecondaryInfoGroup" x="85" y="302" width="280" height="36" alpha="255">
+            <Variant mode="AMBIENT" target="y" value="318" startOffset="0.45" duration="0.55" interpolation="EASE_IN" />
+            <Variant mode="AMBIENT" target="alpha" value="0" startOffset="0.45" duration="0.55" interpolation="EASE_IN" />
+            <PartText x="0" y="0" width="280" height="36">
+                <Text align="CENTER">
+                    <Font family="SYNC_TO_DEVICE" size="20" color="#FFA9BACB">
+                        <Template>%s / %s STEPS<Parameter expression="[STEP_COUNT]" /><Parameter expression="[STEP_GOAL]" /></Template>
+                    </Font>
+                </Text>
+            </PartText>
+        </Group>
+
+        <!-- Stage 1 (0~85%): Single DigitalClock/TimeText object translates & scales smoothly into centered AOD state -->
+        <DigitalClock x="40" y="131" width="370" height="118" pivotX="0.5" pivotY="0.5" scaleX="1.0" scaleY="1.0" alpha="255" tintColor="#FFF3F7FA">
+            <Variant mode="AMBIENT" target="y" value="166" startOffset="0.00" duration="0.85" interpolation="EASE_IN_OUT" />
+            <Variant mode="AMBIENT" target="scaleX" value="0.88" startOffset="0.00" duration="0.85" interpolation="CUBIC_BEZIER" controls="0.25 0.1 0.25 1.0" />
+            <Variant mode="AMBIENT" target="scaleY" value="0.88" startOffset="0.00" duration="0.85" interpolation="CUBIC_BEZIER" controls="0.25 0.1 0.25 1.0" />
+            <Variant mode="AMBIENT" target="tintColor" value="#FFB7C0C9" startOffset="0.00" duration="0.85" interpolation="EASE_IN_OUT" />
+            <TimeText x="0" y="0" width="370" height="118" format="hh:mm" hourFormat="SYNC_TO_DEVICE" align="CENTER" alpha="255">
+                <Variant mode="AMBIENT" target="alpha" value="235" startOffset="0.00" duration="0.85" interpolation="EASE_IN_OUT" />
+                <Font family="SYNC_TO_DEVICE" size="96" weight="NORMAL" color="#FFF3F7FA" />
+            </TimeText>
+        </DigitalClock>
+    </Scene>
+</WatchFace>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Negative Fixture 5: WFF 5 ComplicationSlot-level blendMode leaked into WFF 2/3/4. -->
+<WatchFace width="450" height="450">
+    <Scene backgroundColor="#FF000000">
+        <ComplicationSlot name="BlendedSlot" slotId="1" x="100" y="260" width="250" height="60"
+                          supportedTypes="SHORT_TEXT" isCustomizable="TRUE" blendMode="SRC_OVER">
+            <BoundingRoundBox x="0" y="0" width="250" height="60" cornerRadius="16" />
+            <Complication type="SHORT_TEXT">
+                <PartText x="0" y="10" width="250" height="40">
+                    <Text align="CENTER">
+                        <Font family="SYNC_TO_DEVICE" size="20" color="#FFF3F7FA">
+                            <Template>%s<Parameter expression="[COMPLICATION.TEXT]" /></Template>
+                        </Font>
+                    </Text>
+                </PartText>
+            </Complication>
+        </ComplicationSlot>
+        <DigitalClock x="40" y="131" width="370" height="118">
+            <TimeText x="0" y="0" width="370" height="118" format="hh:mm" hourFormat="SYNC_TO_DEVICE" align="CENTER">
+                <Font family="SYNC_TO_DEVICE" size="96" color="#FFF3F7FA" />
+            </TimeText>
+        </DigitalClock>
+    </Scene>
+</WatchFace>
