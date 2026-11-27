@@ -9,9 +9,9 @@
 |---|---|
 | 정본 브랜치 | main |
 | 확인한 코드 SHA | f284b1bd69a767ef0f7285449fe7c45f05895e53 |
-| 활성 GPT 작업 | GPT-03 PARTIAL / 회차 01 CI 대기 |
+| 활성 GPT 작업 | GPT-03 PARTIAL / 회차 01 CI 성공, 통합 대기 |
 | 활성 WO | WO-01 PARTIAL; WO-02·04 준비 작업만 일부 구현 |
-| 다음 안전한 행동 | GPT-03 후보 CI 46006560829 최종 로그 확인 → 안전한 통합 → 실제 flavor override 격리 시험 |
+| 다음 안전한 행동 | GPT-03 검증 후보 통합 및 독립 재생성·flavor override 시험; GB-01 보완 및 AG-01 원격 증거 확보 |
 | 다음 실행 명세 | operations/GPT-03.md |
 | 현재 차단 | B-003 SDK/빌드 해결; B-002/003 런타임/004/007 미해결 |
 | 공식 WO GO | 0/38 |
@@ -207,3 +207,9 @@ G0 PASS; G1 현재 작업 범위 PASS; G2 40 단위 및 공식 negative probe PA
 - Verify debug APK signatures: pending
 - Upload debug APKs: pending
 원격 diff 별도 자기 재검토: 제품 앱 리소스 변경 없음; source/packaged preview Git blob 동일 d073ea432797ca9e83a8ea2654de3c9f6440f41b; 외부 에이전트 소유 파일 변경 0; 후보 주요 문서 상대 링크 오류 0. 신규 시험 코드 22개 확인, 실제 총 시험 개수 및 SHA-256 manifest는 최종 원본 로그 확인 후 기록한다. 생성기는 같은 프로세스에서 재실행하며 독립 프로세스 재현 및 --write 실사용 시험은 후속. PNG 원본 복사 및 header 검사만 적용. 실제 렌더링/고급 소재/실기기 미실시. G0/G1 범위 확인, G2/G3/G4/G6 최종 CI 로그 대기, G5 자기 재검토 완료(독립 리뷰 아님), G7 main 문서 체크포인트 등록 대상. GPT-03 PARTIAL, WO 및 출시 판정 유지. main은 기존 코드 유지. 다음: CI 46006560829 최종 결과 및 원본 로그·Artifact 확인, 이후 후보의 안전한 병합 및 실제 flavor override 격리 시험. 중앙 문서의 병행 변경을 보존하며 통합한다. [skip ci]는 문서 전용 체크포인트에만 적용.
+
+## 2026-11-27 — 외부 에이전트 1차 결과 접수 및 총괄 검토
+- GB-01: 원격 agent/grok/GB-01 @ d7e60c06c84809676162c37a0f8b19511518f68c, [PR #1](https://github.com/scarlel96-design/AURA-Ultra/pull/1) OPEN, 코드 SHA 098dd35e1d7111a5ece9f8417142cf1c6ecc2fd3. 담당자 GO(독립 모듈). REPORT.md와 domain-test-summary.log의 로컬 70 PASS/0 FAIL 및 host 40 PASS 확인. CI 46009884061 success(job 140542379520)는 기존 WFF 파이프라인이며 Kotlin 시험을 포함하지 않는다. 코드 이후 보고서/로그만 변경. 24개 변경 파일(22 모듈+2 증거), 소유권 위반 0. 총괄 소스 8개 및 build/settings/계약/가정 문서 검토. 독립 Kotlin 재실행 미실시. 통합은 보류.
+- GB-01 검토 후속: Validation.kt의 unit 내부 제어문자 및 공백 계약 불일치 가능성, LongBounds.parse의 배타적 인접 정수 범위/Long.MIN_VALUE·MAX_VALUE 극값에서 표현 가능한 정수가 없는 경우를 시험한다. 소스 검토 관찰이며 재현 결과는 아직 없다. classifiedValue는 구조/TTL 전체를 검증하지 않으므로 통합 파이프라인에서 validate/applyRevision/deriveStatus 성공 여부를 명시적으로 확인한다. 독립 clean JDK17 CI 시험, 원본 JUnit XML·환경 증거, 비ASCII Windows 경로 제한, A1~A26 가정 유지. 루트 빌드 통합은 보류.
+- AG-01: 사용자 전달 보고서에서 로컬 SHA 0ebe3a8d06f31bcaec959f61832efd864160fd6a, 52/52 스키마 기대 판정, 6/6 격리 APK 검사, 실기기/에뮬레이터 NOT RUN, 담당자 PARTIAL 확인. GitHub branch 목록에 agent/antigravity/AG-01 없음; 해당 SHA 조회 API 422 No commit found. 원문/실제 diff/시험 로그 검증 불가. 푸시 후 총괄 검토. reported 자산 추정치 2371712/2371712 bytes 일반, 2371712/3181712 bytes 자리별 시계; AOD 차이 810000 bytes. 제품 실측이나 원인 확정 근거로 사용하지 않는다. Variant/Reference/Animation/Gyro 발견은 후보로 보존. B-002/003/005 유지.
+- GPT-03: 후보 0016b30609da0b7c38c0ea8ee5fe15c12e2d536d, [CI 46006560829](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46006560829) job 140531069930 completed/success. 원본 로그 62 tests OK, 생성·WFF2~5 schema/negative probe 4/4, clean build 59s, 4 APK 검사/메모리/서명 success. 각 active/ambient 2371712 bytes. Artifact 15201877307, 79010 bytes, expired=false, digest sha256:89d966146b9117376ea4c0d831cd0b0b88558de1dba37ea9f07fc8bb91d9d913. API metadata 확인, 재해시 미실시. 후보 아직 main 미병합. 다음: GPT-03 안전한 통합 및 독립 process/write/flavor override 검증. GPT-03 PARTIAL, GPT 완료 2/12, WO GO 0/38, 제품 NO-GO.
