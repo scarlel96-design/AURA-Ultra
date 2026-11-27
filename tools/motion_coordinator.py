@@ -27,12 +27,12 @@ class Request:
 
     @property
     def target(self):
-        return 0 if self.sample.ambient else MAX
+        return 0 if self.sample.ambient or self.sample.quality == "AOD" else MAX
 
     @property
     def static(self):
         s = self.sample
-        return s.profile < 4 or s.reduced or s.quality == "ECO"
+        return s.profile < 4 or s.reduced or s.quality in ("ECO", "AOD")
 
 
 @dataclass(frozen=True)
@@ -87,11 +87,12 @@ def advance(previous, request):
     changed_target = old.target != request.target
     changed_profile = old.sample.profile != request.sample.profile
     changed_static = old.static != request.static
-    if changed_target and request.advance:
-        raise ValueError("Direction change must not advance")
+    # Protective snaps take precedence over a pending progress increment.
     if request.static or changed_profile or changed_static or request.resync:
         progress = request.target
     elif changed_target:
+        if request.advance:
+            raise ValueError("Direction change must not advance")
         progress = previous.progress
     elif request.target == MAX:
         progress = min(MAX,previous.progress+request.advance)
@@ -142,12 +143,18 @@ def render(state, assets):
 
 def verify(state, assets, value, diameter):
     req = state.request
-    if not 0 <= state.progress <= MAX:
+    if type(state.progress) is not int or not 0 <= state.progress <= MAX:
         raise ValueError("Invalid progress")
     if req.static and state.progress != req.target:
         raise ValueError("Static state not at target")
-    if state.events.sample.tick_ms != req.sample.tick_ms:
+    if state.events.sample != replace(req.sample,core_busy=state.events.sample.core_busy):
         raise ValueError("Event snapshot out of sync")
+    if (req.sample.core_busy or state.moving or state.digits is not None) and not state.events.sample.core_busy:
+        raise ValueError("Missing core busy guard")
+    if state.events.active and not (state.events.active.started_ms <= req.sample.tick_ms < state.events.active.end_ms):
+        raise ValueError("Effect outside lifetime")
+    if state.digits and not (state.digits.started_ms <= req.sample.tick_ms < state.digits.end_ms):
+        raise ValueError("Digit run outside lifetime")
     if state.digits and (state.moving or not stable_active(req,state.progress)):
         raise ValueError("Digit motion overlaps protected state")
     if state.events.active and (state.moving or state.digits or not req.sample.allowed

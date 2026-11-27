@@ -144,3 +144,71 @@ class MotionCoordinatorTests(unittest.TestCase):
             mutate(v)
             with self.assertRaises(ValueError):
                 verify(self.base,self.assets,v,432)
+
+    def test_aod_quality_overrides_inconsistent_ambient_flag(self):
+        for profile in (2,3,4,5):
+            for ambient in (False,True):
+                for reduced in (False,True):
+                    request = self.request(1,quality="AOD",profile=profile,
+                                           ambient=ambient,reduced=reduced)
+                    state = advance(None,request).state
+                    self.assertEqual(state.progress,0)
+                    self.assertFalse(state.moving)
+                    self.assertTrue(request.static)
+                    value = render(state,self.assets)
+                    self.assertEqual({n for n,r in value["geometry"]["regions"].items()
+                                      if r["alpha"]>0},{"time","date","ampm"})
+                    self.assertEqual(value["geometry"]["ring"]["alpha"],0)
+                    self.assertEqual(value["geometry"]["highlight"]["alpha"],0)
+                    self.assertIsNone(value["effect"])
+                    for d in (432,438,480,498):
+                        verify(state,self.assets,value,d)
+
+    def test_aod_quality_cancels_effect_and_ignores_pending_delta(self):
+        a = advance(self.base,self.request(1,charging=True)).state
+        r = advance(a,self.request(2,self.next_clock,delta=200,quality="AOD",charging=True))
+        self.assertEqual(r.state.progress,0)
+        self.assertEqual(r.event.cancelled,"M14")
+        self.assertIsNone(r.state.digits)
+        self.assertEqual(render(r.state,self.assets)["clock"]["visualAnchor"],"10:09")
+        b = advance(r.state,self.request(3,self.next_clock,charging=True,weather="RAIN"))
+        self.assertEqual(b.state.progress,1000)
+        self.assertIsNone(b.state.events.active)
+        self.assertIsNone(b.state.digits)
+
+    def test_aod_quality_interrupts_digits(self):
+        a = advance(self.base,self.request(1,self.next_clock)).state
+        self.assertIsNotNone(a.digits)
+        b = advance(a,self.request(2,self.next_clock,quality="AOD")).state
+        self.assertEqual(b.progress,0)
+        self.assertIsNone(b.digits)
+        self.assertEqual(render(b,self.assets)["clock"]["visualAnchor"],"10:09")
+
+    def test_protection_precedes_direction_delta(self):
+        a = advance(self.base,self.request(1,ambient=True)).state
+        b = advance(a,self.request(2,ambient=True,delta=400)).state
+        for kwargs in ({"reduced":True},{"profile":3},{"quality":"ECO"},{"resync":True}):
+            c = advance(b,self.request(3,delta=100,**kwargs)).state
+            self.assertEqual(c.progress,1000)
+            self.assertIsNone(c.digits)
+            self.assertIsNone(c.events.active)
+
+    def test_forged_event_snapshot_and_guard_rejected(self):
+        a = advance(self.base,self.request(1,ambient=True)).state
+        for sample in (replace(a.events.sample,weather="RAIN"),
+                       replace(a.events.sample,core_busy=False)):
+            invalid = replace(a,events=replace(a.events,sample=sample))
+            with self.assertRaises(ValueError):
+                verify(invalid,self.assets,render(invalid,self.assets),432)
+
+    def test_expired_runs_and_noninteger_progress_rejected(self):
+        a = advance(self.base,self.request(1,charging=True)).state
+        b = replace(a,events=replace(a.events,active=replace(a.events.active,started_ms=-1000)))
+        with self.assertRaisesRegex(ValueError,"Effect outside lifetime"):
+            verify(b,self.assets,render(b,self.assets),432)
+        c = advance(self.base,self.request(1,self.next_clock)).state
+        d = replace(c,digits=replace(c.digits,started_ms=-1000))
+        with self.assertRaisesRegex(ValueError,"Digit run outside lifetime"):
+            verify(d,self.assets,render(d,self.assets),432)
+        with self.assertRaisesRegex(ValueError,"Invalid progress"):
+            verify(replace(self.base,progress=True),self.assets,render(self.base,self.assets),432)
