@@ -1,0 +1,95 @@
+command: .\gradlew -p modules/intelligence clean test --rerun-tasks --offline --console=plain
+worktree: C:\Users\scarl\AppData\Local\Temp\aura-gb02-wt
+code: 1536fd7fad37b52375e7eccbb6114b8fd1f735c6
+not-before: 2026-11-27T23:37:06Z
+TEST_JVM version=17 vendor=Eclipse Temurin path=C:\Users\scarl\.jdks\temurin-17
+
+GateTest > scaleBoundsAreInclusiveAndAreNotConverted() PASSED
+GateTest > expiryBoundaryAndBadStatusStayUnusable() PASSED
+GateTest > absentIsNotZero() PASSED
+GateTest > uncheckedTokenIsNotExercise() PASSED
+JunitXmlCheckTest > rejectsMissingDirectory() PASSED
+JunitXmlCheckTest > rejectsCountMismatch() PASSED
+JunitXmlCheckTest > acceptsMatchingFreshResults() PASSED
+JunitXmlCheckTest > rejectsCorruptXml() PASSED
+JunitXmlCheckTest > rejectsHeaderCaseMismatch() PASSED
+JunitXmlCheckTest > rejectsEmptyFile() PASSED
+JunitXmlCheckTest > rejectsDuplicateSuiteAndTestcase() PASSED
+JunitXmlCheckTest > rejectsHiddenFailure() PASSED
+JunitXmlCheckTest > rejectsZeroTests() PASSED
+JunitXmlCheckTest > rejectsMissingResultFile() PASSED
+JunitXmlCheckTest > rejectsHiddenError() PASSED
+JunitXmlCheckTest > rejectsHiddenSkip() PASSED
+JunitXmlCheckTest > rejectsStaleTimestamp() PASSED
+MachineTest > firstStepStartsAtRevisionOneAndDoesNotInferActivity() PASSED
+MachineTest > lowPowerKeepsFreshWeatherNumbersWhileRemovingParticles() PASSED
+MachineTest > urgentAlertBypassesHoldAndCommitsTheCurrentDesiredSensors() PASSED
+MachineTest > freshAlertSurvivesABadPrecipitationSample() PASSED
+MachineTest > chargingIsNotLowPowerAndBypassesHold() PASSED
+MachineTest > powerHysteresisUsesTheCandidateBand() PASSED
+MachineTest > callerScaleIsNotTheDocumentedPercentScale() PASSED
+MachineTest > omittedChannelsKeepStateAndUnusableSettingsDoNotWipeIt() PASSED
+MachineTest > repeatedSamplesAndReturningDesiredDoNotBumpRevision() PASSED
+MachineTest > precipitationHysteresisDoesNotTreatAlertAsPrecip() PASSED
+MachineTest > immediateAxesDoNotResetTheSensorHold() PASSED
+MachineTest > badObservationsAreNotPromotedAndDoNotBecomeZero() PASSED
+MachineTest > clockInversionPublishesNoNumbersAndKeepsTheMachineState() PASSED
+MachineTest > presentationChangesBumpRevisionWhenAxesStay() PASSED
+MachineTest > priorityPrefersCriticalThenPowerThenExerciseThenWeatherThenContext() PASSED
+MachineTest > documentedHoldAndSeparateDebounceKeepThePreviousSensorAxis() PASSED
+MachineTest > suppliedFreshChannelsStayFreshAndObservationsAreUnchanged() PASSED
+PolicyTest > durationsAndScalesAndUnitsMustBeUsable() PASSED
+PolicyTest > powerBandMustRise() PASSED
+PolicyTest > precipitationBandMustFall() PASSED
+PolicyTest > documentedCandidatesRemainConfigurable() PASSED
+PolicyTest > rejectedPolicyDoesNotAdvance() PASSED
+Round02Test > freshChargingFalseUsesHysteresisAndDoesNotInventZero() PASSED
+Round02Test > olderSampleCannotClearChargingOrRaiseAlert() PASSED
+Round02Test > thresholdsOutsideTheConfiguredScaleAreRejected() PASSED
+Round02Test > unchangedInputStillRejectsAnOlderSample() PASSED
+Round02Test > staleReadingDuringUrgentDoesNotLeaveLowOrPublishANumber() PASSED
+Round02Test > extremeInstantAndDurationDoNotEscapeStep() PASSED
+Round02Test > scaleEdgesRemainAccepted() PASSED
+Round02Test > revisionDoesNotWrapAndStopsAtTheLimit() PASSED
+Round02Test > inBandBatteryWithDeniedActivityStaysNormalAndDegraded() PASSED
+Round02Test > equalProcessedTimeIsNotInversion() PASSED
+Round02Test > hysteresisDebounceUrgentAndLowPowerInteract() PASSED
+Round02Test > missingOrInvalidChargingDoesNotClearCharging() PASSED
+Round03Test > chargingExceptionDoesNotBypassUnrelatedWeatherOrActivity() PASSED
+Round03Test > missingExpiryDenialInversionAndRapidRepeatsStayDistinct() PASSED
+Round03Test > olderSampleCannotClearLatestAodAndMotionReduction() PASSED
+Round03Test > missingChargingAndLowBatteryDoNotAddAPowerAxis() PASSED
+Round03Test > revisionCeilingAppliesProtectionWithoutWrapping() PASSED
+Round03Test > sameInstantReplacesSettingsBecauseItIsNotAnOlderObservation() PASSED
+Round03Test > urgentAlertDoesNotBypassAnUnrelatedActivityDebounce() PASSED
+Round04Test > ceilingProtectionIsDeliveredWhenRevisionStaysAtTheLimit() PASSED
+Round04Test > lowPowerGraphicsDoNotWaitForDebounceOrHold() PASSED
+Round04Test > freshLowBatteryLimitsDecorationWithoutChangingTheChargingAxis() PASSED
+Round04Test > ceilingWithdrawsExpiredAndDeniedPublications() PASSED
+Round04Test > anotherAxisDoesNotRestartDebounceOrHold() PASSED
+Round05Test > continuousChangesDoNotResetOtherAxisClocks() PASSED
+Round05Test > revisionOnlyConsumerMissesSameRevisionProtection() PASSED
+Round05Test > sameInstantAndOlderSamplesKeepProtection() PASSED
+Round05Test > timeAndPolicyBoundariesStayInsideStep() PASSED
+Round05Test > compositeConflictsKeepCanonicalPriority() PASSED
+Round05Test > longRunKeepsInvariants() PASSED
+Round05Test > reorderedIntentCanOverwriteNewerProtection() PASSED
+SourceScanTest > plantedClockAndNetworkTokensAreDetected() PASSED
+SourceScanTest > mainSourcesStayFreeOfPlatformClockAndNetwork() PASSED
+
+BUILD SUCCESSFUL in 38s
+7 actionable tasks: 7 executed
+
+XML tally after the run:
+files=9 tests=72 failures=0 errors=0 skipped=0
+GateTest 4 2026-11-27T23:37:41.117Z
+JunitXmlCheckTest 13 2026-11-27T23:37:41.264Z
+MachineTest 17 2026-11-27T23:37:43.606Z
+PolicyTest 5 2026-11-27T23:37:43.703Z
+Round02Test 12 2026-11-27T23:37:43.708Z
+Round03Test 7 2026-11-27T23:37:43.724Z
+Round04Test 5 2026-11-27T23:37:43.735Z
+Round05Test 7 2026-11-27T23:37:43.742Z
+SourceScanTest 2 2026-11-27T23:37:44.563Z
+checker: OK files=9 tests=72
+checker not-before: 2026-11-27T23:37:06Z
