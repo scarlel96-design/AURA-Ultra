@@ -27,6 +27,10 @@ jobs:
         run: python tools/generate_bootstrap.py --check
       - name: Independent bootstrap regeneration
         run: python tools/check_bootstrap_reproduction.py
+      - name: Round layout geometry
+        run: |
+          python tools/round_layout.py --write
+          python tools/round_layout.py --check
       - name: Check project invariants
         run: python tools/check_foundation.py
       - name: Validation tool regression tests

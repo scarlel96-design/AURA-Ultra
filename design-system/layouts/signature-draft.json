@@ -1,0 +1,76 @@
+{
+  "schemaVersion": 1,
+  "logicalSize": 450,
+  "safeInset": 12,
+  "minGap": 8,
+  "diameters": [
+    432,
+    438,
+    480,
+    498
+  ],
+  "regions": {
+    "brand": [
+      145,
+      42,
+      160,
+      24
+    ],
+    "date": [
+      90,
+      78,
+      174,
+      32
+    ],
+    "battery": [
+      274,
+      78,
+      86,
+      32
+    ],
+    "time": [
+      44,
+      124,
+      362,
+      110
+    ],
+    "weather": [
+      62,
+      247,
+      158,
+      52
+    ],
+    "heart": [
+      230,
+      247,
+      158,
+      52
+    ],
+    "steps": [
+      98,
+      312,
+      254,
+      35
+    ],
+    "rain": [
+      127,
+      357,
+      196,
+      29
+    ]
+  },
+  "fontSizes": {
+    "brand": 15,
+    "date": 23,
+    "battery": 23,
+    "time": 96,
+    "weather": 25,
+    "heart": 25,
+    "steps": 23,
+    "rain": 23
+  },
+  "ambient": [
+    "date",
+    "time"
+  ]
+}
