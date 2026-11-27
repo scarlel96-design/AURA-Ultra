@@ -34,6 +34,22 @@ data class PolicyCandidates(
         } else if (precipEnter <= precipExit) {
             issues += "precipitation enter must be above precipitation exit"
         }
+        if (powerEnterPercent.isFinite() && powerExitPercent.isFinite() &&
+            percentMinimum.isFinite() && percentMaximum.isFinite() &&
+            percentMinimum <= percentMaximum &&
+            (powerEnterPercent < percentMinimum || powerEnterPercent > percentMaximum ||
+                powerExitPercent < percentMinimum || powerExitPercent > percentMaximum)
+        ) {
+            issues += "power thresholds must lie inside the percent scale"
+        }
+        if (precipEnter.isFinite() && precipExit.isFinite() &&
+            probabilityMinimum.isFinite() && probabilityMaximum.isFinite() &&
+            probabilityMinimum <= probabilityMaximum &&
+            (precipEnter < probabilityMinimum || precipEnter > probabilityMaximum ||
+                precipExit < probabilityMinimum || precipExit > probabilityMaximum)
+        ) {
+            issues += "precipitation thresholds must lie inside the probability scale"
+        }
         if (minimumHold.isNegative || debounce.isNegative) {
             issues += "durations must not be negative"
         }

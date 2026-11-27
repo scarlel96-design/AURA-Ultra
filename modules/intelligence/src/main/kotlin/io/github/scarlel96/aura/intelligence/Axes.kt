@@ -61,6 +61,7 @@ enum class DataQuality {
 enum class ReasonCode {
     POLICY_REJECTED,
     CLOCK_INVERSION,
+    REVISION_EXHAUSTED,
     DEBOUNCE,
     MINIMUM_HOLD,
     URGENT,

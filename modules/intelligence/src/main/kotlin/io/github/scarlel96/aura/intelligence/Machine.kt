@@ -2,6 +2,8 @@ package io.github.scarlel96.aura.intelligence
 
 import io.github.scarlel96.aura.domain.Observation
 import io.github.scarlel96.aura.domain.draft.PresentationIntentDraft
+import java.time.DateTimeException
+import java.time.Duration
 import java.time.Instant
 
 data class IntelligenceSample(
@@ -46,6 +48,7 @@ data class MachineState(
     val userMode: UserModeAxis,
     val focus: FocusBand,
     val committedAt: Instant,
+    val processedAt: Instant,
     val revision: Long,
     val pending: PendingSensors?,
     val emission: Emission,
@@ -93,6 +96,11 @@ fun IntelligenceIntent.emission(): Emission {
 sealed class StepResult {
     data class PolicyRejected(val issues: List<String>) : StepResult()
 
+    data class LimitReached(
+        val reason: ReasonCode,
+        val state: MachineState,
+    ) : StepResult()
+
     data class Advanced(
         val state: MachineState,
         val intent: IntelligenceIntent,
@@ -108,7 +116,7 @@ fun step(
     if (policyIssues.isNotEmpty()) {
         return StepResult.PolicyRejected(policyIssues)
     }
-    if (previous != null && sample.referenceTime < previous.committedAt) {
+    if (previous != null && sample.referenceTime < previous.processedAt) {
         return finish(
             skeleton = previous,
             intent = intentFor(
@@ -159,6 +167,7 @@ fun step(
             connectivity = connectivity,
             userMode = userMode,
             committedAt = sample.referenceTime,
+            processedAt = sample.referenceTime,
             revision = 1L,
             pending = null,
         )
@@ -199,8 +208,11 @@ fun step(
             currentPending
         }
     }
-    val debounceElapsed = pending == null || !sample.referenceTime.isBefore(pending.since.plus(policy.debounce))
-    val holdElapsed = !sample.referenceTime.isBefore(previous.committedAt.plus(policy.minimumHold))
+    val debounceDeadline = if (pending == null) null else plusOrNull(pending.since, policy.debounce)
+    val debounceElapsed = pending == null ||
+        (debounceDeadline != null && !sample.referenceTime.isBefore(debounceDeadline))
+    val holdDeadline = plusOrNull(previous.committedAt, policy.minimumHold)
+    val holdElapsed = holdDeadline != null && !sample.referenceTime.isBefore(holdDeadline)
     val commitSensors = sensorChanged && (urgent || chargingException || (pending == null) || (debounceElapsed && holdElapsed))
     if (commitSensors && urgent) {
         reasons += ReasonCode.URGENT
@@ -209,7 +221,7 @@ fun step(
         reasons += ReasonCode.CHARGING_EXCEPTION
     }
     if (sensorChanged && !commitSensors) {
-        if (pending != null && sample.referenceTime.isBefore(pending.since.plus(policy.debounce))) {
+        if (pending != null && !debounceElapsed) {
             reasons += ReasonCode.DEBOUNCE
         }
         if (!holdElapsed && !urgent && !chargingException) {
@@ -229,6 +241,7 @@ fun step(
         connectivity = connectivity,
         userMode = userMode,
         committedAt = committedAt,
+        processedAt = sample.referenceTime,
         revision = previous.revision,
         pending = keptPending,
     )
@@ -251,7 +264,7 @@ private fun finish(
     skeleton: MachineState,
     intent: IntelligenceIntent,
     previous: MachineState?,
-): StepResult.Advanced {
+): StepResult {
     val emission = intent.emission()
     val axesChanged = previous != null && (
         skeleton.power != previous.power ||
@@ -263,6 +276,9 @@ private fun finish(
             skeleton.focus != previous.focus
         )
     val emissionChanged = previous != null && emission != previous.emission
+    if (previous != null && (axesChanged || emissionChanged) && previous.revision == Long.MAX_VALUE) {
+        return StepResult.LimitReached(ReasonCode.REVISION_EXHAUSTED, previous)
+    }
     val revision = when {
         previous == null -> 1L
         axesChanged || emissionChanged -> previous.revision + 1
@@ -272,6 +288,16 @@ private fun finish(
         state = skeleton.copy(revision = revision, emission = emission),
         intent = intent.copy(revision = revision),
     )
+}
+
+private fun plusOrNull(start: Instant, amount: Duration): Instant? {
+    return try {
+        start.plus(amount)
+    } catch (ex: DateTimeException) {
+        null
+    } catch (ex: ArithmeticException) {
+        null
+    }
 }
 
 private data class GatedSample(
@@ -341,18 +367,20 @@ private fun desiredPower(
     if (charging is Channel.Fresh && charging.value) {
         return PowerAxis.CHARGING
     }
+    val chargingKnownOff = charging is Channel.Fresh
+    if (previous == PowerAxis.CHARGING && !chargingKnownOff) {
+        return PowerAxis.CHARGING
+    }
     return when (battery) {
         is Channel.Fresh -> {
             val low = lowPower(battery.value, previous == PowerAxis.LOW, policy)
             if (low) PowerAxis.LOW else PowerAxis.NORMAL
         }
-        Channel.Absent -> when (charging) {
-            is Channel.Fresh ->
-                if (previous == PowerAxis.CHARGING) PowerAxis.NORMAL else previous ?: PowerAxis.NORMAL
-            is Channel.Unusable -> previous ?: PowerAxis.NORMAL
-            Channel.Absent -> previous ?: PowerAxis.NORMAL
+        else -> if (chargingKnownOff && previous == PowerAxis.CHARGING) {
+            PowerAxis.NORMAL
+        } else {
+            previous ?: PowerAxis.NORMAL
         }
-        is Channel.Unusable -> previous ?: PowerAxis.NORMAL
     }
 }
 
@@ -408,6 +436,7 @@ private fun assemble(
     connectivity: ConnectivityAxis,
     userMode: UserModeAxis,
     committedAt: Instant,
+    processedAt: Instant,
     revision: Long,
     pending: PendingSensors?,
 ): MachineState {
@@ -420,6 +449,7 @@ private fun assemble(
         userMode = userMode,
         focus = focusOf(power, weather, activity, light, connectivity, userMode),
         committedAt = committedAt,
+        processedAt = processedAt,
         revision = revision,
         pending = pending,
         emission = Emission(

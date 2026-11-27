@@ -14,6 +14,8 @@
 
 `-p`는 시작 디렉터리를 `modules/intelligence`로 두고 이 디렉터리의 `settings.gradle.kts`를 읽는다. 루트 프로젝트 `:apps:watchface`는 구성되지 않는다. 도메인 회귀는 기존 `modules/domain` 빌드를 그대로 실행한다.
 
+독립 CI에 넣을 명령과 워크플로 초안은 [CI_PROPOSAL.md](CI_PROPOSAL.md)에 있다. 그 파일은 실행되지 않고, 공통 `.github/workflows`는 바꾸지 않는다.
+
 ## 고정 버전
 
 | 도구 | 버전 | 역할 |
