@@ -8,7 +8,7 @@ import xml.etree.ElementTree as ET
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "tools"))
 from generate_basic_face import generate as face, OUTPUT
-from signature_preview import collect, generate, scenarios, expression, clock_text, PREFIX, render
+from signature_preview import collect, generate, scenarios, expression, clock_text, PREFIX, render, font_text
 
 
 class SignaturePreviewTests(unittest.TestCase):
@@ -102,3 +102,14 @@ class SignaturePreviewTests(unittest.TestCase):
     def test_unsupported_diameter(self):
         with self.assertRaises(ValueError):
             render(collect(self.xml, self.samples["en24-normal"]), self.samples["en24-normal"], 500)
+
+    def test_literal_percent_template(self):
+        font = ET.fromstring('<Font><Template>%s%%<Parameter expression="[BATTERY_PERCENT]" /></Template></Font>')
+        self.assertEqual(font_text(font, {"BATTERY_PERCENT": 0}), "0%")
+
+    def test_invalid_percent_template(self):
+        for fmt in ("%s%", "%d", "%s%%%", "%s%s"):
+            with self.subTest(fmt=fmt):
+                font = ET.fromstring(f'<Font><Template>{fmt}<Parameter expression="[BATTERY_PERCENT]" /></Template></Font>')
+                with self.assertRaises(ValueError):
+                    font_text(font, {"BATTERY_PERCENT": 85})

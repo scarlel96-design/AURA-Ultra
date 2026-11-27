@@ -111,7 +111,7 @@ def font_text(font, data):
         raise ValueError("Unsupported Font content")
     t = children[0]
     fmt = (t.text or "").strip()
-    if not fmt or re.search(r"%(?!s|%)", fmt):
+    if re.fullmatch(r"(?:[^%]|%s|%%)+", fmt) is None:
         raise ValueError("Unsupported template format")
     params = []
     for p in t:
