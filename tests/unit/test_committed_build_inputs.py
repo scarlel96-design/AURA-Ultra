@@ -1,6 +1,5 @@
 """Exercise committed input isolation with real temporary Git repositories."""
 import os
-import subprocess
 import sys
 import tempfile
 import unittest
@@ -22,13 +21,18 @@ class CommittedInputsTests(unittest.TestCase):
         git(self.root,"config","user.name","AURA test")
         git(self.root,"config","user.email","test@example.invalid")
         git(self.root,"config","commit.gpgsign","false")
+        git(self.root,"config","core.autocrlf","false")
+        git(self.root,"config","core.filemode","false" if os.name == "nt" else "true")
         (self.root/"tools").mkdir()
         (self.root/"gradlew").write_bytes(b"#!/bin/sh\n")
+        if os.name != "nt":
+            (self.root/"gradlew").chmod(0o755)
         (self.root/"tools"/"input.py").write_bytes(b"original\n")
-        (self.root/".gitignore").write_text("ignored.py\n",encoding="utf-8")
+        (self.root/".gitignore").write_bytes(b"ignored.py\n")
         git(self.root,"add",".")
         git(self.root,"update-index","--chmod=+x","gradlew")
         git(self.root,"commit","-qm","fixture")
+        self.assertEqual(git(self.root,"status","--porcelain","--untracked-files=no"),b"")
         self.commit = clean_commit(self.root)
 
     def copy(self, files=("gradlew",), directories=("tools",)):
@@ -81,3 +85,14 @@ class CommittedInputsTests(unittest.TestCase):
     def test_invalid_commit(self):
         with self.assertRaisesRegex(ValueError,"Invalid source commit"):
             copy_committed_inputs(self.root,self.dest,"HEAD",("gradlew",),("tools",))
+
+    def test_staged_mode_change_rejected(self):
+        git(self.root,"update-index","--chmod=-x","gradlew")
+        with self.assertRaisesRegex(ValueError,"Tracked worktree"):
+            clean_commit(self.root)
+
+    def test_staged_content_change_rejected(self):
+        (self.root/"tools"/"input.py").write_bytes(b"staged")
+        git(self.root,"add","tools/input.py")
+        with self.assertRaisesRegex(ValueError,"Tracked worktree"):
+            clean_commit(self.root)
