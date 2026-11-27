@@ -1,17 +1,19 @@
-# 세션 독립형 자율 개발 운영 규정 v1.1
+# 세션 독립형 자율 개발 운영 규정 v1.2
 
 ## 목적과 권한
 사용자 지시: 채팅 GPT가 안전하게 처리할 수 있는 개발을 최대한 선행한다. Codex 사용량과 중복 개발을 줄인다. 사용자는 반복해서 상세 WO를 지정할 필요가 없다.
 "다음 작업", "작업 시작", "작업 재개", "계속 진행"은 저장소의 현재 상태를 확인하고 다음 안전한 작업 묶음을 직접 선택·수행하라는 승인이다. 설명만 출력하지 말고 가능한 범위에서 변경·검증·기록까지 수행한다.
 이 권한은 사용자가 메시지를 보낸 현재 작업에 한정한다. 대화가 종료된 뒤 백그라운드 작업을 약속하지 않는다. 자동 릴리스, 유료 서비스, 시크릿 발급, 실제 사용자 기기 변경, 강제 푸시 및 데이터 파괴에는 적용하지 않는다.
 
-## 1. 매 세션 복원
+## 1. 매 작업 턴 복원 (PRE-FLIGHT)
+[루트 AGENTS.md](../../AGENTS.md)의 PRE-FLIGHT를 모든 작업 요청의 첫 행동으로 실행한다. 같은 대화의 후속 턴에도 생략하지 않는다. 이전 턴의 확인 결과를 재사용하지 않는다. 필수 문서 확인 및 증거 대조를 마치기 전에는 구현·수정·테스트 실행·커밋·작업 확정을 하지 않는다. 확인이 차단되면 안전한 읽기 전용 진단과 상태 정정만 수행한다.
+
 1. 저장소 scarlel96-design/AURA-Ultra의 실제 main HEAD를 조회한다.
 2. HEAD에 고정해 AGENTS.md, docs/STATUS.md, 이 문서, docs/operations/GPT_EXECUTION_PLAN.md, docs/operations/PROJECT_INVARIANTS.md를 읽는다.
 3. [TASK_RECORD_PROTOCOL.md](TASK_RECORD_PROTOCOL.md), [VERIFICATION_PROTOCOL.md](VERIFICATION_PROTOCOL.md), [TASK_REPORT_TEMPLATE.md](TASK_REPORT_TEMPLATE.md)를 읽는다. 현재 작업 ID와 차단 ID를 찾는다. docs/operations/BLOCKERS.md, docs/operations/WORK_LOG.md의 관련 최근 기록, docs/ROADMAP.md와 관련 WO 명세·증거를 읽는다.
 4. 활성 작업의 실제 소스, CI 설정, 최신 관련 실행 결과와 변경 이력을 확인한다. 현재 HEAD와 CI 검사 SHA를 구분한다.
 5. 현재 환경의 도구, 파일 쓰기 권한, 네트워크, CI, 기기 접근 가능성을 확인한다.
-6. 기존 기록과 실제 소스/증거가 불일치하면 상태를 정정한다. 과거 대화 기억이나 이전 에이전트의 완료 주장만 신뢰하지 않는다.
+6. 기존 기록과 실제 소스/증거가 불일치하면 상태를 정정한다. 기준 SHA, 확인 문서, 활성 작업, 차단점 및 PRE-FLIGHT 판정을 해당 작업 보고서에 기록한다. 과거 대화 기억이나 이전 에이전트의 완료 주장만 신뢰하지 않는다.
 
 기록이 누락됐으면 확인 가능한 소스와 증거에서 상태를 복원한다. 확인 불가능한 사항은 UNKNOWN 또는 NOT RUN으로 기록한다. 사용자에게 이미 문서화된 정보를 다시 요청하지 않는다.
 

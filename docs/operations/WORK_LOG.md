@@ -24,3 +24,10 @@
 - CI 45998056978 로그에서 공식 validator PASSED #2/#3/#4, Gradle BUILD SUCCESSFUL, APK 검사 FAIL을 확인했다. B-001 유지. 검증 스크립트의 일반 VALID 포함 조건 위험 B-010 등록. 실제 오판은 미재현.
 - 변경 범위: 운영 문서. APK 검사와 validator 스크립트는 미수정. 다음 작업은 GPT-01 유지.
 - 증거: docs/evidence/OPS-02/REPORT.md. 최종 저장소 반영은 해당 커밋 이력에서 확인한다.
+
+## 2026-11-27 / 매 턴 PRE-FLIGHT 진입 게이트
+- 기준 부모 SHA 951593e4fbbac33f2c675ea5cbbf07edbe22353d. 사용자 요청에 따라 루트 AGENTS.md 최상단에 필수 확인 순서 배치. README와 STATUS 상단에서 연결.
+- 매 턴 최신 HEAD 및 필수 문서 확인, 활성 작업·실제 소스·CI 대조, 보고서에 PRE-FLIGHT 판정 기록. 동일 대화 및 재시도에도 적용.
+- 문서 기준 SHA 951593e4fbbac33f2c675ea5cbbf07edbe22353d, CI 45998609726 (completed/failure): Official WFF validation: success; Build debug APKs: success; Check APK contents: failure; Upload debug APKs: skipped. https://github.com/scarlel96-design/AURA-Ultra/actions/runs/45998609726. 운영 문서 변경 실행이며 제품 코드 변경 없음. B-001/B-010 해결 증거 없음.
+- 운영 규정·기록·검증·보고서 양식 동기화. 제품 코드 변경 없음. 다음 GPT-01/B-001/B-010 유지.
+- 증거: docs/evidence/OPS-03/REPORT.md. 커밋 후 실제 등록과 링크 확인.

@@ -2,6 +2,7 @@
 상태: PLANNED / IN_PROGRESS / GO / PARTIAL / NO-GO
 일자, 작업자, 검토자:
 기준 브랜치/HEAD:
+PRE-FLIGHT: 확인한 최신 기준 SHA / 실제 읽은 필수 문서 경로 / 활성 작업 / 차단점 / 관련 CI / PASS 또는 BLOCKED:
 검증 대상 코드 SHA:
 관련 요구사항 / WO / GPT ID:
 관련 정본 문서:

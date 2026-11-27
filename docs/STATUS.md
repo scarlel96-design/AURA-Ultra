@@ -1,4 +1,7 @@
 # 프로젝트 상태 — 단일 재개 체크포인트
+
+> [!IMPORTANT]
+> 매 작업 턴 시작 시 [루트 AGENTS.md](../AGENTS.md)의 PRE-FLIGHT를 먼저 수행한다. 이 문서만 읽고 작업을 시작하지 않는다. 최신 HEAD, 필수 규정, 활성 작업 및 실제 CI 증거를 확인한다.
 기준일: 2026-11-27. 이 문서는 매 작업 종료 시 업데이트한다.
 현재 목표: GPT 선행 개발 최대화(작업량 추정 목표 65%, 조건부 상한 75%). 최종 프리미엄 품질 유지. Codex 중복 작업 최소화.
 
@@ -41,3 +44,7 @@ main의 현재 HEAD를 먼저 확인한다. 확인한 코드 SHA와 최신 문�
 
 ## 운영 규정 v1.1
 매 작업마다 작업별 영속 기록, G0~G7 검증, 증거 감사 및 별도 재검토를 필수 적용한다. 작업 종료 전 실제 저장소 기록을 확인한다. 이번 변경은 문서만 수정하며 제품 판정을 변경하지 않는다.
+
+## 운영 규정 v1.2 — 매 턴 PRE-FLIGHT
+루트 AGENTS.md 최상단의 확인 게이트를 매 작업 턴마다 수행한다. 신규 세션뿐 아니라 동일 대화의 연속 작업에도 적용한다. 제품 코드 변경 없음. GPT-01/B-001/B-010 상태 유지.
+문서 기준 SHA 951593e4fbbac33f2c675ea5cbbf07edbe22353d, CI 45998609726 (completed/failure): Official WFF validation: success; Build debug APKs: success; Check APK contents: failure; Upload debug APKs: skipped. https://github.com/scarlel96-design/AURA-Ultra/actions/runs/45998609726. 운영 문서 변경 실행이며 제품 코드 변경 없음. B-001/B-010 해결 증거 없음.

@@ -1,5 +1,8 @@
 # AURA Ultra
 
+> [!IMPORTANT]
+> **AI 개발 작업은 매 턴 [AGENTS.md의 PRE-FLIGHT](AGENTS.md#0-필수-pre-flight--매-턴-가장-먼저)부터 시작한다.** 최신 HEAD와 [STATUS.md](docs/STATUS.md)를 확인하고 필수 운영 문서·활성 작업·검증 증거를 읽기 전에는 구현을 시작하지 않는다. 이전 대화 기억에 의존하지 않는다.
+
 Galaxy Watch7 이후의 Wear OS 갤럭시 워치를 위한 지능형 프리미엄 워치 페이스 플랫폼.
 
 **상태: 설계 기준선 v1.0 / 초기 빌드 토대 / 출시 NO-GO (2026-11-27)**

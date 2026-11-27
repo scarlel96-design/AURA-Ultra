@@ -1,10 +1,11 @@
-# 작업별 영속 기록 규정 v1.1
+# 작업별 영속 기록 규정 v1.2
 
 ## 적용 범위
 모든 GPT 작업, WO, 긴급 수정, 조사, 검증, 문서 변경에 적용한다. 코드 변경이 없어도 기록한다. 대화 기억은 정본이 아니다. 저장소의 요구사항·기술 명세·결정·실제 코드·검증 증거를 읽어 재개한다.
 이 문서와 [VERIFICATION_PROTOCOL.md](VERIFICATION_PROTOCOL.md)는 매 작업의 필수 규정이다.
 
 ## 1. 작업 전 기록
+매 작업 턴의 첫 행동으로 [AGENTS.md](../../AGENTS.md)의 PRE-FLIGHT를 실행한다. 확인한 기준 SHA, 필수 문서 경로, 활성 작업 및 차단점, 관련 CI, PASS/BLOCKED 판정을 보고서에 기록한다. 이전 턴의 확인을 복사해 사용하지 않는다.
 작업 ID와 회차를 부여한다. 같은 작업의 재시도는 기존 ID 아래 새 회차로 기록한다.
 관련 증거 경로에 REPORT.md 또는 회차별 REPORT-NN.md를 만든다. [TASK_REPORT_TEMPLATE.md](TASK_REPORT_TEMPLATE.md)를 적용한다. 기존 시험 기록을 덮어쓰지 않는다.
 기록할 정보:
