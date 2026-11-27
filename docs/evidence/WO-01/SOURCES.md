@@ -21,3 +21,6 @@
 - S1 추가 영문 공식 근거: https://www.samsungmobilepress.com/articles/samsungs-expanded-wearables-portfolio-unlocks-intelligent-health-experiences-for-all .
 - S5: https://www.samsung.com/hk_en/watches/galaxy-watch/galaxy-watch-ultra-2025-47mm-titanium-silver-lte-sm-l705fzs1tgy/ — Ultra 2025 480×480 확인.
 - S6: https://www.samsungmobilepress.com/articles/samsung-galaxy-watch-ultra-now-has-one-ui-8-watch — 2025-07-22 Ultra One UI 8 업데이트 확인. 출고 OS 및 개별 펌웨어는 별도 확인.
+
+- A13: https://gradle.org/release-checksums/ — Gradle9.3.1 공식 SHA-256. https://github.com/gradle/gradle/tree/v9.3.1 — 공식 Wrapper.
+- A14: https://developer.android.com/about/versions/17/setup-sdk — compileSdk/targetSdk 37. 실제 SDK package ID platforms;android-37.0은 CI 46002470824 source.properties 및 설치 로그에서 확인. 공식 문서와 SDK 실행 증거를 구분한다.

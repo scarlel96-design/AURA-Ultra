@@ -5,3 +5,5 @@ Official sources inspected: WFF setup, digital clock/time and text reference, WF
 Decision: PARTIAL. Establish a reversible bootstrap without claiming WO-01 complete or closing WO-02. Use CI for Android build and schema tests. Record actual results separately. Physical device, memory, power and latest device confirmations remain pending.
 
 GPT-02 회차 01: 공식 Watch7/8/9/Ultra2 발표 사양 및 API37/AGP9.1.1 확인. DEVICE_MATRIX, TOOLCHAIN, API_CAPABILITIES, SOURCES 문서 추가. WFF5 schema-only probe 및 profile contract 후보. SDK37 실제 빌드·실기기·optimizer·세부 API 미검증. WO-01 PARTIAL 유지.
+
+GPT-02 회차 02: API37.0/AGP9.1.1/Gradle9.3.1 환경 실제 CI 46002470824에서 검증. 40 PASS/0 FAIL, WFF2~5 Debug APK 정상. WO-01 PARTIAL: 사용자 PC/실기기/optimizer 및 일부 세부 API·기기 조건 미검증. 제품 출시 NO-GO.

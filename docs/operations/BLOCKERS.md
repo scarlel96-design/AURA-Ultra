@@ -5,7 +5,7 @@ OPEN은 미해결, BLOCKED는 외부 조건 필요, RESOLVED는 해결 증거가
 |---|---|---|---|---|
 | B-001 | RESOLVED | 과거 WFF2 APK classes.dex 및 AGP 생성 R 클래스 5개 재현, 현행 3 APK 리소스 전용 검사 PASS | CI 46000111676/46000111754; REPORT-02 | GPT-01 |
 | B-002 | BLOCKED / P1 | 현재 채팅 환경에 Android SDK/ADB 및 연결된 워치 없음 | CI로 대체 가능한 검증 수행; 실제 설치·센서·전력 시험은 접근 가능한 환경에서 수행 | GPT / Codex / 사용자 |
-| B-003 | OPEN / P1 | WFF5 빌드 비활성. SDK/API, 스키마, 설치된 OS 미확정 | 공식 문서와 호환 도구·기기 증거 확보, 별도 profile 검증 | GPT-02 / 실기기 |
+| B-003 | OPEN / P1 (SDK/빌드 해결) | CI 46002470824 SDK37.0 및 WFF5 Debug APK PASS. WFF5 실제 설치·런타임·전용 기능 미확인 | 실제 기기 및 P12 PoC 증거 | WO-08/35 |
 | B-004 | OPEN / P1 | Watch7 크기/펌웨어/OS 및 최신 Samsung 기기 공식 매트릭스 미확인 | 공식 사양 확인, 실제 지원 대상별 기기/OS 기록 | WO-01 / 34 / 35 |
 | B-005 | OPEN / P1 | WFF4 Reference, Variant, 숫자 전환, Gyro, 모션 트리거 및 최종 그래픽 품질 미검증 | P03~09의 실제 증거 | GPT-05/06 / Codex |
 | B-006 | OPEN / P2 | 실제 KMA API 자격·할당량, Samsung Health 권한/파트너 및 독점 지표, Watch Face Push 조건 미확정 | 공식 조건 확인 및 실제 승인된 환경 시험 | GPT-08/09/11 |
@@ -47,3 +47,6 @@ B-003: 공식 WFF5 공개 및 Wear OS7/API37 확인, AGP9.1.1/Gradle9.3.1 전환
 CI 46001149417 SUCCESS, WFF5 스키마 정상 및 예상 실패 검출 PASS. B-003 OPEN: API37 toolchain/실제 WFF5 APK·설치 미확인. B-004 OPEN: 공식 주요 모델 사양 확인, 실제 OS/Ultra2025 출고 OS 미확정. B-007 OPEN: ADR-007 정식 정책 제안 상태. B-002 유지. 기존 B-001/B-010 해결 유지.
 
 GPT-02 회차 02: B-003 API37 전환 후보 격리 검증 중. 스키마 PASS만으로 설치 지원을 주장하지 않는다. B-002/004/007 유지. B-001/010 해결 상태 유지; 회귀 검사 수행 예정.
+
+## GPT-02 회차 02 최종
+B-003: SDK 패키지 android-37.0 설치, 네 APK build/스키마/메모리/서명 PASS. 도구 전환 차단 해결. 실제 설치·기능 확인은 남음. B-002/004/007 유지. B-001/010 재발 없음. CI 46002470824, REPORT-02. 첫 CI 46002330942 실패도 보존.

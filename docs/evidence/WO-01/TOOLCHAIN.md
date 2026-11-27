@@ -14,3 +14,5 @@
 CI 46001149417: 기존 SDK36/AGP8.10.1에서 WFF2/3/4 APK 및 WFF5 schema-only PASS. API37 후보 자체 실행 NOT RUN.
 
 GPT-02 회차 02 격리 후보: AGP9.1.1, Gradle9.3.1, JDK17, SDK37, build-tools36.0.0. 공식 Gradle distribution SHA-256 b266d5ff6b90eada6dc3b20cb090e3731302e553a27c5d3e4df1f0d76beaff06, wrapper SHA-256 b3a875ddc1f044746e1b1a55f645584505f4a10438c1afea9f15e92a7c42ec13. CI 결과 PENDING. https://gradle.org/release-checksums/ ; https://developer.android.com/build/releases/agp-9-1-0-release-notes .
+
+회차 02 실제 CI 46002470824 SUCCESS: SDK package platforms;android-37.0 (revision 2), Gradle9.3.1, JDK17.0.21, AGP9.1.1, build-tools36.0.0, 4 Debug APK 검증. SDK37 전환 후보가 자동 빌드 기준으로 검증됨. 실제 기기/optimizer/Release NOT RUN. 첫 실패 CI 46002330942 보존.

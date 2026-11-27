@@ -34,7 +34,7 @@ AURA는 고급 시계의 금속·유리 소재, 정밀한 데이터 시각화, A
 
 ## 초기 빌드 토대
 [BUILD_GUIDE.md](docs/BUILD_GUIDE.md) · [WO-01 예비 증거](docs/evidence/WO-01/REPORT.md) · [Bootstrap 증거](docs/evidence/BOOTSTRAP/REPORT.md)
-API37 전환 후보는 WFF2/3/4/5 debug variant 및 자동 검사를 구성한다. 실제 판정은 STATUS/CI에서 확인한다. WFF5 전용 기능과 프리미엄 그래픽은 후속 PoC 대상이다.
+API37.0 환경에서 WFF2/3/4/5 debug variant 및 자동 검사 CI를 통과했다. 실제 판정은 STATUS/CI에서 확인한다. WFF5 전용 기능과 프리미엄 그래픽은 후속 PoC 대상이다.
 
 ## 세션 독립형 개발 운영
 [핵심 요구사항 보존표](docs/operations/PROJECT_INVARIANTS.md) · [차단점](docs/operations/BLOCKERS.md) · [작업 이력](docs/operations/WORK_LOG.md) · [진행률 기준](docs/operations/PROGRESS_MODEL.md) · [인수인계](docs/operations/HANDOFF.md) · [GPT-01](docs/operations/GPT-01.md)

@@ -8,14 +8,14 @@
 | 항목 | 현재 값 |
 |---|---|
 | 정본 브랜치 | main |
-| 확인한 코드 SHA | 7820f90cbb35220fe9c6da4f9702374714d143d1 |
-| 활성 GPT 작업 | GPT-02 회차 02 후보 / 검증 대기 |
+| 확인한 코드 SHA | f284b1bd69a767ef0f7285449fe7c45f05895e53 |
+| 활성 GPT 작업 | GPT-03 READY / GPT-02 GO(개발 기반) |
 | 활성 WO | WO-01 PARTIAL; WO-02·04 준비 작업만 일부 구현 |
-| 다음 안전한 행동 | GPT-02 회차 02: API37/AGP9.1.1/Gradle9.3.1 격리 전환 및 WFF5 APK 검증 |
-| 다음 실행 명세 | operations/GPT-02.md |
-| 현재 차단 | B-001/B-010 RESOLVED; B-002/B-003/B-004/B-007 미해결 |
+| 다음 안전한 행동 | GPT-03: 공통 토큰 기반 결정적 WFF·그래픽 자산 생성 및 검증 도구 준비 |
+| 다음 실행 명세 | operations/GPT-03.md |
+| 현재 차단 | B-003 SDK/빌드 해결; B-002/003 런타임/004/007 미해결 |
 | 공식 WO GO | 0/38 |
-| GPT 묶음 완료 | 1/12 |
+| GPT 묶음 완료 | 2/12 |
 | 실제 제품 완성도 | 미확정; 초기 빌드 토대 |
 | 출시 판정 | NO-GO |
 
@@ -167,3 +167,22 @@ G0 PASS; G1 현재 회차 범위 PASS; G2 단위 fixture 및 실제 validator �
 
 ## GPT-02 회차 02 후보
 기준 main bfe56169a60eea1a40e71ba6db4a679a6192595b, 격리 브랜치 gpt-02-api37. AGP9.1.1/Gradle9.3.1/SDK37/build-tools36.0.0, WFF5 flavor 활성화 후보, APK XML 오류 주입 시험 추가. 4개 APK 및 전체 회귀 CI PENDING. main 반영 전 실제 결과 확인. 기기·출시 미검증. [REPORT-02](evidence/GPT-02/REPORT-02.md).
+
+## GPT-02 회차 02 종료
+
+## 회차 02 최종 검증 및 판정
+검증 코드 SHA f284b1bd69a767ef0f7285449fe7c45f05895e53, 격리 브랜치 gpt-02-api37. [CI 46002470824](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46002470824), job 140517331808, completed/success. 이전 실패 CI 46002330942의 원인은 sdkmanager package identifier 불일치: platforms;android-37 없음. platforms;android-37.0 설치 성공, source.properties Pkg.Revision=2, AndroidVersion.ApiLevel=37.0. compileSdk=37 설정으로 실제 빌드 성공. Gradle 9.3.1, JDK 17.0.21, wrapper checksum PASS. AGP9.1.1 고정. Build Tools 36.0.0 설치/서명 실행 PASS.
+- 단위 시험 40 PASS / 0 FAIL (기존 37 + 신규 3). 정상·누락·불일치 raw XML fixture PASS. 공식 WFF Validator #2~#5 명시적 PASSED, invalid XML 예상 실패 검출 4/4 PASS.
+- Clean Gradle build SUCCESSFUL in 49s. 네 APK의 minSdk/패키지/WFF 속성/리소스 전용/원본 XML 일치 검사 4/4 PASS. 기존 watchface.xml blob 및 앱 리소스 변경 없음.
+- Memory Footprint Evaluator 1.5.1 b87dde8: 네 APK 각각 totalBytes, maxActiveBytes, maxAmbientBytes = 2371712 (약 2.26 MiB). 70/7 MiB 예산 PASS, 이전 자산 추정값과 동일. 실제 기기 RAM/전력 측정 아님.
+- apksigner 4/4 Verifies, v2=true, signer count=1. Debug 서명 한정.
+| 프로필 | 최소 API | APK SHA-256 (CI 로그) |
+|---|---:|---|
+| wff2 | 34 | 6be386fc4e2eafec8e49ea72b7f1ad1bcc2a428db1c34e5c4fe164ed8642bde8 |
+| wff3 | 35 | 9a15baaf8816d8d4f365b1f9669ee188c0dde024834f9b2df97e722b9084dba0 |
+| wff4 | 36 | 7e051ff1bf3ae937c0151ec923eecd7a52f34ca52379c078440928e4542d5756 |
+| wff5 | 37 | 361d927a1a3d28917c731097cc44a3b59c468d07e953955b982373793399957f |
+Artifact [15199096968](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46002470824/artifacts/15199096968), 79007 bytes, expired=false, expires_at 2027-02-25T12:53:51Z, digest sha256:9906e7c7af9608867c9ba05e3ea6bd5cedc66cb2ea75bf313b935ef7c90229f9. CI 업로드 로그 및 API 메타데이터 대조. 로컬 다운로드/재해시 미실시.
+G0 PASS; G1 현재 작업 범위 PASS; G2 40 단위 및 공식 negative probe PASS; G3 격리 최종 코드 전체 CI PASS; G4 4 APK/스키마/메모리/서명 PASS, 실기기·전용 WFF5 기능·실제 flavor override·Release NOT RUN; G5 별도 자기 재검토(원격 diff, wrapper blob/실행 모드, 설정, 앱 리소스 불변 확인), 독립 에이전트 미실시; G6 최종 코드 SHA, 로그, Artifact 일치 PASS; G7 기록 및 main 반영 재확인 대상.
+판정: GPT-02 GO (빌드·호환성 개발 기반 범위). WO-01 PARTIAL 및 정식 WO 0/38 유지. GPT 완료 2/12. 출시 NO-GO. B-003의 SDK/빌드 차단 해결; 실제 WFF5 런타임/기기 지원은 B-002/B-004 및 B-003 잔여로 계속 추적. B-007 정식 ID/배포 정책 승인 미실시. 기존 B-001/B-010 재발 없음. SDK37 전환을 main에 fast-forward할 수 있는 근거 확보. 문서만 변경하는 종료 커밋은 [skip ci], 코드 검증은 격리 SHA의 동일한 코드에 대한 증거다.
+다음: GPT-03 독립 준비 작업 — 그래픽 자산 및 WFF 생성 자동화. WO-09/10의 선행 PoC는 아직 미충족이므로 공통 토큰/재현 가능한 생성·검증 기반에 한정한다. 프리미엄 소재 품질과 실제 모션을 확정하지 않는다. [GPT-03 명세](operations/GPT-03.md).
