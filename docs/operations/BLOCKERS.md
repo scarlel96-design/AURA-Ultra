@@ -20,3 +20,7 @@ B-001 해결 전 후속 통합 작업을 GO 처리하지 않는다. 독립 테�
 ## 운영 점검 기록 (2026-11-27)
 문서 기준 SHA 951593e4fbbac33f2c675ea5cbbf07edbe22353d, CI 45998609726 (completed/failure): Official WFF validation: success; Build debug APKs: success; Check APK contents: failure; Upload debug APKs: skipped. https://github.com/scarlel96-design/AURA-Ultra/actions/runs/45998609726. 운영 문서 변경 실행이며 제품 코드 변경 없음. B-001/B-010 해결 증거 없음.
 신규 제품 차단점 없음. 기존 차단점은 해결되지 않았다. 매 턴 PRE-FLIGHT에서 최신 증거를 다시 확인한다.
+
+## GPT-01 회차 01 수정 후보
+B-001: CI 45998909046, job 140505251267에서 DEX build/merge 작업 및 APK FAIL 재확인. 정확한 이전 ZIP 항목은 미확인. Samsung 공식 WFF 가이드의 minify 활성화/resource shrink 비활성화 적용. 검사기는 모든 APK의 정확한 항목과 컴파일된 Manifest를 기록한다. 새 CI 검증 대기.
+B-010: 명시적 파일/버전 PASSED 판정, 오류/종료 코드/중복 검사, 정상·실패 fixture 및 실제 잘못된 XML probe 추가. 새 CI 검증 대기. 두 차단점은 OPEN 유지.

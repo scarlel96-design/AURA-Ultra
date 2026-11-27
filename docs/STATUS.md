@@ -11,9 +11,9 @@
 | 확인한 코드 SHA | 544a7010f4bed515d667bfa6a9bbda1389f5bc92 |
 | 활성 GPT 작업 | GPT-01 / 빌드 안정화 |
 | 활성 WO | WO-01 PARTIAL; WO-02·04 준비 작업만 일부 구현 |
-| 다음 안전한 행동 | B-001: 정확한 APK ZIP 항목 확인 → 원인 분석 → 최소 수정; B-010: validator 성공·실패 판정 시험 → CI 재검증 |
+| 다음 안전한 행동 | GPT-01 회차 01: 새 코드의 CI 결과 확인. 실패 시 정확한 ZIP 항목/manifest/validator 로그로 재현 및 수정. 성공 시 Artifact 확인 및 메모리 평가 통합 |
 | 다음 실행 명세 | operations/GPT-01.md |
-| 현재 차단 | operations/BLOCKERS.md B-001; B-010 검증기 판정 보완 |
+| 현재 차단 | operations/BLOCKERS.md B-001/B-010 수정 후보 검증 대기 |
 | 공식 WO GO | 0/38 |
 | GPT 묶음 완료 | 0/12 |
 | 실제 제품 완성도 | 미확정; 초기 빌드 토대 |
@@ -48,3 +48,6 @@ main의 현재 HEAD를 먼저 확인한다. 확인한 코드 SHA와 최신 문�
 ## 운영 규정 v1.2 — 매 턴 PRE-FLIGHT
 루트 AGENTS.md 최상단의 확인 게이트를 매 작업 턴마다 수행한다. 신규 세션뿐 아니라 동일 대화의 연속 작업에도 적용한다. 제품 코드 변경 없음. GPT-01/B-001/B-010 상태 유지.
 문서 기준 SHA 951593e4fbbac33f2c675ea5cbbf07edbe22353d, CI 45998609726 (completed/failure): Official WFF validation: success; Build debug APKs: success; Check APK contents: failure; Upload debug APKs: skipped. https://github.com/scarlel96-design/AURA-Ultra/actions/runs/45998609726. 운영 문서 변경 실행이며 제품 코드 변경 없음. B-001/B-010 해결 증거 없음.
+
+## GPT-01 회차 01 — 구현 및 CI 대기
+기준 HEAD 95e51cca23210f930dc3716cb790e791585a7bf0. 이전 CI 45998909046: 공식 WFF #2/#3/#4 PASSED, assemble 성공, APK 검사 실패. Debug/release R8 활성화, resource shrinking 비활성화, 검사 강화 및 회귀 시험 작성. 후보 코드 커밋의 CI 결과는 아직 미확인(PENDING). B-001/B-010은 실제 새 증거 확인 전 OPEN 유지. 상세 기록: evidence/GPT-01/REPORT-01.md.

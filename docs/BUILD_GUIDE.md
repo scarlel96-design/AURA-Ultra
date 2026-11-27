@@ -10,12 +10,17 @@ Install Android Studio, SDK 36, build-tools 35.0.0 and JDK17. Configure JAVA_HOM
 Run:
 ```powershell
 python tools/check_foundation.py
+python -m unittest discover -s tests/unit -p 'test_*.py' -v
 python tools/verify_wff.py
 .\gradlew.bat :apps:watchface:assembleWff2Debug :apps:watchface:assembleWff3Debug :apps:watchface:assembleWff4Debug
 python tools/check_apk.py
 ```
 Linux: use ./gradlew with the same tasks. The official validator script verifies a pinned release digest; if Google replaces the asset, stop and review the new release. No unverified fallback.
 
+## Resource-only packaging and verification
+Enable R8 code minification for debug and release. Disable resource shrinking to preserve WFF XML and referenced graphics. Samsung's WFF guide documents this configuration: https://developer.samsung.com/sdp/blog/en/2025/08/14/building-a-watch-face-with-watch-face-format. Do not manually modify a signed APK. The earlier build's exact executable entry was not printed; generated DEX is a hypothesis supported by its Gradle task log, not yet a confirmed root cause.
+The official validator must emit an explicit PASSED line for the requested file/version. The script also probes schema-invalid XML in a temporary directory. APK inspection uses Android SDK apkanalyzer to read the compiled manifest and prints each ZIP entry and SHA-256. Install Android command-line tools and place apkanalyzer on PATH if needed.
+ 
 ## Select a debug APK
 | Variant | Minimum API | Application ID suffix |
 |---|---:|---|

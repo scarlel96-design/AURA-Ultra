@@ -36,8 +36,14 @@ android {
         }
     }
     buildTypes {
+        // Remove generated code without shrinking declarative face resources.
+        debug {
+            isMinifyEnabled = true
+            isShrinkResources = false
+        }
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = false
         }
     }
     buildFeatures {

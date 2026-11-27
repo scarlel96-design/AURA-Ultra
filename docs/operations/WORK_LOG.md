@@ -31,3 +31,9 @@
 - 문서 기준 SHA 951593e4fbbac33f2c675ea5cbbf07edbe22353d, CI 45998609726 (completed/failure): Official WFF validation: success; Build debug APKs: success; Check APK contents: failure; Upload debug APKs: skipped. https://github.com/scarlel96-design/AURA-Ultra/actions/runs/45998609726. 운영 문서 변경 실행이며 제품 코드 변경 없음. B-001/B-010 해결 증거 없음.
 - 운영 규정·기록·검증·보고서 양식 동기화. 제품 코드 변경 없음. 다음 GPT-01/B-001/B-010 유지.
 - 증거: docs/evidence/OPS-03/REPORT.md. 커밋 후 실제 등록과 링크 확인.
+
+## 2026-11-27 / GPT-01 회차 01 — 초기 패키징 및 검사 강화
+- 기준 HEAD 95e51cca23210f930dc3716cb790e791585a7bf0. PRE-FLIGHT: 활성 문서와 요구사항·실제 도구 및 CI 45998909046 확인.
+- 삼성 공식 WFF 가이드에 따라 debug/release R8 활성화 및 리소스 축소 비활성화. 이전 APK 항목 미확인으로 원인은 가설 상태.
+- WFF 결과 명시적 파일/버전 성공 검증, 실제 invalid XML 검사, 모든 APK ZIP/manifest 검사, 단위 회귀 시험 추가.
+- 새 CI 실행 결과 미확인. B-001/B-010 OPEN, GPT-01 NO-GO 유지. evidence/GPT-01/REPORT-01.md 참조.

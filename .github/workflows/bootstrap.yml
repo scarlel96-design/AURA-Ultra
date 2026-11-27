@@ -25,6 +25,8 @@ jobs:
         run: echo '2db75c40782f5e8ba1fc278a5574bab070adccb2d21ca5a6e5ed840888448046  gradle/wrapper/gradle-wrapper.jar' | sha256sum -c -
       - name: Check project invariants
         run: python tools/check_foundation.py
+      - name: Validation tool regression tests
+        run: python -m unittest discover -s tests/unit -p 'test_*.py' -v
       - name: Install Android SDK
         uses: android-actions/setup-android@138b5fb1cf087fdb4c5f3c621466fe304d0cf2e3 # v4.0.3
         with:
@@ -34,7 +36,7 @@ jobs:
       - name: Official WFF validation
         run: python tools/verify_wff.py
       - name: Build debug APKs
-        run: ./gradlew --no-daemon --stacktrace :apps:watchface:assembleWff2Debug :apps:watchface:assembleWff3Debug :apps:watchface:assembleWff4Debug
+        run: ./gradlew --no-daemon --stacktrace clean :apps:watchface:assembleWff2Debug :apps:watchface:assembleWff3Debug :apps:watchface:assembleWff4Debug
       - name: Check APK contents
         run: python tools/check_apk.py
       - name: Upload debug APKs
