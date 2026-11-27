@@ -37,3 +37,6 @@ B-001 과거 95e51cc 격리 재현 job 추가. 실행 결과 미확인. B-010 �
 
 ## GPT-01 회차 02 최종 확인
 B-001 RESOLVED: 과거 SHA 격리 재현 classes.dex 및 R 클래스 5개 확인, 현행 3개 APK 검사 PASS. B-010 RESOLVED 유지. 현행 메모리 2,371,712 bytes 활성/AOD, 3 Debug 서명 PASS. CI 46000111754/46000111676 SUCCESS. B-002/003/004/007 등 기존 실기기·WFF5·기기/배포 정책 차단점은 유지. 새 결함 없음.
+
+## GPT-02 회차 01
+B-003: 공식 WFF5 공개 및 Wear OS7/API37 확인, AGP9.1.1/Gradle9.3.1 전환 후보. 기존 SDK36 환경 유지. WFF5 schema-only 후보, SDK37 실제 빌드/설치 미확인. B-004: Watch7/8/9/Ultra2 공식 발표 해상도/출시 OS 확인. Ultra 2025 출고 OS 및 실제 설치 OS/기기 시험 미확정. B-007: ADR-007 제안, 정식 정책 승인 필요. B-002 유지. 새 CI 결과 미확인.

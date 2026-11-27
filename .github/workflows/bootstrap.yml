@@ -36,16 +36,13 @@ jobs:
       - name: Official WFF validation
         run: python tools/verify_wff.py
       - name: Build debug APKs
-        run: ./gradlew --no-daemon --stacktrace clean :apps:watchface:assembleWff2Debug :apps:watchface:assembleWff3Debug :apps:watchface:assembleWff4Debug
+        run: python tools/build_profiles.py assemble
       - name: Check APK contents
         run: python tools/check_apk.py
       - name: Official asset memory evaluation
         run: python tools/verify_memory.py
       - name: Verify debug APK signatures
-        run: |
-          for apk in apps/watchface/build/outputs/apk/*/debug/*.apk; do
-            "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose --print-certs "$apk"
-          done
+        run: python tools/build_profiles.py signatures
       - name: Upload debug APKs
         uses: actions/upload-artifact@v4
         with:

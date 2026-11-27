@@ -40,3 +40,6 @@ After APK assembly and payload inspection, run `python tools/verify_memory.py`. 
 
 ## Verified baseline (2026-11-27)
 CI 46000111754: all three debug APKs pass schema, package, asset memory (2,371,712 bytes active/ambient), v2 signature checks. Memory evaluator 1.5.1 (b87dde8). Historical CI 46000111676 reproduced classes.dex containing generated R classes. Current R8 configuration resolves the failure. See docs/evidence/GPT-01/REPORT-02.md for hashes and links. Debug certificates are not production signing identities; CI runner keys may differ between runs. Release and update installation are unverified.
+
+## Profile contract
+Run `python tools/build_profiles.py assemble` and `python tools/build_profiles.py signatures` after setting up the SDK. Enabled profiles are resolved from compatibility/profiles.json. Official schema checks include WFF5 as a disabled-profile probe; no WFF5 APK is produced. The common face is selected unless an explicit src/wffN/res/raw/watchface.xml exists. The APK check compares the packaged raw face against that source. Unsupported source overrides are rejected. API37 migration is a separate verification task; do not enable WFF5 using SDK36.

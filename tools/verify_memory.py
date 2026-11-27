@@ -1,5 +1,6 @@
 """Evaluate compiled WFF APK asset memory with the pinned Google tool."""
 import hashlib
+from profile_contract import enabled_profiles, debug_apk
 import json
 import subprocess
 import urllib.request
@@ -65,15 +66,9 @@ def evaluate(jar, apk, version):
 def main():
     jar = get_jar()
     subprocess.run(["java", "-jar", str(jar), "--version"], check=True, timeout=30)
-    profiles = json.loads((ROOT / "compatibility/profiles.json").read_text(encoding="utf-8"))["profiles"]
-    enabled = [p for p in profiles if p["enabled"]]
-    if not enabled or len({p["name"] for p in enabled}) != len(enabled):
-        raise ValueError("Missing or duplicate enabled profiles")
+    enabled = enabled_profiles()
     for p in enabled:
-        apks = list((ROOT / "apps/watchface/build/outputs/apk" / p["name"] / "debug").glob("*.apk"))
-        if len(apks) != 1:
-            raise ValueError("Expected one debug APK: " + p["name"])
-        apk = apks[0]
+        apk = debug_apk(p)
         report = evaluate(jar, apk, p["version"])
         print("MEMORY_RESULT " + json.dumps({"profile": p["name"], "apk_sha256": hashlib.sha256(apk.read_bytes()).hexdigest(), **report}, sort_keys=True))
         enforce_limits(report)

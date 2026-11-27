@@ -23,9 +23,9 @@
     {
       "name": "wff5",
       "version": 5,
-      "minSdk": null,
+      "minSdk": 37,
       "enabled": false,
-      "reason": "Confirm API 37 toolchain, final WFF schema and device support before enabling."
+      "reason": "Wear OS 7 / API 37 candidate; migrate AGP and SDK in isolated verification before enabling. Schema probe is not install support."
     }
   ]
 }

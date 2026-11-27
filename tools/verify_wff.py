@@ -1,6 +1,6 @@
 """Run the official WFF validator against enabled profiles."""
 import hashlib
-import json
+from profile_contract import load_profiles, face_source, check_source_sets
 import re
 import tempfile
 import subprocess
@@ -44,12 +44,12 @@ def main():
         jar.write_bytes(data)
     if hashlib.sha256(jar.read_bytes()).hexdigest() != SHA256:
         raise SystemExit("Validator digest mismatch.")
-    face = ROOT / "apps/watchface/src/main/res/raw/watchface.xml"
-    profiles = json.loads((ROOT / "compatibility/profiles.json").read_text(encoding="utf-8"))["profiles"]
-    enabled = [p for p in profiles if p["enabled"]]
-    if not enabled or len({p["version"] for p in enabled}) != len(enabled):
-        raise SystemExit("Missing or duplicate enabled WFF versions")
-    for p in enabled:
+    profiles = load_profiles()
+    check_source_sets(profiles)
+    # Include disabled profiles for schema-only compatibility probes.
+    for p in profiles:
+        face = face_source(p)
+        print(f"SCHEMA_PROFILE {p['name']} enabled={p['enabled']} source={face}", flush=True)
         result = run_validator(jar, face, p["version"])
         print(result.stdout, end="")
         try:
@@ -60,7 +60,7 @@ def main():
     with tempfile.TemporaryDirectory(prefix="aura-wff-negative-") as directory:
         invalid = Path(directory) / "invalid.xml"
         invalid.write_text("<WatchFace/>", encoding="utf-8")
-        for p in enabled:
+        for p in profiles:
             result = run_validator(jar, invalid, p["version"])
             print(result.stdout, end="")
             if any(PASS.fullmatch(line) for line in result.stdout.splitlines()):
@@ -68,7 +68,7 @@ def main():
             if result.returncode == 0 and not FAILURE.search(result.stdout):
                 raise SystemExit("Inconclusive negative validator test: " + p["name"])
             print("PASS: real validator rejected invalid XML for " + p["name"])
-    print("PASS: explicit WFF verdict and negative probe for every enabled profile")
+    print("PASS: explicit WFF verdict and negative probe for every declared profile (disabled profiles: schema only)")
 
 if __name__ == "__main__":
     main()

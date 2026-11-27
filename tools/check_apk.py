@@ -1,6 +1,6 @@
 """Inspect each WFF debug APK without changing its signed contents."""
 import hashlib
-import json
+from profile_contract import enabled_profiles, debug_apk, face_source
 import os
 import shutil
 import subprocess
@@ -79,25 +79,26 @@ def analyzer_path():
 
 
 def main():
-    profiles = json.loads((ROOT / "compatibility/profiles.json").read_text(encoding="utf-8"))["profiles"]
-    enabled = [p for p in profiles if p["enabled"]]
-    if not enabled or len({p["name"] for p in enabled}) != len(enabled):
-        raise SystemExit("FAIL: missing or duplicate enabled profiles")
+    enabled = enabled_profiles()
     analyzer = analyzer_path()
     failures = []
     for p in enabled:
         name = p["name"]
-        apks = sorted((OUT / name / "debug").glob("*.apk"))
-        if len(apks) != 1:
-            failures.append(f"{name}: expected one APK, found {len(apks)}")
+        try:
+            apk = debug_apk(p)
+        except ValueError as exc:
+            failures.append(str(exc))
             continue
-        apk = apks[0]
         print(f"APK {name}: {apk.name}; SHA-256 {hashlib.sha256(apk.read_bytes()).hexdigest()}")
         try:
             with zipfile.ZipFile(apk) as archive:
                 entries = archive.namelist()
                 print("ZIP entries:\n" + "\n".join(sorted(entries)))
                 errors = inspect_entries(entries)
+                if "res/raw/watchface.xml" not in entries:
+                    errors.append("Missing packaged face")
+                elif archive.read("res/raw/watchface.xml") != face_source(p).read_bytes():
+                    errors.append("Packaged face differs from selected source")
                 corrupt = archive.testzip()
                 if corrupt:
                     errors.append("Corrupt ZIP entry: " + corrupt)

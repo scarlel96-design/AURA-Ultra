@@ -9,9 +9,9 @@
 |---|---|
 | 정본 브랜치 | main |
 | 확인한 코드 SHA | 98a4f915577cf3175beeca19864a431061673e7b |
-| 활성 GPT 작업 | GPT-02 READY / GPT-01 GO(빌드 토대) |
+| 활성 GPT 작업 | GPT-02 회차 01 IN_PROGRESS / GPT-01 GO |
 | 활성 WO | WO-01 PARTIAL; WO-02·04 준비 작업만 일부 구현 |
-| 다음 안전한 행동 | GPT-02: 공식 WFF/SDK·기기 매트릭스 확인, 패키지 정책 ADR 및 버전별 빌드 기반 검토 |
+| 다음 안전한 행동 | GPT-02 회차 01 후보 CI 확인 → API37/AGP9 전환 검증 및 WFF5 빌드 |
 | 다음 실행 명세 | operations/GPT-02.md |
 | 현재 차단 | B-001/B-010 RESOLVED; B-002/B-003/B-004/B-007 미해결 |
 | 공식 WO GO | 0/38 |
@@ -130,3 +130,6 @@ Artifact: [15197747235](https://github.com/scarlel96-design/AURA-Ultra/actions/r
 
 ### 최종 판정 및 검토
 G0 PASS, G1 PASS(작업 범위), G2 PASS(26 단위 시험 및 기존 공식 스키마 실패 검출), G3 PASS(현행 전체 CI 및 격리 재현), G4 PASS(작업 범위의 메모리 추정/Debug APK/서명/스키마), G5 별도 자기 재검토 수행(독립 에이전트 아님), G6 PASS(코드 SHA·원본 로그·Artifact 메타데이터 일치), G7 문서 기록 및 원격 반영 확인 대상. 실기기, 실제 메모리/발광 픽셀/전력, Release 및 설치·업데이트는 NOT RUN; 후속 WO에서 수행. GPT-01 GO(초기 빌드 토대), WO-01 PARTIAL, 정식 WO GO 0/38, GPT 묶음 1/12, 출시 NO-GO. 다음 GPT-02(준비 작업): 공식 플랫폼/기기/SDK/API 및 패키지 정책 확정, 다중 WFF 기반 개선. WFF5 및 기기 지원은 증거 확보 전 미확정. 별도 실행 명세 docs/operations/GPT-02.md 참조. 문서만 변경하므로 [skip ci] 적용.
+
+## GPT-02 회차 01 후보
+공식 Watch7/8/9/Ultra2 화면 사양, Wear OS 7/API37, AGP9.1.1 호환성 확인. profile contract, flavor source resolution, dynamic build/signature, APK raw XML 대조 및 WFF5 schema-only probe 추가. WFF5 APK 비활성 유지. 새 CI PENDING. 상세 [REPORT-01](evidence/GPT-02/REPORT-01.md). GPT-02 PARTIAL/제품 NO-GO.

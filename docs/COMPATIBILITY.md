@@ -1,30 +1,28 @@
 # 기기 및 WFF 호환성
-상태: 목표 목록. 실제 지원 판정은 미실시. 조사 기준 2026-11-27. 신형 모델명과 사양은 WO-01에서 삼성 공식 자료로 재확인한다.
-
-| 목표 기기 | 화면 후보 | 출시 OS 후보 | 시험 상태 |
+조사 기준 2026-11-27. 공식 제품 사양과 실제 시험을 구분한다. 모든 실기기 설치/렌더링/성능 시험 NOT RUN.
+| 목표 기기 | 화면 해상도 | 출시 OS | 실기기 |
 |---|---|---|---|
-| Watch7 40/44mm | 432/480 정사각 픽셀의 원형 화면 | Wear OS 5 | NOT RUN |
-| Watch Ultra 2024 | 480 | 5 | NOT RUN |
-| Watch8 40/44mm | 438/480 | 6 | NOT RUN |
-| Watch8 Classic | 438 | 6 | NOT RUN |
-| Watch Ultra 2025 | 480 | 6 | NOT RUN |
-| Watch9 40/44mm | 438/480 | 7 | 공식 사양 재확인 |
-| Watch Ultra2 | 498 | 7 | 공식 사양 재확인 |
-| 이후 모델 | 미정 | 미정 | 신규 프로필 필요 |
+| Watch7 40 / 44mm | 432 / 480 | Wear OS 5 | NOT RUN |
+| Watch Ultra 2024 | 480 | Wear OS 5 | NOT RUN |
+| Watch8 40 / 44mm | 438 / 480 | Wear OS 6 | NOT RUN |
+| Watch8 Classic 46mm | 438 | Wear OS 6 | NOT RUN |
+| Watch Ultra 2025 | 480 | 출고 OS 추가 확인 | NOT RUN |
+| Watch9 40 / 44mm | 438 / 480 | Wear OS 7 | NOT RUN |
+| Watch Ultra2 47mm | 498 | Wear OS 7 | NOT RUN |
+| 이후 모델 | unknown | unknown | 신규 프로필 필요 |
 
-실제 기기의 설치된 OS와 WFF 지원 수준을 기준으로 빌드를 선택한다. 업데이트 상태·지역·모델 차이를 기록한다. 출시 OS를 현재 OS로 간주하지 않는다.
+공식 근거: [기기 매트릭스](evidence/WO-01/DEVICE_MATRIX.md), [출처](evidence/WO-01/SOURCES.md). 설치된 OS와 실제 지원 규격을 확인한다. 출시 OS를 현재 OS로 간주하지 않는다.
 
-| WFF | OS / API 기준 후보 | 빌드 | 기능 |
+| WFF | OS/API | 빌드 상태 | 기능 계획 |
 |---|---|---|---|
-| 2 | Wear OS 5 / 34 | Compatibility | 날씨, 기본 소재 및 모션 |
-| 3 | Wear OS 5.1 / 35 | Compatibility+ | 지원 혼합 모드·텍스트 개선 |
-| 4 | Wear OS 6 / 36 | Continuity | AOD transition, Reference, 색상 변환 |
-| 5 | Wear OS 7 / 공식 API 확인 | Next | 확장 혼합, 텍스트·설정 기능 |
+| 2 | Wear OS 5 / 34 | enabled | 날씨, 기본 소재 및 모션 |
+| 3 | Wear OS 5.1 / 35 | enabled | 혼합 모드 |
+| 4 | Wear OS 6 / 36 | enabled | AOD transition, Reference, 색상 변환 |
+| 5 | Wear OS 7 / 37 (OS 및 API 근거; 공식 WFF 버전 표는 4까지) | disabled; schema probe | 확장 혼합, 텍스트·설정 기능 |
 
-공식 버전별 스키마를 확인한다. 상위 빌드에만 해당 기능을 포함한다. 공통 디자인 토큰에서 버전별 XML을 생성한다. OS 업그레이드 후 설정 호환성과 업데이트 경로를 검증한다. 패키지 식별자와 스토어 배포 방식은 WO-02에서 확정한다.
+WFF5는 공식 발표 및 스키마 존재 확인. API37 지원 toolchain으로 별도 전환·검증 필요. WFF2/3/4 기존 빌드를 유지한다. 공식 지원과 프로젝트 설치 호환성은 다르다. [API 매트릭스](evidence/WO-01/API_CAPABILITIES.md).
+프로필 계약 compatibility/profiles.json 및 tools/profile_contract.py. 공통 src/main/res/raw/watchface.xml, 필요한 경우 src/wffN/res/raw/watchface.xml override. 활성 프로필별 스키마·실제 APK·메모리·서명 검사. 비활성 프로필 스키마 검사만으로 APK/설치를 주장하지 않는다. [패키지 정책 ADR](adr/ADR-007.md).
 
-## 프로필 계약
-deviceModel, screenWidth, screenHeight, installedWearOs, apiLevel, supportedWffVersion, firmwareBuild, region, capabilities, testEvidenceRef. 미확인 값은 unknown으로 유지한다. 미래 모델은 프로필·스키마·실기기 시험을 추가한다. 자동 지원 보장은 금지한다.
-
-## 시험
-에뮬레이터로 화면 크기와 기본 스키마를 검증한다. Samsung Remote Test Lab은 접근 가능 기기를 확인한 후 사용한다. 실물 센서, AOD, 밝기, 전력 및 사용자 체감은 실기기에서 검증한다. 원격 시험을 배터리 시험으로 대체하지 않는다.
+## 기기 프로필 및 시험
+deviceModel, screenWidth, screenHeight, installedWearOs, apiLevel, supportedWffVersion, firmwareBuild, region, capabilities, testEvidenceRef. 미확인 값 unknown. 신규 기기 자동 지원 보장 금지.
+ADB 읽기 전용 확인: adb devices -l; adb -s DEVICE shell getprop ro.product.model; adb -s DEVICE shell getprop ro.build.version.sdk; adb -s DEVICE shell getprop ro.build.fingerprint; adb -s DEVICE shell wm size. 실제 WFF 지원 및 설치는 별도 검증한다. 에뮬레이터/Remote Test Lab 이용 가능 여부 및 실물 센서·AOD·밝기·전력 시험은 후속 검증. 원격 시험을 배터리 측정으로 대체하지 않는다.

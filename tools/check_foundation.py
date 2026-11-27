@@ -1,5 +1,6 @@
 """Check project invariants. This is not the official WFF validator."""
 import json
+from profile_contract import load_profiles, check_source_sets, face_source
 import re
 import sys
 import struct
@@ -33,14 +34,25 @@ def check():
     require(info.find("Preview").get("value") == "@drawable/preview", "Missing preview metadata")
     png = (RES / "drawable-nodpi/preview.png").read_bytes()
     require(png[:8] == b"\x89PNG\r\n\x1a\n" and struct.unpack(">II", png[16:24]) == (450,450), "Invalid preview header/dimensions")
-    profile = json.loads((ROOT / "compatibility/profiles.json").read_text(encoding="utf-8"))
+    profiles = load_profiles()
+    check_source_sets(profiles)
     gradle = (APP / "build.gradle.kts").read_text(encoding="utf-8")
-    enabled = [p for p in profile["profiles"] if p["enabled"]]
-    require([(p["version"],p["minSdk"]) for p in enabled] == [(2,34),(3,35),(4,36)], "Unexpected enabled profile matrix")
-    for p in profile["profiles"]:
+    expected_names = {p["name"] for p in profiles if p["enabled"]}
+    actual_names = set(re.findall(r'create\("([^"]+)"\)', gradle))
+    require(actual_names == expected_names, "Unexpected Gradle profile matrix")
+    compile_match = re.search(r'\bcompileSdk\s*=\s*(\d+)', gradle)
+    require(compile_match is not None, "Missing compileSdk")
+    for p in profiles:
         match = re.search(r'create\("' + p["name"] + r'"\)\s*\{([^}]*)\}', gradle)
         if p["enabled"]:
             require(match and f'minSdk = {p["minSdk"]}' in match[1] and f'["wffVersion"] = "{p["version"]}"' in match[1], "Gradle/profile mismatch: " + p["name"])
+            require(int(compile_match[1]) >= p["minSdk"], "compileSdk below profile minimum")
+            require(f'applicationIdSuffix = ".{p["name"]}"' in match[1], "Application ID suffix mismatch")
+            resolved = ET.parse(face_source(p)).getroot()
+            require(resolved.tag == "WatchFace" and (resolved.get("width"), resolved.get("height")) == ("450", "450"), "Invalid resolved face canvas")
+            require(len(resolved.findall("Scene")) == 1 and len(resolved.findall(".//TimeText")) == 2, "Missing scene or time")
+            require(all(t.get("hourFormat") == "SYNC_TO_DEVICE" for t in resolved.findall(".//TimeText")), "Clock format mismatch")
+            require(any(v.get("mode") == "AMBIENT" and v.get("target") == "alpha" and v.get("value") == "0" for v in resolved.findall(".//Group/Variant")), "Missing AOD decoration suppression")
         else:
             require(match is None, "Unapproved profile enabled")
     tokens = json.loads((ROOT / "design-system/tokens/bootstrap.json").read_text(encoding="utf-8"))
