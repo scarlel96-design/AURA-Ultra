@@ -8,10 +8,10 @@
 | 항목 | 현재 값 |
 |---|---|
 | 정본 브랜치 | main |
-| 확인한 코드 SHA | 110183ebf3ea3259be979292dde2400bb9f9dbb9 (GPT-06 R01 통합 CI 성공) |
-| 활성 GPT 작업 | GPT-04 PARTIAL / 통합 CI 성공; GPT-05 PARTIAL R07 검증·통합; GPT-06 PARTIAL R01 통합 성공 / R02 보완 후보 |
+| 확인한 코드 SHA | 73e19fac4ecf834c5aa1206cee3f475c5a21566b (R02 통합 CI 성공) |
+| 활성 GPT 작업 | GPT-04 PARTIAL / 통합 CI 성공; GPT-05 PARTIAL R07 검증·통합; GPT-06 PARTIAL R02 통합 검증 완료 / R03·R04 후보 CI 진행 중 |
 | 활성 WO | WO-01 PARTIAL; WO-02·04 준비 작업만 일부 구현 |
-| 다음 안전한 행동 | R02 보완 CI 46078480317 검증 → 통합 검토 → R03 유리 소재 |
+| 다음 안전한 행동 | R03 CI 46080536642 및 R04 CI 46080845104 확인 → 검증 후 통합 → R05 |
 | 다음 실행 명세 | operations/GPT-05.md 및 operations/GPT-06.md |
 | 현재 차단 | B-011 도구 불일치 해결; B-002/003 런타임/004/005/006/007/008 유지 |
 | 공식 WO GO | 0/38 |
@@ -423,3 +423,17 @@ R07 integration CI 46075293496 SUCCESS 246 PASS; R01 CI 46075399378 SUCCESS 258 
 ## GPT-06 R02 corrective checkpoint
 - R01 integrated 110183ebf3ea3259be979292dde2400bb9f9dbb9, CI 46077503677 job 140768565131 SUCCESS, 258 PASS/0 FAIL/0 SKIP (13.318s), 12 materials and prior budgets unchanged, 41/41 preview pairs, all steps success, 47 committed inputs. Bundle 311014 B SHA256 b9c5c82f0afa4ecebdcef348df225074b63ad8f6149457fc35766f2966a36d47, sourceCommit exact, readbackVerified true, XML 4bbe6db1a6a215538ea8e0d37509c35132845ad845a0fb42efb78c19f8f11313. Four APK SHA256 matched basic and memory: cdb216d9f6a87a45052e4485107fd4dcb329c838bd3441fd13dfa2434a436dc8, 092ea7d781d93c42ce6a0e319bda935a7a9efc5eceebd123dadd2df305eaa034, 39450d866599bb117c7b1b020c78491ca50c7cd437fd2ff6e55d2171ac989c9a, e645256e139331ab521fd30349b97c0c127a4aad220433f37e0ce67e7453df8c. Each active/ambient estimate 2371712/3181712 B. Artifact metadata 15235587164 digest sha256:fc7aa87000c3dbc166408035dd163d55776b3bc38224c8fa7461b0ac300f0355 and 15235122660 digest sha256:b29e43f0b0f425f71ff07c2ab6d53f6b6ea4281e9d8c338fe9b7241d618c3124 unexpired; independent download NOT RUN. Expected stale WFF4 negative detected.
 - GPT06-D1 OPEN/P1: candidate 8ad0d24fa5907cc635deef11092b9284bd2ba85d CI 46077603468 failed setup with one error, 258 existing tests ran and 12 new ring tests NOT RUN. SDK/WFF/APK stages skipped. Do not integrate. Corrected candidate 3020ceddd577ff2357a8483b28a2218992031e4d, CI 46078480317 IN_PROGRESS. Preserve 60 ticks; shorten only indices 10/50, enforce separate continuous annulus and 2160 tick/region checks with 1 px margin, plus 36 ring/region checks. 15 ring methods (273 total expected), 16 SVG outputs. Actual corrected execution pending; resolve only after exact full CI success. No product, dependency, workflow, agent changes. R03 deferred. B-005 and B-008 actual graphics/runtime remain. GPT-06 PARTIAL / release NO-GO. AG/GB HOLD unchanged. Mandatory stop after GPT-06 completion or independent-work exhaustion; no GPT-07 without instruction.
+
+
+## GPT-06 R02 verified integration
+- Candidate 3020ceddd577ff2357a8483b28a2218992031e4d CI 46078480317 SUCCESS: 273 PASS, 0 FAIL, 0 SKIP, 16 SVGs, 2160 tick checks, 36 ring checks. Corrected GPT06-D1 candidate gate passed. Exact three tested blobs integrated on main 73e19fac4ecf834c5aa1206cee3f475c5a21566b by fast-forward. Combined main CI not yet confirmed. See docs/evidence/GPT-06/REPORT-02-VERIFIED.md. Next R03 independent glass candidate; verify integration regression. Product NO-GO, GPT-06 PARTIAL; user stop before GPT-07. AG/GB HOLD unchanged.
+
+
+## GPT-06 R03 — Liquid Crystal candidate checkpoint
+- R02 combined main CI 46080386050 at 73e19fac4ecf834c5aa1206cee3f475c5a21566b IN_PROGRESS. R03 branch gpt-06-liquid-crystal, exact candidate 970ff421617b6ac2f8bc68baaff0c34fe015cc6b, CI 46080536642 IN_PROGRESS. Four new paths (glass config, host tool, ten unit methods, report). Expected 283 host tests; eight cropped PNGs at four resolutions, two modes. Bounded synthetic displacement, shared 45-degree light, static Eco and no AOD assets. Draft RGB channel cap 68, not measured contrast. One-copy budget <=100000 bytes, duplicate costs reported separately; runtime sharing unverified. No product, agent, workflow or dependency changes. See branch docs/evidence/GPT-06/REPORT-03-GLASS.md. Next verify both exact CI runs, actual test counts, LIQUID_CRYSTAL_RESULT, memory, package and previous gates. Integrate only after success; then R04 optical/spatial. GPT06-D1 candidate corrected; main regression pending. B-005/B-008 remain. GPT-06 PARTIAL, release NO-GO, stop before GPT-07. AG/GB HOLD unchanged.
+
+
+## GPT-06 R04 — independent optical depth checkpoint
+- R02 integrated code 73e19fac4ecf834c5aa1206cee3f475c5a21566b CI 46080386050 job 140777745593 SUCCESS: 273 PASS/0 FAIL/0 SKIP (13.424s), 16 SVGs, 2160 tick and 36 ring-region checks. GPT06-D1 resolved for host geometry; actual device NOT RUN. All required job steps success. Bundle 311014 B, SHA256 f2d66183f32029662579cd7fd01401a829525139071b6481c27f7d16ce8738ac, exact sourceCommit, readbackVerified true. Four basic APK hashes match memory and bundle; each 2371712/3181712 B. Artifacts 15237321110 and 15236441930 unexpired; download NOT RUN.
+- R03 CI 46080536642 at 970ff421617b6ac2f8bc68baaff0c34fe015cc6b remains IN_PROGRESS (host regression, schema, APK/memory/signature/flavor steps success; isolated Signature step running at last observation). Do not integrate until full CI and raw evidence pass.
+- Independent R04 candidate 4eb1da278f8197a9b472fa37609cb68909056f9c, branch gpt-06-optical-depth, CI 46080845104 QUEUED. Four added paths: optical-depth-draft.json, optical_depth.py, test_optical_depth.py, REPORT-04-OPTICAL.md. 10 new methods, expected 283 host tests on this branch; combined 293 only after both candidates integrate. 176 synthetic sample references, fixed panel clipping, Ultra 2/4/6 and Balanced 1/2/3 logical depth, Eco/static, missing tilt/static, reduced motion removes reflection, AOD off. Draft normalized tilt and opacity cap 180/1000, no real sensor or runtime power/visual claim. No product, workflow, dependency or external agent path changes. R04 independent of R03. Next verify R03 and R04 exact CI, raw logs, artifacts, candidate diffs and integrate verified blobs only, then combined CI and R05. B-005/B-008 remain. AG/GB HOLD unchanged; their latest HEADs observed, not audited for acceptance. GPT-06 PARTIAL, release NO-GO. Mandatory stop before GPT-07.
