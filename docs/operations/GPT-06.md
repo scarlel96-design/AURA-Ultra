@@ -1,5 +1,5 @@
 # GPT-06 — Material & Optical independent preparation
-Status: PARTIAL. R-05/08/09/10/11/20/22/25, WO-06/11/12/13/16/30 preparation. WO-04/09/10 not GO. P04/05/06 actual device NOT RUN. Preserve Signature layout and premium objective. No WFF XML, renderer API or external agent paths changed.
+Status: PARTIAL. R-05/08/09/10/11/20/22/25, WO-06/11/12/13/16/30 preparation. WO-04/09/10 not GO. P04/05/06 actual device NOT RUN. Preserve Signature layout and premium objective. Product WFF XML and external agent paths unchanged; R06 generates isolated candidate WFF XML.
 ## R01 material foundation
 Use design-system/materials/signature-material-draft.json. Fix a shared upper-left 45-degree light. Generate cropped RGBA PNG swatches for brushed titanium, simulated dark glass and local optical streak at 432/438/480/498. Use integer directional illumination, deterministic horizontal grain, bevel and 4x4 corner coverage. Glass is a baked lens approximation, not actual refraction. The highlight alpha has a bounded envelope. Keep RGB zero at fully transparent pixels. No external assets or libraries. Original artwork is procedural; no third-party material copied.
 Draft logical sizes 120x32, 158x52, 80x12. Asset sizes round upward. Limit summed one-copy decoded RGBA to 100000 bytes for these three assets per diameter. This is an incremental draft budget, not official memory evaluation or total runtime memory. AOD selects none; Eco omits the highlight. Actual composition, text contrast, optical quality, density and package memory are not verified. Stored DEFLATE is intentionally unoptimized in R01; later evaluate compressed size. Avoid full-screen textures.
@@ -12,6 +12,9 @@ Run python tools/material_foundation.py --check; --manifest; --png 480 glass (re
 
 [원본 기록](https://github.com/scarlel96-design/AURA-Ultra/blob/c4791149928ce1d90fadc31dcb7af73403e6d02f/docs/operations/GPT-06.md); [archive](../archive/README.md).
 
-R06 후보 e1a5f62abbf20cbaa6d9c741251b96d7a6caddd1; [CI](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46082882539) IN_PROGRESS; [실행 보고](https://github.com/scarlel96-design/AURA-Ultra/blob/e1a5f62abbf20cbaa6d9c741251b96d7a6caddd1/docs/evidence/GPT-06/REPORT-06-MATERIAL-APK.md). 기존 검사 단계 보존, 신규 격리 빌드·증거 업로드 단계 추가. 검증 전 통합 금지. 다음 턴 실제 CI 로그, 309 예상 시험, MATERIAL_APK_RESULT 및 네 APK의 메모리/서명/리소스 해시와 artifact 검증. 실패 시 수정·재시험. 현재 제품 NO-GO.
+R06 후보 e1a5f62abbf20cbaa6d9c741251b96d7a6caddd1; [CI](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46082882539) SUCCESS; [실행 보고](https://github.com/scarlel96-design/AURA-Ultra/blob/e1a5f62abbf20cbaa6d9c741251b96d7a6caddd1/docs/evidence/GPT-06/REPORT-06-MATERIAL-APK.md). 기존 검사 단계 보존, 신규 격리 빌드·증거 업로드 단계 추가. 검증 전 통합 금지. 다음 턴 실제 CI 로그, 309 예상 시험, MATERIAL_APK_RESULT 및 네 APK의 메모리/서명/리소스 해시와 artifact 검증. 실패 시 수정·재시험. 현재 제품 NO-GO.
 
 OPS-07 별도 후보 46b22851d401bc5c4db548e1b45a3e9fbbca17b5, CI 46083109875 IN_PROGRESS. 자동 문서 상한, 관련 증거 선택 열람, 실기기 체크 및 제품 승격 게이트. [보고서](https://github.com/scarlel96-design/AURA-Ultra/blob/46b22851d401bc5c4db548e1b45a3e9fbbca17b5/docs/evidence/OPS-07/REPORT.md). R06의 실제 APK 성공과 구분한다. 후보 검증 및 통합 후 규정 적용; 실제 사용자 기기 미변경.
+
+## 최종 통합 검증
+R06 후보 CI 46082882539 SUCCESS, 309 PASS, 소재 APK 4/4. [검증](../evidence/GPT-06/REPORT-06-VERIFIED.md). OPS-07 문서 예산 및 [실기기 승격 게이트](SIGNATURE_DEVICE_GATE.md)를 결합한 후보에서 316 host tests 및 전체 WFF/패키지 회귀, 실제 문서 상한 검사 기대. 결합 CI 성공 전 최종 통합 금지. 실제 설치·시각 승인·동적 센서·전력 NOT RUN. 독립 준비 종료 또는 외부 조건으로 소진 시 GPT-06 전체 종료 보고 및 중단. GPT-07 자동 시작 금지.

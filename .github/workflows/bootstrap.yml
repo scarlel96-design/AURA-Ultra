@@ -21,6 +21,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Check active documentation budget
+        run: python tools/check_doc_budget.py
       - name: Verify Gradle wrapper
         run: echo 'b3a875ddc1f044746e1b1a55f645584505f4a10438c1afea9f15e92a7c42ec13  gradle/wrapper/gradle-wrapper.jar' | sha256sum -c -
       - name: Reproduce bootstrap assets
@@ -81,4 +83,12 @@ jobs:
         with:
           name: aura-bootstrap-debug-apks
           path: apps/watchface/build/outputs/apk/*/debug/*.apk
+          if-no-files-found: error
+      - name: Isolated Signature material APKs
+        run: python tools/check_signature_material_build.py --output "$RUNNER_TEMP/aura-signature-material"
+      - name: Upload Signature material development evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: aura-signature-material-development
+          path: ${{ runner.temp }}/aura-signature-material/
           if-no-files-found: error

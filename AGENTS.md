@@ -12,7 +12,7 @@
 2. 같은 기준 SHA에서 [AGENTS.md](AGENTS.md)와 [STATUS.md](docs/STATUS.md)를 읽는다.
 3. [재개 규정](docs/operations/RESUME_PROTOCOL.md), [핵심 목표](docs/operations/PROJECT_INVARIANTS.md), [작업별 기록](docs/operations/TASK_RECORD_PROTOCOL.md), [검증 규정](docs/operations/VERIFICATION_PROTOCOL.md), [보고서 양식](docs/operations/TASK_REPORT_TEMPLATE.md)을 읽는다.
 4. [GPT 계획](docs/operations/GPT_EXECUTION_PLAN.md), [차단점](docs/operations/BLOCKERS.md), [작업 이력](docs/operations/WORK_LOG.md)의 관련 최신 항목을 읽는다.
-5. STATUS의 활성 작업 명세, 관련 WO·요구사항·설계·직전 증거를 읽는다. 실제 소스와 최신 관련 CI 결과를 대조한다.
+5. STATUS의 활성 작업 명세, 관련 WO·요구사항·설계·직전 증거를 읽는다. 실제 소스와 최신 관련 CI 결과를 대조한다. evidence/archive 링크를 재귀적으로 열지 않는다. 현재 작업의 직전 증거, 직접 의존성, 충돌 또는 감사에 필요한 기록만 선택한다. 관련 필수 증거는 생략하지 않는다.
 6. 현재 작업 ID, 기준 SHA, 차단점, 다음 행동, 변경 범위, 검증 계획을 확정한다. 보고서에 PRE-FLIGHT 확인 결과를 기록한다.
 
 **PRE-FLIGHT PASS**: 필수 문서를 최신 기준 SHA에서 실제 읽고, 활성 작업 및 증거를 대조했다. 기존 제품 FAIL은 별도 유지한다.
