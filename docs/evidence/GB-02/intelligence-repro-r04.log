@@ -1,0 +1,89 @@
+Starting a Gradle Daemon, 2 incompatible and 9 stopped Daemons could not be reused, use --status for details
+> Task :checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :domain:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :processResources NO-SOURCE
+> Task :processTestResources NO-SOURCE
+> Task :domain:compileKotlin UP-TO-DATE
+> Task :domain:compileJava NO-SOURCE
+> Task :domain:processResources NO-SOURCE
+> Task :domain:classes UP-TO-DATE
+> Task :domain:jar UP-TO-DATE
+> Task :compileKotlin UP-TO-DATE
+> Task :compileJava NO-SOURCE
+> Task :classes UP-TO-DATE
+> Task :jar UP-TO-DATE
+> Task :compileTestKotlin
+> Task :compileTestJava NO-SOURCE
+> Task :testClasses UP-TO-DATE
+
+> Task :test FAILED
+TEST_JVM version=17 vendor=Eclipse Temurin path=C:\Users\scarl\.jdks\temurin-17
+
+Round04ReproTest > ceilingDropsLowPowerAndKeepsAnExpiredNumber() FAILED
+    org.opentest4j.AssertionFailedError: Expected value to be of type <io.github.scarlel96.aura.intelligence.StepResult$Advanced (Kotlin reflection is not available)>, actual <class io.github.scarlel96.aura.intelligence.StepResult$LimitReached (Kotlin reflection is not available)>.
+        at app//org.junit.jupiter.api.AssertionUtils.fail(AssertionUtils.java:38)
+        at app//org.junit.jupiter.api.Assertions.fail(Assertions.java:138)
+        at app//kotlin.test.junit5.JUnit5Asserter.fail(JUnitSupport.kt:56)
+        at app//kotlin.test.Asserter.assertTrue(Assertions.kt:1545)
+        at app//kotlin.test.junit5.JUnit5Asserter.assertTrue(JUnitSupport.kt:30)
+        at app//kotlin.test.AssertionsKt__AssertionsKt.assertIsOfType(Assertions.kt:242)
+        at app//kotlin.test.AssertionsKt.assertIsOfType(Unknown Source)
+        at app//io.github.scarlel96.aura.intelligence.Round04ReproTest.run(Round04ReproTest.kt:18)
+        at app//io.github.scarlel96.aura.intelligence.Round04ReproTest.run$default(Round04ReproTest.kt:13)
+        at app//io.github.scarlel96.aura.intelligence.Round04ReproTest.ceilingDropsLowPowerAndKeepsAnExpiredNumber(Round04ReproTest.kt:51)
+
+Round04ReproTest > freshLowBatteryStillDecoratesWhileChargingIsRetained() FAILED
+    org.opentest4j.AssertionFailedError: expected: <POWER> but was: <DECORATIVE>
+        at app//org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+        at app//org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+        at app//org.junit.jupiter.api.AssertEquals.failNotEqual(AssertEquals.java:197)
+        at app//org.junit.jupiter.api.AssertEquals.assertEquals(AssertEquals.java:182)
+        at app//org.junit.jupiter.api.Assertions.assertEquals(Assertions.java:1156)
+        at app//kotlin.test.junit5.JUnit5Asserter.assertEquals(JUnitSupport.kt:32)
+        at app//kotlin.test.AssertionsKt__AssertionsKt.assertEquals(Assertions.kt:83)
+        at app//kotlin.test.AssertionsKt.assertEquals(Unknown Source)
+        at app//kotlin.test.AssertionsKt__AssertionsKt.assertEquals$default(Assertions.kt:82)
+        at app//kotlin.test.AssertionsKt.assertEquals$default(Unknown Source)
+        at app//io.github.scarlel96.aura.intelligence.Round04ReproTest.freshLowBatteryStillDecoratesWhileChargingIsRetained(Round04ReproTest.kt:31)
+
+Round04ReproTest > lowPowerGraphicsWaitForTheSharedHold() FAILED
+    org.opentest4j.AssertionFailedError: expected: <POWER> but was: <DECORATIVE>
+        at app//org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+        at app//org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+        at app//org.junit.jupiter.api.AssertEquals.failNotEqual(AssertEquals.java:197)
+        at app//org.junit.jupiter.api.AssertEquals.assertEquals(AssertEquals.java:182)
+        at app//org.junit.jupiter.api.Assertions.assertEquals(Assertions.java:1156)
+        at app//kotlin.test.junit5.JUnit5Asserter.assertEquals(JUnitSupport.kt:32)
+        at app//kotlin.test.AssertionsKt__AssertionsKt.assertEquals(Assertions.kt:83)
+        at app//kotlin.test.AssertionsKt.assertEquals(Unknown Source)
+        at app//kotlin.test.AssertionsKt__AssertionsKt.assertEquals$default(Assertions.kt:82)
+        at app//kotlin.test.AssertionsKt.assertEquals$default(Unknown Source)
+        at app//io.github.scarlel96.aura.intelligence.Round04ReproTest.lowPowerGraphicsWaitForTheSharedHold(Round04ReproTest.kt:42)
+
+Round04ReproTest > otherAxisCommitsRestartTheSharedHoldAndDebounce() FAILED
+    org.opentest4j.AssertionFailedError: expected: <NORMAL> but was: <ALERT>
+        at app//org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+        at app//org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+        at app//org.junit.jupiter.api.AssertEquals.failNotEqual(AssertEquals.java:197)
+        at app//org.junit.jupiter.api.AssertEquals.assertEquals(AssertEquals.java:182)
+        at app//org.junit.jupiter.api.Assertions.assertEquals(Assertions.java:1156)
+        at app//kotlin.test.junit5.JUnit5Asserter.assertEquals(JUnitSupport.kt:32)
+        at app//kotlin.test.AssertionsKt__AssertionsKt.assertEquals(Assertions.kt:83)
+        at app//kotlin.test.AssertionsKt.assertEquals(Unknown Source)
+        at app//kotlin.test.AssertionsKt__AssertionsKt.assertEquals$default(Assertions.kt:82)
+        at app//kotlin.test.AssertionsKt.assertEquals$default(Unknown Source)
+        at app//io.github.scarlel96.aura.intelligence.Round04ReproTest.otherAxisCommitsRestartTheSharedHoldAndDebounce(Round04ReproTest.kt:88)
+
+4 tests completed, 4 failed
+
+6 actionable tasks: 2 executed, 4 up-to-date
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':test'.
+> There were failing tests. See the report at: file:///C:/Users/scarl/AppData/Local/Temp/aura-gb02-wt/modules/intelligence/build/reports/tests/test/index.html
+
+* Try:
+> Run with --scan to get full insights from a Build Scan (powered by Develocity).
+
+BUILD FAILED in 30s
