@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "logicalSize": 450,
+  "lighting": {
+    "origin": "upper-left",
+    "angleDegrees": 45
+  },
+  "ring": {
+    "innerRadius": 210,
+    "outerRadius": 212,
+    "trackColors": [
+      "#D1DCE6",
+      "#758696",
+      "#344451",
+      "#8798A8",
+      "#3C4A58"
+    ],
+    "machiningBands": 4
+  },
+  "ticks": {
+    "count": 60,
+    "majorEvery": 5,
+    "innerMajor": 205,
+    "innerMinor": 207,
+    "outer": 209,
+    "majorWidthMilli": 1000,
+    "minorWidthMilli": 600,
+    "majorColor": "#8F9FAE",
+    "minorColor": "#536575"
+  },
+  "highlight": {
+    "startDegrees": -135,
+    "endDegrees": -110,
+    "radius": 211,
+    "widthMilli": 800,
+    "color": "#F3F7FA",
+    "opacityPermille": 600
+  },
+  "profiles": {
+    "ULTRA": [
+      "ring",
+      "ticks",
+      "highlight"
+    ],
+    "BALANCED": [
+      "ring",
+      "ticks",
+      "highlight"
+    ],
+    "ECO": [
+      "ring",
+      "ticks"
+    ],
+    "AOD": []
+  }
+}
