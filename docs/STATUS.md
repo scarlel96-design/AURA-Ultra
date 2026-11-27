@@ -51,3 +51,20 @@ main의 현재 HEAD를 먼저 확인한다. 확인한 코드 SHA와 최신 문�
 
 ## GPT-01 회차 01 — 구현 및 CI 대기
 기준 HEAD 95e51cca23210f930dc3716cb790e791585a7bf0. 이전 CI 45998909046: 공식 WFF #2/#3/#4 PASSED, assemble 성공, APK 검사 실패. Debug/release R8 활성화, resource shrinking 비활성화, 검사 강화 및 회귀 시험 작성. 후보 코드 커밋의 CI 결과는 아직 미확인(PENDING). B-001/B-010은 실제 새 증거 확인 전 OPEN 유지. 상세 기록: evidence/GPT-01/REPORT-01.md.
+
+## GPT-01 회차 01 — CI 중간 체크포인트
+검증 대상 코드 SHA: ef9f9c9bbb2020de835926a3bf0e4262b9c89d51. [CI 45999371709](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/45999371709), job 140506784499, status completed, conclusion success.
+
+| 단계 | 실제 확인 상태 |
+|---|---|
+| Verify Gradle wrapper | success |
+| Check project invariants | success |
+| Validation tool regression tests | success |
+| Install Android SDK | success |
+| Confirm Android SDK tools | success |
+| Official WFF validation | success |
+| Build debug APKs | success |
+| Check APK contents | success |
+| Upload debug APKs | success |
+
+새 코드와 변경 파일을 별도 자기 재검토했다. Google watchface의 DWFValidationApplication.java 원문에서 PASSED/FAILED 출력 형식을 확인했다. 현재 CI 실행 결과가 최종 판정되지 않았으면 B-001/B-010의 최종 해결 및 GPT-01 GO를 선언하지 않는다. 기존 APK의 정확한 실패 ZIP 항목은 아직 확보하지 못했다. 메모리 평가, 서명·설치·실기기 시험은 미실시. 다음 턴에는 이 실행의 최종 job/step 로그와 Artifact부터 확인한다. 증거 보존용 문서 커밋은 [skip ci]를 사용하여 진행 중인 코드 검증 실행을 취소하지 않는다. 이는 코드 검사 생략이나 성공 판정이 아니다.

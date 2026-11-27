@@ -37,3 +37,5 @@
 - 삼성 공식 WFF 가이드에 따라 debug/release R8 활성화 및 리소스 축소 비활성화. 이전 APK 항목 미확인으로 원인은 가설 상태.
 - WFF 결과 명시적 파일/버전 성공 검증, 실제 invalid XML 검사, 모든 APK ZIP/manifest 검사, 단위 회귀 시험 추가.
 - 새 CI 실행 결과 미확인. B-001/B-010 OPEN, GPT-01 NO-GO 유지. evidence/GPT-01/REPORT-01.md 참조.
+
+- 회차 01 코드 SHA ef9f9c9bbb2020de835926a3bf0e4262b9c89d51, CI 45999371709 상태 completed/success 확인. 검증 세부 상태는 STATUS 및 REPORT-01에 저장. 별도 자기 재검토 완료. 제품 GO 미선언. 문서 전용 체크포인트는 실행 중 CI 보존 목적의 [skip ci].

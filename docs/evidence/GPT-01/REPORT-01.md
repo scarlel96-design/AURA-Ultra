@@ -20,3 +20,20 @@ PRE-FLIGHT: PASS (기준 HEAD의 AGENTS, STATUS, README, MASTER_ARCHITECTURE, RE
 롤백: 이 후보 커밋 revert; 검증 완화 및 서명 후 APK 변조 금지.
 G0 PASS (기준 문서 및 실패 증거 확인), G1 구현 후보, G2/G3/G4 새 실행 대기, G5 별도 자기 재검토 필요, G6 새 CI SHA와 로그 대조 필요, G7 문서 갱신 및 원격 반영 확인 필요.
 다음 행동: 최신 후보 코드 SHA의 CI step/원본 로그 확인. 실패하면 구체적 ZIP/manifest/validator 판정으로 원인 분석. 성공 시 Artifact와 시험 증거 확인, 공식 메모리 도구 통합 검토. 기존 차단점 해결 전 GO 금지.
+
+## GPT-01 회차 01 — CI 중간 체크포인트
+검증 대상 코드 SHA: ef9f9c9bbb2020de835926a3bf0e4262b9c89d51. [CI 45999371709](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/45999371709), job 140506784499, status completed, conclusion success.
+
+| 단계 | 실제 확인 상태 |
+|---|---|
+| Verify Gradle wrapper | success |
+| Check project invariants | success |
+| Validation tool regression tests | success |
+| Install Android SDK | success |
+| Confirm Android SDK tools | success |
+| Official WFF validation | success |
+| Build debug APKs | success |
+| Check APK contents | success |
+| Upload debug APKs | success |
+
+새 코드와 변경 파일을 별도 자기 재검토했다. Google watchface의 DWFValidationApplication.java 원문에서 PASSED/FAILED 출력 형식을 확인했다. 현재 CI 실행 결과가 최종 판정되지 않았으면 B-001/B-010의 최종 해결 및 GPT-01 GO를 선언하지 않는다. 기존 APK의 정확한 실패 ZIP 항목은 아직 확보하지 못했다. 메모리 평가, 서명·설치·실기기 시험은 미실시. 다음 턴에는 이 실행의 최종 job/step 로그와 Artifact부터 확인한다. 증거 보존용 문서 커밋은 [skip ci]를 사용하여 진행 중인 코드 검증 실행을 취소하지 않는다. 이는 코드 검사 생략이나 성공 판정이 아니다.
