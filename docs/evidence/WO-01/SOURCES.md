@@ -17,3 +17,7 @@
 - A11: https://developer.android.com/reference/wear-os/wff/common/transform/gyro — Gyro Wear OS 4부터.
 - A12: https://developer.android.com/reference/wear-os/wff/common/attributes/blend-mode — blend mode Wear OS 5.1부터.
 추가 확인: 실제 지원 WFF5 runtime, SDK/Gradle migration, optimizer 실행, health/Push/Reference 세부 계약. 미검증 사항을 지원 확정으로 기록하지 않는다.
+
+- S1 추가 영문 공식 근거: https://www.samsungmobilepress.com/articles/samsungs-expanded-wearables-portfolio-unlocks-intelligent-health-experiences-for-all .
+- S5: https://www.samsung.com/hk_en/watches/galaxy-watch/galaxy-watch-ultra-2025-47mm-titanium-silver-lte-sm-l705fzs1tgy/ — Ultra 2025 480×480 확인.
+- S6: https://www.samsungmobilepress.com/articles/samsung-galaxy-watch-ultra-now-has-one-ui-8-watch — 2025-07-22 Ultra One UI 8 업데이트 확인. 출고 OS 및 개별 펌웨어는 별도 확인.

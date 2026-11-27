@@ -11,7 +11,7 @@
 | 확인한 코드 SHA | 98a4f915577cf3175beeca19864a431061673e7b |
 | 활성 GPT 작업 | GPT-02 회차 01 IN_PROGRESS / GPT-01 GO |
 | 활성 WO | WO-01 PARTIAL; WO-02·04 준비 작업만 일부 구현 |
-| 다음 안전한 행동 | GPT-02 회차 01 후보 CI 확인 → API37/AGP9 전환 검증 및 WFF5 빌드 |
+| 다음 안전한 행동 | CI 46001149417 최종 로그 확인 → API37/AGP9 전환 격리 검증 및 WFF5 빌드 |
 | 다음 실행 명세 | operations/GPT-02.md |
 | 현재 차단 | B-001/B-010 RESOLVED; B-002/B-003/B-004/B-007 미해결 |
 | 공식 WO GO | 0/38 |
@@ -133,3 +133,19 @@ G0 PASS, G1 PASS(작업 범위), G2 PASS(26 단위 시험 및 기존 공식 스�
 
 ## GPT-02 회차 01 후보
 공식 Watch7/8/9/Ultra2 화면 사양, Wear OS 7/API37, AGP9.1.1 호환성 확인. profile contract, flavor source resolution, dynamic build/signature, APK raw XML 대조 및 WFF5 schema-only probe 추가. WFF5 APK 비활성 유지. 새 CI PENDING. 상세 [REPORT-01](evidence/GPT-02/REPORT-01.md). GPT-02 PARTIAL/제품 NO-GO.
+
+## 회차 01 CI 체크포인트
+검증 코드 SHA 7820f90cbb35220fe9c6da4f9702374714d143d1, [CI 46001149417](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46001149417), job 140512806931: in_progress/PENDING.
+- Set up job: success
+- Verify Gradle wrapper: success
+- Check project invariants: success
+- Validation tool regression tests: success
+- Install Android SDK: success
+- Confirm Android SDK tools: success
+- Official WFF validation: success
+- Build debug APKs: in_progress
+- Check APK contents: pending
+- Official asset memory evaluation: pending
+- Verify debug APK signatures: pending
+- Upload debug APKs: pending
+원격 변경 코드 원문을 별도 자기 재검토했다. 프로필 계약의 2~4 필수 활성 및 5 선언, 공통/override 선택, Gradle matrix·minSDK 검증, APK raw XML 대조, 기존 메모리·서명 검사 보존 확인. 실제 flavor override는 합성 단위 시험만 적용하며 실제 flavor 전용 XML 빌드는 후속 PoC 대상. WFF5가 disabled 상태이면 schema 검사만 수행한다. 스키마 PASS는 기기 호환성 증거가 아니다. CI 전체 종료 및 원본 로그/Artifact 확인 전 G3/G4/G6 최종 판정 보류. WO-01/GPT-02 PARTIAL 유지. 다음 작업: CI 원본 로그와 37 단위 시험/4개 schema verdict/3 APK raw XML·메모리·서명 검사 확인. 이후 API37/AGP9.1.1 전환은 격리 검증. 문서 전용 [skip ci]로 기존 CI 실행 보존.

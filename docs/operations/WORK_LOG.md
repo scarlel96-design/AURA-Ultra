@@ -52,3 +52,5 @@
 
 ## 2026-11-27 / GPT-02 회차 01
 - 기준 d75c1a51dab60add9b80469d1081f11cf21587e0. PRE-FLIGHT 및 GPT-01 CI 46000111754 success 확인. 공식 모델/SDK 근거, 프로필 공통 계약, 빌드/서명 자동화 및 스키마 검사 개선. WFF5는 API37 전환 이전 disabled 유지. ADR-007 제안. 새 CI PENDING; REPORT-01 참조.
+
+- 회차 01 코드 7820f90cbb35220fe9c6da4f9702374714d143d1, CI 46001149417 in_progress/PENDING. 원격 소스 자기 재검토 수행. 기존 결과 보존, STATUS/REPORT-01에 재개 기록.

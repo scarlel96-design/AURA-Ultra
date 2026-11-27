@@ -5,10 +5,12 @@
 | Weather data | WFF2 (A1) | 후속 구현 |
 | Part blend mode | WFF3 (A12) | PoC |
 | Variant AOD 단순 상태 | WFF 기본 | bootstrap 스키마 PASS, runtime 미시험 |
-| AOD transition / Reference | WFF4 후보 (A6) | 세부 문법·동작 PoC |
+| AOD transition / Reference | WFF4 (A6) | 공식 도입 버전 확인; 세부 문법·동작 PoC |
 | Gyro | Wear OS4 (A11) | 센서/전력 PoC |
 | PartAnimatedImage | 버전별 XML reference 확인 필요 | PoC |
 | Group/ComplicationSlot blend | WFF5 (A6) | schema/runtime PoC |
 | Watch Face Push | 공식 WFF 안내 | 권한/배포 조건 후속 확인 |
 | Health Services/Connect/Samsung Health | 별도 앱 | SDK/권한/데이터 PoC |
 WFF5와 API37 연결은 A2/A3에서 확인. A1 버전 표는 4까지만 나열. 공식 최소 API 표 갱신 및 설치 시험 추적. 세부 기능 가용성은 실제 스키마와 기기 증거 확보 전 확정하지 않는다.
+
+A6 버전별 릴리스 노트 확인: WFF2 날씨 및 심박 시스템 데이터, WFF3 텍스트 자동 크기·Part 혼합, WFF4 ambient transition·Reference·color transform, WFF5 Group/ComplicationSlot 혼합 및 확장 텍스트/설정. 버전별 기능 구현/런타임은 별도 PoC.
