@@ -67,7 +67,7 @@ def candidate(layout):
     heart_title, heart_value = split("heart")
 
     def weather_available(parent):
-        g = node(parent, "Group", x=0, y=0, width=450, height=450)
+        g = node(parent, "Group", name="WeatherAvailable", x=0, y=0, width=450, height=450)
         part(g, weather_title, 14, muted, "%s", ("[WEATHER.CONDITION_NAME]",))
         def unit(parent, error):
             prefix = "! " if error else ""
@@ -82,7 +82,7 @@ def candidate(layout):
                   lambda p: unit(p, False))
 
     def weather_unavailable(parent):
-        g = node(parent, "Group", x=0, y=0, width=450, height=450)
+        g = node(parent, "Group", name="WeatherUnavailable", x=0, y=0, width=450, height=450)
         part(g, weather_title, 14, muted, "WX")
         condition(g, [("load_error", "[WEATHER.IS_ERROR]", lambda p: part(p, weather_value, fonts["weather"], warn, "ERR"))],
                   lambda p: part(p, weather_value, fonts["weather"], muted, "--"))

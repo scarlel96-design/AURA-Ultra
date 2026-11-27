@@ -76,3 +76,8 @@ class BasicFaceTests(unittest.TestCase):
     def test_native_battery_steps(self):
         params = {p.get("expression") for p in self.active.findall(".//Parameter")}
         self.assertTrue({"[BATTERY_PERCENT]", "[STEP_COUNT]", "[STEP_GOAL]"} <= params)
+
+    def test_group_names_required_and_unique(self):
+        names = [g.get("name") for g in self.face.findall(".//Group")]
+        self.assertEqual(set(names), {"ActiveInformation", "WeatherAvailable", "WeatherUnavailable"})
+        self.assertEqual(len(names), len(set(names)))
