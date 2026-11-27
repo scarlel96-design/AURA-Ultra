@@ -25,12 +25,16 @@ data class PendingSensors(
     val weather: WeatherAxis,
     val activity: ActivityAxis,
     val since: Instant,
+    val powerSince: Instant,
+    val weatherSince: Instant,
+    val activitySince: Instant,
 )
 
 data class Emission(
     val quality: QualityCandidate,
     val motionAllowed: Boolean,
     val particleEffectsAllowed: Boolean,
+    val graphicsPowerLimited: Boolean,
     val weatherNumbersKept: Boolean,
     val timeKept: Boolean,
     val publishedBatteryPercent: Double?,
@@ -60,6 +64,9 @@ data class MachineState(
     val userMode: UserModeAxis,
     val focus: FocusBand,
     val committedAt: Instant,
+    val powerCommittedAt: Instant,
+    val weatherCommittedAt: Instant,
+    val activityCommittedAt: Instant,
     val processedAt: Instant,
     val revision: Long,
     val pending: PendingSensors?,
@@ -72,6 +79,7 @@ data class IntelligenceIntent(
     val quality: QualityCandidate,
     val motionAllowed: Boolean,
     val particleEffectsAllowed: Boolean,
+    val graphicsPowerLimited: Boolean,
     val weatherNumbersKept: Boolean,
     val timeKept: Boolean,
     val publishedBatteryPercent: Double?,
@@ -97,6 +105,7 @@ fun IntelligenceIntent.emission(): Emission {
         quality = quality,
         motionAllowed = motionAllowed,
         particleEffectsAllowed = particleEffectsAllowed,
+        graphicsPowerLimited = graphicsPowerLimited,
         weatherNumbersKept = weatherNumbersKept,
         timeKept = timeKept,
         publishedBatteryPercent = publishedBatteryPercent,
@@ -120,6 +129,14 @@ sealed class StepResult {
     ) : StepResult()
 }
 
+fun StepResult.deliveredIntent(): IntelligenceIntent? {
+    return when (this) {
+        is StepResult.Advanced -> intent
+        is StepResult.LimitReached -> null
+        is StepResult.PolicyRejected -> null
+    }
+}
+
 fun step(
     previous: MachineState?,
     sample: IntelligenceSample,
@@ -132,17 +149,28 @@ fun step(
     if (previous != null && sample.referenceTime < previous.processedAt) {
         val raised = previous.settings.raisedBy(sample.motionReduction, sample.ambientDisplay)
         val skeleton = previous.copy(settings = raised)
+        val inversionReasons = listOf(ReasonCode.CLOCK_INVERSION)
         return finish(
             skeleton = skeleton,
             intent = intentFor(
                 state = skeleton,
                 settings = raised,
-                extraReasons = listOf(ReasonCode.CLOCK_INVERSION),
+                extraReasons = inversionReasons,
                 publishedBattery = null,
                 publishedPrecipitation = null,
                 dataQuality = DataQuality.DEGRADED,
+                graphicsLow = previous.emission.graphicsPowerLimited,
             ),
             previous = previous,
+            publication = Publication(
+                battery = null,
+                precipitation = null,
+                dataQuality = DataQuality.DEGRADED,
+                batteryUnusable = false,
+                precipitationUnusable = false,
+                graphicsLow = false,
+            ),
+            gateReasons = inversionReasons,
         )
     }
     val gated = gateSample(sample, policy)
@@ -172,6 +200,15 @@ fun step(
     }
     val publishedBattery = (gated.battery as? Channel.Fresh)?.value
     val publishedPrecipitation = (gated.precipitation as? Channel.Fresh)?.value
+    val graphicsLow = freshBatteryIsLow(gated.battery, previous?.power, policy)
+    val publication = Publication(
+        battery = publishedBattery,
+        precipitation = publishedPrecipitation,
+        dataQuality = gated.quality,
+        batteryUnusable = gated.battery is Channel.Unusable,
+        precipitationUnusable = gated.precipitation is Channel.Unusable,
+        graphicsLow = graphicsLow,
+    )
     val settings = CallerSettings(sample.motionReduction, sample.ambientDisplay)
     if (previous == null) {
         val created = assemble(
@@ -182,10 +219,14 @@ fun step(
             connectivity = connectivity,
             userMode = userMode,
             committedAt = sample.referenceTime,
+            powerCommittedAt = sample.referenceTime,
+            weatherCommittedAt = sample.referenceTime,
+            activityCommittedAt = sample.referenceTime,
             processedAt = sample.referenceTime,
             revision = 1L,
             pending = null,
             settings = settings,
+            graphicsLow = graphicsLow,
         )
         return finish(
             skeleton = created,
@@ -196,54 +237,45 @@ fun step(
                 publishedBattery = publishedBattery,
                 publishedPrecipitation = publishedPrecipitation,
                 dataQuality = gated.quality,
+                graphicsLow = graphicsLow,
             ),
             previous = null,
+            publication = publication,
+            gateReasons = reasons,
         )
     }
     val powerChanged = desiredPower != previous.power
     val weatherChanged = desiredWeather != previous.weather
     val activityChanged = desiredActivity != previous.activity
-    val sensorChanged = powerChanged || weatherChanged || activityChanged
     val urgent = desiredWeather == WeatherAxis.ALERT && previous.weather != WeatherAxis.ALERT
     val chargingException = desiredPower == PowerAxis.CHARGING && previous.power != PowerAxis.CHARGING ||
         previous.power == PowerAxis.CHARGING && desiredPower != PowerAxis.CHARGING
-    val cohort = if (!sensorChanged) {
-        null
-    } else {
-        val currentPending = previous.pending
-        if (currentPending != null &&
-            currentPending.power == desiredPower &&
-            currentPending.weather == desiredWeather &&
-            currentPending.activity == desiredActivity &&
-            sample.referenceTime >= currentPending.since
-        ) {
-            currentPending
-        } else {
-            PendingSensors(desiredPower, desiredWeather, desiredActivity, sample.referenceTime)
-        }
-    }
-    val debounceDeadline = if (cohort == null) null else plusOrNull(cohort.since, policy.debounce)
-    val debounceElapsed = cohort == null ||
-        (debounceDeadline != null && !sample.referenceTime.isBefore(debounceDeadline))
-    val holdDeadline = plusOrNull(previous.committedAt, policy.minimumHold)
-    val holdElapsed = holdDeadline != null && !sample.referenceTime.isBefore(holdDeadline)
-    val timersElapsed = debounceElapsed && holdElapsed
-    val commitPower = powerChanged && (chargingException || urgent || timersElapsed)
-    val commitWeather = weatherChanged && (urgent || timersElapsed)
-    val commitActivity = activityChanged && timersElapsed
+    val pending = previous.pending
+    val powerSince = keptSince(powerChanged, pending?.power == desiredPower, pending?.powerSince, sample.referenceTime)
+    val weatherSince = keptSince(weatherChanged, pending?.weather == desiredWeather, pending?.weatherSince, sample.referenceTime)
+    val activitySince = keptSince(activityChanged, pending?.activity == desiredActivity, pending?.activitySince, sample.referenceTime)
+    val powerDebounce = !powerChanged || debounceElapsed(powerSince, sample.referenceTime, policy)
+    val weatherDebounce = !weatherChanged || debounceElapsed(weatherSince, sample.referenceTime, policy)
+    val activityDebounce = !activityChanged || debounceElapsed(activitySince, sample.referenceTime, policy)
+    val powerHold = !powerChanged || holdElapsed(previous.powerCommittedAt, sample.referenceTime, policy)
+    val weatherHold = !weatherChanged || holdElapsed(previous.weatherCommittedAt, sample.referenceTime, policy)
+    val activityHold = !activityChanged || holdElapsed(previous.activityCommittedAt, sample.referenceTime, policy)
+    val commitPower = powerChanged && (chargingException || urgent || (powerDebounce && powerHold))
+    val commitWeather = weatherChanged && (urgent || (weatherDebounce && weatherHold))
+    val commitActivity = activityChanged && activityDebounce && activityHold
     if (commitWeather && urgent) {
         reasons += ReasonCode.URGENT
     }
     if (commitPower && chargingException) {
         reasons += ReasonCode.CHARGING_EXCEPTION
     }
-    val waiting = (powerChanged && !commitPower) ||
-        (weatherChanged && !commitWeather) ||
-        (activityChanged && !commitActivity)
-    if (waiting && !debounceElapsed) {
+    val waitingPower = powerChanged && !commitPower
+    val waitingWeather = weatherChanged && !commitWeather
+    val waitingActivity = activityChanged && !commitActivity
+    if ((waitingPower && !powerDebounce) || (waitingWeather && !weatherDebounce) || (waitingActivity && !activityDebounce)) {
         reasons += ReasonCode.DEBOUNCE
     }
-    if (waiting && !holdElapsed) {
+    if ((waitingPower && !powerHold) || (waitingWeather && !weatherHold) || (waitingActivity && !activityHold)) {
         reasons += ReasonCode.MINIMUM_HOLD
     }
     val power = if (commitPower) desiredPower else previous.power
@@ -254,6 +286,24 @@ fun step(
     } else {
         previous.committedAt
     }
+    val waitingSince = listOfNotNull(
+        if (waitingPower) powerSince else null,
+        if (waitingWeather) weatherSince else null,
+        if (waitingActivity) activitySince else null,
+    )
+    val nextPending = if (waitingSince.isEmpty()) {
+        null
+    } else {
+        PendingSensors(
+            power = desiredPower,
+            weather = desiredWeather,
+            activity = desiredActivity,
+            since = waitingSince.min(),
+            powerSince = powerSince,
+            weatherSince = weatherSince,
+            activitySince = activitySince,
+        )
+    }
     val next = assemble(
         power = power,
         weather = weather,
@@ -262,10 +312,14 @@ fun step(
         connectivity = connectivity,
         userMode = userMode,
         committedAt = committedAt,
+        powerCommittedAt = if (commitPower) sample.referenceTime else previous.powerCommittedAt,
+        weatherCommittedAt = if (commitWeather) sample.referenceTime else previous.weatherCommittedAt,
+        activityCommittedAt = if (commitActivity) sample.referenceTime else previous.activityCommittedAt,
         processedAt = sample.referenceTime,
         revision = previous.revision,
-        pending = if (waiting) cohort else null,
+        pending = nextPending,
         settings = settings,
+        graphicsLow = graphicsLow,
     )
     return finish(
         skeleton = next,
@@ -276,15 +330,29 @@ fun step(
             publishedBattery = publishedBattery,
             publishedPrecipitation = publishedPrecipitation,
             dataQuality = gated.quality,
+            graphicsLow = graphicsLow,
         ),
         previous = previous,
+        publication = publication,
+        gateReasons = reasons,
     )
 }
+
+private data class Publication(
+    val battery: Double?,
+    val precipitation: Double?,
+    val dataQuality: DataQuality,
+    val batteryUnusable: Boolean,
+    val precipitationUnusable: Boolean,
+    val graphicsLow: Boolean,
+)
 
 private fun finish(
     skeleton: MachineState,
     intent: IntelligenceIntent,
     previous: MachineState?,
+    publication: Publication,
+    gateReasons: List<ReasonCode>,
 ): StepResult {
     val emission = intent.emission()
     val axesChanged = previous != null && (
@@ -298,38 +366,7 @@ private fun finish(
         )
     val emissionChanged = previous != null && emission != previous.emission
     if (previous != null && previous.revision == Long.MAX_VALUE && (axesChanged || emissionChanged)) {
-        val raised = previous.settings.raisedBy(
-            skeleton.settings.motionReduction,
-            skeleton.settings.ambientDisplay,
-        )
-        if (raised == previous.settings) {
-            return StepResult.LimitReached(ReasonCode.REVISION_EXHAUSTED, previous)
-        }
-        val dropped = axesChanged ||
-            intent.publishedBatteryPercent != previous.emission.publishedBatteryPercent ||
-            intent.publishedPrecipitation != previous.emission.publishedPrecipitation ||
-            intent.dataQuality != previous.emission.dataQuality
-        val protectedEmission = protectEmission(previous, raised, dropped)
-        val state = previous.copy(
-            settings = raised,
-            emission = protectedEmission,
-            processedAt = skeleton.processedAt,
-            revision = Long.MAX_VALUE,
-        )
-        return StepResult.Advanced(
-            state = state,
-            intent = intent.copy(
-                focus = state.focus,
-                quality = protectedEmission.quality,
-                motionAllowed = protectedEmission.motionAllowed,
-                particleEffectsAllowed = protectedEmission.particleEffectsAllowed,
-                publishedBatteryPercent = protectedEmission.publishedBatteryPercent,
-                publishedPrecipitation = protectedEmission.publishedPrecipitation,
-                dataQuality = protectedEmission.dataQuality,
-                reasonCodes = protectedEmission.reasonCodes,
-                revision = Long.MAX_VALUE,
-            ),
-        )
+        return deliverAtCeiling(skeleton, previous, publication, gateReasons)
     }
     val revision = when {
         previous == null -> 1L
@@ -342,37 +379,102 @@ private fun finish(
     )
 }
 
-private fun protectEmission(
+private fun deliverAtCeiling(
+    skeleton: MachineState,
     previous: MachineState,
-    raised: CallerSettings,
-    dropped: Boolean,
-): Emission {
-    val motionAllowed = !raised.motionReduction &&
-        !raised.ambientDisplay &&
-        previous.power != PowerAxis.LOW
-    val quality = when {
-        raised.ambientDisplay -> QualityCandidate.AOD
-        previous.power == PowerAxis.LOW -> QualityCandidate.ECO
-        else -> QualityCandidate.BALANCED
+    publication: Publication,
+    gateReasons: List<ReasonCode>,
+): StepResult {
+    val raised = previous.settings.raisedBy(
+        skeleton.settings.motionReduction,
+        skeleton.settings.ambientDisplay,
+    )
+    val graphics = previous.emission.graphicsPowerLimited || publication.graphicsLow
+    val withdrawBattery = publication.batteryUnusable && previous.emission.publishedBatteryPercent != null
+    val withdrawPrecipitation = publication.precipitationUnusable && previous.emission.publishedPrecipitation != null
+    val settingsRose = raised != previous.settings
+    val graphicsRose = graphics && !previous.emission.graphicsPowerLimited
+    val withdrew = withdrawBattery || withdrawPrecipitation
+    if (!settingsRose && !graphicsRose && !withdrew) {
+        return StepResult.LimitReached(ReasonCode.REVISION_EXHAUSTED, previous)
     }
-    val reasons = buildList {
-        addAll(previous.emission.reasonCodes.filter { it != ReasonCode.MOTION_REDUCTION && it != ReasonCode.AOD && it != ReasonCode.REVISION_EXHAUSTED })
-        if (raised.motionReduction) {
-            add(ReasonCode.MOTION_REDUCTION)
-        }
-        if (raised.ambientDisplay) {
-            add(ReasonCode.AOD)
-        }
-        if (dropped) {
+    val sensorDropped = skeleton.power != previous.power ||
+        skeleton.weather != previous.weather ||
+        skeleton.activity != previous.activity ||
+        skeleton.light != previous.light ||
+        skeleton.connectivity != previous.connectivity ||
+        skeleton.userMode != previous.userMode
+    val freshNumberDropped = (!publication.batteryUnusable &&
+        publication.battery != null &&
+        publication.battery != previous.emission.publishedBatteryPercent) ||
+        (!publication.precipitationUnusable &&
+            publication.precipitation != null &&
+            publication.precipitation != previous.emission.publishedPrecipitation)
+    val focus = focusOf(
+        power = previous.power,
+        weather = previous.weather,
+        activity = previous.activity,
+        light = previous.light,
+        connectivity = previous.connectivity,
+        userMode = previous.userMode,
+        graphicsLow = graphics,
+    )
+    val stateBase = previous.copy(
+        focus = focus,
+        settings = raised,
+        processedAt = skeleton.processedAt,
+        revision = Long.MAX_VALUE,
+    )
+    val extra = buildList {
+        addAll(gateReasons.filter { it != ReasonCode.REVISION_EXHAUSTED })
+        if (sensorDropped || freshNumberDropped || withdrew) {
             add(ReasonCode.REVISION_EXHAUSTED)
         }
-    }.distinct()
-    return previous.emission.copy(
-        quality = quality,
-        motionAllowed = motionAllowed,
-        particleEffectsAllowed = motionAllowed,
-        reasonCodes = reasons,
+    }
+    val delivered = intentFor(
+        state = stateBase,
+        settings = raised,
+        extraReasons = extra,
+        publishedBattery = if (withdrawBattery) null else previous.emission.publishedBatteryPercent,
+        publishedPrecipitation = if (withdrawPrecipitation) null else previous.emission.publishedPrecipitation,
+        dataQuality = if (withdrew) DataQuality.DEGRADED else previous.emission.dataQuality,
+        graphicsLow = graphics,
+    ).copy(revision = Long.MAX_VALUE)
+    return StepResult.Advanced(
+        state = stateBase.copy(emission = delivered.emission()),
+        intent = delivered,
     )
+}
+
+private fun keptSince(
+    changed: Boolean,
+    pendingMatches: Boolean,
+    pendingSince: Instant?,
+    now: Instant,
+): Instant {
+    if (changed && pendingMatches && pendingSince != null && !now.isBefore(pendingSince)) {
+        return pendingSince
+    }
+    return now
+}
+
+private fun debounceElapsed(since: Instant, now: Instant, policy: PolicyCandidates): Boolean {
+    val deadline = plusOrNull(since, policy.debounce)
+    return deadline != null && !now.isBefore(deadline)
+}
+
+private fun holdElapsed(committedAt: Instant, now: Instant, policy: PolicyCandidates): Boolean {
+    val deadline = plusOrNull(committedAt, policy.minimumHold)
+    return deadline != null && !now.isBefore(deadline)
+}
+
+private fun freshBatteryIsLow(
+    battery: Channel<Double>,
+    previousPower: PowerAxis?,
+    policy: PolicyCandidates,
+): Boolean {
+    val fresh = battery as? Channel.Fresh ?: return false
+    return lowPower(fresh.value, previousPower == PowerAxis.LOW, policy)
 }
 
 private fun plusOrNull(start: Instant, amount: Duration): Instant? {
@@ -521,10 +623,14 @@ private fun assemble(
     connectivity: ConnectivityAxis,
     userMode: UserModeAxis,
     committedAt: Instant,
+    powerCommittedAt: Instant,
+    weatherCommittedAt: Instant,
+    activityCommittedAt: Instant,
     processedAt: Instant,
     revision: Long,
     pending: PendingSensors?,
     settings: CallerSettings,
+    graphicsLow: Boolean,
 ): MachineState {
     return MachineState(
         power = power,
@@ -533,8 +639,11 @@ private fun assemble(
         light = light,
         connectivity = connectivity,
         userMode = userMode,
-        focus = focusOf(power, weather, activity, light, connectivity, userMode),
+        focus = focusOf(power, weather, activity, light, connectivity, userMode, graphicsLow),
         committedAt = committedAt,
+        powerCommittedAt = powerCommittedAt,
+        weatherCommittedAt = weatherCommittedAt,
+        activityCommittedAt = activityCommittedAt,
         processedAt = processedAt,
         revision = revision,
         pending = pending,
@@ -542,6 +651,7 @@ private fun assemble(
             quality = QualityCandidate.BALANCED,
             motionAllowed = true,
             particleEffectsAllowed = true,
+            graphicsPowerLimited = false,
             weatherNumbersKept = true,
             timeKept = true,
             publishedBatteryPercent = null,
@@ -560,11 +670,12 @@ fun focusOf(
     light: LightAxis,
     connectivity: ConnectivityAxis,
     userMode: UserModeAxis,
+    graphicsLow: Boolean,
 ): FocusBand {
     if (weather == WeatherAxis.ALERT) {
         return FocusBand.CRITICAL
     }
-    if (power == PowerAxis.LOW) {
+    if (power == PowerAxis.LOW || graphicsLow) {
         return FocusBand.POWER
     }
     if (activity == ActivityAxis.EXERCISE) {
@@ -586,6 +697,7 @@ private fun intentFor(
     publishedBattery: Double?,
     publishedPrecipitation: Double?,
     dataQuality: DataQuality,
+    graphicsLow: Boolean,
 ): IntelligenceIntent {
     val quality = when {
         settings.ambientDisplay -> QualityCandidate.AOD
@@ -595,6 +707,7 @@ private fun intentFor(
     val motionAllowed = !settings.motionReduction &&
         !settings.ambientDisplay &&
         state.power != PowerAxis.LOW
+    val particleEffectsAllowed = motionAllowed && !graphicsLow && state.power != PowerAxis.LOW
     val reasons = buildList {
         addAll(extraReasons)
         when (state.focus) {
@@ -604,6 +717,9 @@ private fun intentFor(
             FocusBand.WEATHER -> add(ReasonCode.WEATHER_PRECIP)
             FocusBand.CONTEXT -> add(ReasonCode.CONTEXT)
             FocusBand.DECORATIVE -> add(ReasonCode.DECORATIVE)
+        }
+        if ((graphicsLow || state.power == PowerAxis.LOW) && state.focus != FocusBand.POWER) {
+            add(ReasonCode.POWER_LOW)
         }
         if (state.power == PowerAxis.CHARGING) {
             add(ReasonCode.POWER_CHARGING)
@@ -622,7 +738,8 @@ private fun intentFor(
         focus = state.focus,
         quality = quality,
         motionAllowed = motionAllowed,
-        particleEffectsAllowed = motionAllowed,
+        particleEffectsAllowed = particleEffectsAllowed,
+        graphicsPowerLimited = graphicsLow || state.power == PowerAxis.LOW,
         weatherNumbersKept = true,
         timeKept = true,
         publishedBatteryPercent = publishedBattery,

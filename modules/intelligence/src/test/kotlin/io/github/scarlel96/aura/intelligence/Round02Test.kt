@@ -83,9 +83,13 @@ class Round02Test {
         )
         assertEquals(PowerAxis.CHARGING, omitted.state.power)
         assertEquals(10.0, omitted.intent.publishedBatteryPercent)
-        assertEquals(FocusBand.DECORATIVE, omitted.state.focus)
+        // DATA_INTELLIGENCE requires a fresh low battery to limit decoration and particles.
+        // The charging axis stays CHARGING. GB02-A28.
+        assertEquals(FocusBand.POWER, omitted.state.focus)
         assertEquals(QualityCandidate.BALANCED, omitted.intent.quality)
         assertTrue(omitted.intent.motionAllowed)
+        assertFalse(omitted.intent.particleEffectsAllowed)
+        assertTrue(omitted.intent.reasonCodes.contains(ReasonCode.POWER_LOW))
         assertFalse(omitted.intent.reasonCodes.contains(ReasonCode.CHARGING_EXCEPTION))
         val unavailable = run(
             plugged.state,

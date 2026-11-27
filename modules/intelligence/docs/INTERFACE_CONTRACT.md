@@ -24,9 +24,9 @@
 
 | 축 | 값 | 반영 |
 |---|---|---|
-| power | `NORMAL`, `LOW`, `CHARGING` | 디바운스와 최소 유지. 충전 예외는 즉시 |
-| weather | `NORMAL`, `PRECIP`, `ALERT`, `UNKNOWN` | 같은 센서 타이머. `ALERT`로 들어갈 때만 긴급 |
-| activity | `REST`, `ACTIVE`, `EXERCISE`, `UNKNOWN` | 같은 센서 타이머 |
+| power | `NORMAL`, `LOW`, `CHARGING` | 디바운스와 최소 유지는 전원 축의 시각만 사용. 충전 예외는 즉시. 그래픽 전력 제한은 축 확정을 기다리지 않음 |
+| weather | `NORMAL`, `PRECIP`, `ALERT`, `UNKNOWN` | 날씨 축의 시각. `ALERT`로 들어갈 때만 긴급 |
+| activity | `REST`, `ACTIVE`, `EXERCISE`, `UNKNOWN` | 활동 축의 시각. 긴급과 충전 예외를 물려받지 않음 |
 | light | `DAY`, `NIGHT` | 즉시. 유지 시각을 재설정하지 않음 |
 | connectivity | `ONLINE`, `OFFLINE` | 즉시 |
 | userMode | `DEFAULT`, `WORK`, `SLEEP`, `MANUAL` | 즉시. 사용자 설정이며 추론하지 않음 |
@@ -35,25 +35,31 @@
 
 ## 시각과 revision
 
-`MachineState.committedAt`은 전원·날씨·활동을 마지막으로 확정한 시각이다. `processedAt`은 마지막으로 받아들인 `referenceTime`이다. 밝기·연결·사용자 모드만 바뀌어도 `processedAt`은 그 샘플 시각이 되고 `committedAt`은 그대로다.
+`MachineState.committedAt`은 전원·날씨·활동 중 하나라도 마지막으로 확정한 시각이다. `powerCommittedAt`, `weatherCommittedAt`, `activityCommittedAt`은 각 축의 확정 시각이다. 보류 시작은 `PendingSensors.powerSince`, `weatherSince`, `activitySince`다. 다른 축이 반복해서 바뀌어도 기다리는 축의 시작 시각과 확정 시각은 다시 시작하지 않는다. `PendingSensors.since`는 아직 기다리는 축의 시작 시각 중 가장 이른 값이다. `processedAt`은 마지막으로 받아들인 `referenceTime`이다. 밝기·연결·사용자 모드만 바뀌어도 `processedAt`은 그 샘플 시각이 되고 센서 확정 시각은 그대로다.
 
-관측 순서와 설정 순서는 다르다. 시계 역전은 `referenceTime < processedAt`이다. 축이 그대로인 뒤의 더 이른 입력도 역전이다. 같은 시각은 역전이 아니다. 역전 결과는 두 시각, 센서 축, 보류를 유지하고 배터리·강수 숫자를 공개하지 않는다. 데이터 품질은 `DEGRADED`다.
+관측 순서와 설정 순서는 다르다. 시계 역전은 `referenceTime < processedAt`이다. 축이 그대로인 뒤의 더 이른 입력도 역전이다. 같은 시각은 역전이 아니다. 상한 아래의 역전 결과는 두 시각, 센서 축, 보류를 유지하고 배터리·강수 숫자를 공개하지 않는다. 데이터 품질은 `DEGRADED`다. 역전은 이전 숫자를 거두는 경로가 아니다.
 
 모션 감소와 항상 표시는 `CallerSettings`다. `referenceTime >= processedAt`인 샘플은 그 설정을 호출 순서대로 교체한다. 같은 시각의 나중 호출도 교체한다. 더 이른 샘플은 저장된 보호를 해제하지 못하고, 없던 보호만 올릴 수 있다.
 
-`revision`은 1에서 시작한다. 축, 포커스, 공개 내용이 바뀔 때만 1 증가한다. 이전 값이 `Long.MAX_VALUE`이고 보호가 늘지 않는데 다른 내용이 바뀌면 `StepResult.LimitReached`다. `reason`은 `REVISION_EXHAUSTED`이고 `state`는 호출자가 넘긴 이전 상태다. 모션 감소나 항상 표시가 켜지면 그 상한에서도 `Advanced`로 반영하고 revision은 최댓값을 유지한다. 함께 있던 다른 변경은 버리며, 그때 이유에 `REVISION_EXHAUSTED`가 들어간다. 상한에서는 이미 켜진 보호를 끄지 않는다.
+`revision`은 1에서 시작한다. 축, 포커스, 공개 내용이 바뀔 때만 1 증가한다. 이전 값이 `Long.MAX_VALUE`이면 숫자를 감싸지 않는다. 그 상한에서 전해야 할 보호가 없으면 `StepResult.LimitReached`다. `reason`은 `REVISION_EXHAUSTED`이고 `state`는 호출자가 넘긴 이전 상태 객체다. `deliveredIntent()`는 null이다. 전해야 할 보호가 있으면 같은 revision의 `Advanced`다. 그 보호는 모션 감소나 항상 표시가 새로 켜지는 것, 그래픽 전력 제한이 새로 켜지는 것, 사용할 수 없게 된 채널의 기존 공개 숫자를 거두는 것이다.
 
-유지·디바운스 기한은 공유 `committedAt` 또는 보류 시작 시각에 정책을 더한 값이다. 그 덧셈이 시각 범위를 벗어나면 기한은 경과하지 않은 것으로 보고, 예외는 `step` 밖으로 나가지 않는다. `Duration.ofSeconds(Long.MAX_VALUE)`는 음수가 아니므로 받을 수 있다. 경보 진입은 날씨와 그 샘플의 목표 전원을 그 기한 없이 확정한다. 충전 예외는 전원만 그 기한 없이 확정한다. 활동은 그 예외들로 기한을 건너뛰지 않는다. 날씨는 충전 예외로 기한을 건너뛰지 않는다.
+소비자는 `StepResult.deliveredIntent()`가 null이 아니면 그 의도를 적용한다. revision이 이전과 같아도 적용한다. `LimitReached`와 `PolicyRejected`는 적용할 의도가 없다. revision이 증가할 때만 초안을 읽는 소비자는 상한의 보호를 놓친다.
 
-확정된 `CHARGING`은 충전 관측이 빠지거나 `Fresh`가 아니면 유지한다. 신선한 충전 거짓만 이탈을 만든다. 그 상태에서 신선한 낮은 배터리가 있어도 축은 `CHARGING`이고 품질은 Eco로 내려가지 않는다. 전원 축에 값을 추가하지 않는다.
+상한의 `Advanced`는 센서 축을 바꾸지 않는다. 새 신선한 숫자로 이전 공개 숫자를 바꾸지 않는다. 생략된 채널은 이전 숫자를 유지한다. 배터리나 강수 채널이 `Unusable`이고 이전 숫자가 있으면 그 숫자만 null로 거두고 데이터 품질은 `DEGRADED`다. null은 0이 아니다. 축 변경, 새 신선한 숫자 교체, 숫자 거두기가 버려지면 이유에 `REVISION_EXHAUSTED`를 더한다. 모션 감소나 항상 표시만 켜지고 버린 변경이 없으면 그 이유를 더하지 않는다. 이미 켜진 보호와 이미 켜진 그래픽 전력 제한은 상한에서 끄지 않는다. 상한의 역전은 보호가 늘지 않고 숫자를 거둘 근거가 없으면 이전 상태 객체의 `LimitReached`다.
+
+유지·디바운스 기한은 그 축의 확정 시각 또는 그 축의 보류 시작 시각에 정책을 더한 값이다. 그 덧셈이 시각 범위를 벗어나면 기한은 경과하지 않은 것으로 보고, 예외는 `step` 밖으로 나가지 않는다. `Duration.ofSeconds(Long.MAX_VALUE)`는 음수가 아니므로 받을 수 있다. 경보 진입은 날씨와 그 샘플의 목표 전원을 그 기한 없이 확정한다. 충전 예외는 전원만 그 기한 없이 확정한다. 활동은 그 예외들로 기한을 건너뛰지 않는다. 날씨는 충전 예외로 기한을 건너뛰지 않는다.
+
+확정된 `CHARGING`은 충전 관측이 빠지거나 `Fresh`가 아니면 유지한다. 신선한 충전 거짓만 이탈을 만든다. 그 상태에서 신선한 낮은 배터리가 있어도 축은 `CHARGING`이고 품질은 Eco로 내려가지 않는다. 전원 축에 값을 추가하지 않는다. 신선한 낮은 배터리는 그 축과 별도로 장식과 입자를 제한한다.
 
 ## 포커스와 표현
 
-`focusOf` 순서: `ALERT` → `CRITICAL`, `LOW` → `POWER`, `EXERCISE` → `EXERCISE`, `PRECIP` → `WEATHER`, 비기본 사용자 모드 또는 `OFFLINE` 또는 `NIGHT` 또는 `ACTIVE` → `CONTEXT`, 그 외 `DECORATIVE`.
+`focusOf` 순서: `ALERT` → `CRITICAL`, 확정된 `LOW` 또는 신선한 낮은 배터리 → `POWER`, `EXERCISE` → `EXERCISE`, `PRECIP` → `WEATHER`, 비기본 사용자 모드 또는 `OFFLINE` 또는 `NIGHT` 또는 `ACTIVE` → `CONTEXT`, 그 외 `DECORATIVE`.
 
-`IntelligenceIntent.toPresentationDraft()`는 도메인 `PresentationIntentDraft`에 포커스 이름, 품질 이름, `motionAllowed`, 이유 이름, revision을 넣는다. `paletteId`는 null이다. revision은 1부터 시작하고 null을 0으로 바꾸지 않는다.
+그래픽 전력 제한은 배터리 채널이 `Fresh`이고 저전력 히스테리시스가 참일 때 바로 켜진다. 디바운스와 최소 유지를 기다리지 않는다. 포커스가 `CRITICAL`이면 이유는 `WEATHER_ALERT`와 `POWER_LOW`다. 품질은 확정된 `LOW`일 때만 `ECO`다. 모션은 확정된 `LOW`, 모션 감소, 항상 표시에서만 꺼진다. 입자는 그때 꺼지고, 그래픽 전력 제한이 켜져도 꺼진다. `graphicsPowerLimited`는 그 제한이거나 확정된 `LOW`다.
 
-품질 이름 후보는 `BALANCED`, `ECO`, `AOD`다. 모션과 입자 허용은 모션 감소, 항상 표시, 저전력에서 거짓이다. `timeKept`와 `weatherNumbersKept`는 참을 유지한다.
+`IntelligenceIntent.toPresentationDraft()`는 도메인 `PresentationIntentDraft`에 포커스 이름, 품질 이름, `motionAllowed`, 이유 이름, revision을 넣는다. `paletteId`는 null이다. 도메인 초안은 `reasonCodes`를 생략할 수 있는 목록으로 선언한다. 이 모듈은 이유 이름을 항상 넣는다. 도메인 초안에는 입자 필드가 없으므로 그래픽 제한의 초안 표시는 포커스 이름 `POWER`와 이유 `POWER_LOW`다. `particleEffectsAllowed`는 `IntelligenceIntent`에 남긴다. revision은 1부터 시작하고 null을 0으로 바꾸지 않는다. 상한에서 소비자가 적용할 초안은 `deliveredIntent().toPresentationDraft()`다.
+
+품질 이름 후보는 `BALANCED`, `ECO`, `AOD`다. `timeKept`와 `weatherNumbersKept`는 참을 유지한다.
 
 ## 하지 않는 일
 

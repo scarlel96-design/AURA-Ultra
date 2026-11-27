@@ -169,9 +169,13 @@ class MachineTest {
         )
         assertEquals(PowerAxis.CHARGING, resting.state.power)
         assertEquals(10.0, resting.intent.publishedBatteryPercent)
-        assertEquals(FocusBand.DECORATIVE, resting.state.focus)
+        // DATA_INTELLIGENCE: a fresh low battery limits decoration even while the axis stays CHARGING.
+        // Quality stays BALANCED and motion stays allowed. GB02-A28.
+        assertEquals(FocusBand.POWER, resting.state.focus)
         assertEquals(QualityCandidate.BALANCED, resting.intent.quality)
         assertTrue(resting.intent.motionAllowed)
+        assertFalse(resting.intent.particleEffectsAllowed)
+        assertTrue(resting.intent.reasonCodes.contains(ReasonCode.POWER_LOW))
         assertTrue(resting.intent.reasonCodes.contains(ReasonCode.POWER_CHARGING))
         val exercise = run(
             null,
@@ -284,7 +288,8 @@ class MachineTest {
         )
         assertEquals(PowerAxis.NORMAL, night.state.power)
         assertEquals(LightAxis.NIGHT, night.state.light)
-        assertEquals(FocusBand.CONTEXT, night.state.focus)
+        // Fresh 10% limits decoration before the power axis commits. POWER outranks NIGHT context.
+        assertEquals(FocusBand.POWER, night.state.focus)
         assertEquals(first.state.committedAt, night.state.committedAt)
         assertEquals(2L, night.state.revision)
         val still = run(

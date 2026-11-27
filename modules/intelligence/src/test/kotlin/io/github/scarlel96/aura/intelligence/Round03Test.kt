@@ -123,9 +123,12 @@ class Round03Test {
         val omitted = run(plugged.state, sample(moment = at(1), battery = reading(10.0, "percent")), policy)
         assertEquals(PowerAxis.CHARGING, omitted.state.power)
         assertEquals(QualityCandidate.BALANCED, omitted.intent.quality)
-        assertEquals(FocusBand.DECORATIVE, omitted.state.focus)
+        // DATA_INTELLIGENCE: fresh low battery limits decoration and particles without a new axis.
+        assertEquals(FocusBand.POWER, omitted.state.focus)
         assertTrue(omitted.intent.motionAllowed)
-        assertFalse(omitted.intent.reasonCodes.contains(ReasonCode.POWER_LOW))
+        assertFalse(omitted.intent.particleEffectsAllowed)
+        assertTrue(omitted.intent.reasonCodes.contains(ReasonCode.POWER_LOW))
+        assertTrue(omitted.intent.reasonCodes.contains(ReasonCode.POWER_CHARGING))
         assertEquals(10.0, omitted.intent.publishedBatteryPercent)
     }
 
