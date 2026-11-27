@@ -11,7 +11,7 @@
 | 확인한 코드 SHA | ef9f9c9bbb2020de835926a3bf0e4262b9c89d51 |
 | 활성 GPT 작업 | GPT-01 PARTIAL / 회차 01 CI 성공 |
 | 활성 WO | WO-01 PARTIAL; WO-02·04 준비 작업만 일부 구현 |
-| 다음 안전한 행동 | GPT-01 회차 02: 이전 실패 APK ZIP 항목 격리 재현 및 공식 Memory Footprint Evaluator 통합·측정 |
+| 다음 안전한 행동 | 회차 02 CI 46000111754/46000111676의 최종 결과 및 로그 확인 → 메모리·서명·과거 DEX 증거 판정 |
 | 다음 실행 명세 | operations/GPT-01.md |
 | 현재 차단 | B-001 현재 APK PASS, 과거 원인 증거 보완 필요; B-010 RESOLVED |
 | 공식 WO GO | 0/38 |
@@ -86,3 +86,26 @@ G0 PASS; G1 범위 내 구현 PASS; G2 검증기 회귀 PASS; G3 현재 Debug cl
 
 ## GPT-01 회차 02 — 검증 후보
 공식 메모리 평가 및 debug 서명 검사 CI 추가, 과거 SHA 격리 재현 워크플로 추가. 새 CI 결과 PENDING. 기존 B-001 원인 증거는 재현 로그 확인 전 OPEN. GPT-01 PARTIAL 및 출시 NO-GO 유지. evidence/GPT-01/REPORT-02.md 참조.
+
+## 회차 02 — 검증 체크포인트
+검증 대상 코드 SHA 98a4f915577cf3175beeca19864a431061673e7b.
+- [CI 46000111754](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46000111754), job 140509284826: in_progress/PENDING.
+  - Set up job: success
+  - Verify Gradle wrapper: success
+  - Check project invariants: success
+  - Validation tool regression tests: success
+  - Install Android SDK: success
+  - Confirm Android SDK tools: success
+  - Official WFF validation: success
+  - Build debug APKs: in_progress
+  - Check APK contents: pending
+  - Official asset memory evaluation: pending
+  - Verify debug APK signatures: pending
+  - Upload debug APKs: pending
+- [CI 46000111676](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46000111676), job 140509283630: in_progress/PENDING.
+  - Set up job: success
+  - Verify historical source: success
+  - Run android-actions/setup-android@138b5fb1cf087fdb4c5f3c621466fe304d0cf2e3: success
+  - Rebuild historical WFF2: in_progress
+  - Inspect historical APK (expected prohibited payload): pending
+검증 도구 및 workflow의 원격 저장소 원문을 다시 읽고 요구사항과 대조했다(별도 자기 재검토, 독립 에이전트 아님). 기존 제품 XML/Gradle 설정은 유지한다. 과거 실패 재현 workflow는 과거 SHA를 체크아웃하고 금지 항목 확인 시 예상 실패 검출로 처리하며 APK를 게시하지 않는다. 실제 과거 APK 클래스 및 메모리 수치는 최종 로그 확인 전 미확정. 기존 B-001 OPEN, B-010 RESOLVED, GPT-01 PARTIAL 및 출시 NO-GO 유지. 새 CI가 완료되면 원본 로그·측정 수치·서명·Artifact·과거 APK 항목/클래스를 대조하고 다음 상태를 판정한다. 이번 기록은 문서 전용 [skip ci]로 코드 CI를 취소하지 않는다.

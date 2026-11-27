@@ -45,3 +45,5 @@
 ## 2026-11-27 / GPT-01 회차 02
 - 기준 HEAD 86f9df3f174f2356959ab04ec4ab6fae0379521e. PRE-FLIGHT 및 이전 CI/Artifact 확인. 공식 memory-footprint release digest, CLI와 소스의 report/byte 단위 확인.
 - 기존 70/7 MiB 예산 검증, 실패 검출 단위 시험, debug 서명 검사, 별도 과거 SHA 재현 CI 추가. 제품 XML/Gradle 설정 변경 없음. 새 CI PENDING. REPORT-02 참조.
+
+- 회차 02 코드 98a4f915577cf3175beeca19864a431061673e7b, CI 46000111754 및 46000111676 확인. 원격 소스 자기 재검토 완료. 실제 단계별 상태와 재개 조건은 STATUS 및 REPORT-02에 저장. [skip ci] 문서 체크포인트.
