@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "logicalSize": 450,
+  "profiles": [
+    {
+      "name": "wff2",
+      "version": 2,
+      "minSdk": 34,
+      "enabled": true
+    },
+    {
+      "name": "wff3",
+      "version": 3,
+      "minSdk": 35,
+      "enabled": true
+    },
+    {
+      "name": "wff4",
+      "version": 4,
+      "minSdk": 36,
+      "enabled": true
+    },
+    {
+      "name": "wff5",
+      "version": 5,
+      "minSdk": null,
+      "enabled": false,
+      "reason": "Confirm API 37 toolchain, final WFF schema and device support before enabling."
+    }
+  ]
+}

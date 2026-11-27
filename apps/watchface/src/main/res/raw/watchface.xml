@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Bootstrap face. Premium assets and motion require separate PoC approval. -->
+<WatchFace width="450" height="450">
+    <Metadata key="CLOCK_TYPE" value="DIGITAL" />
+    <Metadata key="PREVIEW_TIME" value="10:08:00" />
+    <Scene backgroundColor="#FF000000">
+        <Group name="ActiveDecoration" x="0" y="0" width="450" height="450">
+            <Variant mode="AMBIENT" target="alpha" value="0" />
+            <PartDraw x="0" y="0" width="450" height="450">
+                <Ellipse x="15" y="15" width="420" height="420">
+                    <Stroke color="#FF314B60" thickness="2" />
+                </Ellipse>
+                <Ellipse x="23" y="23" width="404" height="404">
+                    <Stroke color="#FF172C39" thickness="1" />
+                </Ellipse>
+                <RoundRectangle x="98" y="247" width="254" height="42" cornerRadiusX="21" cornerRadiusY="21">
+                    <Fill color="#FF101E2A" />
+                    <Stroke color="#FF314B60" thickness="1" />
+                </RoundRectangle>
+            </PartDraw>
+            <PartText x="145" y="52" width="160" height="29">
+                <Text align="CENTER"><Font family="SYNC_TO_DEVICE" size="15" color="#FF79D4F2">AURA ULTRA</Font></Text>
+            </PartText>
+            <PartText x="90" y="90" width="270" height="35">
+                <Text align="CENTER">
+                    <Font family="SYNC_TO_DEVICE" size="23" color="#FFA9BACB">
+                        <Template>%s.%s · %s<Parameter expression="[MONTH_Z]" /><Parameter expression="[DAY_Z]" /><Parameter expression="[DAY_OF_WEEK_S]" /></Template>
+                    </Font>
+                </Text>
+            </PartText>
+            <PartText x="120" y="250" width="210" height="35">
+                <Text align="CENTER">
+                    <Font family="SYNC_TO_DEVICE" size="24" color="#FF79D4F2">
+                        <Template>%s%%<Parameter expression="[BATTERY_PERCENT]" /></Template>
+                    </Font>
+                </Text>
+            </PartText>
+            <PartText x="85" y="300" width="280" height="34">
+                <Text align="CENTER">
+                    <Font family="SYNC_TO_DEVICE" size="22" color="#FFA9BACB">
+                        <Template>%s / %s<Parameter expression="[STEP_COUNT]" /><Parameter expression="[STEP_GOAL]" /></Template>
+                    </Font>
+                </Text>
+            </PartText>
+        </Group>
+        <DigitalClock x="40" y="131" width="370" height="118">
+            <TimeText x="0" y="0" width="370" height="118" format="hh:mm" hourFormat="SYNC_TO_DEVICE" align="CENTER" alpha="255">
+                <Variant mode="AMBIENT" target="alpha" value="0" />
+                <Font family="SYNC_TO_DEVICE" size="96" weight="NORMAL" color="#FFF3F7FA" />
+            </TimeText>
+            <TimeText x="0" y="0" width="370" height="118" format="hh:mm" hourFormat="SYNC_TO_DEVICE" align="CENTER" alpha="0">
+                <Variant mode="AMBIENT" target="alpha" value="255" />
+                <Font family="SYNC_TO_DEVICE" size="96" weight="THIN" color="#FFB7C0C9" />
+            </TimeText>
+        </DigitalClock>
+    </Scene>
+</WatchFace>

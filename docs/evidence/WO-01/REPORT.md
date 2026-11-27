@@ -1,0 +1,5 @@
+# WO-01 — preliminary environment evidence
+Date: 2026-11-27. Baseline parent: 6f074fbc86c1382a52bfeac57023c1a3f7a7559e.
+Work mode handoff declined. Chat environment: java available (/usr/bin/java), Python 3.13.5, Git 2.47.3. No Gradle or ADB on PATH; ANDROID_HOME unset. External Gradle distribution hostname did not resolve. Local Android build and device tests NOT RUN.
+Official sources inspected: WFF setup, digital clock/time and text reference, WFF version table (2/34, 3/35, 4/36), AGP 8.10 compatibility, official Android Wear OS SimpleDigital and Weather examples, Google watchface release API, Gradle 8.11.1 checksums. WFF5 official announcement exists; final SDK/toolchain and device support remain to verify. Latest Samsung model matrix and physical watch firmware remain unverified in this work.
+Decision: PARTIAL. Establish a reversible bootstrap without claiming WO-01 complete or closing WO-02. Use CI for Android build and schema tests. Record actual results separately. Physical device, memory, power and latest device confirmations remain pending.

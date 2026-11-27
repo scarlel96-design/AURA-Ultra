@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 1,
+  "size": 450,
+  "colors": {
+    "background": "#FF000000",
+    "primary": "#FFF3F7FA",
+    "secondary": "#FFA9BACB",
+    "ring": "#FF314B60",
+    "accent": "#FF79D4F2",
+    "panel": "#FF101E2A",
+    "ambient": "#FFB7C0C9"
+  },
+  "layout": {
+    "time": [
+      40,
+      131,
+      370,
+      118
+    ],
+    "date": [
+      90,
+      90,
+      270,
+      35
+    ],
+    "battery": [
+      120,
+      250,
+      210,
+      35
+    ],
+    "steps": [
+      85,
+      300,
+      280,
+      34
+    ],
+    "brand": [
+      145,
+      52,
+      160,
+      29
+    ]
+  },
+  "typography": {
+    "time": 96,
+    "date": 23,
+    "battery": 24,
+    "steps": 22,
+    "brand": 15
+  }
+}

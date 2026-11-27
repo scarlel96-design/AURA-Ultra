@@ -11,3 +11,11 @@
 - AOD 연속성, Reference 제어, 숫자 morph, Samsung Health 독점 지표, Watch Face Push: PoC 필요.
 
 설계 문서의 기능은 구현 목표다. 완료 증거가 없는 기능을 출시 기능으로 표시하지 않는다.
+
+## Bootstrap implementation (2026-11-27)
+- Resource-only Android project and WFF 2/3/4 debug variants created; shared minimal WFF face.
+- WO-01 PARTIAL: local Android SDK/Gradle/ADB not available; device and Samsung model matrix verification pending.
+- WO-02/04 bootstrap only, no formal completion. WFF5 remains disabled pending confirmed SDK/toolchain.
+- CI configured for official validator, APK assembly and payload inspection. Check actual workflow results; no PASS assumed.
+- Premium design and motion, external data, services, companion, memory and physical-device tests remain pending.
+- Product release NO-GO.
