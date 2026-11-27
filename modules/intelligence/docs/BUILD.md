@@ -10,7 +10,11 @@
 .\gradlew -p modules/intelligence test
 .\gradlew -p modules/intelligence dependencies --configuration testRuntimeClasspath
 .\gradlew -p modules/domain test
+python modules/intelligence/tools/check_junit_xml.py --dir modules/intelligence/build/test-results/test --files 9 --tests 72
+python modules/intelligence/tools/check_junit_xml.py --dir modules/domain/build/test-results/test --files 7 --tests 81
 ```
+
+`check_junit_xml.py`는 표준 라이브러리만 쓴다. 공통 GitHub Actions에는 연결되어 있지 않다. `--not-before`에 ISO-8601 시각을 주면 그 시각보다 이른 XML을 거절한다. 시험이 끝난 디렉터리에만 실행한다.
 
 `-p`는 시작 디렉터리를 `modules/intelligence`로 두고 이 디렉터리의 `settings.gradle.kts`를 읽는다. 루트 프로젝트 `:apps:watchface`는 구성되지 않는다. 도메인 회귀는 기존 `modules/domain` 빌드를 그대로 실행한다.
 

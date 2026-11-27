@@ -32,6 +32,10 @@ tasks.withType<Test>().configureEach {
         )
     }
     systemProperty("aura.intelligence.sources", intelligenceSources)
+    systemProperty(
+        "aura.intelligence.junitTool",
+        layout.projectDirectory.file("tools/check_junit_xml.py").asFile.absolutePath,
+    )
     testLogging {
         events("passed", "failed", "skipped")
         exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL

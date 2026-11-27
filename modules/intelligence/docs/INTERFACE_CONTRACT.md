@@ -43,7 +43,7 @@
 
 `revision`은 1에서 시작한다. 축, 포커스, 공개 내용이 바뀔 때만 1 증가한다. 이전 값이 `Long.MAX_VALUE`이면 숫자를 감싸지 않는다. 그 상한에서 전해야 할 보호가 없으면 `StepResult.LimitReached`다. `reason`은 `REVISION_EXHAUSTED`이고 `state`는 호출자가 넘긴 이전 상태 객체다. `deliveredIntent()`는 null이다. 전해야 할 보호가 있으면 같은 revision의 `Advanced`다. 그 보호는 모션 감소나 항상 표시가 새로 켜지는 것, 그래픽 전력 제한이 새로 켜지는 것, 사용할 수 없게 된 채널의 기존 공개 숫자를 거두는 것이다.
 
-소비자는 `StepResult.deliveredIntent()`가 null이 아니면 그 의도를 적용한다. revision이 이전과 같아도 적용한다. `LimitReached`와 `PolicyRejected`는 적용할 의도가 없다. revision이 증가할 때만 초안을 읽는 소비자는 상한의 보호를 놓친다.
+소비자는 `StepResult.deliveredIntent()`가 null이 아니면 그 의도를 적용한다. revision이 이전과 같아도 적용한다. `LimitReached`와 `PolicyRejected`는 적용할 의도가 없다. revision이 증가할 때만 초안을 읽는 소비자는 상한의 보호를 놓친다. 그 누락은 시험 전용 소비자 둘을 같은 입력에 넣어 확인한다. Wear Services와 WFF 연결 코드는 없다.
 
 상한의 `Advanced`는 센서 축을 바꾸지 않는다. 새 신선한 숫자로 이전 공개 숫자를 바꾸지 않는다. 생략된 채널은 이전 숫자를 유지한다. 배터리나 강수 채널이 `Unusable`이고 이전 숫자가 있으면 그 숫자만 null로 거두고 데이터 품질은 `DEGRADED`다. null은 0이 아니다. 축 변경, 새 신선한 숫자 교체, 숫자 거두기가 버려지면 이유에 `REVISION_EXHAUSTED`를 더한다. 모션 감소나 항상 표시만 켜지고 버린 변경이 없으면 그 이유를 더하지 않는다. 이미 켜진 보호와 이미 켜진 그래픽 전력 제한은 상한에서 끄지 않는다. 상한의 역전은 보호가 늘지 않고 숫자를 거둘 근거가 없으면 이전 상태 객체의 `LimitReached`다.
 
@@ -55,12 +55,32 @@
 
 `focusOf` 순서: `ALERT` → `CRITICAL`, 확정된 `LOW` 또는 신선한 낮은 배터리 → `POWER`, `EXERCISE` → `EXERCISE`, `PRECIP` → `WEATHER`, 비기본 사용자 모드 또는 `OFFLINE` 또는 `NIGHT` 또는 `ACTIVE` → `CONTEXT`, 그 외 `DECORATIVE`.
 
-그래픽 전력 제한은 배터리 채널이 `Fresh`이고 저전력 히스테리시스가 참일 때 바로 켜진다. 디바운스와 최소 유지를 기다리지 않는다. 포커스가 `CRITICAL`이면 이유는 `WEATHER_ALERT`와 `POWER_LOW`다. 품질은 확정된 `LOW`일 때만 `ECO`다. 모션은 확정된 `LOW`, 모션 감소, 항상 표시에서만 꺼진다. 입자는 그때 꺼지고, 그래픽 전력 제한이 켜져도 꺼진다. `graphicsPowerLimited`는 그 제한이거나 확정된 `LOW`다.
+그래픽 전력 제한은 배터리 채널이 `Fresh`이고 저전력 히스테리시스가 참일 때 바로 켜진다. 디바운스와 최소 유지를 기다리지 않는다. 포커스가 `CRITICAL`이면 이유는 `WEATHER_ALERT`와 `POWER_LOW`다. 품질은 확정된 `LOW`일 때만 `ECO`다. 모션은 확정된 `LOW`, 모션 감소, 항상 표시에서만 꺼진다. 입자는 그때 꺼지고, 그래픽 전력 제한이 켜져도 꺼진다. `graphicsPowerLimited`는 그 제한이거나 확정된 `LOW`다. 상한 아래에서 배터리 생략은 이번 샘플의 그래픽 제한을 켜지 않는다. 확정 축이 `LOW`가 아니면 이전 스텝의 그래픽 제한은 다음 의도로 넘어가지 않는다. 상한에서 이미 켜진 제한은 끄지 않는다.
 
 `IntelligenceIntent.toPresentationDraft()`는 도메인 `PresentationIntentDraft`에 포커스 이름, 품질 이름, `motionAllowed`, 이유 이름, revision을 넣는다. `paletteId`는 null이다. 도메인 초안은 `reasonCodes`를 생략할 수 있는 목록으로 선언한다. 이 모듈은 이유 이름을 항상 넣는다. 도메인 초안에는 입자 필드가 없으므로 그래픽 제한의 초안 표시는 포커스 이름 `POWER`와 이유 `POWER_LOW`다. `particleEffectsAllowed`는 `IntelligenceIntent`에 남긴다. revision은 1부터 시작하고 null을 0으로 바꾸지 않는다. 상한에서 소비자가 적용할 초안은 `deliveredIntent().toPresentationDraft()`다.
 
-품질 이름 후보는 `BALANCED`, `ECO`, `AOD`다. `timeKept`와 `weatherNumbersKept`는 참을 유지한다.
+품질 이름 후보는 `BALANCED`, `ECO`, `AOD`다. `timeKept`와 `weatherNumbersKept`는 참을 유지한다. `reasonCodes`는 수정할 수 없는 복사본이다.
+
+## 초기 상태
+
+`previous`가 null이면 첫 스텝이다. revision은 1이고 보류는 없다. `committedAt`, 축별 확정 시각, `processedAt`은 그 샘플의 `referenceTime`이다. 축은 그 샘플의 목표값이고, 설정은 그 샘플의 모션 감소와 항상 표시다.
+
+## 소비자 순서
+
+`deliveredIntent()`는 한 결과 안의 의도를 고른다. 결과가 호출 밖에서 재정렬되면 이전 의도가 최신 보호를 덮어쓸 수 있다. 지원되는 소비자는 `step` 결과를 호출 순서대로 받고, null이 아닌 `deliveredIntent()`를 revision이 같아도 적용한다. `Advanced.state.processedAt`이 마지막으로 적용한 시각보다 이르면 그 결과는 버린다. 같은 시각은 호출 순서를 유지한다. 의도 객체에는 `processedAt`이 없다. 이 규칙 없이 결과를 재정렬하는 통합은 차단점 GB02-R05-ASYNC다. 순서 필드는 추가하지 않는다.
+
+## 실제 공급원
+
+호출자가 `referenceTime`을 넣는다. 기계는 시스템 시계를 읽지 않는다. 관측은 도메인 `Observation`으로 들어오고, null은 생략이며 실패한 관측이 아니다. 공개 숫자 null을 0으로 그리지 않는다. `particleEffectsAllowed`는 도메인 초안에 없으므로 초안만 보는 렌더러는 입자 제한을 놓친다. 포커스 이름 `POWER`와 이유 `POWER_LOW`를 함께 본다. 제품 임계값과 플랫폼 지원 범위는 이 계약이 확정하지 않는다.
+
+## 구현하지 않은 기능
+
+Wear Services, WFF 렌더링, 실제 공급원 연결, 실기기, 배터리 측정, 예보, 행동 추론, 상황 스냅샷, 팔레트, OS 절전 연동, 공통 GitHub Actions 적용.
+
+## 총괄 CI
+
+공통 `bootstrap.yml`은 수정하지 않는다. 총괄이 [CI_PROPOSAL.md](CI_PROPOSAL.md)의 워크플로를 별도로 추가한다. 검증 도구는 `modules/intelligence/tools/check_junit_xml.py`다. 기대 수량은 intelligence `TEST-*.xml` 9개·시험 72개, domain 7개·시험 81개다. 수량을 낮추지 않는다.
 
 ## 하지 않는 일
 
-도메인 소스를 바꾸지 않는다. 상황 스냅샷 초안을 채우지 않는다. 예보를 계산하지 않는다. 민감한 행동을 추정하지 않는다. 시스템 시계와 네트워크와 Android를 쓰지 않는다. 실기기 측정값으로 임계값을 확정하지 않는다.
+도메인 소스를 바꾸지 않는다. 상황 스냅샷 초안을 채우지 않는다. 예보를 계산하지 않는다. 민감한 행동을 추정하지 않는다. 시스템 시계와 네트워크와 Android를 쓰지 않는다. 실기기 측정값으로 임계값을 확정하지 않는다. 순서 필드나 Wear·WFF 연결로 재정렬을 대신 막지 않는다.

@@ -745,7 +745,7 @@ private fun intentFor(
         publishedBatteryPercent = publishedBattery,
         publishedPrecipitation = publishedPrecipitation,
         dataQuality = dataQuality,
-        reasonCodes = reasons,
+        reasonCodes = java.util.List.copyOf(reasons),
         revision = state.revision,
     )
 }
