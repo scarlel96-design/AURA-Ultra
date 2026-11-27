@@ -10,7 +10,7 @@ from generate_bootstrap import ROOT, exact_keys, integer, rect, safe_path, check
 SOURCE = "design-system/layouts/signature-draft.json"
 OUTPUT = "assets/generated/layouts/signature-draft"
 DIAMETERS = (432, 438, 480, 498)
-REGIONS = {"brand", "date", "battery", "time", "weather", "heart", "steps", "rain"}
+REGIONS = {"brand", "date", "battery", "time", "weather", "heart", "steps", "rain", "ampm"}
 
 
 def unique(pairs):
@@ -62,7 +62,7 @@ def parse(raw):
     t = json.loads(raw, object_pairs_hook=unique)
     exact_keys(t, {"schemaVersion", "logicalSize", "safeInset", "minGap",
                    "diameters", "regions", "fontSizes", "ambient"}, "layout")
-    integer(t["schemaVersion"], 1, 1, "schemaVersion")
+    integer(t["schemaVersion"], 2, 2, "schemaVersion")
     integer(t["logicalSize"], 450, 450, "logicalSize")
     integer(t["safeInset"], 12, 18, "safeInset")
     integer(t["minGap"], 8, 20, "minGap")
@@ -70,8 +70,8 @@ def parse(raw):
         raise ValueError("Missing or unsupported screen diameter")
     exact_keys(t["regions"], REGIONS, "regions")
     exact_keys(t["fontSizes"], REGIONS, "fontSizes")
-    if t["ambient"] != ["date", "time"]:
-        raise ValueError("Draft ambient contract requires date and time")
+    if t["ambient"] != ["date", "time", "ampm"]:
+        raise ValueError("Draft ambient contract requires date, time and conditional AM/PM")
     geometry(t["regions"], 450, t["safeInset"], t["minGap"])
     for name, font in t["fontSizes"].items():
         integer(font, 1, t["regions"][name][3], name + " font size")

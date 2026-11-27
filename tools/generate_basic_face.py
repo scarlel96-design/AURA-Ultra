@@ -37,14 +37,15 @@ def part(parent, box, size, color, text, expressions=(), name=None, weight=None)
     return p
 
 
-def condition(parent, cases, default):
+def condition(parent, cases, default=None):
     c = node(parent, "Condition")
     es = node(c, "Expressions")
     for name, expr, _ in cases:
         node(es, "Expression", name=name).text = expr
     for name, _, emit in cases:
         emit(node(c, "Compare", expression=name))
-    default(node(c, "Default"))
+    if default is not None:
+        default(node(c, "Default"))
     return c
 
 
@@ -104,6 +105,10 @@ def candidate(layout):
 
     # Keep date independent of external data and before the dynamic clock.
     part(scene, r["date"], fonts["date"], muted, "%s.%s · %s", ("[MONTH_Z]", "[DAY_Z]", "[DAY_OF_WEEK_S]"), name="CoreDate")
+    # Omit the marker entirely in 24-hour mode. Keep it before the clock for AOD.
+    condition(scene, [("show_ampm", "![IS_24_HOUR_MODE]",
+                      lambda p: part(p, r["ampm"], fonts["ampm"], muted, "%s",
+                                     ("[AMPM_STRING]",), name="CoreAmPm"))])
     clock = node(scene, "DigitalClock", **bounds(r["time"]))
     _,_,w,h = r["time"]
     for alpha, ambient, weight, color in [(255,0,"NORMAL",primary),(0,255,"THIN","#FFB7C0C9")]:

@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "logicalSize": 450,
   "safeInset": 12,
   "minGap": 8,
@@ -36,27 +36,33 @@
     ],
     "weather": [
       62,
-      247,
+      268,
       158,
       52
     ],
     "heart": [
       230,
-      247,
+      268,
       158,
       52
     ],
     "steps": [
       98,
-      312,
+      328,
       254,
       35
     ],
     "rain": [
       127,
-      357,
+      371,
       196,
       29
+    ],
+    "ampm": [
+      180,
+      242,
+      90,
+      18
     ]
   },
   "fontSizes": {
@@ -67,10 +73,12 @@
     "weather": 25,
     "heart": 25,
     "steps": 23,
-    "rain": 23
+    "rain": 23,
+    "ampm": 16
   },
   "ambient": [
     "date",
-    "time"
+    "time",
+    "ampm"
   ]
 }

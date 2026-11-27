@@ -81,3 +81,13 @@ class BasicFaceTests(unittest.TestCase):
         names = [g.get("name") for g in self.face.findall(".//Group")]
         self.assertEqual(set(names), {"ActiveInformation", "WeatherAvailable", "WeatherUnavailable"})
         self.assertEqual(len(names), len(set(names)))
+
+    def test_ampm_guard_and_source(self):
+        c = self.scene.find("Condition")
+        self.assertEqual(c.find("Expressions/Expression").text, "![IS_24_HOUR_MODE]")
+        self.assertIsNone(c.find("Default"))
+        marker = c.find("Compare/PartText")
+        self.assertEqual(marker.get("name"), "CoreAmPm")
+        self.assertEqual(marker.find(".//Parameter").get("expression"), "[AMPM_STRING]")
+        self.assertEqual([int(marker.get(k)) for k in ("x","y","width","height")], parse((ROOT / SOURCE).read_bytes())["regions"]["ampm"])
+        self.assertFalse(marker.findall("Variant"))

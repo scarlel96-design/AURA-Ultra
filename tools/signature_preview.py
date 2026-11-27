@@ -14,10 +14,10 @@ from generate_basic_face import OUTPUT as FACE_OUTPUT, generate as generate_face
 from round_layout import DIAMETERS, inside_circle, project
 
 PREFIX = "assets/generated/layouts/basic-preview"
-BOOL_KEYS = {"WEATHER.IS_AVAILABLE", "WEATHER.IS_ERROR", "WEATHER.DAYS.0.IS_AVAILABLE"}
+BOOL_KEYS = {"WEATHER.IS_AVAILABLE", "WEATHER.IS_ERROR", "WEATHER.DAYS.0.IS_AVAILABLE", "IS_24_HOUR_MODE"}
 INT_KEYS = {"BATTERY_PERCENT", "STEP_COUNT", "STEP_GOAL", "WEATHER.TEMPERATURE",
             "WEATHER.TEMPERATURE_UNIT", "WEATHER.DAYS.0.CHANCE_OF_PRECIPITATION"}
-STR_KEYS = {"MONTH_Z", "DAY_Z", "DAY_OF_WEEK_S", "WEATHER.CONDITION_NAME"}
+STR_KEYS = {"MONTH_Z", "DAY_Z", "DAY_OF_WEEK_S", "WEATHER.CONDITION_NAME", "AMPM_STRING"}
 TAGS = {"WatchFace", "Metadata", "Scene", "Group", "Variant", "PartText", "Text",
         "Font", "Template", "Parameter", "Condition", "Expressions", "Expression",
         "Compare", "Default", "DigitalClock", "TimeText"}
@@ -29,7 +29,8 @@ def scenario(name, locale, hour, minute, hour_format, ambient=False, weather="no
         raise ValueError("Unsupported synthetic locale or hour format")
     if type(hour) is not int or type(minute) is not int or not 0 <= hour <= 23 or not 0 <= minute <= 59:
         raise ValueError("Invalid synthetic time")
-    sources = {"MONTH_Z": "12", "DAY_Z": "31",
+    sources = {"IS_24_HOUR_MODE": hour_format == 24, "AMPM_STRING": "AM" if hour < 12 else "PM",
+               "MONTH_Z": "12", "DAY_Z": "31",
                "DAY_OF_WEEK_S": "목" if locale == "ko-KR" else "Thu",
                "BATTERY_PERCENT": 85, "STEP_COUNT": 6420, "STEP_GOAL": 8000, "HEART_RATE": 72,
                "WEATHER.IS_AVAILABLE": weather not in ("missing", "error"),
@@ -76,6 +77,8 @@ def source(data, key):
     if key in INT_KEYS and type(value) is int:
         return value
     if key in STR_KEYS and isinstance(value, str) and value.strip():
+        if key == "AMPM_STRING" and value not in ("AM", "PM"):
+            raise ValueError("Invalid AM/PM source")
         return value
     if key == "HEART_RATE":
         if type(value) in (float, int) or (type(value) is str and re.fullmatch(r"[0-9]+(?:\.[0-9]+)?", value)):
@@ -89,6 +92,8 @@ def expression(text, data):
     """Evaluate only expressions used by this candidate."""
     if not isinstance(text, str):
         raise ValueError("Missing expression")
+    if text == "![IS_24_HOUR_MODE]":
+        return not source(data, "IS_24_HOUR_MODE")
     if text == "[HEART_RATE] > 0 && [HEART_RATE] <= 240":
         return 0 < source(data, "HEART_RATE") <= 240
     if text == "round([HEART_RATE])":
@@ -128,7 +133,7 @@ def font_text(font, data):
 
 def selected(condition, data):
     children = list(condition)
-    if len(children) < 3 or children[0].tag != "Expressions" or children[-1].tag != "Default":
+    if len(children) < 2 or children[0].tag != "Expressions":
         raise ValueError("Unsupported Condition structure")
     expressions = {}
     for e in children[0]:
@@ -136,11 +141,12 @@ def selected(condition, data):
         if e.tag != "Expression" or not name or name in expressions:
             raise ValueError("Invalid Condition expression name")
         expressions[name] = e.text
-    comparisons = children[1:-1]
+    fallback = children[-1] if children[-1].tag == "Default" else None
+    comparisons = children[1:-1] if fallback is not None else children[1:]
     names = [c.get("expression") for c in comparisons]
     if set(names) != set(expressions) or len(names) != len(expressions):
         raise ValueError("Unmatched Condition expressions")
-    if any(c.tag != "Compare" or len(c) != 1 for c in comparisons) or len(children[-1]) != 1:
+    if any(c.tag != "Compare" or len(c) != 1 for c in comparisons) or (fallback is not None and len(fallback) != 1):
         raise ValueError("Expected single-child comparison and fallback")
     for c in comparisons:
         result = expression(expressions[c.get("expression")], data)
@@ -148,7 +154,7 @@ def selected(condition, data):
             raise ValueError("Condition did not return Boolean")
         if result:
             return c[0]
-    return children[-1][0]
+    return fallback[0] if fallback is not None else None
 
 
 def alpha(element, ambient):
@@ -211,7 +217,9 @@ def collect(xml, sample):
         if e.tag == "Variant":
             return
         if e.tag == "Condition":
-            walk(selected(e, data), offset)
+            child = selected(e, data)
+            if child is not None:
+                walk(child, offset)
             return
         if e.tag in ("Group", "DigitalClock"):
             box = box_at(e, offset)
@@ -245,7 +253,13 @@ def collect(xml, sample):
     roles = [i["role"] for i in items]
     if roles.count("CoreDate") != 1 or roles.count("time") != 1:
         raise ValueError("Missing or duplicate core time/date")
-    if ambient and len(items) != 2:
+    expected_ampm = sample["hourFormat"] == 12
+    markers = [i for i in items if i["role"] == "CoreAmPm"]
+    if len(markers) != int(expected_ampm):
+        raise ValueError("Wrong AM/PM visibility")
+    if expected_ampm and markers[0]["text"] != ("AM" if sample["hour"] < 12 else "PM"):
+        raise ValueError("Wrong AM/PM value")
+    if ambient and len(items) != 2 + int(expected_ampm):
         raise ValueError("Unexpected ambient data")
     return items
 
@@ -284,7 +298,7 @@ def generate(root=ROOT):
             records.append({"scenario": s["name"], "locale": s["locale"], "hourFormat": s["hourFormat"],
                             "ambient": s["ambient"], "diameter": d,
                             "expectedAmPm": ("AM" if s["hour"] < 12 else "PM") if s["hourFormat"] == 12 else None,
-                            "amPmRendered": False, "items": items, "path": path,
+                            "amPmRendered": any(i["role"] == "CoreAmPm" for i in items), "items": items, "path": path,
                             "sha256": hashlib.sha256(data).hexdigest()})
     report = {"schemaVersion": 1, "scope": "synthetic host subset, not Wear OS rendering or glyph measurement",
               "sourceXmlSha256": hashlib.sha256(xml).hexdigest(), "previews": records}
