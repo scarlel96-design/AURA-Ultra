@@ -1,0 +1,119 @@
+Starting a Gradle Daemon, 2 incompatible and 10 stopped Daemons could not be reused, use --status for details
+> Task :domain:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :clean
+> Task :checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :processResources NO-SOURCE
+> Task :processTestResources NO-SOURCE
+> Task :domain:processResources NO-SOURCE
+> Task :domain:compileKotlin
+> Task :domain:compileJava NO-SOURCE
+> Task :domain:classes UP-TO-DATE
+> Task :domain:jar
+> Task :compileKotlin
+> Task :compileJava NO-SOURCE
+> Task :classes UP-TO-DATE
+> Task :jar
+> Task :compileTestKotlin
+> Task :compileTestJava NO-SOURCE
+> Task :testClasses UP-TO-DATE
+
+> Task :test
+TEST_JVM version=17 vendor=Eclipse Temurin path=C:\Users\scarl\.jdks\temurin-17
+
+GateTest > scaleBoundsAreInclusiveAndAreNotConverted() PASSED
+
+GateTest > expiryBoundaryAndBadStatusStayUnusable() PASSED
+
+GateTest > absentIsNotZero() PASSED
+
+GateTest > uncheckedTokenIsNotExercise() PASSED
+
+MachineTest > firstStepStartsAtRevisionOneAndDoesNotInferActivity() PASSED
+
+MachineTest > lowPowerKeepsFreshWeatherNumbersWhileRemovingParticles() PASSED
+
+MachineTest > urgentAlertBypassesHoldAndCommitsTheCurrentDesiredSensors() PASSED
+
+MachineTest > freshAlertSurvivesABadPrecipitationSample() PASSED
+
+MachineTest > chargingIsNotLowPowerAndBypassesHold() PASSED
+
+MachineTest > powerHysteresisUsesTheCandidateBand() PASSED
+
+MachineTest > callerScaleIsNotTheDocumentedPercentScale() PASSED
+
+MachineTest > omittedChannelsKeepStateAndUnusableSettingsDoNotWipeIt() PASSED
+
+MachineTest > repeatedSamplesAndReturningDesiredDoNotBumpRevision() PASSED
+
+MachineTest > precipitationHysteresisDoesNotTreatAlertAsPrecip() PASSED
+
+MachineTest > immediateAxesDoNotResetTheSensorHold() PASSED
+
+MachineTest > badObservationsAreNotPromotedAndDoNotBecomeZero() PASSED
+
+MachineTest > clockInversionPublishesNoNumbersAndKeepsTheMachineState() PASSED
+
+MachineTest > presentationChangesBumpRevisionWhenAxesStay() PASSED
+
+MachineTest > priorityPrefersCriticalThenPowerThenExerciseThenWeatherThenContext() PASSED
+
+MachineTest > documentedHoldAndSeparateDebounceKeepThePreviousSensorAxis() PASSED
+
+MachineTest > suppliedFreshChannelsStayFreshAndObservationsAreUnchanged() PASSED
+
+PolicyTest > durationsAndScalesAndUnitsMustBeUsable() PASSED
+
+PolicyTest > powerBandMustRise() PASSED
+
+PolicyTest > precipitationBandMustFall() PASSED
+
+PolicyTest > documentedCandidatesRemainConfigurable() PASSED
+
+PolicyTest > rejectedPolicyDoesNotAdvance() PASSED
+
+Round02Test > freshChargingFalseUsesHysteresisAndDoesNotInventZero() PASSED
+
+Round02Test > olderSampleCannotClearChargingOrRaiseAlert() PASSED
+
+Round02Test > thresholdsOutsideTheConfiguredScaleAreRejected() PASSED
+
+Round02Test > unchangedInputStillRejectsAnOlderSample() PASSED
+
+Round02Test > staleReadingDuringUrgentDoesNotLeaveLowOrPublishANumber() PASSED
+
+Round02Test > extremeInstantAndDurationDoNotEscapeStep() PASSED
+
+Round02Test > scaleEdgesRemainAccepted() PASSED
+
+Round02Test > revisionDoesNotWrapAndStopsAtTheLimit() PASSED
+
+Round02Test > inBandBatteryWithDeniedActivityStaysNormalAndDegraded() PASSED
+
+Round02Test > equalProcessedTimeIsNotInversion() PASSED
+
+Round02Test > hysteresisDebounceUrgentAndLowPowerInteract() PASSED
+
+Round02Test > missingOrInvalidChargingDoesNotClearCharging() PASSED
+
+Round03Test > chargingExceptionDoesNotBypassUnrelatedWeatherOrActivity() PASSED
+
+Round03Test > missingExpiryDenialInversionAndRapidRepeatsStayDistinct() PASSED
+
+Round03Test > olderSampleCannotClearLatestAodAndMotionReduction() PASSED
+
+Round03Test > missingChargingAndLowBatteryDoNotAddAPowerAxis() PASSED
+
+Round03Test > revisionCeilingAppliesProtectionWithoutWrapping() PASSED
+
+Round03Test > sameInstantReplacesSettingsBecauseItIsNotAnOlderObservation() PASSED
+
+Round03Test > urgentAlertDoesNotBypassAnUnrelatedActivityDebounce() PASSED
+
+SourceScanTest > plantedClockAndNetworkTokensAreDetected() PASSED
+
+SourceScanTest > mainSourcesStayFreeOfPlatformClockAndNetwork() PASSED
+
+BUILD SUCCESSFUL in 49s
+7 actionable tasks: 7 executed
+Consider enabling configuration cache to speed up this build: https://docs.gradle.org/9.3.1/userguide/configuration_cache_enabling.html
