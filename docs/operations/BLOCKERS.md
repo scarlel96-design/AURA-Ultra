@@ -3,7 +3,7 @@ OPEN은 미해결, BLOCKED는 외부 조건 필요, RESOLVED는 해결 증거가
 
 | ID | 상태 / 우선도 | 내용 및 증거 | 해결 조건 | 담당 |
 |---|---|---|---|---|
-| B-001 | OPEN / P0 | CI 45997124733 및 45998056978: WFF2 APK 실행 코드 검사 FAIL. 실제 ZIP 항목 미확인. WFF3/4 개별 내용 검사도 미확인. | 정확한 항목과 원인 확인, 3 APK 공식 규격 및 내용 검사 PASS, Artifact 확보 | GPT-01 |
+| B-001 | OPEN / P0 (현재 실패 해소) | 기존 CI APK 실행 코드 검사 FAIL. 새 CI 45999371709: 3 APK 스키마/ZIP/Manifest PASS 및 Artifact 확보. 과거 정확한 ZIP 항목/원인 미확인. | 과거 실패 격리 재현 및 원인 증거 보완. 현재 APK PASS 증거 유지. | GPT-01 |
 | B-002 | BLOCKED / P1 | 현재 채팅 환경에 Android SDK/ADB 및 연결된 워치 없음 | CI로 대체 가능한 검증 수행; 실제 설치·센서·전력 시험은 접근 가능한 환경에서 수행 | GPT / Codex / 사용자 |
 | B-003 | OPEN / P1 | WFF5 빌드 비활성. SDK/API, 스키마, 설치된 OS 미확정 | 공식 문서와 호환 도구·기기 증거 확보, 별도 profile 검증 | GPT-02 / 실기기 |
 | B-004 | OPEN / P1 | Watch7 크기/펌웨어/OS 및 최신 Samsung 기기 공식 매트릭스 미확인 | 공식 사양 확인, 실제 지원 대상별 기기/OS 기록 | WO-01 / 34 / 35 |
@@ -13,7 +13,7 @@ OPEN은 미해결, BLOCKED는 외부 조건 필요, RESOLVED는 해결 증거가
 | B-008 | OPEN / P2 | 전력/발열/실기기 소재 및 접근성 승인 미확보 | 비교 시험, 영상, 측정 및 사용자 승인 | WO-30~38 |
 | B-009 | RESOLVED | CI 45997002132 SDK manager not found (exit 127) | CI 45997124733 SDK 설치·확인 PASS | 수정 544a7010 |
 
-| B-010 | OPEN / P1 | tools/verify_wff.py의 성공 조건이 일반 VALID 포함 여부에 의존한다. 헤더 Validation도 매치되므로 명시적 성공을 검증하지 못할 위험. 실제 두 CI의 성공 로그는 버전별 PASSED를 확인했다. 오판 발생 자체는 미재현. | 공식 validator 결과 형식 확인, 성공·실패·불명확·버전 불일치 회귀 시험, 대상별 명시적 성공 검사 | GPT-01 |
+| B-010 | RESOLVED | tools/verify_wff.py의 성공 조건이 일반 VALID 포함 여부에 의존한다. 헤더 Validation도 매치되므로 명시적 성공을 검증하지 못할 위험. 실제 두 CI의 성공 로그는 버전별 PASSED를 확인했다. 오판 발생 자체는 미재현. | 공식 validator 결과 형식 확인, 성공·실패·불명확·버전 불일치 회귀 시험, 대상별 명시적 성공 검사 | GPT-01 |
 
 B-001 해결 전 후속 통합 작업을 GO 처리하지 않는다. 독립 테스트·설계·도메인 작업은 RESUME_PROTOCOL의 선행 조건에 따라 진행 가능하다.
 
@@ -26,3 +26,6 @@ B-001: CI 45998909046, job 140505251267에서 DEX build/merge 작업 및 APK FAI
 B-010: 명시적 파일/버전 PASSED 판정, 오류/종료 코드/중복 검사, 정상·실패 fixture 및 실제 잘못된 XML probe 추가. 새 CI 검증 대기. 두 차단점은 OPEN 유지.
 
 - GPT-01 코드 SHA ef9f9c9bbb2020de835926a3bf0e4262b9c89d51, CI 45999371709: completed/success. 실제 최종 로그/Artifact 확인 전 B-001/B-010 OPEN 유지. STATUS의 단계별 결과 참조.
+
+## GPT-01 회차 01 최종 증거
+코드 ef9f9c9bbb2020de835926a3bf0e4262b9c89d51, CI 45999371709: 19 단위 시험 PASS, 공식 WFF 정상 3/3 및 잘못된 XML 명시적 실패 검출 3/3 PASS, 3 APK clean build/내용 검사 PASS, Artifact 15197113871 확보. B-010 해결, B-001 현재 빌드 실패 해소 및 과거 원인 증거만 보완 필요. REPORT-01 최종 결과 참조.
