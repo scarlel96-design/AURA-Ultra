@@ -33,6 +33,8 @@ jobs:
           python tools/round_layout.py --check
           python tools/generate_basic_face.py --write
           python tools/generate_basic_face.py --check
+          python tools/signature_preview.py --write
+          python tools/signature_preview.py --check
           python tools/check_layout_reproduction.py
       - name: Check project invariants
         run: python tools/check_foundation.py
