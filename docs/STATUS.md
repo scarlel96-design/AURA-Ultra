@@ -9,9 +9,9 @@
 |---|---|
 | 정본 브랜치 | main |
 | 확인한 코드 SHA | f284b1bd69a767ef0f7285449fe7c45f05895e53 |
-| 활성 GPT 작업 | GPT-03 READY / GPT-02 GO(개발 기반) |
+| 활성 GPT 작업 | GPT-03 PARTIAL / 회차 01 CI 대기 |
 | 활성 WO | WO-01 PARTIAL; WO-02·04 준비 작업만 일부 구현 |
-| 다음 안전한 행동 | GPT-03: 공통 토큰 기반 결정적 WFF·그래픽 자산 생성 및 검증 도구 준비 |
+| 다음 안전한 행동 | GPT-03 후보 CI 46006560829 최종 로그 확인 → 안전한 통합 → 실제 flavor override 격리 시험 |
 | 다음 실행 명세 | operations/GPT-03.md |
 | 현재 차단 | B-003 SDK/빌드 해결; B-002/003 런타임/004/007 미해결 |
 | 공식 WO GO | 0/38 |
@@ -189,3 +189,21 @@ G0 PASS; G1 현재 작업 범위 PASS; G2 40 단위 및 공식 negative probe PA
 
 ## 외부 에이전트 1차 병행 준비
 [배정표](operations/agent-orders/README.md), [GB-01](operations/agent-orders/GB-01.md), [AG-01](operations/agent-orders/AG-01.md) 등록. Grok Build 순수 Kotlin 도메인 계약, Antigravity CLI WFF4/5 PoC. 상태 READY(실행 미확인), 별도 브랜치 및 파일 소유권. GPT-03 활성 유지, 중앙 문서는 총괄 담당자만 갱신한다. 제품 코드/판정 변경 없음.
+
+
+## 회차 01 확인된 중간 증거
+후보 SHA 0016b30609da0b7c38c0ea8ee5fe15c12e2d536d, branch gpt-03-generator, [CI 46006560829](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46006560829), job 140531069930, in_progress/PENDING.
+- Set up job: success
+- Verify Gradle wrapper: success
+- Reproduce bootstrap assets: success
+- Check project invariants: success
+- Validation tool regression tests: success
+- Install Android SDK: success
+- Confirm Android SDK tools: success
+- Official WFF validation: success
+- Build debug APKs: in_progress
+- Check APK contents: pending
+- Official asset memory evaluation: pending
+- Verify debug APK signatures: pending
+- Upload debug APKs: pending
+원격 diff 별도 자기 재검토: 제품 앱 리소스 변경 없음; source/packaged preview Git blob 동일 d073ea432797ca9e83a8ea2654de3c9f6440f41b; 외부 에이전트 소유 파일 변경 0; 후보 주요 문서 상대 링크 오류 0. 신규 시험 코드 22개 확인, 실제 총 시험 개수 및 SHA-256 manifest는 최종 원본 로그 확인 후 기록한다. 생성기는 같은 프로세스에서 재실행하며 독립 프로세스 재현 및 --write 실사용 시험은 후속. PNG 원본 복사 및 header 검사만 적용. 실제 렌더링/고급 소재/실기기 미실시. G0/G1 범위 확인, G2/G3/G4/G6 최종 CI 로그 대기, G5 자기 재검토 완료(독립 리뷰 아님), G7 main 문서 체크포인트 등록 대상. GPT-03 PARTIAL, WO 및 출시 판정 유지. main은 기존 코드 유지. 다음: CI 46006560829 최종 결과 및 원본 로그·Artifact 확인, 이후 후보의 안전한 병합 및 실제 flavor override 격리 시험. 중앙 문서의 병행 변경을 보존하며 통합한다. [skip ci]는 문서 전용 체크포인트에만 적용.

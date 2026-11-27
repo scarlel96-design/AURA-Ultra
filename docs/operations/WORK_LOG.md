@@ -67,3 +67,6 @@
 
 ## 2026-11-27 / 외부 에이전트 1차 배정
 - 기준 main c1c66b76b7af4a20bb7a08a369fb5962d28b973f 실제 조회 및 활성 GPT-03 확인. GB-01/AG-01 지시서와 소유권 배정표 등록. 사용자 직접 CLI 실행 전 상태 READY. 제품 코드 변경 없음. 기존 GPT/WO/출시 판정 유지. 병행 작업 증거는 독립 보고서로 수신 후 검토한다.
+
+## GPT-03 회차 01 체크포인트
+후보 0016b30609da0b7c38c0ea8ee5fe15c12e2d536d, branch gpt-03-generator, CI 46006560829 in_progress/PENDING. 실제 변경 14개, 외부 소유 경로 변경 없음. 원본 XML·preview 보존. 검증 단계별 상태 REPORT-01. main 제품 코드 유지. 다음 실행은 최종 CI 로그 확인 및 안전한 통합. GPT-03 PARTIAL.
