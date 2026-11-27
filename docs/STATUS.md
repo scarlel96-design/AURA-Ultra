@@ -83,3 +83,6 @@ main의 현재 HEAD를 먼저 확인한다. 확인한 코드 SHA와 최신 문�
 
 B-010: RESOLVED. 명시적 대상별 성공, 정상/오류/불명확/버전 불일치 회귀 및 실제 스키마 실패 확인. B-001: 현재 APK 패키징 실패 해소(3/3 PASS 및 Artifact 확보). 과거 실패 APK의 정확한 ZIP 항목/생성 경로는 미확인으로 원래 종료 조건 전부 충족 전까지 OPEN 유지. R8에 의해 생성 코드가 제거된 것으로 추정하나 과거 APK 재현 없이 원인을 확정하지 않는다.
 G0 PASS; G1 범위 내 구현 PASS; G2 검증기 회귀 PASS; G3 현재 Debug clean CI PASS; G4 ZIP/manifest/공식 스키마 PASS, 메모리·서명 별도 검사·Release 빌드·실기기 NOT RUN; G5 별도 자기 재검토 수행(독립 리뷰 아님); G6 SHA/CI/Artifact 대조 PASS; G7 문서 갱신 및 원격 반영 확인 필요. 회차 01 빌드/검증 개선 성공, 전체 GPT-01 PARTIAL, WO-01 PARTIAL, 출시 NO-GO. 다음: GPT-01 회차 02에서 기존 실패의 정확한 ZIP 항목을 격리 재현(기존 main 빌드 정책 유지), 공식 Memory Footprint Evaluator 통합/실제 측정 및 남은 필수 검사 검토. 별도 Release 빌드·실기기 시험은 미실시. 이번 문서만 변경하는 증거 커밋은 코드 검증 대상 SHA를 유지하기 위해 [skip ci]로 기록한다.
+
+## GPT-01 회차 02 — 검증 후보
+공식 메모리 평가 및 debug 서명 검사 CI 추가, 과거 SHA 격리 재현 워크플로 추가. 새 CI 결과 PENDING. 기존 B-001 원인 증거는 재현 로그 확인 전 OPEN. GPT-01 PARTIAL 및 출시 NO-GO 유지. evidence/GPT-01/REPORT-02.md 참조.

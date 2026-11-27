@@ -41,3 +41,7 @@
 - 회차 01 코드 SHA ef9f9c9bbb2020de835926a3bf0e4262b9c89d51, CI 45999371709 상태 completed/success 확인. 검증 세부 상태는 STATUS 및 REPORT-01에 저장. 별도 자기 재검토 완료. 제품 GO 미선언. 문서 전용 체크포인트는 실행 중 CI 보존 목적의 [skip ci].
 
 - 최종 CI 45999371709 전체 SUCCESS. 19 단위 시험, WFF2/3/4 정상 및 실패 검출, 3 APK build/내용 검사, Artifact 15197113871 확인. B-010 RESOLVED, B-001 현재 실패 해소(과거 원인 증거 보완 전 OPEN). GPT-01 PARTIAL, WO-01 PARTIAL, 출시 NO-GO. 다음 회차: 과거 실패 격리 재현 및 공식 메모리 평가 통합. 정확한 검증 SHA 및 해시: docs/evidence/GPT-01/REPORT-01.md.
+
+## 2026-11-27 / GPT-01 회차 02
+- 기준 HEAD 86f9df3f174f2356959ab04ec4ab6fae0379521e. PRE-FLIGHT 및 이전 CI/Artifact 확인. 공식 memory-footprint release digest, CLI와 소스의 report/byte 단위 확인.
+- 기존 70/7 MiB 예산 검증, 실패 검출 단위 시험, debug 서명 검사, 별도 과거 SHA 재현 CI 추가. 제품 XML/Gradle 설정 변경 없음. 새 CI PENDING. REPORT-02 참조.

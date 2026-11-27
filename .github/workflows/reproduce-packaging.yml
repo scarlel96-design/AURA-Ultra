@@ -1,0 +1,53 @@
+name: Historical WFF packaging reproduction
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/reproduce-packaging.yml'
+permissions:
+  contents: read
+jobs:
+  reproduce:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: 95e51cca23210f930dc3716cb790e791585a7bf0
+          persist-credentials: false
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify historical source
+        run: |
+          test "$(git rev-parse HEAD)" = 95e51cca23210f930dc3716cb790e791585a7bf0
+          echo '2db75c40782f5e8ba1fc278a5574bab070adccb2d21ca5a6e5ed840888448046  gradle/wrapper/gradle-wrapper.jar' | sha256sum -c -
+      - uses: android-actions/setup-android@138b5fb1cf087fdb4c5f3c621466fe304d0cf2e3
+        with:
+          packages: 'platform-tools platforms;android-36 build-tools;35.0.0'
+      - name: Rebuild historical WFF2
+        run: ./gradlew --no-daemon --stacktrace clean :apps:watchface:assembleWff2Debug
+      - name: Inspect historical APK (expected prohibited payload)
+        run: |
+          python - <<'PY'
+          import hashlib
+          import zipfile
+          from pathlib import Path
+          apks = list(Path("apps/watchface/build/outputs/apk/wff2/debug").glob("*.apk"))
+          if len(apks) != 1:
+              raise SystemExit("Expected one historical APK")
+          apk = apks[0]
+          print("HISTORICAL_APK_SHA256", hashlib.sha256(apk.read_bytes()).hexdigest())
+          with zipfile.ZipFile(apk) as archive:
+              names = archive.namelist()
+              print("\n".join(sorted(names)))
+              bad = [n for n in names if n.endswith((".dex", ".so")) or n.startswith("lib/")]
+              print("HISTORICAL_PROHIBITED_ENTRIES", repr(bad))
+              if not bad:
+                  raise SystemExit("Historical failure not reproduced")
+          PY
+          apkanalyzer dex packages --defined-only apps/watchface/build/outputs/apk/wff2/debug/watchface-wff2-debug.apk

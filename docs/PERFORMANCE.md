@@ -21,3 +21,6 @@ Balanced 기본값은 제안이다. 사용자 선택과 실측으로 결정한�
 ## 측정
 기기, 펌웨어, 밝기, AOD, 네트워크, 배터리 시작/종료, 화면 사용 패턴, 주변 온도, 테스트 시간, 기준 페이스를 기록한다.
 동일 조건에서 기본 페이스와 AURA를 비교한다. 1시간 유휴/활성, 8시간 안정성, 이후 24시간 대표 사용 시험을 실시한다. 반복 시험의 편차를 보고한다. 백분율/시간과 가능 시 전력 측정값을 구분한다. 실기기 없이 배터리 수명을 추정해 확정하지 않는다.
+
+## Automated asset estimate
+Google Memory Footprint Evaluator defines MB as 1024 × 1024 bytes. CI applies the existing 70/7 budget as 73,400,320/7,340,032 bytes. Official example limits are 100/10 in the same units. Use exact JSON bytes (`totalBytes`, `maxActiveBytes`, `maxAmbientBytes`), not rounded verbose output. The estimator uses v1 offload limitations and does not assume optimization. Report mode itself does not enforce limits; the wrapper does. This is asset estimation, not measured RAM, lit pixels or battery. Source: https://github.com/google/watchface/tree/main/play-validations .
