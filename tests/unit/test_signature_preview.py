@@ -71,8 +71,9 @@ class SignaturePreviewTests(unittest.TestCase):
     def test_aod_preserves_only_date_time(self):
         for name in ("en24-ambient", "ko12-ambient"):
             items = collect(self.xml, self.samples[name])
-            self.assertEqual([i["role"] for i in items], ["CoreDate", "time"])
-            self.assertEqual(items[1]["weight"], "THIN")
+            expected = ["CoreDate", "CoreAmPm", "time"] if name == "ko12-ambient" else ["CoreDate", "time"]
+            self.assertEqual([i["role"] for i in items], expected)
+            self.assertEqual(items[-1]["weight"], "THIN")
 
     def test_missing_available_source_rejected(self):
         s = copy.deepcopy(self.samples["en24-normal"])
@@ -113,3 +114,40 @@ class SignaturePreviewTests(unittest.TestCase):
                 font = ET.fromstring(f'<Font><Template>{fmt}<Parameter expression="[BATTERY_PERCENT]" /></Template></Font>')
                 with self.assertRaises(ValueError):
                     font_text(font, {"BATTERY_PERCENT": 85})
+
+    def test_ampm_active_and_ambient(self):
+        for name, expected in (("ko12-midnight", "AM"), ("ko12-noon", "PM"), ("en12-stale", "PM"), ("ko12-ambient", "PM")):
+            with self.subTest(name=name):
+                markers = [i["text"] for i in collect(self.xml, self.samples[name]) if i["role"] == "CoreAmPm"]
+                self.assertEqual(markers, [expected])
+
+    def test_24_hour_no_ampm(self):
+        for name, sample in self.samples.items():
+            if sample["hourFormat"] == 24:
+                self.assertFalse(any(i["role"] == "CoreAmPm" for i in collect(self.xml, sample)), name)
+
+    def test_24_hour_does_not_read_ampm(self):
+        s = copy.deepcopy(self.samples["en24-normal"])
+        del s["sources"]["AMPM_STRING"]
+        self.assertIn("23:59", [i["text"] for i in collect(self.xml, s)])
+
+    def test_12_hour_missing_ampm_rejected(self):
+        s = copy.deepcopy(self.samples["ko12-midnight"])
+        del s["sources"]["AMPM_STRING"]
+        with self.assertRaises(ValueError):
+            collect(self.xml, s)
+
+    def test_wrong_hour_mode_rejected(self):
+        s = copy.deepcopy(self.samples["ko12-noon"])
+        s["sources"]["IS_24_HOUR_MODE"] = True
+        with self.assertRaises(ValueError):
+            collect(self.xml, s)
+
+    def test_invalid_ampm_rejected(self):
+        s = copy.deepcopy(self.samples["ko12-noon"])
+        s["sources"]["AMPM_STRING"] = "AM"
+        with self.assertRaises(ValueError):
+            collect(self.xml, s)
+        s["sources"]["AMPM_STRING"] = "UNKNOWN"
+        with self.assertRaises(ValueError):
+            collect(self.xml, s)

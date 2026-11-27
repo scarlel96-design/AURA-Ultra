@@ -24,8 +24,8 @@ class RoundLayoutTests(unittest.TestCase):
         for size in DIAMETERS:
             with self.subTest(size=size):
                 result = project_layout(self.layout, size)
-                self.assertEqual(len(result["regions"]), 8)
-                self.assertEqual(set(result["ambientRegions"]), {"time", "date"})
+                self.assertEqual(len(result["regions"]), 9)
+                self.assertEqual(set(result["ambientRegions"]), {"time", "date", "ampm"})
                 self.assertEqual(result["regions"]["time"], result["ambientRegions"]["time"])
 
     def test_projection_rounds_outward(self):
@@ -71,3 +71,10 @@ class RoundLayoutTests(unittest.TestCase):
     def test_deterministic(self):
         self.assertEqual(generate(), generate())
         self.assertEqual(len(generate()), 5)
+
+    def test_core_rectangles_unchanged(self):
+        self.assertEqual(self.layout["regions"]["time"], [44,124,362,110])
+        self.assertEqual(self.layout["regions"]["date"], [90,78,174,32])
+
+    def test_ampm_region_is_required(self):
+        self.reject(lambda t: t["regions"].pop("ampm"))
