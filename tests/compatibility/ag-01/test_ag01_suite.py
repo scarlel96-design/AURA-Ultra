@@ -38,6 +38,7 @@ from run_ag01_verification import (
 from verify_memory import get_jar as get_memory_jar
 from verify_wff import require_pass
 from wear_emulator_runtime import (
+    EvidenceOverwriteError,
     PNG_SIGNATURE,
     RECOMMENDED_WEAR_AVD_PLANS,
     RecoveryFailureError,
@@ -46,6 +47,7 @@ from wear_emulator_runtime import (
     build_safe_runtime_verification_plan,
     build_safe_setup_commands,
     execute_runtime_verification,
+    parse_and_validate_mp4_structure,
     parse_power_and_display_state,
     validate_dedicated_wear_avd_name,
     validate_emulator_serial,
@@ -55,6 +57,7 @@ from wear_emulator_runtime import (
     validate_wear_device_properties,
     verify_active_watchface_selected,
     verify_local_apk_before_install,
+    verify_mp4_video_artifact,
 )
 
 ALLOWED_INTERPOLATIONS = {"LINEAR", "EASE_IN", "EASE_OUT", "EASE_IN_OUT", "OVERSHOOT", "CUBIC_BEZIER"}
@@ -134,6 +137,44 @@ def _build_valid_png_bytes(width=4, height=4):
     raw_scanlines = b"".join(b"\x00" + (b"\x10\x20\x30\xff" * width) for _ in range(height))
     idat_data = zlib.compress(raw_scanlines)
     return PNG_SIGNATURE + _png_chunk(b"IHDR", ihdr_data) + _png_chunk(b"IDAT", idat_data) + _png_chunk(b"IEND", b"")
+
+
+def _mp4_box(box_type, payload):
+    return struct.pack(">I4s", 8 + len(payload), box_type) + payload
+
+
+def _build_valid_mp4_bytes(handler=b"vide", sample_count=2, sample_size=64, codec=b"avc1", bad_offset=None):
+    """Build a structurally valid ISO BMFF MP4 with ftyp + mdat + moov(trak/mdia/hdlr/minf/stbl)."""
+    ftyp = _mp4_box(b"ftyp", b"mp42" + struct.pack(">I", 0) + b"mp42isom")
+    mdat_payload = b"\x00\x00\x00\x01\x65" + (b"\xAB" * max(128, sample_count * sample_size))
+    mdat_header_offset = len(ftyp)
+    mdat_payload_offset = mdat_header_offset + 8
+    mdat = _mp4_box(b"mdat", mdat_payload)
+
+    hdlr = _mp4_box(b"hdlr", b"\x00\x00\x00\x00" + b"\x00\x00\x00\x00" + handler + (b"\x00" * 12) + b"VideoHandler\x00")
+    codec_entry = _mp4_box(codec, b"\x00" * 24)
+    stsd = _mp4_box(b"stsd", b"\x00\x00\x00\x00" + struct.pack(">I", 1) + codec_entry)
+    if sample_count > 0:
+        stsz = _mp4_box(b"stsz", b"\x00\x00\x00\x00" + struct.pack(">II", sample_size, sample_count))
+    else:
+        stsz = _mp4_box(b"stsz", b"\x00\x00\x00\x00" + struct.pack(">II", 0, 0))
+    chunk_off = mdat_payload_offset if bad_offset is None else bad_offset
+    stco = _mp4_box(b"stco", b"\x00\x00\x00\x00" + struct.pack(">II", 1, chunk_off))
+    stbl = _mp4_box(b"stbl", stsd + stsz + stco)
+    minf = _mp4_box(b"minf", stbl)
+    mdia = _mp4_box(b"mdia", hdlr + minf)
+    trak = _mp4_box(b"trak", mdia)
+    moov = _mp4_box(b"moov", trak)
+    return ftyp + mdat + moov
+
+
+def _ok_ffprobe_runner(frames=24):
+    payload = (
+        '{"streams":[{"codec_type":"video","codec_name":"h264","width":454,"height":454,"nb_read_frames":"'
+        + str(frames)
+        + '"}]}'
+    )
+    return lambda cmd, timeout=60: SimpleNamespace(returncode=0, stdout=payload, stderr="")
 
 
 def _build_synthetic_resource_only_apk(path, watchface_xml="<WatchFace width=\"450\" height=\"450\"><Scene/></WatchFace>", extra_entry=None):
@@ -844,14 +885,16 @@ class Ag01EmulatorInspectionAndSafetyTests(unittest.TestCase):
             validate_mp4_bytes(b"")
         with self.assertRaises(RuntimeError):
             validate_mp4_bytes(b"0" * 2048)
-        valid_mp4 = b"\x00\x00\x00\x18ftypmp42" + (b"\x00" * 2048)
+        with self.assertRaises(RuntimeError):
+            validate_mp4_bytes(b"\x00\x00\x00\x18ftypmp42" + (b"\x00" * 2048))
+        valid_mp4 = _build_valid_mp4_bytes()
         self.assertEqual(len(valid_mp4), validate_mp4_bytes(valid_mp4))
 
     def test_execute_runtime_verification_enforces_exit_codes_awake_restore_and_cleanup(self):
-        """AG-01-R04 §2 & AG-01-R05: verify adb rc, timeout, recorder termination, Awake recovery, remote rm+absence check, and PNG integrity."""
+        """AG-01-R04 §2, R05 & R06: verify adb rc, timeout, recorder termination, Awake+watchface recovery, remote rm+absence check, PNG & MP4."""
         pkg = "io.github.scarlel96.aura.watchface.wff4"
         valid_png = _build_valid_png_bytes(4, 4)
-        valid_mp4 = b"\x00\x00\x00\x18ftypmp42" + (b"\x00" * 2048)
+        valid_mp4 = _build_valid_mp4_bytes()
 
         class FakeRecorder:
             def __init__(self, rc=0, hang_on_terminate=False, unkillable=False):
@@ -888,12 +931,13 @@ class Ag01EmulatorInspectionAndSafetyTests(unittest.TestCase):
             apk_path = tmp_path / "watchface-wff4-debug.apk"
             _build_synthetic_resource_only_apk(apk_path)
             apk_sha = hashlib.sha256(apk_path.read_bytes()).hexdigest()
-            out_dir = tmp_path / "out"
 
             power_states = [
-                "mWakefulness=Awake\nDisplay Power: state=ON\n",
-                "mWakefulness=Dozing\nDisplay Power: state=DOZE_SUSPEND\n",
-                "mWakefulness=Awake\nDisplay Power: state=ON\n",
+                "mWakefulness=Awake\nDisplay Id=0\nDisplay Power: state=ON\n",
+                "mWakefulness=Awake\nDisplay Id=0\nDisplay Power: state=ON\n",
+                "mWakefulness=Dozing\nDisplay Id=0\nDisplay Power: state=DOZE_SUSPEND\n",
+                "mWakefulness=Dozing\nDisplay Id=0\nDisplay Power: state=DOZE_SUSPEND\n",
+                "mWakefulness=Awake\nDisplay Id=0\nDisplay Power: state=ON\n",
             ]
             commands_log = []
 
@@ -936,35 +980,39 @@ class Ag01EmulatorInspectionAndSafetyTests(unittest.TestCase):
 
                 return runner
 
-            # 1. Full happy path verifies PNG metadata, MP4, Awake restore, rm -f AND `test ! -e`
+            # 1. Full happy path verifies PNG metadata, MP4 + ffprobe, Awake+watchface restore, rm -f AND `test ! -e`
             res = execute_runtime_verification(
                 adb_bin=Path("adb"),
                 serial="emulator-5554",
                 apk_path=apk_path,
                 package_id=pkg,
                 wff_version=4,
-                output_dir=out_dir,
+                output_dir=tmp_path / "out_happy",
                 expected_avd_name="aura_wear36_round",
                 expected_api_level=36,
                 expected_apk_sha256=apk_sha,
                 runner=make_runner(),
                 manifest_printer=lambda _: _valid_manifest_xml(pkg=pkg, min_sdk=36, wff_version=4),
                 recorder_factory=lambda: FakeRecorder(rc=0),
+                probe_runner=_ok_ffprobe_runner(24),
                 sleep_fn=lambda _: None,
             )
             self.assertTrue(res["recovery_report"]["recorder_stopped"])
             self.assertTrue(res["recovery_report"]["awake_restored"])
+            self.assertTrue(res["recovery_report"]["watchface_restored"])
             self.assertTrue(res["recovery_report"]["remote_file_removed"])
+            self.assertEqual("PASS", res["video_verification_status"])
             self.assertEqual((4, 4), (res["active_png_meta"]["width"], res["active_png_meta"]["height"]))
             self.assertTrue(any("rm" in cmd and "-f" in cmd for cmd in commands_log))
             self.assertTrue(any("test" in cmd and "!" in cmd and "-e" in cmd for cmd in commands_log))
 
             # 2. Mid-run failure with clean recovery: recorder hung on terminate -> kill+wait succeeds,
-            #    recovery WAKEUP + dumpsys confirms Awake+ON, rm -f + test ! -e succeeds -> raises original RuntimeError
+            #    recovery WAKEUP + dumpsys confirms Awake+ON + watchface, rm -f + test ! -e succeeds -> raises original RuntimeError
             commands_log.clear()
             power_states[:] = [
-                "mWakefulness=Awake\nDisplay Power: state=ON\n",
-                "mWakefulness=Awake\nDisplay Power: state=ON\n",
+                "mWakefulness=Awake\nDisplay Id=0\nDisplay Power: state=ON\n",
+                "mWakefulness=Awake\nDisplay Id=0\nDisplay Power: state=ON\n",
+                "mWakefulness=Awake\nDisplay Id=0\nDisplay Power: state=ON\n",
             ]
             hang_rec = FakeRecorder(rc=None, hang_on_terminate=True)
             with self.assertRaises(RuntimeError) as ctx:
@@ -974,7 +1022,7 @@ class Ag01EmulatorInspectionAndSafetyTests(unittest.TestCase):
                     apk_path=apk_path,
                     package_id=pkg,
                     wff_version=4,
-                    output_dir=out_dir,
+                    output_dir=tmp_path / "out_hang",
                     expected_avd_name="aura_wear36_round",
                     runner=make_runner(
                         lambda args, _: SimpleNamespace(returncode=1, stdout="", stderr="input service dead")
@@ -982,6 +1030,7 @@ class Ag01EmulatorInspectionAndSafetyTests(unittest.TestCase):
                     ),
                     manifest_printer=lambda _: _valid_manifest_xml(pkg=pkg, min_sdk=36, wff_version=4),
                     recorder_factory=lambda: hang_rec,
+                    probe_runner=_ok_ffprobe_runner(24),
                     sleep_fn=lambda _: None,
                 )
             self.assertNotIsInstance(ctx.exception, RecoveryFailureError)
@@ -991,9 +1040,9 @@ class Ag01EmulatorInspectionAndSafetyTests(unittest.TestCase):
 
             # 3. Failure recovery failure: remote rm -f fails with rc=1 AND recovery WAKEUP times out -> MUST raise RecoveryFailureError (never swallowed!)
             power_states[:] = [
-                "mWakefulness=Awake\nDisplay Power: state=ON\n",
-                "mWakefulness=Dozing\nDisplay Power: state=DOZE\n",
-                "mWakefulness=Dozing\nDisplay Power: state=DOZE\n",
+                "mWakefulness=Awake\nDisplay Id=0\nDisplay Power: state=ON\n",
+                "mWakefulness=Awake\nDisplay Id=0\nDisplay Power: state=ON\n",
+                "mWakefulness=Dozing\nDisplay Id=0\nDisplay Power: state=DOZE\n",
             ]
 
             def fail_recovery_override(args, _):
@@ -1014,11 +1063,12 @@ class Ag01EmulatorInspectionAndSafetyTests(unittest.TestCase):
                     apk_path=apk_path,
                     package_id=pkg,
                     wff_version=4,
-                    output_dir=out_dir,
+                    output_dir=tmp_path / "out_rec_fail",
                     expected_avd_name="aura_wear36_round",
                     runner=make_runner(fail_recovery_override),
                     manifest_printer=lambda _: _valid_manifest_xml(pkg=pkg, min_sdk=36, wff_version=4),
                     recorder_factory=lambda: unkillable_rec,
+                    probe_runner=_ok_ffprobe_runner(24),
                     sleep_fn=lambda _: None,
                 )
             err_joined = " ".join(rec_ctx.exception.recovery_errors)
@@ -1029,9 +1079,11 @@ class Ag01EmulatorInspectionAndSafetyTests(unittest.TestCase):
 
             # 4. Failure recovery: remote `test ! -e` fails (file still exists after rm) -> MUST raise RecoveryFailureError
             power_states[:] = [
-                "mWakefulness=Awake\nDisplay Power: state=ON\n",
-                "mWakefulness=Dozing\nDisplay Power: state=DOZE\n",
-                "mWakefulness=Awake\nDisplay Power: state=ON\n",
+                "mWakefulness=Awake\nDisplay Id=0\nDisplay Power: state=ON\n",
+                "mWakefulness=Awake\nDisplay Id=0\nDisplay Power: state=ON\n",
+                "mWakefulness=Dozing\nDisplay Id=0\nDisplay Power: state=DOZE\n",
+                "mWakefulness=Dozing\nDisplay Id=0\nDisplay Power: state=DOZE\n",
+                "mWakefulness=Awake\nDisplay Id=0\nDisplay Power: state=ON\n",
             ]
             with self.assertRaises(RecoveryFailureError) as rm_ctx:
                 execute_runtime_verification(
@@ -1040,7 +1092,7 @@ class Ag01EmulatorInspectionAndSafetyTests(unittest.TestCase):
                     apk_path=apk_path,
                     package_id=pkg,
                     wff_version=4,
-                    output_dir=out_dir,
+                    output_dir=tmp_path / "out_rm_fail",
                     expected_avd_name="aura_wear36_round",
                     runner=make_runner(
                         lambda args, _: SimpleNamespace(returncode=1, stdout="", stderr="file still exists")
@@ -1048,6 +1100,7 @@ class Ag01EmulatorInspectionAndSafetyTests(unittest.TestCase):
                     ),
                     manifest_printer=lambda _: _valid_manifest_xml(pkg=pkg, min_sdk=36, wff_version=4),
                     recorder_factory=lambda: FakeRecorder(rc=0),
+                    probe_runner=_ok_ffprobe_runner(24),
                     sleep_fn=lambda _: None,
                 )
             self.assertIn("remote_cleanup_failed", " ".join(rm_ctx.exception.recovery_errors))
@@ -1060,7 +1113,7 @@ class Ag01EmulatorInspectionAndSafetyTests(unittest.TestCase):
                     apk_path=apk_path,
                     package_id=pkg,
                     wff_version=4,
-                    output_dir=out_dir,
+                    output_dir=tmp_path / "out_wp_unknown",
                     expected_avd_name="aura_wear36_round",
                     runner=make_runner(
                         lambda args, _: SimpleNamespace(
@@ -1071,10 +1124,15 @@ class Ag01EmulatorInspectionAndSafetyTests(unittest.TestCase):
                     ),
                     manifest_printer=lambda _: _valid_manifest_xml(pkg=pkg, min_sdk=36, wff_version=4),
                     recorder_factory=lambda: FakeRecorder(rc=0),
+                    probe_runner=_ok_ffprobe_runner(24),
                     sleep_fn=lambda _: None,
                 )
 
             # 6. Failure fixture: corrupt screencap PNG (4-byte header only) -> RuntimeError before saving
+            power_states[:] = [
+                "mWakefulness=Awake\nDisplay Id=0\nDisplay Power: state=ON\n",
+                "mWakefulness=Awake\nDisplay Id=0\nDisplay Power: state=ON\n",
+            ]
             with self.assertRaises(RuntimeError):
                 execute_runtime_verification(
                     adb_bin=Path("adb"),
@@ -1082,7 +1140,7 @@ class Ag01EmulatorInspectionAndSafetyTests(unittest.TestCase):
                     apk_path=apk_path,
                     package_id=pkg,
                     wff_version=4,
-                    output_dir=out_dir,
+                    output_dir=tmp_path / "out_bad_png",
                     expected_avd_name="aura_wear36_round",
                     runner=make_runner(
                         lambda args, _: SimpleNamespace(returncode=0, stdout=b"\x89PNG\x00\x00\x00", stderr=b"")
@@ -1090,8 +1148,398 @@ class Ag01EmulatorInspectionAndSafetyTests(unittest.TestCase):
                     ),
                     manifest_printer=lambda _: _valid_manifest_xml(pkg=pkg, min_sdk=36, wff_version=4),
                     recorder_factory=lambda: FakeRecorder(rc=0),
+                    probe_runner=_ok_ffprobe_runner(24),
                     sleep_fn=lambda _: None,
                 )
+
+    def test_r06_aud05_per_display_id_mapping_dedup_and_target_display(self):
+        """AG01-AUD-05: explicit Display ID mapping; duplicate observations never count for another display; unknown target display -> UNKNOWN."""
+        # 1. Display Id=0 has 2 duplicate ON lines, Display Id=1 has NO state -> MUST be UNKNOWN (never inflated!)
+        dup_obs = (
+            "mWakefulness=Awake\n"
+            "Display Id=0\n"
+            "Display Power: state=ON\n"
+            "mScreenState=ON\n"
+            "Display Id=1\n"
+        )
+        r1 = parse_power_and_display_state(dup_obs)
+        self.assertEqual("UNKNOWN", r1["status"])
+        self.assertFalse(r1["is_active"])
+        self.assertEqual(["ON"], r1["display_states_by_id"]["0"])
+        self.assertEqual([], r1["display_states_by_id"]["1"])
+
+        # 2. Only secondary Display Id=1 present, default target Display Id=0 missing -> MUST be UNKNOWN
+        r2 = parse_power_and_display_state("mWakefulness=Awake\nDisplay Id=1\nDisplay Power: state=ON\n")
+        self.assertEqual("UNKNOWN", r2["status"])
+        self.assertEqual("TARGET_DISPLAY_MISSING", r2["display_state"])
+        self.assertFalse(r2["is_active"])
+
+        # 3. Both Display Id=0 and Display Id=1 explicitly mapped to ON -> ACTIVE
+        both_on = (
+            "mWakefulness=Awake\n"
+            "Display Id=0\nDisplay Power: state=ON\n"
+            "Display Id=1\nDisplay Power: state=ON\n"
+        )
+        r3 = parse_power_and_display_state(both_on)
+        self.assertEqual("ACTIVE", r3["status"])
+        self.assertTrue(r3["is_active"])
+        self.assertEqual({"0": ["ON"], "1": ["ON"]}, r3["display_states_by_id"])
+
+        # 4. Same Display Id=0 reports ON in power and DOZE in display -> CONFLICT -> UNKNOWN
+        r4 = parse_power_and_display_state(
+            "mWakefulness=Awake\nDisplay Id=0\nDisplay Power: state=ON\n",
+            "Display Id=0\nmScreenState=DOZE\n",
+        )
+        self.assertEqual("UNKNOWN", r4["status"])
+        self.assertFalse(r4["is_active"])
+
+        # 5. Non-default target_display_id="1" with unscoped dump (no Display IDs) -> TARGET_DISPLAY_MISSING -> UNKNOWN
+        r5 = parse_power_and_display_state("mWakefulness=Awake\nDisplay Power: state=ON\n", target_display_id="1")
+        self.assertEqual("UNKNOWN", r5["status"])
+        self.assertEqual("TARGET_DISPLAY_MISSING", r5["display_state"])
+
+    def test_r06_aud06_png_bounds_zlib_eof_interlace_and_chunk_order(self):
+        """AG01-AUD-06: PNG input/resolution/decompressed bounds, zlib eof/unused_data, interlace rejection, and strict chunk ordering."""
+        ihdr_4x4 = _png_chunk(b"IHDR", struct.pack(">IIBBBBB", 4, 4, 8, 6, 0, 0, 0))
+        raw_4x4 = b"".join(b"\x00" + (b"\x10\x20\x30\xff" * 4) for _ in range(4))
+        comp_4x4 = zlib.compress(raw_4x4)
+        iend = _png_chunk(b"IEND", b"")
+
+        # 1. Unsupported interlace=1 (Adam7) -> MUST FAIL
+        ihdr_interlaced = _png_chunk(b"IHDR", struct.pack(">IIBBBBB", 4, 4, 8, 6, 0, 0, 1))
+        with self.assertRaises(RuntimeError):
+            validate_png_bytes(PNG_SIGNATURE + ihdr_interlaced + _png_chunk(b"IDAT", comp_4x4) + iend)
+
+        # 2. Trailing unused bytes inside IDAT after valid zlib stream end -> MUST FAIL
+        with self.assertRaises(RuntimeError):
+            validate_png_bytes(PNG_SIGNATURE + ihdr_4x4 + _png_chunk(b"IDAT", comp_4x4 + b"EXTRA") + iend)
+
+        # 3. Truncated/unterminated zlib stream (eof=False) -> MUST FAIL
+        with self.assertRaises(RuntimeError):
+            validate_png_bytes(PNG_SIGNATURE + ihdr_4x4 + _png_chunk(b"IDAT", comp_4x4[:-4]) + iend)
+
+        # 4. Non-contiguous IDAT chunks separated by ancillary tEXt -> MUST FAIL
+        mid = len(comp_4x4) // 2
+        non_contig = (
+            PNG_SIGNATURE
+            + ihdr_4x4
+            + _png_chunk(b"IDAT", comp_4x4[:mid])
+            + _png_chunk(b"tEXt", b"Key\x00Val")
+            + _png_chunk(b"IDAT", comp_4x4[mid:])
+            + iend
+        )
+        with self.assertRaises(RuntimeError):
+            validate_png_bytes(non_contig)
+
+        # 5. PLTE after IDAT, duplicate PLTE, and PLTE on grayscale -> MUST FAIL
+        with self.assertRaises(RuntimeError):
+            validate_png_bytes(PNG_SIGNATURE + ihdr_4x4 + _png_chunk(b"IDAT", comp_4x4) + _png_chunk(b"PLTE", b"\x00\x00\x00") + iend)
+        gray_ihdr = _png_chunk(b"IHDR", struct.pack(">IIBBBBB", 4, 4, 8, 0, 0, 0, 0))
+        gray_idat = _png_chunk(b"IDAT", zlib.compress(b"".join(b"\x00" + b"\x00" * 4 for _ in range(4))))
+        with self.assertRaises(RuntimeError):
+            validate_png_bytes(PNG_SIGNATURE + gray_ihdr + _png_chunk(b"PLTE", b"\x00\x00\x00") + gray_idat + iend)
+
+        # 6. Unknown critical chunk (uppercase first byte) and APNG acTL chunk -> MUST FAIL
+        with self.assertRaises(RuntimeError):
+            validate_png_bytes(PNG_SIGNATURE + ihdr_4x4 + _png_chunk(b"XyZz", b"abc") + _png_chunk(b"IDAT", comp_4x4) + iend)
+        with self.assertRaises(RuntimeError):
+            validate_png_bytes(PNG_SIGNATURE + ihdr_4x4 + _png_chunk(b"acTL", b"\x00\x00\x00\x02\x00\x00\x00\x00") + _png_chunk(b"IDAT", comp_4x4) + iend)
+
+        # 7. Input size, resolution, and decompressed size upper bounds -> MUST FAIL
+        good = _build_valid_png_bytes(8, 8)
+        with self.assertRaises(RuntimeError):
+            validate_png_bytes(good, max_input_bytes=len(good) - 1)
+        with self.assertRaises(RuntimeError):
+            validate_png_bytes(good, max_width=4, max_height=4)
+        with self.assertRaises(RuntimeError):
+            validate_png_bytes(good, max_decompressed_bytes=16)
+
+    def test_r06_aud07_mp4_box_video_track_frames_and_missing_tool_not_run(self):
+        """AG01-AUD-07: MP4 box/video-track/sample verification + ffprobe decoded frames; missing probe tool -> NOT RUN."""
+        # 1. Structural rejections: fake zero-padded ftyp, audio-only track, 0 samples, out-of-bounds chunk offset
+        with self.assertRaises(RuntimeError):
+            parse_and_validate_mp4_structure(b"\x00\x00\x00\x18ftypmp42" + (b"\x00" * 2048))
+        with self.assertRaises(RuntimeError):
+            parse_and_validate_mp4_structure(_build_valid_mp4_bytes(handler=b"soun"))
+        with self.assertRaises(RuntimeError):
+            parse_and_validate_mp4_structure(_build_valid_mp4_bytes(sample_count=0))
+        with self.assertRaises(RuntimeError):
+            parse_and_validate_mp4_structure(_build_valid_mp4_bytes(bad_offset=999999))
+
+        valid_mp4 = _build_valid_mp4_bytes(sample_count=3, sample_size=64)
+        meta = parse_and_validate_mp4_structure(valid_mp4)
+        self.assertEqual(1, meta["video_track_count"])
+        self.assertEqual(3, meta["sample_count"])
+        self.assertEqual("avc1", meta["video_tracks"][0]["codec"])
+
+        with tempfile.TemporaryDirectory() as tmp:
+            mp4_file = Path(tmp) / "clip.mp4"
+            mp4_file.write_bytes(valid_mp4)
+
+            # 2. Missing ffprobe binary -> explicit NOT RUN (never PASS!)
+            missing_res = verify_mp4_video_artifact(mp4_file, ffprobe_bin=Path(tmp) / "no_such_ffprobe")
+            self.assertEqual("NOT_RUN", missing_res["status"])
+            self.assertEqual("NOT RUN", missing_res["video_verification_status"])
+            self.assertFalse(missing_res["frames_verified"])
+
+            # 3. ffprobe reports 0 decoded frames -> RuntimeError
+            with self.assertRaises(RuntimeError):
+                verify_mp4_video_artifact(mp4_file, probe_runner=_ok_ffprobe_runner(frames=0))
+
+            # 4. ffprobe confirms 18 decoded frames -> VERIFIED / PASS
+            ok_res = verify_mp4_video_artifact(mp4_file, probe_runner=_ok_ffprobe_runner(frames=18))
+            self.assertEqual("VERIFIED", ok_res["status"])
+            self.assertEqual("PASS", ok_res["video_verification_status"])
+            self.assertTrue(ok_res["frames_verified"])
+            self.assertEqual(18, ok_res["decoded_frame_count"])
+
+            # 5. execute_runtime_verification with missing ffprobe MUST raise RuntimeVerificationIncompleteError (NOT RUN)
+            pkg = "io.github.scarlel96.aura.watchface.wff4"
+            apk_path = Path(tmp) / "wff4.apk"
+            _build_synthetic_resource_only_apk(apk_path)
+            valid_png = _build_valid_png_bytes(4, 4)
+            p_seq = [
+                "mWakefulness=Awake\nDisplay Id=0\nDisplay Power: state=ON\n",
+                "mWakefulness=Awake\nDisplay Id=0\nDisplay Power: state=ON\n",
+                "mWakefulness=Dozing\nDisplay Id=0\nDisplay Power: state=DOZE_SUSPEND\n",
+                "mWakefulness=Dozing\nDisplay Id=0\nDisplay Power: state=DOZE_SUSPEND\n",
+                "mWakefulness=Awake\nDisplay Id=0\nDisplay Power: state=ON\n",
+            ]
+            p_idx = {"i": 0}
+
+            def runner_ok(args, timeout=30, binary=False):
+                s = " ".join(args)
+                if "ro.boot.qemu.avd_name" in s: return SimpleNamespace(returncode=0, stdout="aura_wear36_round\n", stderr="")
+                if "sys.boot_completed" in s: return SimpleNamespace(returncode=0, stdout="1\n", stderr="")
+                if "ro.build.characteristics" in s: return SimpleNamespace(returncode=0, stdout="watch\n", stderr="")
+                if "ro.build.version.sdk" in s: return SimpleNamespace(returncode=0, stdout="36\n", stderr="")
+                if args[0] == "install": return SimpleNamespace(returncode=0, stdout="Success\n", stderr="")
+                if "pm list packages" in s: return SimpleNamespace(returncode=0, stdout=f"package:{pkg}\n", stderr="")
+                if "dumpsys wallpaper" in s: return SimpleNamespace(returncode=0, stdout=f"mCurrentUserId=0\n  WallpaperData 0 userId=0\n    mWallpaperComponent=ComponentInfo{{{pkg}/.WatchFace}}\n", stderr="")
+                if "dumpsys power" in s:
+                    out_s = p_seq[min(p_idx["i"], len(p_seq) - 1)]
+                    p_idx["i"] += 1
+                    return SimpleNamespace(returncode=0, stdout=out_s, stderr="")
+                if "screencap" in s: return SimpleNamespace(returncode=0, stdout=valid_png, stderr=b"")
+                if args[0] == "pull":
+                    Path(args[2]).write_bytes(valid_mp4)
+                    return SimpleNamespace(returncode=0, stdout="1 file pulled\n", stderr="")
+                return SimpleNamespace(returncode=0, stdout="", stderr="")
+
+            class DoneRec:
+                def poll(self): return 0
+                def wait(self, timeout=None): return 0
+                def terminate(self): pass
+                def kill(self): pass
+
+            with self.assertRaises(RuntimeVerificationIncompleteError) as not_run_ctx:
+                execute_runtime_verification(
+                    adb_bin=Path("adb"),
+                    serial="emulator-5554",
+                    apk_path=apk_path,
+                    package_id=pkg,
+                    wff_version=4,
+                    output_dir=Path(tmp) / "out_no_ffprobe",
+                    expected_avd_name="aura_wear36_round",
+                    runner=runner_ok,
+                    manifest_printer=lambda _: _valid_manifest_xml(pkg=pkg, min_sdk=36, wff_version=4),
+                    recorder_factory=lambda: DoneRec(),
+                    ffprobe_bin=Path(tmp) / "no_such_ffprobe",
+                    sleep_fn=lambda _: None,
+                )
+            self.assertIn("NOT RUN", str(not_run_ctx.exception))
+
+    def test_r06_aud08_watchface_and_screen_consistency_before_after_captures_and_restore(self):
+        """AG01-AUD-08: active watchface and screen state must be re-verified before/after Active & AOD captures and at final restore."""
+        pkg = "io.github.scarlel96.aura.watchface.wff4"
+        valid_png = _build_valid_png_bytes(4, 4)
+        valid_mp4 = _build_valid_mp4_bytes()
+        good_wp = f"mCurrentUserId=0\n  WallpaperData 0 userId=0\n    mWallpaperComponent=ComponentInfo{{{pkg}/.WatchFace}}\n"
+        drifted_wp = "mCurrentUserId=0\n  WallpaperData 0 userId=0\n    mWallpaperComponent=ComponentInfo{com.example.other/.Face}\n"
+
+        class DoneRec:
+            def poll(self): return 0
+            def wait(self, timeout=None): return 0
+            def terminate(self): pass
+            def kill(self): pass
+
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            apk_path = tmp_path / "wff4.apk"
+            _build_synthetic_resource_only_apk(apk_path)
+
+            def run_scenario(out_name, wp_responses, power_responses):
+                wp_idx = {"i": 0}
+                pw_idx = {"i": 0}
+
+                def runner(args, timeout=30, binary=False):
+                    s = " ".join(args)
+                    if "ro.boot.qemu.avd_name" in s: return SimpleNamespace(returncode=0, stdout="aura_wear36_round\n", stderr="")
+                    if "sys.boot_completed" in s: return SimpleNamespace(returncode=0, stdout="1\n", stderr="")
+                    if "ro.build.characteristics" in s: return SimpleNamespace(returncode=0, stdout="watch\n", stderr="")
+                    if "ro.build.version.sdk" in s: return SimpleNamespace(returncode=0, stdout="36\n", stderr="")
+                    if args[0] == "install": return SimpleNamespace(returncode=0, stdout="Success\n", stderr="")
+                    if "pm list packages" in s: return SimpleNamespace(returncode=0, stdout=f"package:{pkg}\n", stderr="")
+                    if "dumpsys wallpaper" in s:
+                        out_s = wp_responses[min(wp_idx["i"], len(wp_responses) - 1)]
+                        wp_idx["i"] += 1
+                        return SimpleNamespace(returncode=0, stdout=out_s, stderr="")
+                    if "dumpsys power" in s:
+                        out_s = power_responses[min(pw_idx["i"], len(power_responses) - 1)]
+                        pw_idx["i"] += 1
+                        return SimpleNamespace(returncode=0, stdout=out_s, stderr="")
+                    if "screencap" in s: return SimpleNamespace(returncode=0, stdout=valid_png, stderr=b"")
+                    if args[0] == "pull":
+                        Path(args[2]).write_bytes(valid_mp4)
+                        return SimpleNamespace(returncode=0, stdout="1 file pulled\n", stderr="")
+                    return SimpleNamespace(returncode=0, stdout="", stderr="")
+
+                return execute_runtime_verification(
+                    adb_bin=Path("adb"),
+                    serial="emulator-5554",
+                    apk_path=apk_path,
+                    package_id=pkg,
+                    wff_version=4,
+                    output_dir=tmp_path / out_name,
+                    expected_avd_name="aura_wear36_round",
+                    runner=runner,
+                    manifest_printer=lambda _: _valid_manifest_xml(pkg=pkg, min_sdk=36, wff_version=4),
+                    recorder_factory=lambda: DoneRec(),
+                    probe_runner=_ok_ffprobe_runner(12),
+                    sleep_fn=lambda _: None,
+                ), wp_idx["i"]
+
+            on_s = "mWakefulness=Awake\nDisplay Id=0\nDisplay Power: state=ON\n"
+            aod_s = "mWakefulness=Dozing\nDisplay Id=0\nDisplay Power: state=DOZE_SUSPEND\n"
+
+            # 1. Happy path checks dumpsys wallpaper at all 6 checkpoints (initial, active before/after, aod before/after, final restore)
+            _, wp_count = run_scenario("ok", [good_wp] * 6, [on_s, on_s, aod_s, aod_s, on_s])
+            self.assertEqual(6, wp_count)
+
+            # 2. Watchface drifts right AFTER Active capture (3rd wallpaper query) -> MUST fail
+            with self.assertRaises(RuntimeError) as ctx_drift_active:
+                run_scenario("drift_active", [good_wp, good_wp, drifted_wp, good_wp], [on_s, on_s, on_s])
+            self.assertIn("active_after", str(ctx_drift_active.exception))
+
+            # 3. Screen state drops from ACTIVE to AOD right AFTER Active capture -> MUST fail
+            with self.assertRaises(RuntimeError) as ctx_screen_drift:
+                run_scenario("screen_drift", [good_wp] * 6, [on_s, aod_s, on_s])
+            self.assertIn("active_after", str(ctx_screen_drift.exception))
+
+            # 4. Watchface drifts right AFTER AOD capture (5th wallpaper query) -> MUST fail
+            with self.assertRaises(RuntimeError) as ctx_drift_aod:
+                run_scenario("drift_aod", [good_wp, good_wp, good_wp, good_wp, drifted_wp, good_wp], [on_s, on_s, aod_s, aod_s, on_s])
+            self.assertIn("aod_after", str(ctx_drift_aod.exception))
+
+            # 5. Watchface drifts at FINAL restore (6th wallpaper query) -> MUST fail (and recovery sees drift too)
+            with self.assertRaises(RuntimeError):
+                run_scenario("drift_final", [good_wp, good_wp, good_wp, good_wp, good_wp, drifted_wp], [on_s, on_s, aod_s, aod_s, on_s, on_s])
+
+    def test_r06_aud09_early_recovery_spawn_failure_capture_failure_and_no_overwrite(self):
+        """AG01-AUD-09: recovery starts at first device mutation, handles spawn/capture failure, and NEVER overwrites existing evidence."""
+        pkg = "io.github.scarlel96.aura.watchface.wff4"
+        valid_png = _build_valid_png_bytes(4, 4)
+        on_s = "mWakefulness=Awake\nDisplay Id=0\nDisplay Power: state=ON\n"
+        good_wp = f"mCurrentUserId=0\n  WallpaperData 0 userId=0\n    mWallpaperComponent=ComponentInfo{{{pkg}/.WatchFace}}\n"
+
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            apk_path = tmp_path / "wff4.apk"
+            _build_synthetic_resource_only_apk(apk_path)
+
+            # 1. Existing evidence file MUST NOT be overwritten, and NO adb commands may run
+            out_existing = tmp_path / "out_existing"
+            out_existing.mkdir()
+            existing_png = out_existing / "active_wff4.png"
+            existing_png.write_bytes(b"ORIGINAL_EVIDENCE_BYTES")
+            adb_called = []
+            with self.assertRaises(EvidenceOverwriteError):
+                execute_runtime_verification(
+                    adb_bin=Path("adb"),
+                    serial="emulator-5554",
+                    apk_path=apk_path,
+                    package_id=pkg,
+                    wff_version=4,
+                    output_dir=out_existing,
+                    expected_avd_name="aura_wear36_round",
+                    runner=lambda args, timeout=30, binary=False: adb_called.append(args),
+                    manifest_printer=lambda _: _valid_manifest_xml(pkg=pkg, min_sdk=36, wff_version=4),
+                    sleep_fn=lambda _: None,
+                )
+            self.assertEqual(b"ORIGINAL_EVIDENCE_BYTES", existing_png.read_bytes())
+            self.assertEqual([], adb_called)
+
+            # 2. Active capture failure (Step 4, before recorder even spawns) MUST trigger finally recovery (KEYCODE_WAKEUP + dumpsys check)
+            cmds_cap = []
+
+            def runner_cap_fail(args, timeout=30, binary=False):
+                cmds_cap.append(" ".join(args))
+                s = " ".join(args)
+                if "ro.boot.qemu.avd_name" in s: return SimpleNamespace(returncode=0, stdout="aura_wear36_round\n", stderr="")
+                if "sys.boot_completed" in s: return SimpleNamespace(returncode=0, stdout="1\n", stderr="")
+                if "ro.build.characteristics" in s: return SimpleNamespace(returncode=0, stdout="watch\n", stderr="")
+                if "ro.build.version.sdk" in s: return SimpleNamespace(returncode=0, stdout="36\n", stderr="")
+                if args[0] == "install": return SimpleNamespace(returncode=0, stdout="Success\n", stderr="")
+                if "pm list packages" in s: return SimpleNamespace(returncode=0, stdout=f"package:{pkg}\n", stderr="")
+                if "dumpsys wallpaper" in s: return SimpleNamespace(returncode=0, stdout=good_wp, stderr="")
+                if "dumpsys power" in s: return SimpleNamespace(returncode=0, stdout=on_s, stderr="")
+                if "screencap" in s: return SimpleNamespace(returncode=1, stdout=b"", stderr=b"screencap crashed")
+                return SimpleNamespace(returncode=0, stdout="", stderr="")
+
+            with self.assertRaises(RuntimeError) as cap_ctx:
+                execute_runtime_verification(
+                    adb_bin=Path("adb"),
+                    serial="emulator-5554",
+                    apk_path=apk_path,
+                    package_id=pkg,
+                    wff_version=4,
+                    output_dir=tmp_path / "out_cap_fail",
+                    expected_avd_name="aura_wear36_round",
+                    runner=runner_cap_fail,
+                    manifest_printer=lambda _: _valid_manifest_xml(pkg=pkg, min_sdk=36, wff_version=4),
+                    sleep_fn=lambda _: None,
+                )
+            self.assertNotIsInstance(cap_ctx.exception, RecoveryFailureError)
+            # Recovery ran a second KEYCODE_WAKEUP after Step 4 capture failed!
+            self.assertEqual(2, sum(1 for c in cmds_cap if "KEYCODE_WAKEUP" in c))
+
+            # 3. spawn_recorder() raises OSError -> MUST still run finally recovery (Awake+watchface + remote rm -f + test ! -e)
+            cmds_spawn = []
+
+            def runner_spawn_fail(args, timeout=30, binary=False):
+                cmds_spawn.append(" ".join(args))
+                s = " ".join(args)
+                if "ro.boot.qemu.avd_name" in s: return SimpleNamespace(returncode=0, stdout="aura_wear36_round\n", stderr="")
+                if "sys.boot_completed" in s: return SimpleNamespace(returncode=0, stdout="1\n", stderr="")
+                if "ro.build.characteristics" in s: return SimpleNamespace(returncode=0, stdout="watch\n", stderr="")
+                if "ro.build.version.sdk" in s: return SimpleNamespace(returncode=0, stdout="36\n", stderr="")
+                if args[0] == "install": return SimpleNamespace(returncode=0, stdout="Success\n", stderr="")
+                if "pm list packages" in s: return SimpleNamespace(returncode=0, stdout=f"package:{pkg}\n", stderr="")
+                if "dumpsys wallpaper" in s: return SimpleNamespace(returncode=0, stdout=good_wp, stderr="")
+                if "dumpsys power" in s: return SimpleNamespace(returncode=0, stdout=on_s, stderr="")
+                if "screencap" in s: return SimpleNamespace(returncode=0, stdout=valid_png, stderr=b"")
+                return SimpleNamespace(returncode=0, stdout="", stderr="")
+
+            def broken_spawn():
+                raise OSError("failed to spawn adb screenrecord")
+
+            with self.assertRaises(OSError):
+                execute_runtime_verification(
+                    adb_bin=Path("adb"),
+                    serial="emulator-5554",
+                    apk_path=apk_path,
+                    package_id=pkg,
+                    wff_version=4,
+                    output_dir=tmp_path / "out_spawn_fail",
+                    expected_avd_name="aura_wear36_round",
+                    runner=runner_spawn_fail,
+                    manifest_printer=lambda _: _valid_manifest_xml(pkg=pkg, min_sdk=36, wff_version=4),
+                    recorder_factory=broken_spawn,
+                    sleep_fn=lambda _: None,
+                )
+            self.assertEqual(2, sum(1 for c in cmds_spawn if "KEYCODE_WAKEUP" in c))
+            self.assertTrue(any("rm -f" in c for c in cmds_spawn))
+            self.assertTrue(any("test ! -e" in c for c in cmds_spawn))
 
 
 class Ag01OfficialValidatorMatrixTests(unittest.TestCase):

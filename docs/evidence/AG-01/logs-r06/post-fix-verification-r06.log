@@ -1,0 +1,24 @@
+================================================================================
+AG-01 R06 POST-FIX VERIFICATION LOG (AG01-AUD-05 ~ AG01-AUD-09)
+Target file: tests/compatibility/ag-01/wear_emulator_runtime.py
+Target SHA-256 (post-fix R06): c5a23026cea262ae99737619141b60ee3395f833da0f952b3b3e8d2802807d12
+================================================================================
+
+--- [AG01-AUD-05] Post-fix verification ---
+Case 5A (Display Id=0 dup ON, Display Id=1 missing): status=UNKNOWN display_state=INCOMPLETE_DISPLAY_MAPPING by_id={'0': ['ON'], '1': []} -> FIXED=YES
+Case 5B (Only Display Id=1 present, target Display Id=0 missing): status=UNKNOWN display_state=TARGET_DISPLAY_MISSING -> FIXED=YES
+
+--- [AG01-AUD-06] Post-fix verification ---
+Case 6A (interlace=1 Adam7): REJECTED (Unsupported PNG interlace method=1 (only non-interlaced interlace=0 is supported)) -> FIXED=YES
+Case 6B (trailing unused_data inside IDAT): REJECTED (Trailing 21 unused byte(s) found after PNG IDAT zlib stream end) -> FIXED=YES
+Case 6C (non-contiguous IDAT): REJECTED (Invalid PNG chunk order: non-contiguous IDAT chunks separated by another chunk) -> FIXED=YES
+Case 6D (6000x6000 144MB bomb header): REJECTED (PNG dimensions 6000x6000 exceed upper limit 4096x4096) -> FIXED=YES
+
+--- [AG01-AUD-07] Post-fix verification ---
+Case 7A (Zero-padded fake MP4): REJECTED (Invalid non-printable MP4 box type b'\x00\x00\x00\x00' at offset 24) -> FIXED=YES
+Case 7B (Valid MP4 structure on host without ffprobe): status=NOT_RUN video_verification_status=NOT RUN reason='ffprobe binary not found; actual video frame decode verification is NOT RUN' -> FIXED=YES
+
+--- [AG01-AUD-08 & AG01-AUD-09] Post-fix verification ---
+Case 9A (Overwrite existing evidence): BLOCKED (Refusing to overwrite pre-existing evidence file 'C:\Users\scarl\AppData\Local\Temp\tmplc36pjpy\out_exist\active_wff4.png'; use a fresh output directory.), preserved=True -> FIXED=YES
+Case 8A (dumpsys wallpaper checkpoint count across flow): 6 (initial + active before/after + aod before/after + final restore) -> FIXED=YES
+Case 9B (spawn_recorder failed with OSError): recovery_wakeup=True remote_cleanup=True -> FIXED=YES

@@ -1,10 +1,12 @@
-"""Safe Wear OS emulator runtime verification helper for AG-01 (R05 hardened).
+"""Safe Wear OS emulator runtime verification helper for AG-01 (R06 hardened).
 
-Safety and verification invariants enforced by this module (AG01-AUD-04 & AG-01-R05):
+Safety and verification invariants enforced by this module (AG01-AUD-04 ~ AG01-AUD-09):
 1. Never downloads SDK packages or creates AVDs automatically.
 2. Never uses `--force` in recommended `avdmanager create avd` commands so existing AVDs are never overwritten.
 3. Refuses to target physical devices (non-`emulator-*` serials) or non-Wear AVDs (e.g. phone/tablet AVDs).
 4. Before any device mutation (`adb install`), verifies:
+   - Existing evidence files (`active_wff*.png`, `ambient_wff*.png`, `transition_wff*.mp4`) do NOT already exist
+     in `output_dir` (refuses overwrite via `EvidenceOverwriteError`, AG01-AUD-09).
    - Local APK file exists, SHA-256 matches `expected_apk_sha256` (when provided), is resource-only (`0 .dex`, `0 .so`),
      and compiled `AndroidManifest.xml` matches `expected_package`, `expected_wff_version`, and `minSdk`.
    - Running emulator reports a dedicated approved Wear AVD name matching `expected_avd_name`,
@@ -14,30 +16,46 @@ Safety and verification invariants enforced by this module (AG01-AUD-04 & AG-01-
    including recovery/cleanup commands.
 6. Active watch face selection (`verify_active_watchface_selected`):
    - Never falls back to another user's wallpaper binding when the current user has no binding (`UNKNOWN`).
-   - Rejects user-scoped dumps lacking `mCurrentUserId`, conflicting `mCurrentUserId`, inactive history references
-     (`previousPackage=`), package suffix collisions (`<pkg>.other`), conflicting active components, and unconfirmed
-     WFF host dumpsys formats (`UNKNOWN` / `NOT_SELECTED`).
-7. Power and display state (`parse_power_and_display_state`):
-   - Collects ALL wakefulness values and ALL display states across BOTH `dumpsys power` and `dumpsys display`.
-   - Any missing, conflicting, multi-display contradictory, or incoherent wakefulness/display combination
-     (e.g. `Awake+DOZE`, `Dozing+ON`, `ON` vs `OFF` across power/display or multiple displays) returns `status="UNKNOWN"`.
-   - `is_active` is True ONLY when `wakefulness == "Awake"` AND single consistent `display_state == "ON"`.
-   - `is_aod` is True ONLY when `wakefulness in ("Dozing", "Asleep")` AND single consistent `display_state in ("DOZE", "DOZE_SUSPEND")`.
-8. PNG & MP4 artifact integrity:
-   - `validate_png_bytes`: validates full 8-byte PNG signature, chunk bounds, CRC-32 of every chunk, `IHDR` geometry/color
-     fields, `IDAT` zlib decompression & exact scanline byte length (non-interlaced), `IEND`, and zero trailing bytes.
-   - `validate_mp4_bytes`: validates size >= 1024 bytes and ISO BMFF `ftyp` header box.
-9. Failure recovery & cleanup verification (`RecoveryFailureError`):
-   - Always terminates and reaps (`kill` + `wait`) any lingering `screenrecord` process.
-   - Verifies ADB exit code and timeout on recovery `KEYCODE_WAKEUP`, and re-checks `dumpsys power`/`display`
-     to confirm final restoration to Active (`Awake + ON`).
-   - Verifies ADB exit code and timeout on `rm -f <remote_video>` AND confirms remote file absence via `test ! -e`.
-   - Never silently swallows recovery failures; raises `RecoveryFailureError` preserving both primary and recovery errors.
+   - Rejects user-scoped dumps lacking `mCurrentUserId`, conflicting `mCurrentUserId`, mixed scoped/unscoped dumps,
+     non-primary unscoped dumps, inactive history (`previousPackage=`), suffix collisions (`<pkg>.other`),
+     conflicting active components, and unconfirmed WFF host dumpsys formats (`UNKNOWN` / `NOT_SELECTED`).
+   - Checked before AND after Active capture, before AND after AOD capture, and at final Awake restoration (AG01-AUD-08).
+7. Power and display state (`parse_power_and_display_state`, AG01-AUD-05):
+   - Explicitly maps display states per Display ID across `dumpsys power` and `dumpsys display`.
+   - Duplicate observations on the same Display ID are deduplicated per Display ID and NEVER counted as evidence
+     for another Display ID.
+   - If the target display (default Display ID `"0"`) cannot be determined, or any declared Display ID lacks a
+     state observation, or states conflict across displays / power / display / global state / wakefulness,
+     returns `status="UNKNOWN"`, `is_active=False`, `is_aod=False`.
+8. PNG integrity (`validate_png_bytes`, AG01-AUD-06):
+   - Enforces upper bounds on input byte size, resolution (`width`, `height`), and decompressed payload size.
+   - Validates exact 8-byte signature, chunk bounds, CRC-32 of every chunk, strict chunk ordering (contiguous `IDAT`,
+     single `IHDR`, valid `PLTE` placement, rejects unknown critical chunks and APNG chunks), non-interlaced only
+     (explicitly rejects `interlace != 0`), `zlib.decompressobj()` stream completion (`eof`), zero `unused_data`
+     and zero `unconsumed_tail`, exact scanline byte length, valid scanline filter bytes (`0..4`), `IEND`, and zero
+     trailing bytes.
+9. MP4 container & frame verification (`parse_and_validate_mp4_structure`, `verify_mp4_video_artifact`, AG01-AUD-07):
+   - Parses ISO BMFF box framing (`ftyp`, `moov`, `mdat`, `trak` -> `mdia` -> `hdlr(vide)` + `minf` -> `stbl` ->
+     `stsd`/`stsz`/`stco|co64`) to prove valid box hierarchy, video track presence, sample count >= 1, and in-bounds
+     `mdat` sample payload.
+   - Runs external frame decoder/probe (`ffprobe`) to verify actual decodable video frames (`nb_read_frames >= 1`).
+   - When `ffprobe` is unavailable, NEVER reports PASS; returns `video_verification_status="NOT RUN"` and raises
+     `RuntimeVerificationIncompleteError` in `execute_runtime_verification`.
+10. Full-scope failure recovery & non-destructive evidence handling (`execute_runtime_verification`, AG01-AUD-09):
+   - Recovery `try ... finally` wraps from the VERY FIRST device-state-mutating command (`KEYCODE_WAKEUP`,
+     captures, `spawn_recorder()`, `KEYCODE_SLEEP`, etc.).
+   - Handles `spawn_recorder()` failure and Active/Ambient capture failure with full Awake+ON + watchface recovery
+     and remote file cleanup (`rm -f` + `test ! -e`) verification.
+   - Writes new evidence exclusively (`open(..., "xb")`) and stages pulled MP4 via temporary file so existing
+     evidence files are NEVER overwritten.
+   - Never silently swallows recovery failures; raises `RecoveryFailureError` preserving primary and recovery errors.
 """
 import argparse
 import hashlib
 import json
+import os
 import re
+import shutil
 import struct
 import subprocess
 import sys
@@ -134,7 +152,12 @@ ACTIVE_WFF_BOUND_PACKAGE_RE = re.compile(
 VALID_WAKEFULNESS_STATES = {"Awake", "Dozing", "Asleep", "Dreaming"}
 VALID_DISPLAY_STATES = {"ON", "OFF", "DOZE", "DOZE_SUSPEND", "ON_SUSPEND", "VR"}
 
+# PNG bounds & structural constraints (AG01-AUD-06)
 PNG_SIGNATURE = b"\x89PNG\r\n\x1a\n"
+PNG_MAX_INPUT_BYTES = 16 * 1024 * 1024
+PNG_MAX_WIDTH = 4096
+PNG_MAX_HEIGHT = 4096
+PNG_MAX_DECOMPRESSED_BYTES = 64 * 1024 * 1024
 PNG_COLOR_CHANNELS = {
     0: (1, {1, 2, 4, 8, 16}),
     2: (3, {8, 16}),
@@ -142,14 +165,25 @@ PNG_COLOR_CHANNELS = {
     4: (2, {8, 16}),
     6: (4, {8, 16}),
 }
+PNG_DISALLOWED_ANIMATION_CHUNKS = {b"acTL", b"fcTL", b"fdAT"}
+PNG_KNOWN_CRITICAL_CHUNKS = {b"IHDR", b"PLTE", b"IDAT", b"IEND"}
+
+# MP4 bounds (AG01-AUD-07)
+MP4_MIN_BYTES = 128
+MP4_MAX_BYTES = 256 * 1024 * 1024
+MP4_CONTAINER_BOXES = {b"moov", b"trak", b"mdia", b"minf", b"stbl", b"edts", b"dinf", b"udta"}
 
 
 class UnsafeTargetError(RuntimeError):
     """Raised when a command attempts to touch a physical watch/phone, non-Wear AVD, or mismatched APK/device."""
 
 
+class EvidenceOverwriteError(FileExistsError):
+    """Raised when a runtime run would overwrite an already-existing evidence file (AG01-AUD-09)."""
+
+
 class RuntimeVerificationIncompleteError(RuntimeError):
-    """Raised when runtime state or dumpsys format is UNKNOWN/unconfirmed and cannot be approved as PASS."""
+    """Raised when runtime state, dumpsys format, or video frame probe is UNKNOWN/NOT RUN and cannot PASS."""
 
 
 class RecoveryFailureError(RuntimeError):
@@ -312,174 +346,269 @@ def verify_local_apk_before_install(
     }
 
 
-def _extract_display_states(text, source_label):
-    """Collect all display state occurrences (including multi-display entries) from a dumpsys text."""
-    patterns = (
-        re.compile(r"Display Power:\s*state=([A-Z_]+)\b"),
-        re.compile(r"\bmScreenState=([A-Z_]+)\b"),
-        re.compile(r"\bDisplay State:\s*([A-Z_]+)\b"),
-        re.compile(r"\bmDisplayState=([A-Z_]+)\b"),
-        re.compile(r"\bmGlobalDisplayState=([A-Z_]+)\b"),
-        re.compile(r"DisplayDeviceInfo\{[^\n}]*?\bstate\s+([A-Z_]+)\b"),
-    )
-    found = []
-    for pat in patterns:
-        for match in pat.finditer(text or ""):
-            found.append((source_label, match.group(1)))
-    return found
+DISPLAY_ID_PATTERNS = (
+    re.compile(r"\b(?:Display Id|mDisplayId|displayId)\s*[:=]\s*(\d+)\b"),
+    re.compile(r"\bLogical Display\s+(\d+)\b"),
+    re.compile(r"\bDisplayPowerController\[(?:display=)?(\d+)\]"),
+    re.compile(r"^\s*Display\s+(\d+)\s*:\s*$"),
+    re.compile(r"DisplayDeviceInfo\{[^\n}]*?\bdisplayId\s+(\d+)\b"),
+)
+LOCAL_DISPLAY_STATE_PATTERNS = (
+    re.compile(r"Display Power:\s*state=([A-Z_]+)\b"),
+    re.compile(r"\bmScreenState=([A-Z_]+)\b"),
+    re.compile(r"\bDisplay State:\s*([A-Z_]+)\b"),
+    re.compile(r"\bmDisplayState=([A-Z_]+)\b"),
+    re.compile(r"DisplayDeviceInfo\{[^\n}]*?\bstate\s+([A-Z_]+)\b"),
+)
+GLOBAL_DISPLAY_STATE_RE = re.compile(r"\bmGlobalDisplayState=([A-Z_]+)\b")
 
 
-def parse_power_and_display_state(dumpsys_power, dumpsys_display=""):
-    """Strictly parse Awake vs Doze/AOD state from `dumpsys power` and `dumpsys display` (AG01-AUD-04 & R05).
+def _extract_display_states_by_id(text, source_label):
+    """Map display states explicitly to each Display ID (AG01-AUD-05).
+
+    Duplicate observations for the same Display ID are deduplicated into that Display ID's state set
+    and NEVER counted as evidence for a different Display ID.
+    """
+    declared_ids = set()
+    states_by_id = {}
+    unscoped_states = set()
+    global_states = set()
+    ambiguous_lines = []
+    current_display_id = None
+
+    for raw_line in (text or "").splitlines():
+        line_ids = []
+        for pat in DISPLAY_ID_PATTERNS:
+            for match in pat.finditer(raw_line):
+                did = match.group(1)
+                declared_ids.add(did)
+                states_by_id.setdefault(did, set())
+                line_ids.append(did)
+        unique_line_ids = sorted(set(line_ids))
+        if len(unique_line_ids) == 1:
+            current_display_id = unique_line_ids[0]
+        elif len(unique_line_ids) > 1:
+            current_display_id = None
+
+        for m_glob in GLOBAL_DISPLAY_STATE_RE.finditer(raw_line):
+            global_states.add(m_glob.group(1))
+
+        line_states = []
+        for pat in LOCAL_DISPLAY_STATE_PATTERNS:
+            for match in pat.finditer(raw_line):
+                line_states.append(match.group(1))
+
+        if line_states:
+            if len(unique_line_ids) > 1:
+                ambiguous_lines.append((unique_line_ids, line_states))
+            elif current_display_id is not None:
+                states_by_id.setdefault(current_display_id, set()).update(line_states)
+            else:
+                unscoped_states.update(line_states)
+
+    return {
+        "source": source_label,
+        "declared_ids": declared_ids,
+        "states_by_id": states_by_id,
+        "unscoped_states": unscoped_states,
+        "global_states": global_states,
+        "ambiguous_lines": ambiguous_lines,
+    }
+
+
+def parse_power_and_display_state(dumpsys_power, dumpsys_display="", target_display_id="0"):
+    """Strictly parse Awake vs Doze/AOD state with explicit per-Display-ID mapping (AG01-AUD-04 & AG01-AUD-05).
 
     Rules:
-    - Collects ALL `mWakefulness=` occurrences in `dumpsys power` and ALL display state occurrences across
-      BOTH `dumpsys power` and `dumpsys display` (including multi-display entries).
-    - Missing values, unknown tokens, multiple conflicting wakefulness values, or multiple conflicting display
-      states (across power vs display or across multiple displays) ALWAYS return `status="UNKNOWN"`,
-      `is_active=False`, `is_aod=False`.
-    - Incoherent wakefulness/display combinations (e.g. `Awake` + `DOZE`, `Dozing` + `ON`, `Awake` + `OFF`)
-      return `status="UNKNOWN"`, `is_active=False`, `is_aod=False`.
-    - `is_active` is True ONLY when single consistent `wakefulness == "Awake"` AND single consistent `display_state == "ON"`.
-    - `is_aod` is True ONLY when single consistent `wakefulness in ("Dozing", "Asleep")` AND single consistent
-      `display_state in ("DOZE", "DOZE_SUSPEND")`.
-    - `Dozing|Asleep` + `OFF` returns `status="SCREEN_OFF"`, `is_active=False`, `is_aod=False`.
+    - Explicitly maps display state observations to each Display ID across `dumpsys power` and `dumpsys display`.
+    - Duplicate observations on a single Display ID (e.g. `Display Power: state=ON` and `mScreenState=ON` on Display 0)
+      collapse into Display 0's set and NEVER masquerade as state evidence for Display 1.
+    - If ANY declared Display ID has no state observation, or has conflicting states, or if multiple Display IDs
+      disagree, or if the target display (`target_display_id`, default `"0"`) is absent/unconfirmed, returns
+      `status="UNKNOWN"`, `is_active=False`, `is_aod=False`.
+    - Conflicts between `dumpsys power`, `dumpsys display`, `mGlobalDisplayState`, `mWakefulness`, or incoherent
+      wakefulness/display pairs (`Awake+DOZE`, `Dozing+ON`, `Awake+OFF`) ALWAYS return `status="UNKNOWN"`.
     """
+    target_id = str(target_display_id)
     wake_matches = re.findall(r"\bmWakefulness=([A-Za-z_]+)\b", dumpsys_power or "")
     unique_wakes = sorted(set(wake_matches))
 
-    display_observations = (
-        _extract_display_states(dumpsys_power, "power")
-        + _extract_display_states(dumpsys_display, "display")
-    )
-    unique_displays = sorted({val for _, val in display_observations})
+    power_parsed = _extract_display_states_by_id(dumpsys_power, "power")
+    display_parsed = _extract_display_states_by_id(dumpsys_display, "display")
 
-    # Detect multiple display IDs explicitly
-    display_ids = sorted(set(
-        re.findall(r"\b(?:Display Id|mDisplayId)\s*[:=]\s*(\d+)\b", (dumpsys_power or "") + "\n" + (dumpsys_display or ""))
-    ))
+    declared_ids = sorted(power_parsed["declared_ids"] | display_parsed["declared_ids"], key=lambda x: int(x))
+    states_by_id = {}
+    for did in declared_ids:
+        combined = set(power_parsed["states_by_id"].get(did, set())) | set(display_parsed["states_by_id"].get(did, set()))
+        states_by_id[did] = sorted(combined)
+
+    unscoped_states = sorted(power_parsed["unscoped_states"] | display_parsed["unscoped_states"])
+    global_states = sorted(power_parsed["global_states"] | display_parsed["global_states"])
+    ambiguous_lines = power_parsed["ambiguous_lines"] + display_parsed["ambiguous_lines"]
+
+    all_observed_display_states = sorted(
+        set(unscoped_states)
+        | set(global_states)
+        | {st for sts in states_by_id.values() for st in sts}
+    )
+
+    def _unknown(reason, wake_val="UNKNOWN", disp_val="UNKNOWN"):
+        return {
+            "status": "UNKNOWN",
+            "wakefulness": wake_val,
+            "display_state": disp_val,
+            "target_display_id": target_id,
+            "observed_wakefulness": unique_wakes,
+            "observed_display_states": all_observed_display_states,
+            "observed_display_ids": declared_ids,
+            "display_states_by_id": states_by_id,
+            "unscoped_display_states": unscoped_states,
+            "global_display_states": global_states,
+            "is_active": False,
+            "is_aod": False,
+            "reason": reason,
+        }
 
     if len(unique_wakes) == 0:
-        return {
-            "status": "UNKNOWN",
-            "wakefulness": "UNKNOWN",
-            "display_state": unique_displays[0] if len(unique_displays) == 1 else ("CONFLICT" if len(unique_displays) > 1 else "UNKNOWN"),
-            "observed_wakefulness": unique_wakes,
-            "observed_display_states": unique_displays,
-            "observed_display_ids": display_ids,
-            "is_active": False,
-            "is_aod": False,
-            "reason": "No mWakefulness field found in dumpsys power",
-        }
+        return _unknown("No mWakefulness field found in dumpsys power")
     if len(unique_wakes) > 1 or unique_wakes[0] not in VALID_WAKEFULNESS_STATES:
-        return {
-            "status": "UNKNOWN",
-            "wakefulness": "CONFLICT" if len(unique_wakes) > 1 else unique_wakes[0],
-            "display_state": unique_displays[0] if len(unique_displays) == 1 else ("CONFLICT" if len(unique_displays) > 1 else "UNKNOWN"),
-            "observed_wakefulness": unique_wakes,
-            "observed_display_states": unique_displays,
-            "observed_display_ids": display_ids,
-            "is_active": False,
-            "is_aod": False,
-            "reason": f"Conflicting or invalid mWakefulness values observed: {unique_wakes}",
-        }
+        return _unknown(
+            f"Conflicting or invalid mWakefulness values observed: {unique_wakes}",
+            wake_val="CONFLICT" if len(unique_wakes) > 1 else unique_wakes[0],
+        )
     wakefulness = unique_wakes[0]
 
-    if len(unique_displays) == 0:
-        return {
-            "status": "UNKNOWN",
-            "wakefulness": wakefulness,
-            "display_state": "UNKNOWN",
-            "observed_wakefulness": unique_wakes,
-            "observed_display_states": unique_displays,
-            "observed_display_ids": display_ids,
-            "is_active": False,
-            "is_aod": False,
-            "reason": "No display state found in dumpsys power or dumpsys display",
-        }
-    if len(unique_displays) > 1 or unique_displays[0] not in VALID_DISPLAY_STATES:
-        return {
-            "status": "UNKNOWN",
-            "wakefulness": wakefulness,
-            "display_state": "CONFLICT" if len(unique_displays) > 1 else unique_displays[0],
-            "observed_wakefulness": unique_wakes,
-            "observed_display_states": unique_displays,
-            "observed_display_ids": display_ids,
-            "is_active": False,
-            "is_aod": False,
-            "reason": f"Conflicting or invalid display states observed across power/display or multiple displays: {display_observations}",
-        }
-    if len(display_ids) > 1 and len(display_observations) < len(display_ids):
-        return {
-            "status": "UNKNOWN",
-            "wakefulness": wakefulness,
-            "display_state": "INCOMPLETE_MULTI_DISPLAY",
-            "observed_wakefulness": unique_wakes,
-            "observed_display_states": unique_displays,
-            "observed_display_ids": display_ids,
-            "is_active": False,
-            "is_aod": False,
-            "reason": f"Multiple display IDs ({display_ids}) present without complete per-display state observations ({display_observations})",
-        }
-    display_state = unique_displays[0]
+    if ambiguous_lines:
+        return _unknown(
+            f"Ambiguous display state line(s) referencing multiple Display IDs simultaneously: {ambiguous_lines}",
+            wake_val=wakefulness,
+            disp_val="AMBIGUOUS_DISPLAY_LINE",
+        )
+
+    # Global display state conflict / validity check
+    if len(global_states) > 1:
+        return _unknown(
+            f"Conflicting mGlobalDisplayState values observed: {global_states}",
+            wake_val=wakefulness,
+            disp_val="CONFLICT",
+        )
+    if global_states and global_states[0] not in VALID_DISPLAY_STATES:
+        return _unknown(
+            f"Invalid mGlobalDisplayState value observed: {global_states[0]}",
+            wake_val=wakefulness,
+            disp_val=global_states[0],
+        )
+
+    if declared_ids:
+        # Every declared Display ID must have at least one explicit state observation (duplicate lines on another ID never count!)
+        missing_ids = [did for did in declared_ids if not states_by_id[did]]
+        if missing_ids:
+            return _unknown(
+                f"Display ID(s) {missing_ids} declared without explicit per-display state mapping (states_by_id={states_by_id})",
+                wake_val=wakefulness,
+                disp_val="INCOMPLETE_DISPLAY_MAPPING",
+            )
+        # No individual Display ID may report conflicting or invalid states
+        for did, sts in states_by_id.items():
+            if len(sts) > 1:
+                return _unknown(
+                    f"Conflicting display states observed for Display Id={did}: {sts}",
+                    wake_val=wakefulness,
+                    disp_val="CONFLICT",
+                )
+            if sts[0] not in VALID_DISPLAY_STATES:
+                return _unknown(
+                    f"Invalid display state '{sts[0]}' observed for Display Id={did}",
+                    wake_val=wakefulness,
+                    disp_val=sts[0],
+                )
+        # Target display must be explicitly present and mapped
+        if target_id not in states_by_id:
+            return _unknown(
+                f"Target display Id={target_id} is missing from declared displays {declared_ids}; cannot confirm target display state",
+                wake_val=wakefulness,
+                disp_val="TARGET_DISPLAY_MISSING",
+            )
+        # Cross-display consistency: all declared displays must agree (no hidden multi-display contradiction)
+        distinct_per_display = sorted({sts[0] for sts in states_by_id.values()})
+        if len(distinct_per_display) > 1:
+            return _unknown(
+                f"Conflicting states across multiple displays: {states_by_id}",
+                wake_val=wakefulness,
+                disp_val="CONFLICT",
+            )
+        target_state = states_by_id[target_id][0]
+        # Any unscoped or global state must agree with the target display state
+        if unscoped_states and (len(unscoped_states) > 1 or unscoped_states[0] != target_state):
+            return _unknown(
+                f"Unscoped display state(s) {unscoped_states} conflict with target Display Id={target_id} state '{target_state}'",
+                wake_val=wakefulness,
+                disp_val="CONFLICT",
+            )
+        if global_states and global_states[0] != target_state:
+            return _unknown(
+                f"mGlobalDisplayState='{global_states[0]}' conflicts with target Display Id={target_id} state '{target_state}'",
+                wake_val=wakefulness,
+                disp_val="CONFLICT",
+            )
+        display_state = target_state
+    else:
+        # No Display ID headers in dumpsys output
+        if target_id != "0":
+            return _unknown(
+                f"Cannot confirm non-default target Display Id={target_id} when dumpsys output omits Display IDs",
+                wake_val=wakefulness,
+                disp_val="TARGET_DISPLAY_MISSING",
+            )
+        combined_unscoped = sorted(set(unscoped_states) | set(global_states))
+        if len(combined_unscoped) == 0:
+            return _unknown(
+                "No display state found in dumpsys power or dumpsys display",
+                wake_val=wakefulness,
+                disp_val="UNKNOWN",
+            )
+        if len(combined_unscoped) > 1 or combined_unscoped[0] not in VALID_DISPLAY_STATES:
+            return _unknown(
+                f"Conflicting or invalid display states observed across power/display: {combined_unscoped}",
+                wake_val=wakefulness,
+                disp_val="CONFLICT" if len(combined_unscoped) > 1 else combined_unscoped[0],
+            )
+        display_state = combined_unscoped[0]
+
+    base_meta = {
+        "wakefulness": wakefulness,
+        "display_state": display_state,
+        "target_display_id": target_id,
+        "observed_wakefulness": unique_wakes,
+        "observed_display_states": all_observed_display_states,
+        "observed_display_ids": declared_ids,
+        "display_states_by_id": states_by_id,
+        "unscoped_display_states": unscoped_states,
+        "global_display_states": global_states,
+    }
 
     if wakefulness == "Awake" and display_state == "ON":
-        return {
-            "status": "ACTIVE",
-            "wakefulness": wakefulness,
-            "display_state": display_state,
-            "observed_wakefulness": unique_wakes,
-            "observed_display_states": unique_displays,
-            "observed_display_ids": display_ids,
-            "is_active": True,
-            "is_aod": False,
-        }
+        return {**base_meta, "status": "ACTIVE", "is_active": True, "is_aod": False}
     if wakefulness in ("Dozing", "Asleep") and display_state in ("DOZE", "DOZE_SUSPEND"):
-        return {
-            "status": "AOD",
-            "wakefulness": wakefulness,
-            "display_state": display_state,
-            "observed_wakefulness": unique_wakes,
-            "observed_display_states": unique_displays,
-            "observed_display_ids": display_ids,
-            "is_active": False,
-            "is_aod": True,
-        }
+        return {**base_meta, "status": "AOD", "is_active": False, "is_aod": True}
     if wakefulness in ("Dozing", "Asleep") and display_state == "OFF":
         return {
+            **base_meta,
             "status": "SCREEN_OFF",
-            "wakefulness": wakefulness,
-            "display_state": display_state,
-            "observed_wakefulness": unique_wakes,
-            "observed_display_states": unique_displays,
-            "observed_display_ids": display_ids,
             "is_active": False,
             "is_aod": False,
             "reason": f"Display is OFF while {wakefulness} (screen off, not AOD)",
         }
 
-    return {
-        "status": "UNKNOWN",
-        "wakefulness": wakefulness,
-        "display_state": display_state,
-        "observed_wakefulness": unique_wakes,
-        "observed_display_states": unique_displays,
-        "observed_display_ids": display_ids,
-        "is_active": False,
-        "is_aod": False,
-        "reason": f"Incoherent or transitional wakefulness/display combination: wakefulness={wakefulness}, display_state={display_state}",
-    }
+    return _unknown(
+        f"Incoherent or transitional wakefulness/display combination: wakefulness={wakefulness}, display_state={display_state}",
+        wake_val=wakefulness,
+        disp_val=display_state,
+    )
 
 
 def verify_active_watchface_selected(dumpsys_wallpaper, expected_package):
-    """Verify from `dumpsys wallpaper` that `expected_package` is the active current-user watch face (AG01-AUD-04 & R05).
-
-    Strict rules:
-    - Never falls back to another user's binding when the current user has no binding -> returns `status="UNKNOWN"`.
-    - Rejects user-scoped dumps that omit `mCurrentUserId` or report conflicting `mCurrentUserId` -> `status="UNKNOWN"`.
-    - Rejects inactive history lines (`previousPackage=`), suffix collisions (`<pkg>.other`), conflicting bindings,
-      conflicting `boundWatchFacePackage` lines, and unconfirmed WFF host formats.
-    """
+    """Verify from `dumpsys wallpaper` that `expected_package` is the active current-user watch face (AG01-AUD-04 & R05)."""
     if not expected_package or not PACKAGE_ID_RE.fullmatch(expected_package):
         raise ValueError(f"expected_package must be a valid Android package name, got '{expected_package}'")
 
@@ -591,7 +720,6 @@ def verify_active_watchface_selected(dumpsys_wallpaper, expected_package):
                 ),
             }
 
-    # Verify each binding does not have conflicting boundWatchFacePackage values
     normalized_keys = set()
     for b in bindings:
         uniq_bound = sorted(set(b["bound_wff_packages"]))
@@ -675,21 +803,36 @@ def verify_active_watchface_selected(dumpsys_wallpaper, expected_package):
     }
 
 
-def validate_png_bytes(data, min_width=1, min_height=1):
-    """Validate complete PNG structure and integrity (ISO/IEC 15948) using Python stdlib only.
+def validate_png_bytes(
+    data,
+    min_width=1,
+    min_height=1,
+    max_input_bytes=PNG_MAX_INPUT_BYTES,
+    max_width=PNG_MAX_WIDTH,
+    max_height=PNG_MAX_HEIGHT,
+    max_decompressed_bytes=PNG_MAX_DECOMPRESSED_BYTES,
+):
+    """Validate bounded PNG structure and integrity (ISO/IEC 15948, AG01-AUD-06) using Python stdlib only.
 
     Checks:
-    1. Exact 8-byte PNG signature (`\\x89PNG\\r\\n\\x1a\\n`).
+    1. Input byte size bounds (`33 <= len(data) <= max_input_bytes`) and exact 8-byte signature.
     2. Complete chunk framing without truncation or trailing bytes after `IEND`.
     3. CRC-32 checksum verification for EVERY chunk.
-    4. First chunk is `IHDR` (13 bytes) with valid width/height/bit_depth/color_type/compression/filter/interlace.
-    5. At least one `IDAT` chunk whose concatenated payload decompresses cleanly with `zlib.decompress`
-       and matches exact uncompressed scanline byte length for non-interlaced PNGs.
-    6. Last chunk is `IEND` (0 bytes).
+    4. First chunk is 13-byte `IHDR` (no duplicate `IHDR`), width/height within `[min, max]` bounds,
+       valid color_type/bit_depth, compression=0, filter=0, and **interlace=0 ONLY** (explicitly rejects Adam7/unsupported interlace).
+    5. Strict chunk ordering and structure:
+       - Rejects non-contiguous `IDAT` chunks.
+       - Rejects duplicate `PLTE`, `PLTE` after `IDAT`, `PLTE` on grayscale, or missing `PLTE` on indexed-color (`color_type=3`).
+       - Rejects unknown critical chunks (`not (chunk_type[0] & 32)`) and APNG animation chunks (`acTL`, `fcTL`, `fdAT`).
+    6. Enforces `max_decompressed_bytes` BEFORE inflating, decompresses with `zlib.decompressobj()` bounded to
+       `expected_len + 1`, and strictly checks `inflater.eof`, empty `inflater.unused_data`, empty
+       `inflater.unconsumed_tail`, exact scanline length, and valid filter byte (`0..4`) on every row.
     """
     if not isinstance(data, (bytes, bytearray)):
         raise RuntimeError("PNG capture output is not bytes")
     raw = bytes(data)
+    if len(raw) > max_input_bytes:
+        raise RuntimeError(f"PNG input size {len(raw)} bytes exceeds upper limit {max_input_bytes} bytes")
     if len(raw) < 33 or raw[:8] != PNG_SIGNATURE:
         raise RuntimeError("Invalid PNG signature or truncated PNG header")
 
@@ -698,6 +841,7 @@ def validate_png_bytes(data, min_width=1, min_height=1):
     ihdr = None
     saw_plte = False
     idat_parts = []
+    idat_closed = False
     saw_iend = False
 
     while offset < len(raw):
@@ -729,14 +873,20 @@ def validate_png_bytes(data, min_width=1, min_height=1):
             width, height, bit_depth, color_type, compression, filter_method, interlace = struct.unpack(">IIBBBBB", chunk_data)
             if width < min_width or height < min_height:
                 raise RuntimeError(f"Invalid PNG dimensions: {width}x{height} (min {min_width}x{min_height})")
+            if width > max_width or height > max_height:
+                raise RuntimeError(f"PNG dimensions {width}x{height} exceed upper limit {max_width}x{max_height}")
             if color_type not in PNG_COLOR_CHANNELS:
                 raise RuntimeError(f"Unsupported PNG color_type={color_type}")
             channels, allowed_depths = PNG_COLOR_CHANNELS[color_type]
             if bit_depth not in allowed_depths:
                 raise RuntimeError(f"Invalid PNG bit_depth={bit_depth} for color_type={color_type}")
-            if compression != 0 or filter_method != 0 or interlace not in (0, 1):
+            if compression != 0 or filter_method != 0:
                 raise RuntimeError(
-                    f"Invalid PNG header flags: compression={compression}, filter={filter_method}, interlace={interlace}"
+                    f"Invalid PNG header flags: compression={compression}, filter={filter_method}"
+                )
+            if interlace != 0:
+                raise RuntimeError(
+                    f"Unsupported PNG interlace method={interlace} (only non-interlaced interlace=0 is supported)"
                 )
             ihdr = {
                 "width": width,
@@ -749,17 +899,35 @@ def validate_png_bytes(data, min_width=1, min_height=1):
         elif chunk_type == b"IHDR":
             raise RuntimeError("Duplicate IHDR chunk found in PNG stream")
         elif chunk_type == b"PLTE":
-            if length == 0 or length % 3 != 0 or length > 768:
-                raise RuntimeError(f"Invalid PNG PLTE chunk length: {length}")
+            if saw_plte:
+                raise RuntimeError("Duplicate PLTE chunk found in PNG stream")
+            if idat_parts:
+                raise RuntimeError("Invalid PNG chunk order: PLTE chunk appeared after IDAT")
+            if ihdr["color_type"] in (0, 4):
+                raise RuntimeError(f"Invalid PNG chunk: PLTE is prohibited for grayscale color_type={ihdr['color_type']}")
+            max_palette_bytes = 3 * min(256, 1 << ihdr["bit_depth"]) if ihdr["color_type"] == 3 else 768
+            if length == 0 or length % 3 != 0 or length > max_palette_bytes:
+                raise RuntimeError(f"Invalid PNG PLTE chunk length: {length} (max {max_palette_bytes})")
             saw_plte = True
         elif chunk_type == b"IDAT":
-            if ihdr and ihdr["color_type"] == 3 and not saw_plte:
+            if idat_closed:
+                raise RuntimeError("Invalid PNG chunk order: non-contiguous IDAT chunks separated by another chunk")
+            if ihdr["color_type"] == 3 and not saw_plte:
                 raise RuntimeError("Indexed-color PNG (color_type=3) is missing required PLTE chunk before IDAT")
             idat_parts.append(chunk_data)
         elif chunk_type == b"IEND":
             if length != 0:
                 raise RuntimeError(f"PNG IEND chunk must have 0 length, got {length}")
             saw_iend = True
+        else:
+            if chunk_type == b"tRNS" and idat_parts:
+                raise RuntimeError("Invalid PNG chunk order: tRNS chunk appeared after IDAT")
+            if chunk_type in PNG_DISALLOWED_ANIMATION_CHUNKS:
+                raise RuntimeError(f"Unsupported APNG animation chunk {chunk_type.decode('ascii')} in static capture PNG")
+            if chunk_type not in PNG_KNOWN_CRITICAL_CHUNKS and not (chunk_type[0] & 32):
+                raise RuntimeError(f"Unsupported unknown critical PNG chunk {chunk_type.decode('ascii')}")
+            if idat_parts:
+                idat_closed = True
 
         offset = crc_end
 
@@ -770,48 +938,400 @@ def validate_png_bytes(data, min_width=1, min_height=1):
     if not saw_iend:
         raise RuntimeError("PNG missing terminating IEND chunk")
 
+    bits_per_pixel = ihdr["channels"] * ihdr["bit_depth"]
+    row_bytes = (ihdr["width"] * bits_per_pixel + 7) // 8
+    stride = 1 + row_bytes
+    expected_decompressed_len = ihdr["height"] * stride
+    if expected_decompressed_len > max_decompressed_bytes:
+        raise RuntimeError(
+            f"PNG decompressed payload size {expected_decompressed_len} bytes exceeds upper limit {max_decompressed_bytes} bytes"
+        )
+
+    idat_payload = b"".join(idat_parts)
+    inflater = zlib.decompressobj()
     try:
-        decompressed = zlib.decompress(b"".join(idat_parts))
+        decompressed = inflater.decompress(idat_payload, expected_decompressed_len + 1)
     except zlib.error as exc:
         raise RuntimeError(f"Corrupt PNG IDAT zlib stream: {exc}") from exc
 
-    if ihdr["interlace"] == 0:
-        bits_per_pixel = ihdr["channels"] * ihdr["bit_depth"]
-        row_bytes = (ihdr["width"] * bits_per_pixel + 7) // 8
-        stride = 1 + row_bytes
-        expected_decompressed_len = ihdr["height"] * stride
-        if len(decompressed) != expected_decompressed_len:
+    if inflater.unconsumed_tail or len(decompressed) > expected_decompressed_len:
+        raise RuntimeError(
+            f"PNG IDAT zlib stream produced data beyond expected decompressed limit "
+            f"(got {len(decompressed)} bytes, unconsumed={len(inflater.unconsumed_tail)})"
+        )
+    try:
+        flushed = inflater.flush(expected_decompressed_len + 1 - len(decompressed))
+    except zlib.error as exc:
+        raise RuntimeError(f"Corrupt PNG IDAT zlib stream on flush: {exc}") from exc
+    if flushed:
+        decompressed += flushed
+
+    if not inflater.eof:
+        raise RuntimeError("Truncated/unterminated PNG IDAT zlib stream (inflater.eof is False)")
+    if inflater.unused_data:
+        raise RuntimeError(
+            f"Trailing {len(inflater.unused_data)} unused byte(s) found after PNG IDAT zlib stream end"
+        )
+    if len(decompressed) != expected_decompressed_len:
+        raise RuntimeError(
+            f"Corrupt PNG IDAT payload length: expected {expected_decompressed_len} decompressed bytes for "
+            f"{ihdr['width']}x{ihdr['height']}, got {len(decompressed)}"
+        )
+    for row_idx in range(ihdr["height"]):
+        filter_byte = decompressed[row_idx * stride]
+        if filter_byte > 4:
             raise RuntimeError(
-                f"Corrupt PNG IDAT payload length: expected {expected_decompressed_len} decompressed bytes for "
-                f"{ihdr['width']}x{ihdr['height']}, got {len(decompressed)}"
+                f"Invalid PNG scanline filter type {filter_byte} at row {row_idx} (must be 0..4)"
             )
-        for row_idx in range(ihdr["height"]):
-            filter_byte = decompressed[row_idx * stride]
-            if filter_byte > 4:
-                raise RuntimeError(
-                    f"Invalid PNG scanline filter type {filter_byte} at row {row_idx} (must be 0..4)"
-                )
 
     return {
         "width": ihdr["width"],
         "height": ihdr["height"],
         "bit_depth": ihdr["bit_depth"],
         "color_type": ihdr["color_type"],
+        "interlace": ihdr["interlace"],
         "chunk_count": chunk_count,
+        "decompressed_bytes": len(decompressed),
         "size_bytes": len(raw),
         "sha256": hashlib.sha256(raw).hexdigest(),
     }
 
 
-def validate_mp4_bytes(data, min_size_bytes=1024):
-    """Verify pulled screenrecord MP4 bytes are non-empty, meet minimum size, and carry an ISO BMFF `ftyp` box."""
-    if not data or len(data) < min_size_bytes:
-        raise RuntimeError(
-            f"Invalid or truncated MP4 recording: size={0 if not data else len(data)} bytes (expected >= {min_size_bytes} bytes)"
-        )
-    if len(data) < 12 or data[4:8] != b"ftyp":
-        raise RuntimeError("Invalid MP4 file header: missing ISO Base Media File Format 'ftyp' box at bytes 4..8")
-    return len(data)
+def _iter_iso_bmff_boxes(raw, start, end):
+    """Strictly parse ISO Base Media File Format (ISO/IEC 14496-12) boxes within [start, end)."""
+    pos = start
+    boxes = []
+    while pos < end:
+        if pos + 8 > end:
+            raise RuntimeError(f"Truncated MP4 box header at offset {pos} (end={end})")
+        size32, box_type = struct.unpack(">I4s", raw[pos:pos + 8])
+        if not all(32 <= b <= 126 for b in box_type):
+            raise RuntimeError(f"Invalid non-printable MP4 box type {box_type!r} at offset {pos}")
+        header_len = 8
+        if size32 == 1:
+            if pos + 16 > end:
+                raise RuntimeError(f"Truncated 64-bit MP4 box header for {box_type!r} at offset {pos}")
+            box_size = struct.unpack(">Q", raw[pos + 8:pos + 16])[0]
+            header_len = 16
+        elif size32 == 0:
+            box_size = end - pos
+        else:
+            box_size = size32
+        if box_size < header_len:
+            raise RuntimeError(f"Invalid MP4 box size {box_size} (< {header_len}) for {box_type!r} at offset {pos}")
+        box_end = pos + box_size
+        if box_end > end:
+            raise RuntimeError(
+                f"Truncated MP4 box {box_type.decode('ascii', errors='replace')}: declared end {box_end} > container end {end}"
+            )
+        boxes.append({
+            "type": box_type,
+            "start": pos,
+            "payload_start": pos + header_len,
+            "end": box_end,
+            "size": box_size,
+        })
+        pos = box_end
+    return boxes
+
+
+def parse_and_validate_mp4_structure(data, min_size_bytes=MP4_MIN_BYTES, max_size_bytes=MP4_MAX_BYTES):
+    """Validate MP4 ISO BMFF box framing, video track (`vide`), sample table (`stsd`/`stsz`/`stco|co64`), and `mdat` bounds (AG01-AUD-07)."""
+    if not isinstance(data, (bytes, bytearray)):
+        raise RuntimeError("MP4 recording data is not bytes")
+    raw = bytes(data)
+    if len(raw) < min_size_bytes:
+        raise RuntimeError(f"Invalid or truncated MP4 recording: size={len(raw)} bytes (expected >= {min_size_bytes} bytes)")
+    if len(raw) > max_size_bytes:
+        raise RuntimeError(f"MP4 recording size {len(raw)} bytes exceeds upper limit {max_size_bytes} bytes")
+
+    top_boxes = _iter_iso_bmff_boxes(raw, 0, len(raw))
+    if not top_boxes or top_boxes[0]["type"] != b"ftyp":
+        raise RuntimeError("Invalid MP4 file: first top-level box must be 'ftyp'")
+    ftyp = top_boxes[0]
+    if ftyp["end"] - ftyp["payload_start"] < 8:
+        raise RuntimeError("Invalid MP4 'ftyp' box: payload shorter than 8 bytes")
+    major_brand = raw[ftyp["payload_start"]:ftyp["payload_start"] + 4].decode("ascii", errors="replace")
+
+    moov_boxes = [b for b in top_boxes if b["type"] == b"moov"]
+    mdat_boxes = [b for b in top_boxes if b["type"] == b"mdat"]
+    if len(moov_boxes) != 1:
+        raise RuntimeError(f"Invalid MP4 structure: expected exactly 1 'moov' box, found {len(moov_boxes)}")
+    if not mdat_boxes:
+        raise RuntimeError("Invalid MP4 structure: missing 'mdat' media data box")
+
+    mdat_ranges = [(b["payload_start"], b["end"]) for b in mdat_boxes]
+    mdat_payload_bytes = sum(end - start for start, end in mdat_ranges)
+    if mdat_payload_bytes <= 0:
+        raise RuntimeError("Invalid MP4 structure: 'mdat' box contains 0 payload bytes")
+
+    moov = moov_boxes[0]
+    moov_children = _iter_iso_bmff_boxes(raw, moov["payload_start"], moov["end"])
+    traks = [b for b in moov_children if b["type"] == b"trak"]
+    if not traks:
+        raise RuntimeError("Invalid MP4 structure: 'moov' contains no 'trak' boxes")
+
+    video_tracks = []
+    for trak in traks:
+        trak_children = _iter_iso_bmff_boxes(raw, trak["payload_start"], trak["end"])
+        mdias = [b for b in trak_children if b["type"] == b"mdia"]
+        if len(mdias) != 1:
+            continue
+        mdia = mdias[0]
+        mdia_children = _iter_iso_bmff_boxes(raw, mdia["payload_start"], mdia["end"])
+        hdlrs = [b for b in mdia_children if b["type"] == b"hdlr"]
+        if len(hdlrs) != 1:
+            continue
+        hdlr = hdlrs[0]
+        if hdlr["end"] - hdlr["payload_start"] < 12:
+            raise RuntimeError("Truncated MP4 'hdlr' box inside 'mdia'")
+        handler_type = raw[hdlr["payload_start"] + 8:hdlr["payload_start"] + 12]
+        if handler_type != b"vide":
+            continue
+
+        minfs = [b for b in mdia_children if b["type"] == b"minf"]
+        if len(minfs) != 1:
+            raise RuntimeError("Video 'trak/mdia' is missing 'minf' box")
+        minf_children = _iter_iso_bmff_boxes(raw, minfs[0]["payload_start"], minfs[0]["end"])
+        stbls = [b for b in minf_children if b["type"] == b"stbl"]
+        if len(stbls) != 1:
+            raise RuntimeError("Video 'minf' is missing 'stbl' sample table box")
+        stbl_children = _iter_iso_bmff_boxes(raw, stbls[0]["payload_start"], stbls[0]["end"])
+        stbl_by_type = {b["type"]: b for b in stbl_children}
+
+        # Validate stsd (sample description / codec)
+        stsd = stbl_by_type.get(b"stsd")
+        if stsd is None or (stsd["end"] - stsd["payload_start"]) < 16:
+            raise RuntimeError("Video 'stbl' is missing valid 'stsd' sample description box")
+        stsd_entry_count = struct.unpack(">I", raw[stsd["payload_start"] + 4:stsd["payload_start"] + 8])[0]
+        if stsd_entry_count < 1:
+            raise RuntimeError("Video 'stsd' declares 0 sample description entries")
+        codec_boxes = _iter_iso_bmff_boxes(raw, stsd["payload_start"] + 8, stsd["end"])
+        if not codec_boxes:
+            raise RuntimeError("Video 'stsd' contains no codec entry box")
+        codec_fourcc = codec_boxes[0]["type"].decode("ascii", errors="replace")
+
+        # Validate stsz (sample sizes & sample count >= 1)
+        stsz = stbl_by_type.get(b"stsz")
+        if stsz is None or (stsz["end"] - stsz["payload_start"]) < 12:
+            raise RuntimeError("Video 'stbl' is missing valid 'stsz' sample size box")
+        uniform_sample_size, sample_count = struct.unpack(">II", raw[stsz["payload_start"] + 4:stsz["payload_start"] + 12])
+        if sample_count < 1:
+            raise RuntimeError("Video track declares 0 samples in 'stsz'")
+        if uniform_sample_size > 0:
+            total_sample_bytes = uniform_sample_size * sample_count
+            min_sample_size = uniform_sample_size
+        else:
+            table_start = stsz["payload_start"] + 12
+            table_end = table_start + (4 * sample_count)
+            if table_end > stsz["end"]:
+                raise RuntimeError("Truncated video 'stsz' sample size table")
+            sample_sizes = struct.unpack(f">{sample_count}I", raw[table_start:table_end])
+            if any(sz == 0 for sz in sample_sizes):
+                raise RuntimeError("Video 'stsz' contains 0-byte sample entry")
+            total_sample_bytes = sum(sample_sizes)
+            min_sample_size = min(sample_sizes)
+        if total_sample_bytes <= 0 or total_sample_bytes > mdat_payload_bytes:
+            raise RuntimeError(
+                f"Video sample byte total ({total_sample_bytes}) is invalid relative to 'mdat' payload ({mdat_payload_bytes})"
+            )
+
+        # Validate stco / co64 chunk offsets point within mdat payload with room for at least one sample
+        stco = stbl_by_type.get(b"stco")
+        co64 = stbl_by_type.get(b"co64")
+        if stco is None and co64 is None:
+            raise RuntimeError("Video 'stbl' is missing both 'stco' and 'co64' chunk offset boxes")
+        chunk_offsets = []
+        if stco is not None:
+            if (stco["end"] - stco["payload_start"]) < 8:
+                raise RuntimeError("Truncated 'stco' box")
+            entry_cnt = struct.unpack(">I", raw[stco["payload_start"] + 4:stco["payload_start"] + 8])[0]
+            if entry_cnt < 1 or stco["payload_start"] + 8 + 4 * entry_cnt > stco["end"]:
+                raise RuntimeError("Invalid or empty 'stco' chunk offset table")
+            chunk_offsets.extend(struct.unpack(f">{entry_cnt}I", raw[stco["payload_start"] + 8:stco["payload_start"] + 8 + 4 * entry_cnt]))
+        if co64 is not None:
+            if (co64["end"] - co64["payload_start"]) < 8:
+                raise RuntimeError("Truncated 'co64' box")
+            entry_cnt = struct.unpack(">I", raw[co64["payload_start"] + 4:co64["payload_start"] + 8])[0]
+            if entry_cnt < 1 or co64["payload_start"] + 8 + 8 * entry_cnt > co64["end"]:
+                raise RuntimeError("Invalid or empty 'co64' chunk offset table")
+            chunk_offsets.extend(struct.unpack(f">{entry_cnt}Q", raw[co64["payload_start"] + 8:co64["payload_start"] + 8 + 8 * entry_cnt]))
+
+        for off in chunk_offsets:
+            if not any(m_start <= off and (off + min_sample_size) <= m_end for m_start, m_end in mdat_ranges):
+                raise RuntimeError(
+                    f"Video chunk offset {off} (+min_sample={min_sample_size}) falls outside any 'mdat' payload range {mdat_ranges}"
+                )
+
+        video_tracks.append({
+            "codec": codec_fourcc,
+            "sample_count": sample_count,
+            "total_sample_bytes": total_sample_bytes,
+            "chunk_offset_count": len(chunk_offsets),
+        })
+
+    if not video_tracks:
+        raise RuntimeError("Invalid MP4 structure: no video ('vide') track found inside 'moov'")
+
+    return {
+        "major_brand": major_brand,
+        "top_level_boxes": [b["type"].decode("ascii", errors="replace") for b in top_boxes],
+        "mdat_payload_bytes": mdat_payload_bytes,
+        "video_track_count": len(video_tracks),
+        "video_tracks": video_tracks,
+        "sample_count": sum(t["sample_count"] for t in video_tracks),
+        "size_bytes": len(raw),
+        "sha256": hashlib.sha256(raw).hexdigest(),
+    }
+
+
+def validate_mp4_bytes(data, min_size_bytes=MP4_MIN_BYTES):
+    """Validate MP4 box structure, video track, and sample table presence; returns verified byte length."""
+    meta = parse_and_validate_mp4_structure(data, min_size_bytes=min_size_bytes)
+    return meta["size_bytes"]
+
+
+def verify_mp4_video_artifact(mp4_path, data=None, ffprobe_bin=None, probe_runner=None):
+    """Verify MP4 container structure AND actual decodable video frames via `ffprobe` (AG01-AUD-07).
+
+    - Structural MP4 box/track/sample errors ALWAYS raise `RuntimeError`.
+    - If `ffprobe` (and custom `probe_runner`) is NOT installed/available, NEVER claims PASS; returns
+      `status="NOT_RUN"`, `video_verification_status="NOT RUN"`, `frames_verified=False`.
+    - When `ffprobe` runs, requires rc=0, at least one video stream with `width > 0`, `height > 0`,
+      and `nb_read_frames >= 1` (actual decoded frames present).
+    """
+    path = Path(mp4_path)
+    raw = bytes(data) if data is not None else path.read_bytes()
+    container = parse_and_validate_mp4_structure(raw)
+
+    if probe_runner is None:
+        resolved_probe = str(ffprobe_bin) if ffprobe_bin else shutil.which("ffprobe")
+        if not resolved_probe or not Path(resolved_probe).is_file():
+            return {
+                "status": "NOT_RUN",
+                "video_verification_status": "NOT RUN",
+                "frames_verified": False,
+                "decoded_frame_count": None,
+                "probe_tool": None,
+                "reason": "ffprobe binary not found; actual video frame decode verification is NOT RUN",
+                "container": container,
+            }
+
+        def _run_ffprobe(cmd, timeout=60):
+            return subprocess.run(
+                cmd,
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                errors="replace",
+                timeout=timeout,
+                check=False,
+            )
+
+        runner_fn = _run_ffprobe
+    else:
+        resolved_probe = str(ffprobe_bin or "ffprobe")
+        runner_fn = probe_runner
+
+    cmd = [
+        resolved_probe,
+        "-v",
+        "error",
+        "-select_streams",
+        "v:0",
+        "-count_frames",
+        "-show_entries",
+        "stream=codec_type,codec_name,width,height,nb_read_frames",
+        "-of",
+        "json",
+        str(path),
+    ]
+    try:
+        proc = runner_fn(cmd, timeout=60)
+    except FileNotFoundError:
+        return {
+            "status": "NOT_RUN",
+            "video_verification_status": "NOT RUN",
+            "frames_verified": False,
+            "decoded_frame_count": None,
+            "probe_tool": None,
+            "reason": f"ffprobe executable '{resolved_probe}' not found; actual video frame decode verification is NOT RUN",
+            "container": container,
+        }
+    except subprocess.TimeoutExpired as exc:
+        raise RuntimeError(f"ffprobe timed out after 60s while verifying {path}") from exc
+
+    if proc.returncode != 0:
+        raise RuntimeError(f"ffprobe failed (rc={proc.returncode}) on {path}: {(proc.stderr or proc.stdout).strip()}")
+
+    try:
+        parsed = json.loads(proc.stdout or "{}")
+    except json.JSONDecodeError as exc:
+        raise RuntimeError(f"Invalid JSON from ffprobe: {exc}") from exc
+
+    streams = parsed.get("streams") or []
+    if not streams:
+        raise RuntimeError(f"ffprobe found 0 video streams in {path}")
+    vstream = streams[0]
+    if vstream.get("codec_type") and vstream.get("codec_type") != "video":
+        raise RuntimeError(f"ffprobe selected non-video stream codec_type={vstream.get('codec_type')!r}")
+    width = int(vstream.get("width") or 0)
+    height = int(vstream.get("height") or 0)
+    raw_frames = vstream.get("nb_read_frames")
+    try:
+        decoded_frames = int(raw_frames)
+    except (TypeError, ValueError) as exc:
+        raise RuntimeError(f"ffprobe did not report countable nb_read_frames (got {raw_frames!r})") from exc
+
+    if width <= 0 or height <= 0:
+        raise RuntimeError(f"ffprobe reported invalid video dimensions {width}x{height}")
+    if decoded_frames < 1:
+        raise RuntimeError(f"ffprobe decoded 0 video frames in {path}")
+
+    return {
+        "status": "VERIFIED",
+        "video_verification_status": "PASS",
+        "frames_verified": True,
+        "decoded_frame_count": decoded_frames,
+        "codec_name": vstream.get("codec_name"),
+        "width": width,
+        "height": height,
+        "probe_tool": resolved_probe,
+        "container": container,
+    }
+
+
+def _write_new_evidence_file(path, data):
+    """Write a new evidence artifact exclusively without EVER overwriting an existing file (AG01-AUD-09)."""
+    target = Path(path)
+    if target.exists():
+        raise EvidenceOverwriteError(f"Refusing to overwrite existing evidence file: {target}")
+    try:
+        with target.open("xb") as fh:
+            fh.write(data)
+    except FileExistsError as exc:
+        raise EvidenceOverwriteError(f"Refusing to overwrite existing evidence file: {target}") from exc
+
+
+def _promote_staged_evidence_file(staged_path, final_path):
+    """Promote a validated temporary file to final_path without EVER overwriting an existing file (AG01-AUD-09)."""
+    staged = Path(staged_path)
+    final = Path(final_path)
+    if final.exists():
+        staged.unlink(missing_ok=True)
+        raise EvidenceOverwriteError(f"Refusing to overwrite existing evidence file: {final}")
+    try:
+        os.link(staged, final)
+    except FileExistsError as exc:
+        staged.unlink(missing_ok=True)
+        raise EvidenceOverwriteError(f"Refusing to overwrite existing evidence file: {final}") from exc
+    except OSError:
+        if final.exists():
+            staged.unlink(missing_ok=True)
+            raise EvidenceOverwriteError(f"Refusing to overwrite existing evidence file: {final}")
+        shutil.move(str(staged), str(final))
+    else:
+        staged.unlink(missing_ok=True)
 
 
 def build_safe_setup_commands(stage_plan):
@@ -853,13 +1373,14 @@ def build_safe_runtime_verification_plan(
         "expected_apk_sha256": expected_apk_sha256,
         "steps": [
             {
-                "step": "0_precheck_local_apk_manifest_and_hash",
+                "step": "0_precheck_local_apk_manifest_hash_and_existing_evidence",
                 "commands": [
                     f"apkanalyzer manifest print \"{apk_str}\"",
                 ],
                 "pass_criteria": (
-                    f"APK exists, SHA-256 matches {expected_apk_sha256 or '<computed>'}, 0 .dex/0 .so, "
-                    f"manifest package='{package_id}', WFF version='{wff_version}', minSdkVersion='{min_sdk}'"
+                    f"Existing evidence files absent in {out_dir} (no overwrite); APK exists, SHA-256 matches "
+                    f"{expected_apk_sha256 or '<computed>'}, 0 .dex/0 .so, manifest package='{package_id}', "
+                    f"WFF version='{wff_version}', minSdkVersion='{min_sdk}'"
                 ),
             },
             {
@@ -899,34 +1420,47 @@ def build_safe_runtime_verification_plan(
                 ),
             },
             {
-                "step": "4_capture_active_state",
+                "step": "4_capture_active_state_with_before_after_checks",
                 "commands": [
                     f"adb -s {safe_serial} shell input keyevent KEYCODE_WAKEUP",
+                    f"adb -s {safe_serial} shell dumpsys wallpaper",
                     f"adb -s {safe_serial} shell dumpsys power",
                     f"adb -s {safe_serial} shell dumpsys display",
                     f"adb -s {safe_serial} exec-out screencap -p > {out_dir}/active_wff{wff_version}.png",
+                    f"adb -s {safe_serial} shell dumpsys wallpaper",
+                    f"adb -s {safe_serial} shell dumpsys power",
+                    f"adb -s {safe_serial} shell dumpsys display",
                 ],
-                "pass_criteria": "All commands rc=0, single consistent mWakefulness=Awake AND Display state=ON, full PNG CRC/IHDR/IDAT/IEND validated",
+                "pass_criteria": (
+                    "Before & after capture: target Display Id=0 Awake+ON AND active watchface SELECTED; "
+                    "bounded non-interlaced PNG CRC/IHDR/IDAT/zlib-EOF/IEND validated; no existing file overwritten"
+                ),
             },
             {
-                "step": "5_record_aod_transition_capture_ambient_and_restore_awake",
+                "step": "5_record_aod_transition_capture_ambient_restore_and_probe_mp4",
                 "commands": [
                     f"adb -s {safe_serial} shell screenrecord --time-limit 8 {remote_video}  # background",
                     f"adb -s {safe_serial} shell input keyevent KEYCODE_SLEEP",
+                    f"adb -s {safe_serial} shell dumpsys wallpaper",
                     f"adb -s {safe_serial} shell dumpsys power",
                     f"adb -s {safe_serial} shell dumpsys display",
                     f"adb -s {safe_serial} exec-out screencap -p > {out_dir}/ambient_wff{wff_version}.png",
+                    f"adb -s {safe_serial} shell dumpsys wallpaper",
+                    f"adb -s {safe_serial} shell dumpsys power",
+                    f"adb -s {safe_serial} shell dumpsys display",
                     f"adb -s {safe_serial} shell input keyevent KEYCODE_WAKEUP",
+                    f"adb -s {safe_serial} shell dumpsys wallpaper",
                     f"adb -s {safe_serial} shell dumpsys power",
                     f"adb -s {safe_serial} shell dumpsys display",
                     f"adb -s {safe_serial} pull {remote_video} {out_dir}/transition_wff{wff_version}.mp4",
+                    f"ffprobe -v error -select_streams v:0 -count_frames -show_entries stream=codec_name,width,height,nb_read_frames -of json {out_dir}/transition_wff{wff_version}.mp4",
                     f"adb -s {safe_serial} shell rm -f {remote_video}",
                     f"adb -s {safe_serial} shell test ! -e {remote_video}",
                 ],
                 "pass_criteria": (
-                    "All commands rc=0; consistent Dozing|Asleep + DOZE|DOZE_SUSPEND confirmed before full-integrity ambient PNG; "
-                    "final Awake+ON confirmed (including on failure recovery); pulled MP4 >= 1024 bytes with 'ftyp'; "
-                    "recorder termination, remote rm -f, and absence test ! -e verified in finally"
+                    "All commands rc=0; active watchface & per-display state verified before/after AOD capture and at final Awake+ON restore; "
+                    "MP4 ISO BMFF boxes/video-track/samples + ffprobe decoded frames >= 1 verified (NOT RUN if ffprobe absent); "
+                    "full-scope finally recovery from first device mutation verified"
                 ),
             },
         ],
@@ -962,6 +1496,42 @@ def run_checked_adb(run_fn, adb_args, timeout=30, binary=False):
     return proc
 
 
+def _assert_watchface_selected(run_fn, safe_serial, package_id, stage_label):
+    wallpaper = run_checked_adb(run_fn, ["shell", "dumpsys", "wallpaper"], timeout=30)
+    selection = verify_active_watchface_selected(wallpaper.stdout, package_id)
+    if selection["status"] == "UNKNOWN":
+        raise RuntimeVerificationIncompleteError(
+            f"[{stage_label}] Active watch face selection status is UNKNOWN on {safe_serial}: {selection.get('reason')}"
+        )
+    if not selection["selected"]:
+        raise RuntimeError(
+            f"[{stage_label}] Watch face '{package_id}' is NOT active on {safe_serial} "
+            f"(status={selection['status']}, active_component='{selection.get('active_component')}')"
+        )
+    return selection
+
+
+def _assert_screen_state(run_fn, safe_serial, expected_mode, stage_label, target_display_id="0"):
+    state = parse_power_and_display_state(
+        run_checked_adb(run_fn, ["shell", "dumpsys", "power"], timeout=30).stdout,
+        run_checked_adb(run_fn, ["shell", "dumpsys", "display"], timeout=30).stdout,
+        target_display_id=target_display_id,
+    )
+    if state["status"] == "UNKNOWN":
+        raise RuntimeVerificationIncompleteError(
+            f"[{stage_label}] Power/display state is UNKNOWN on {safe_serial}: {state}"
+        )
+    if expected_mode == "ACTIVE" and not state["is_active"]:
+        raise RuntimeError(
+            f"[{stage_label}] Expected Active (Awake+ON) on {safe_serial}, got {state['status']}: {state}"
+        )
+    if expected_mode == "AOD" and not state["is_aod"]:
+        raise RuntimeError(
+            f"[{stage_label}] Expected AOD (Dozing|Asleep + DOZE|DOZE_SUSPEND) on {safe_serial}, got {state['status']}: {state}"
+        )
+    return state
+
+
 def execute_runtime_verification(
     adb_bin,
     serial,
@@ -972,18 +1542,33 @@ def execute_runtime_verification(
     expected_avd_name=None,
     expected_api_level=None,
     expected_apk_sha256=None,
+    target_display_id="0",
     runner=None,
     manifest_printer=None,
     recorder_factory=None,
+    ffprobe_bin=None,
+    probe_runner=None,
     sleep_fn=time.sleep,
 ):
-    """Execute safe runtime verification against an ALREADY-RUNNING isolated Wear OS emulator."""
+    """Execute safe runtime verification against an ALREADY-RUNNING isolated Wear OS emulator (R06 hardened)."""
     safe_serial = validate_emulator_serial(serial)
     min_sdk = WFF_MIN_SDK[wff_version]
     target_api = expected_api_level if expected_api_level is not None else min_sdk
     target_avd = validate_dedicated_wear_avd_name(expected_avd_name or f"aura_wear{min_sdk}_round")
 
-    # Step 0: Pre-check local APK hash, resource-only entries, and compiled AndroidManifest BEFORE touching emulator
+    # Step 0A: Refuse to overwrite any pre-existing evidence artifacts BEFORE touching device (AG01-AUD-09)
+    out = Path(output_dir)
+    active_png = out / f"active_wff{wff_version}.png"
+    ambient_png = out / f"ambient_wff{wff_version}.png"
+    local_video = out / f"transition_wff{wff_version}.mp4"
+    staged_video = out / f"transition_wff{wff_version}.mp4.{os.getpid()}.tmp"
+    for existing in (active_png, ambient_png, local_video):
+        if existing.exists():
+            raise EvidenceOverwriteError(
+                f"Refusing to overwrite pre-existing evidence file '{existing}'; use a fresh output directory."
+            )
+
+    # Step 0B: Pre-check local APK hash, resource-only entries, and compiled AndroidManifest BEFORE touching emulator
     apk_meta = verify_local_apk_before_install(
         apk_path=apk_path,
         expected_package=package_id,
@@ -996,7 +1581,7 @@ def execute_runtime_verification(
         lambda args, timeout=30, binary=False: _default_adb_runner(adb_bin, safe_serial, args, timeout=timeout, binary=binary)
     )
 
-    # Step 1: Verify running emulator AVD name, boot status, watch characteristics, and SDK level
+    # Step 1: Read-only verification of running emulator AVD name, boot status, watch characteristics, and SDK level
     avd_prop = run_checked_adb(run_fn, ["shell", "getprop", "ro.boot.qemu.avd_name"], timeout=15)
     running_avd_name = avd_prop.stdout.strip()
     if not running_avd_name:
@@ -1027,46 +1612,11 @@ def execute_runtime_verification(
     if exact_pkg_line not in [line.strip() for line in pm.stdout.splitlines()]:
         raise RuntimeError(f"Installed package '{package_id}' not found in exact package list on {safe_serial}: {pm.stdout}")
 
-    # Step 3: Verify active current-user watch face selection in dumpsys wallpaper
-    wallpaper = run_checked_adb(run_fn, ["shell", "dumpsys", "wallpaper"], timeout=30)
-    selection = verify_active_watchface_selected(wallpaper.stdout, package_id)
-    if selection["status"] == "UNKNOWN":
-        raise RuntimeVerificationIncompleteError(
-            f"Active watch face selection status is UNKNOWN on {safe_serial}: {selection.get('reason')}. "
-            "Treating runtime verification as UNKNOWN/NOT RUN."
-        )
-    if not selection["selected"]:
-        raise RuntimeError(
-            f"Watch face '{package_id}' is installed on {safe_serial} but NOT active "
-            f"(status={selection['status']}, active_component='{selection.get('active_component')}')."
-        )
+    # Step 3: Initial active watch face verification
+    selection_initial = _assert_watchface_selected(run_fn, safe_serial, package_id, "initial_selection")
 
-    # Step 4: Wake display, confirm Active (Awake + ON) state, and capture full-integrity Active PNG
-    run_checked_adb(run_fn, ["shell", "input", "keyevent", "KEYCODE_WAKEUP"], timeout=15)
-    power_active = parse_power_and_display_state(
-        run_checked_adb(run_fn, ["shell", "dumpsys", "power"], timeout=30).stdout,
-        run_checked_adb(run_fn, ["shell", "dumpsys", "display"], timeout=30).stdout,
-    )
-    if power_active["status"] == "UNKNOWN":
-        raise RuntimeVerificationIncompleteError(
-            f"Active power/display state is UNKNOWN on {safe_serial}: {power_active}"
-        )
-    if not power_active["is_active"]:
-        raise RuntimeError(f"Emulator {safe_serial} did not enter Active (Awake+ON) state: {power_active}")
-
-    out = Path(output_dir)
-    out.mkdir(parents=True, exist_ok=True)
-    active_png = out / f"active_wff{wff_version}.png"
-    cap_active = run_checked_adb(run_fn, ["exec-out", "screencap", "-p"], timeout=30, binary=True)
-    active_png_meta = validate_png_bytes(cap_active.stdout)
-    active_png.write_bytes(cap_active.stdout)
-
-    # Step 5: Record AOD transition, verify AOD, capture full-integrity Ambient PNG, restore Awake+ON,
-    # pull & validate MP4, and ALWAYS verify recovery/cleanup results without swallowing errors
+    # Step 4 & Step 5: Wrap from the VERY FIRST device-state-mutating command in single try...finally (AG01-AUD-09)
     remote_video = f"/sdcard/ag01_wff{wff_version}_aod_transition.mp4"
-    local_video = out / f"transition_wff{wff_version}.mp4"
-    ambient_png = out / f"ambient_wff{wff_version}.png"
-
     spawn_recorder = recorder_factory or (
         lambda: subprocess.Popen(
             [str(adb_bin), "-s", safe_serial, "shell", "screenrecord", "--time-limit", "8", remote_video],
@@ -1074,53 +1624,81 @@ def execute_runtime_verification(
             stderr=subprocess.PIPE,
         )
     )
-    recorder = spawn_recorder()
-    power_aod = None
+
+    out.mkdir(parents=True, exist_ok=True)
+    recorder = None
+    device_state_mutated = False
+    recording_attempted = False
+
+    checkpoints = {"initial_selection": selection_initial}
+    power_active_before = None
+    power_active_after = None
+    power_aod_before = None
+    power_aod_after = None
     power_restored = None
+    selection_restored = None
+    active_png_meta = None
     ambient_png_meta = None
-    video_size = None
+    video_verification = None
     primary_error = None
     recovery_errors = []
     recovery_report = {
+        "recovery_scope_entered": False,
+        "recorder_spawned": False,
         "recorder_stopped": False,
         "awake_restored": False,
+        "watchface_restored": False,
         "remote_file_removed": False,
     }
 
     try:
+        # Step 4: Wake display (first state mutation!), verify watchface + Active BEFORE and AFTER screencap (AG01-AUD-08)
+        device_state_mutated = True
+        recovery_report["recovery_scope_entered"] = True
+        run_checked_adb(run_fn, ["shell", "input", "keyevent", "KEYCODE_WAKEUP"], timeout=15)
+        checkpoints["active_before_selection"] = _assert_watchface_selected(run_fn, safe_serial, package_id, "active_before")
+        power_active_before = _assert_screen_state(run_fn, safe_serial, "ACTIVE", "active_before", target_display_id)
+        checkpoints["active_before_state"] = power_active_before
+
+        cap_active = run_checked_adb(run_fn, ["exec-out", "screencap", "-p"], timeout=30, binary=True)
+        active_png_meta = validate_png_bytes(cap_active.stdout)
+
+        checkpoints["active_after_selection"] = _assert_watchface_selected(run_fn, safe_serial, package_id, "active_after")
+        power_active_after = _assert_screen_state(run_fn, safe_serial, "ACTIVE", "active_after", target_display_id)
+        checkpoints["active_after_state"] = power_active_after
+
+        _write_new_evidence_file(active_png, cap_active.stdout)
+
+        # Step 5: Start recorder (inside try/finally so spawn failure triggers recovery!), sleep -> AOD -> capture -> wake -> probe MP4
+        recording_attempted = True
+        recorder = spawn_recorder()
+        recovery_report["recorder_spawned"] = True
+
         sleep_fn(1.0)
         run_checked_adb(run_fn, ["shell", "input", "keyevent", "KEYCODE_SLEEP"], timeout=15)
         sleep_fn(2.0)
-        power_aod = parse_power_and_display_state(
-            run_checked_adb(run_fn, ["shell", "dumpsys", "power"], timeout=30).stdout,
-            run_checked_adb(run_fn, ["shell", "dumpsys", "display"], timeout=30).stdout,
-        )
-        if power_aod["status"] == "UNKNOWN":
-            raise RuntimeVerificationIncompleteError(
-                f"AOD power/display state is UNKNOWN on {safe_serial}: {power_aod}"
-            )
-        if not power_aod["is_aod"]:
-            raise RuntimeError(f"Emulator {safe_serial} did not enter valid AOD (Dozing + DOZE/DOZE_SUSPEND) state: {power_aod}")
+
+        checkpoints["aod_before_selection"] = _assert_watchface_selected(run_fn, safe_serial, package_id, "aod_before")
+        power_aod_before = _assert_screen_state(run_fn, safe_serial, "AOD", "aod_before", target_display_id)
+        checkpoints["aod_before_state"] = power_aod_before
 
         cap_ambient = run_checked_adb(run_fn, ["exec-out", "screencap", "-p"], timeout=30, binary=True)
         ambient_png_meta = validate_png_bytes(cap_ambient.stdout)
-        ambient_png.write_bytes(cap_ambient.stdout)
+
+        checkpoints["aod_after_selection"] = _assert_watchface_selected(run_fn, safe_serial, package_id, "aod_after")
+        power_aod_after = _assert_screen_state(run_fn, safe_serial, "AOD", "aod_after", target_display_id)
+        checkpoints["aod_after_state"] = power_aod_after
+
+        _write_new_evidence_file(ambient_png, cap_ambient.stdout)
 
         sleep_fn(1.5)
         run_checked_adb(run_fn, ["shell", "input", "keyevent", "KEYCODE_WAKEUP"], timeout=15)
         sleep_fn(1.0)
-        power_restored = parse_power_and_display_state(
-            run_checked_adb(run_fn, ["shell", "dumpsys", "power"], timeout=30).stdout,
-            run_checked_adb(run_fn, ["shell", "dumpsys", "display"], timeout=30).stdout,
-        )
-        if power_restored["status"] == "UNKNOWN":
-            raise RuntimeVerificationIncompleteError(
-                f"Post-AOD restored power/display state is UNKNOWN on {safe_serial}: {power_restored}"
-            )
-        if not power_restored["is_active"]:
-            raise RuntimeError(
-                f"Emulator {safe_serial} failed to return to Active (Awake+ON) state after AOD capture: {power_restored}"
-            )
+
+        selection_restored = _assert_watchface_selected(run_fn, safe_serial, package_id, "final_restore")
+        power_restored = _assert_screen_state(run_fn, safe_serial, "ACTIVE", "final_restore", target_display_id)
+        checkpoints["final_restore_selection"] = selection_restored
+        checkpoints["final_restore_state"] = power_restored
 
         try:
             rec_rc = recorder.wait(timeout=15)
@@ -1129,63 +1707,106 @@ def execute_runtime_verification(
         if rec_rc != 0:
             raise RuntimeError(f"screenrecord exited with non-zero returncode={rec_rc} on {safe_serial}")
 
-        run_checked_adb(run_fn, ["pull", remote_video, str(local_video)], timeout=60)
-        if not local_video.is_file():
-            raise RuntimeError(f"Pulled transition video file is missing at {local_video}")
+        staged_video.unlink(missing_ok=True)
+        run_checked_adb(run_fn, ["pull", remote_video, str(staged_video)], timeout=60)
+        if not staged_video.is_file():
+            raise RuntimeError(f"Pulled transition video file is missing at {staged_video}")
+
         try:
-            video_size = validate_mp4_bytes(local_video.read_bytes())
+            video_verification = verify_mp4_video_artifact(
+                staged_video,
+                ffprobe_bin=ffprobe_bin,
+                probe_runner=probe_runner,
+            )
         except Exception:
-            local_video.unlink(missing_ok=True)
+            staged_video.unlink(missing_ok=True)
             raise
+
+        _promote_staged_evidence_file(staged_video, local_video)
+
+        if video_verification["status"] == "NOT_RUN":
+            raise RuntimeVerificationIncompleteError(
+                f"Video frame verification is NOT RUN ({video_verification['reason']}); "
+                "refusing to mark runtime video verification as PASS."
+            )
     except Exception as exc:
         primary_error = exc
     finally:
-        # 1. Verify recorder process is fully terminated and reaped
-        try:
-            if recorder.poll() is None:
-                recorder.terminate()
-                try:
-                    recorder.wait(timeout=5)
-                except subprocess.TimeoutExpired:
-                    recorder.kill()
-                    recorder.wait(timeout=5)
-            else:
-                recorder.wait(timeout=5)
-            if recorder.poll() is None:
-                recovery_errors.append("recorder_termination_failed: recorder process is still running after kill+wait")
-            else:
-                recovery_report["recorder_stopped"] = True
-        except Exception as rec_exc:
-            recovery_errors.append(f"recorder_termination_failed: {rec_exc}")
+        staged_video.unlink(missing_ok=True)
 
-        # 2. Verify final Awake+ON restoration (including strict adb rc/timeout + dumpsys re-verification on recovery)
-        if power_restored is not None and power_restored.get("is_active"):
-            recovery_report["awake_restored"] = True
+        # 1. Verify recorder process is fully terminated and reaped (if spawned)
+        if recorder is None:
+            recovery_report["recorder_stopped"] = True
         else:
             try:
-                run_checked_adb(run_fn, ["shell", "input", "keyevent", "KEYCODE_WAKEUP"], timeout=15)
-                sleep_fn(0.5)
-                recovered_state = parse_power_and_display_state(
-                    run_checked_adb(run_fn, ["shell", "dumpsys", "power"], timeout=30).stdout,
-                    run_checked_adb(run_fn, ["shell", "dumpsys", "display"], timeout=30).stdout,
-                )
-                recovery_report["recovered_state"] = recovered_state
-                if recovered_state["is_active"]:
-                    recovery_report["awake_restored"] = True
+                if recorder.poll() is None:
+                    recorder.terminate()
+                    try:
+                        recorder.wait(timeout=5)
+                    except subprocess.TimeoutExpired:
+                        recorder.kill()
+                        recorder.wait(timeout=5)
                 else:
-                    recovery_errors.append(
-                        f"awake_recovery_failed: emulator did not confirm Awake+ON after recovery wakeup ({recovered_state})"
-                    )
-            except Exception as wake_exc:
-                recovery_errors.append(f"awake_recovery_failed: {wake_exc}")
+                    recorder.wait(timeout=5)
+                if recorder.poll() is None:
+                    recovery_errors.append("recorder_termination_failed: recorder process is still running after kill+wait")
+                else:
+                    recovery_report["recorder_stopped"] = True
+            except Exception as rec_exc:
+                recovery_errors.append(f"recorder_termination_failed: {rec_exc}")
 
-        # 3. Verify remote temporary MP4 deletion (adb rc/timeout + explicit absence check `test ! -e`)
-        try:
-            run_checked_adb(run_fn, ["shell", "rm", "-f", remote_video], timeout=15)
-            run_checked_adb(run_fn, ["shell", "test", "!", "-e", remote_video], timeout=15)
+        # 2. Verify final Awake+ON AND active watchface restoration whenever device state was mutated (AG01-AUD-08 & 09)
+        if device_state_mutated:
+            if (
+                power_restored is not None
+                and power_restored.get("is_active")
+                and selection_restored is not None
+                and selection_restored.get("selected")
+            ):
+                recovery_report["awake_restored"] = True
+                recovery_report["watchface_restored"] = True
+            else:
+                try:
+                    run_checked_adb(run_fn, ["shell", "input", "keyevent", "KEYCODE_WAKEUP"], timeout=15)
+                    sleep_fn(0.5)
+                    recovered_state = parse_power_and_display_state(
+                        run_checked_adb(run_fn, ["shell", "dumpsys", "power"], timeout=30).stdout,
+                        run_checked_adb(run_fn, ["shell", "dumpsys", "display"], timeout=30).stdout,
+                        target_display_id=target_display_id,
+                    )
+                    recovery_report["recovered_state"] = recovered_state
+                    if recovered_state["is_active"]:
+                        recovery_report["awake_restored"] = True
+                    else:
+                        recovery_errors.append(
+                            f"awake_recovery_failed: emulator did not confirm Awake+ON after recovery wakeup ({recovered_state})"
+                        )
+                except Exception as wake_exc:
+                    recovery_errors.append(f"awake_recovery_failed: {wake_exc}")
+
+                try:
+                    recovered_wp = run_checked_adb(run_fn, ["shell", "dumpsys", "wallpaper"], timeout=30)
+                    recovered_sel = verify_active_watchface_selected(recovered_wp.stdout, package_id)
+                    recovery_report["recovered_selection"] = recovered_sel
+                    if recovered_sel.get("selected"):
+                        recovery_report["watchface_restored"] = True
+                    else:
+                        recovery_errors.append(
+                            f"watchface_recovery_failed: active watchface not confirmed after recovery ({recovered_sel})"
+                        )
+                except Exception as wp_exc:
+                    recovery_errors.append(f"watchface_recovery_failed: {wp_exc}")
+
+        # 3. Verify remote temporary MP4 deletion whenever recording was attempted (including spawn failure)
+        if recording_attempted:
+            try:
+                run_checked_adb(run_fn, ["shell", "rm", "-f", remote_video], timeout=15)
+                run_checked_adb(run_fn, ["shell", "test", "!", "-e", remote_video], timeout=15)
+                recovery_report["remote_file_removed"] = True
+            except Exception as rm_exc:
+                recovery_errors.append(f"remote_cleanup_failed: {rm_exc}")
+        else:
             recovery_report["remote_file_removed"] = True
-        except Exception as rm_exc:
-            recovery_errors.append(f"remote_cleanup_failed: {rm_exc}")
 
     if recovery_errors:
         if primary_error is not None:
@@ -1209,11 +1830,14 @@ def execute_runtime_verification(
         "serial": safe_serial,
         "avd_name": running_avd_name,
         "sdk_int": sdk_int,
+        "target_display_id": str(target_display_id),
         "apk_verification": apk_meta,
-        "selection": selection,
-        "active_state": power_active,
-        "aod_state": power_aod,
+        "selection": selection_initial,
+        "checkpoints": checkpoints,
+        "active_state": power_active_after,
+        "aod_state": power_aod_after,
         "restored_active_state": power_restored,
+        "restored_selection": selection_restored,
         "recovery_report": recovery_report,
         "active_png": str(active_png),
         "active_png_meta": active_png_meta,
@@ -1222,8 +1846,10 @@ def execute_runtime_verification(
         "ambient_png_meta": ambient_png_meta,
         "ambient_png_sha256": ambient_png_meta["sha256"],
         "transition_mp4": str(local_video),
-        "transition_mp4_size_bytes": video_size,
-        "transition_mp4_sha256": hashlib.sha256(local_video.read_bytes()).hexdigest(),
+        "transition_mp4_size_bytes": video_verification["container"]["size_bytes"],
+        "transition_mp4_sha256": video_verification["container"]["sha256"],
+        "video_verification": video_verification,
+        "video_verification_status": video_verification["video_verification_status"],
     }
 
 
@@ -1238,6 +1864,7 @@ def main():
     parser.add_argument("--wff-version", type=int, choices=(2, 3, 4, 5), required=True)
     parser.add_argument("--out-dir", type=Path, required=True)
     parser.add_argument("--adb", type=Path, default=Path("adb"))
+    parser.add_argument("--ffprobe", type=Path, default=None)
     args = parser.parse_args()
 
     plan = build_safe_runtime_verification_plan(
@@ -1262,6 +1889,7 @@ def main():
         args.out_dir,
         expected_avd_name=args.avd_name,
         expected_apk_sha256=args.apk_sha256,
+        ffprobe_bin=args.ffprobe,
     )
     print(json.dumps(res, indent=2, ensure_ascii=False))
 
