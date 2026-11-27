@@ -23,6 +23,13 @@ val domainSources = layout.projectDirectory.dir("src/main/kotlin").asFile.absolu
 
 tasks.withType<Test>().configureEach {
     useJUnitPlatform()
+    val launcher = javaLauncher
+    doFirst {
+        val metadata = launcher.get().metadata
+        logger.lifecycle(
+            "TEST_JVM version=${metadata.languageVersion} vendor=${metadata.vendor} path=${metadata.installationPath}",
+        )
+    }
     systemProperty("aura.domain.sources", domainSources)
     testLogging {
         events("passed", "failed", "skipped")

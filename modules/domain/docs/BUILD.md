@@ -31,11 +31,15 @@
 
 ## Windows 경로
 
-저장소 경로에 비ASCII 문자가 있으면 이 환경의 Gradle 테스트 워커가 테스트 클래스를 읽지 못하고 `ClassNotFoundException`으로 실패했다. JDK 17과 JDK 21 모두 같은 실패였다. 소스와 빌드 파일은 저장소에 두고, ASCII 경로의 디렉터리 접합에서 같은 명령을 실행한다.
+JDK 17 테스트 워커는 클래스패스를 `@argfile`로 받는다. Gradle 9.3.1은 그 파일을 UTF-8로 쓴다. 이 기기의 Temurin 17.0.20.1은 `@argfile`을 플랫폼 인코딩 `sun.jnu.encoding=MS949`로 읽는다. 워커 명령의 `-Dfile.encoding=UTF-8`은 argfile을 펼친 뒤에 적용되므로 이 디코딩을 바꾸지 않는다. 경로에 비ASCII 문자가 있으면 클래스 디렉터리 경로가 깨지고 `ClassNotFoundException`이 난다. 클래스 파일은 디스크에 있다. ASCII 경로에서는 두 인코딩이 같은 바이트라 실패하지 않는다.
+
+재현: `C:\Users\scarl\AppData\Local\Temp\코딩-gb01` 접합에서 `IdentityTest` 실행. 워커 argfile의 한글 구간 바이트는 UTF-8 `EC BD 94 EB 94 A9`였다. 같은 JDK로 UTF-8 argfile의 클래스는 찾지 못했고, MS949 argfile의 같은 클래스는 실행됐다.
+
+통과한 시험은 ASCII worktree에서 실행한다. 저장소를 옮기지 않을 때는 ASCII 접합을 쓴다.
 
 ```text
 cmd /c mklink /J C:\aura-ultra "<저장소 경로>"
 C:\aura-ultra\gradlew -p modules/domain test
 ```
 
-접합은 다른 복사본이 아니다. ASCII 경로에서는 추가 절차 없이 저장소 루트의 명령을 사용한다.
+접합은 다른 복사본이 아니다. 작업이 끝나면 접합만 지운다. `rmdir C:\aura-ultra`는 대상을 지우지 않는다. ASCII 경로에서는 추가 절차 없이 저장소 루트의 명령을 사용한다.

@@ -3,6 +3,7 @@ package io.github.scarlel96.aura.domain
 enum class IssueCode {
     UNIT_BLANK,
     UNIT_PADDED,
+    UNIT_CONTROL,
     UNIT_MISMATCH,
     VALUE_REQUIRED,
     VALUE_FORBIDDEN,
@@ -63,8 +64,14 @@ private fun <T> structuralIssues(observation: Observation<T>, subject: String?):
         when {
             observation.unit.isBlank() ->
                 issues += issue(IssueCode.UNIT_BLANK, "값이 있으면 단위가 필요하다.", subject)
-            observation.unit != observation.unit.trim() ->
-                issues += issue(IssueCode.UNIT_PADDED, "단위의 앞뒤 공백은 허용하지 않는다.", subject)
+            else -> {
+                if (observation.unit.any { it.isWhitespace() }) {
+                    issues += issue(IssueCode.UNIT_PADDED, "단위에 공백을 포함하지 않는다.", subject)
+                }
+                if (observation.unit.any { it.isISOControl() && !it.isWhitespace() }) {
+                    issues += issue(IssueCode.UNIT_CONTROL, "단위에 제어 문자를 포함하지 않는다.", subject)
+                }
+            }
         }
         if ((current is Double && !current.isFinite()) || (current is Float && !current.isFinite())) {
             issues += issue(IssueCode.NON_FINITE, "유한하지 않은 부동소수는 측정값이 아니다.", subject)

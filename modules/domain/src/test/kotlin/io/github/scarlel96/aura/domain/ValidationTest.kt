@@ -279,6 +279,120 @@ class ValidationTest {
     }
 
     @Test
+    fun plainUnitTokensStayAccepted() {
+        val millimeters = observation(value = 1, unit = "mm")
+        val celsius = observation(value = 21.5, unit = "°C")
+        val ratio = observation(value = 1, unit = "m/s")
+        assertTrue(validateObservation(millimeters, ObservationConstraints(expectedUnit = "mm")).accepted)
+        assertTrue(validateObservation(celsius, ObservationConstraints(expectedUnit = "°C")).accepted)
+        assertTrue(validateObservation(ratio).accepted)
+    }
+
+    @Test
+    fun internalWhitespaceInUnitIsRejectedEvenWhenExpectedMatches() {
+        val spaced = observation(value = 3, unit = "mm Hg")
+        val report = validateObservation(spaced, ObservationConstraints(expectedUnit = "mm Hg"))
+        assertEquals(listOf(IssueCode.UNIT_PADDED), report.codes())
+        assertEquals("mm Hg", spaced.unit)
+        assertEquals(3, spaced.value)
+    }
+
+    @Test
+    fun nonWhitespaceControlCharacterInUnitIsRejected() {
+        val embedded = observation(value = 3, unit = "mm\u0000")
+        val onlyControl = observation(value = 3, unit = "\u0000")
+        val leading = observation(value = 3, unit = "\u0007mm")
+        assertEquals(
+            listOf(IssueCode.UNIT_CONTROL),
+            validateObservation(embedded, ObservationConstraints(expectedUnit = "mm\u0000")).codes(),
+        )
+        assertEquals(listOf(IssueCode.UNIT_CONTROL), validateObservation(onlyControl).codes())
+        assertEquals(listOf(IssueCode.UNIT_CONTROL), validateObservation(leading).codes())
+        assertEquals("mm\u0000", embedded.unit)
+    }
+
+    @Test
+    fun internalWhitespaceThatIsAlsoAControlCharacterIsRejected() {
+        val observation = observation(value = 3, unit = "mm\u000BHg")
+        assertEquals(listOf(IssueCode.UNIT_PADDED), validateObservation(observation).codes())
+    }
+
+    @Test
+    fun absentValueStillSkipsUnitCharacterChecks() {
+        val missing = observation<Int>(value = null, unit = "\u0000", status = ObservationStatus.UNAVAILABLE)
+        assertTrue(validateObservation(missing).accepted)
+    }
+
+    @Test
+    fun exclusiveAdjacentLongRangeIsEmpty() {
+        assertEquals(
+            ParseCode.RANGE_EMPTY,
+            (LongBounds.parse(5, 6, minimumInclusive = false, maximumInclusive = false) as DomainParse.Rejected).code,
+        )
+        assertEquals(
+            ParseCode.RANGE_EMPTY,
+            (LongBounds.parse(Long.MAX_VALUE - 1, Long.MAX_VALUE, minimumInclusive = false, maximumInclusive = false) as DomainParse.Rejected).code,
+        )
+        assertEquals(
+            ParseCode.RANGE_EMPTY,
+            (LongBounds.parse(Long.MIN_VALUE, Long.MIN_VALUE + 1, minimumInclusive = false, maximumInclusive = false) as DomainParse.Rejected).code,
+        )
+    }
+
+    @Test
+    fun exclusiveExtremeWithNoRepresentableLongIsEmpty() {
+        assertEquals(
+            ParseCode.RANGE_EMPTY,
+            (LongBounds.parse(Long.MAX_VALUE, null, minimumInclusive = false, maximumInclusive = true) as DomainParse.Rejected).code,
+        )
+        assertEquals(
+            ParseCode.RANGE_EMPTY,
+            (LongBounds.parse(null, Long.MIN_VALUE, minimumInclusive = true, maximumInclusive = false) as DomainParse.Rejected).code,
+        )
+        assertEquals(
+            ParseCode.RANGE_EMPTY,
+            (LongBounds.parse(Long.MAX_VALUE, Long.MAX_VALUE, minimumInclusive = false, maximumInclusive = true) as DomainParse.Rejected).code,
+        )
+        assertEquals(
+            ParseCode.RANGE_EMPTY,
+            (LongBounds.parse(Long.MIN_VALUE, Long.MIN_VALUE, minimumInclusive = true, maximumInclusive = false) as DomainParse.Rejected).code,
+        )
+    }
+
+    @Test
+    fun exclusiveNeighborAndExtremeInclusivePointsStayValid() {
+        val aboveZero = acceptedLongRange(0, null, minimumInclusive = false)
+        assertEquals(
+            listOf(IssueCode.RANGE_BELOW),
+            validateObservation(observation(0L, "count"), ObservationConstraints(longRange = aboveZero)).codes(),
+        )
+        assertTrue(validateObservation(observation(1L, "count"), ObservationConstraints(longRange = aboveZero)).accepted)
+
+        val belowTen = acceptedLongRange(null, 10, maximumInclusive = false)
+        assertTrue(validateObservation(observation(9L, "count"), ObservationConstraints(longRange = belowTen)).accepted)
+        assertEquals(
+            listOf(IssueCode.RANGE_ABOVE),
+            validateObservation(observation(10L, "count"), ObservationConstraints(longRange = belowTen)).codes(),
+        )
+
+        val onlyMin = acceptedLongRange(Long.MIN_VALUE, Long.MIN_VALUE)
+        assertTrue(validateObservation(observation(Long.MIN_VALUE, "count"), ObservationConstraints(longRange = onlyMin)).accepted)
+        val onlyMax = acceptedLongRange(Long.MAX_VALUE, Long.MAX_VALUE)
+        assertTrue(validateObservation(observation(Long.MAX_VALUE, "count"), ObservationConstraints(longRange = onlyMax)).accepted)
+
+        val openGap = acceptedLongRange(5, 7, minimumInclusive = false, maximumInclusive = false)
+        assertTrue(validateObservation(observation(6L, "count"), ObservationConstraints(longRange = openGap)).accepted)
+        assertEquals(
+            listOf(IssueCode.RANGE_BELOW),
+            validateObservation(observation(5L, "count"), ObservationConstraints(longRange = openGap)).codes(),
+        )
+        assertEquals(
+            listOf(IssueCode.RANGE_ABOVE),
+            validateObservation(observation(7L, "count"), ObservationConstraints(longRange = openGap)).codes(),
+        )
+    }
+
+    @Test
     fun allKindsRemainUnchangedByValidation() {
         ObservationKind.entries.forEach { kind ->
             val observation = observation(value = 1, kind = kind)

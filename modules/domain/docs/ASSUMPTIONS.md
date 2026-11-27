@@ -16,7 +16,7 @@
 | A10 | 단위는 정확 일치만 본다. 환산과 별칭 표는 없다. | `IssueCode.UNIT_MISMATCH` | 단위 표준 표 |
 | A11 | 건강·기상 값의 기본 범위는 없다. 호출자가 `NumericRange` 또는 `LongBounds`를 전달한다. | `ObservationConstraints` | 지표별 승인 범위 |
 | A12 | 유한하지 않은 `Float`/`Double`은 구조적으로 거절하고 읽기 값으로 분류하지 않는다. 제품 범위가 아니다. | `IssueCode.NON_FINITE` | 없음. 측정값으로 쓰지 않는다. |
-| A13 | `VALID`와 `STALE`은 null이 아닌 값과 공백 없는 단위가 필요하다. `UNAVAILABLE`, `DENIED`, `ERROR`는 값이 null이어야 한다. 위반은 거절하고 고치지 않는다. | `validateObservation` | 오류에 부분 값을 남기는 계약이 승인될 때 |
+| A13 | 값이 있는 단위는 공백 문자와 비공백 ISO 제어 문자를 포함하지 않는다. 앞뒤만 보는 검사는 내부 공백과 NUL을 놓친다. 값이 null이면 단위 문자 검사는 하지 않는다. `VALID`/`STALE`은 null이 아닌 값이 필요하고, `UNAVAILABLE`/`DENIED`/`ERROR`는 값이 null이어야 한다. 위반은 거절하고 고치지 않는다. | `IssueCode.UNIT_PADDED`, `UNIT_CONTROL` | 오류에 부분 값을 남기는 계약이 승인될 때 |
 | A14 | 파생은 `VALID`가 만료됐을 때만 `STALE` 사본을 만든다. 다른 상태는 올리지 않는다. 입력 객체는 유지한다. | `deriveStatus` | 명시적 STALE을 신선한 VALID로 회복하는 정책 |
 | A15 | `observedAt`은 출처 시각이다. 예보 유효 구간은 `WeatherSnapshotDraft.validFrom`/`validTo`만 사용한다. | 초안 타입 | 발행 시각과 관측 시각의 공식 대응 |
 | A16 | 오류 문장 필드는 두지 않는다. 상태와 값이 섞이지 않게 하기 위해서다. | `Observation` | 진단 문구 계약 |
@@ -27,8 +27,9 @@
 | A21 | 의존성은 Kotlin 2.4.21과 그 테스트 아티팩트뿐이다. | `build.gradle.kts` | 추가 라이브러리 승인 |
 | A22 | `expiresAt < observedAt`은 구조 오류다. `expiresAt < receivedAt`은 늦은 수신으로 허용하고 신선도 계산에 맡긴다. | `IssueCode.EXPIRES_BEFORE_OBSERVED` | 없음 |
 | A23 | 예보 구간의 `validTo < validFrom`은 역전, 같으면 길이 0으로 초안 검사에서 보고한다. 기상 규칙의 승인이 아니다. | `validateWeatherSnapshotDraft` | 0 길이 구간을 허용하는 결정 |
-| A24 | 표시 코드는 `classifiedValue()`를 쓴다. `value ?: 0`으로 읽지 않는다. 이 함수는 TTL을 적용하지 않으므로 표시 전에 `deriveStatus`가 필요하다. | `ClassifiedValue` | 표시 계층 |
-| A25 | 정수 범위는 `Byte`, `Short`, `Int`, `Long`에만 적용한다. 부동소수 범위는 `Float`, `Double`에만 적용한다. 다른 형식은 변환하지 않고 `CONSTRAINT_TYPE_MISMATCH`다. 두 범위를 동시에 주면 `CONSTRAINT_CONFLICT`다. | `ObservationConstraints` | 공통 숫자 형식 |
+| A24 | 표시 코드는 `classifiedValue()`를 쓴다. `value ?: 0`으로 읽지 않는다. 이 함수는 단위 문자, 호출자 범위, TTL을 검사하지 않는다. 표시 전에 `validateObservation` 또는 `applyRevision`의 성공과 `deriveStatus`를 확인한다. `Freshness.UNDECLARED`는 `FRESH`가 아니다. | `ClassifiedValue` | 표시 계층 |
+| A25 | 정수 범위는 `Byte`, `Short`, `Int`, `Long`에만 적용한다. 표현 가능한 `Long`이 없으면 `RANGE_EMPTY`다. 배타 구간의 인접 정수 `(n, n+1)`과, 배타 하한 `Long.MAX_VALUE`, 배타 상한 `Long.MIN_VALUE`가 포함된다. 부동소수 범위는 `Float`, `Double`에만 적용한다. 다른 형식은 변환하지 않고 `CONSTRAINT_TYPE_MISMATCH`다. 두 범위를 동시에 주면 `CONSTRAINT_CONFLICT`다. | `LongBounds.parse` | 공통 숫자 형식 |
 | A26 | `-0.0`은 누락이 아니다. 범위의 `<`/`>`에서는 `0.0`과 같다. `Double.equals`는 부호 비트를 구분하므로 같은 revision에서는 `DUPLICATE_CONFLICT`다. `0.0`으로 바꾸지 않는다. | `samePayload` | 부호 비트를 정규화하는 결정 |
+| A27 | `NumericRange`는 인접한 두 `Double` 사이의 열린 구간을 빈 범위로 거절하지 않는다. 예: `(0.0, nextUp(0.0))`. 그 구간에 들어가는 유한 값은 비교에서 나오지 않는다. 정수 범위와 같은 빈 구간 거절로 바꾸지 않았다. | `NumericRange.parse` | 부동소수 빈 구간 정책 |
 
 테스트의 `"mm"`, `"percent"`, `"bpm"`, `"fixture"`는 픽스처 토큰이다. 승인된 단위가 아니다.
