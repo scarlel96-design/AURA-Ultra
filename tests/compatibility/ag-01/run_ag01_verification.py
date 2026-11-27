@@ -425,7 +425,9 @@ def verify_schemas(logs_dir=None, include_separated=True):
 
     if logs_dir:
         logs_dir.mkdir(parents=True, exist_ok=True)
-        out_name = f"schema-matrix-{total_cases}-r04.log" if logs_dir.name.endswith("r04") else f"schema-matrix-{total_cases}-r03.log"
+        rev_match = re.search(r"-(r\d+)$", logs_dir.name)
+        rev_suffix = rev_match.group(1) if rev_match else "r03"
+        out_name = f"schema-matrix-{total_cases}-{rev_suffix}.log"
         (logs_dir / out_name).write_text("\n".join(log_lines), encoding="utf-8")
         print(f"[LOG] Wrote {total_cases}-case strict schema matrix log to {logs_dir / out_name}")
 
@@ -1261,7 +1263,9 @@ def inspect_emulator_environment(logs_dir=None, sdk_root=None, runner=None):
         if mem_jar_path.is_file():
             mv_proc = subprocess.run(["java", "-jar", str(mem_jar_path), "--version"], capture_output=True, text=True, encoding="utf-8", check=False)
             mem_ver_str = (mv_proc.stdout or mv_proc.stderr).strip()
-        summary_name = "emulator-readiness-r04.log" if logs_dir.name.endswith("r04") else "emulator-readiness-r03.log"
+        rev_match = re.search(r"-(r\d+)$", logs_dir.name)
+        rev_suffix = rev_match.group(1) if rev_match else "r03"
+        summary_name = f"emulator-readiness-{rev_suffix}.log"
         summary_lines = [
             "================================================================================",
             "AG-01 LIVE ENVIRONMENT, PINNED TOOL HASHES & WEAR OS EMULATOR READINESS LOG",

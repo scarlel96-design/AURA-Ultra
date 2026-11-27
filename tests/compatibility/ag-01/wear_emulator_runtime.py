@@ -1,6 +1,6 @@
-"""Safe Wear OS emulator runtime verification helper for AG-01 (R04 hardened).
+"""Safe Wear OS emulator runtime verification helper for AG-01 (R05 hardened).
 
-Safety and verification invariants enforced by this module (AG01-AUD-04 & AG-01-R04):
+Safety and verification invariants enforced by this module (AG01-AUD-04 & AG-01-R05):
 1. Never downloads SDK packages or creates AVDs automatically.
 2. Never uses `--force` in recommended `avdmanager create avd` commands so existing AVDs are never overwritten.
 3. Refuses to target physical devices (non-`emulator-*` serials) or non-Wear AVDs (e.g. phone/tablet AVDs).
@@ -10,32 +10,40 @@ Safety and verification invariants enforced by this module (AG01-AUD-04 & AG-01-
    - Running emulator reports a dedicated approved Wear AVD name matching `expected_avd_name`,
      `sys.boot_completed == "1"`, `ro.build.characteristics` contains `"watch"`, and `ro.build.version.sdk`
      satisfies both `>= required_min_sdk` and `== expected_api_level` (when specified).
-5. Requires explicit `-s <emulator-serial>` and checks `returncode == 0` and timeout on EVERY `adb` command.
+5. Requires explicit `-s <emulator-serial>` and checks `returncode == 0` and timeout on EVERY `adb` command,
+   including recovery/cleanup commands.
 6. Active watch face selection (`verify_active_watchface_selected`):
-   - Never uses substring or loose `\b` regex matching across `dumpsys wallpaper`.
-   - Parses the active current-user wallpaper component binding (`mWallpaperComponent=ComponentInfo{<pkg>/<cls>}`).
-   - Rejects inactive/history references (`previousPackage=`, `fallback`, etc.) and package suffix collisions (`<pkg>.other`).
-   - Returns `status="UNKNOWN", selected=False` if the active component or WFF host dumpsys format cannot be confirmed.
+   - Never falls back to another user's wallpaper binding when the current user has no binding (`UNKNOWN`).
+   - Rejects user-scoped dumps lacking `mCurrentUserId`, conflicting `mCurrentUserId`, inactive history references
+     (`previousPackage=`), package suffix collisions (`<pkg>.other`), conflicting active components, and unconfirmed
+     WFF host dumpsys formats (`UNKNOWN` / `NOT_SELECTED`).
 7. Power and display state (`parse_power_and_display_state`):
-   - Requires BOTH `mWakefulness` and display state (`ON` / `DOZE` / `DOZE_SUSPEND` / `OFF`) to be explicitly parsed.
-   - If either is `UNKNOWN`, returns `status="UNKNOWN", is_active=False, is_aod=False`.
-   - `is_active` is True ONLY when `wakefulness == "Awake"` AND `display_state == "ON"`.
-   - `is_aod` is True ONLY when `wakefulness in ("Dozing", "Asleep")` AND `display_state in ("DOZE", "DOZE_SUSPEND")`
-     (`Dozing` + `OFF` is rejected as `is_aod=False`).
-8. Transition recording and cleanup:
-   - Verifies pulled MP4 exists, has non-trivial size, and contains a valid ISO BMFF `ftyp` header box.
-   - Explicitly verifies final return to Active (`wakefulness == "Awake"` AND `display_state == "ON"`) after AOD capture.
-   - Always terminates any lingering `screenrecord`, wakes display, and removes temporary `/sdcard/*.mp4` in `finally`.
+   - Collects ALL wakefulness values and ALL display states across BOTH `dumpsys power` and `dumpsys display`.
+   - Any missing, conflicting, multi-display contradictory, or incoherent wakefulness/display combination
+     (e.g. `Awake+DOZE`, `Dozing+ON`, `ON` vs `OFF` across power/display or multiple displays) returns `status="UNKNOWN"`.
+   - `is_active` is True ONLY when `wakefulness == "Awake"` AND single consistent `display_state == "ON"`.
+   - `is_aod` is True ONLY when `wakefulness in ("Dozing", "Asleep")` AND single consistent `display_state in ("DOZE", "DOZE_SUSPEND")`.
+8. PNG & MP4 artifact integrity:
+   - `validate_png_bytes`: validates full 8-byte PNG signature, chunk bounds, CRC-32 of every chunk, `IHDR` geometry/color
+     fields, `IDAT` zlib decompression & exact scanline byte length (non-interlaced), `IEND`, and zero trailing bytes.
+   - `validate_mp4_bytes`: validates size >= 1024 bytes and ISO BMFF `ftyp` header box.
+9. Failure recovery & cleanup verification (`RecoveryFailureError`):
+   - Always terminates and reaps (`kill` + `wait`) any lingering `screenrecord` process.
+   - Verifies ADB exit code and timeout on recovery `KEYCODE_WAKEUP`, and re-checks `dumpsys power`/`display`
+     to confirm final restoration to Active (`Awake + ON`).
+   - Verifies ADB exit code and timeout on `rm -f <remote_video>` AND confirms remote file absence via `test ! -e`.
+   - Never silently swallows recovery failures; raises `RecoveryFailureError` preserving both primary and recovery errors.
 """
 import argparse
 import hashlib
 import json
-import os
 import re
+import struct
 import subprocess
 import sys
 import time
 import zipfile
+import zlib
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -106,17 +114,14 @@ RECOMMENDED_WEAR_AVD_PLANS = [
     },
 ]
 
-# Strict Android package identifier pattern (dot-separated Java identifiers)
 PACKAGE_ID_RE = re.compile(r"^[A-Za-z][A-Za-z0-9_]*(?:\.[A-Za-z][A-Za-z0-9_]*)+$")
 
-# Strict active wallpaper binding lines (anchored to line start after whitespace; never matches previousComponent/history)
 ACTIVE_WALLPAPER_COMPONENT_RE = re.compile(
     r"^\s*mWallpaperComponent=ComponentInfo\{([A-Za-z][A-Za-z0-9_]*(?:\.[A-Za-z][A-Za-z0-9_]*)+)/([^\}\s]+)\}\s*$"
 )
 CURRENT_USER_RE = re.compile(r"^\s*(?:mCurrentUserId|Current user ID)\s*[:=]\s*(\d+)\s*$")
-USER_WALLPAPER_HEADER_RE = re.compile(r"^\s*WallpaperData\s+\S+\s+userId=(\d+)\b")
+USER_WALLPAPER_HEADER_RE = re.compile(r"^\s*(?:WallpaperData\b.*?\buserId=(\d+)\b|User\s+(\d+)\s*:)")
 
-# Known declarative WFF system host packages that may bind a declarative watch face package via an explicit active field
 KNOWN_WFF_HOST_PACKAGES = {
     "com.google.wear.watchface.runtime",
     "com.google.android.wearable.watchface.rwf",
@@ -126,6 +131,18 @@ ACTIVE_WFF_BOUND_PACKAGE_RE = re.compile(
     r"^\s*(?:activeWatchFacePackage|mWatchFacePackage|boundWatchFacePackage)=([A-Za-z][A-Za-z0-9_]*(?:\.[A-Za-z][A-Za-z0-9_]*)+)\s*$"
 )
 
+VALID_WAKEFULNESS_STATES = {"Awake", "Dozing", "Asleep", "Dreaming"}
+VALID_DISPLAY_STATES = {"ON", "OFF", "DOZE", "DOZE_SUSPEND", "ON_SUSPEND", "VR"}
+
+PNG_SIGNATURE = b"\x89PNG\r\n\x1a\n"
+PNG_COLOR_CHANNELS = {
+    0: (1, {1, 2, 4, 8, 16}),
+    2: (3, {8, 16}),
+    3: (1, {1, 2, 4, 8}),
+    4: (2, {8, 16}),
+    6: (4, {8, 16}),
+}
+
 
 class UnsafeTargetError(RuntimeError):
     """Raised when a command attempts to touch a physical watch/phone, non-Wear AVD, or mismatched APK/device."""
@@ -133,6 +150,16 @@ class UnsafeTargetError(RuntimeError):
 
 class RuntimeVerificationIncompleteError(RuntimeError):
     """Raised when runtime state or dumpsys format is UNKNOWN/unconfirmed and cannot be approved as PASS."""
+
+
+class RecoveryFailureError(RuntimeError):
+    """Raised when post-run or failure-path recovery/cleanup checks fail (never silently swallowed)."""
+
+    def __init__(self, message, primary_error=None, recovery_errors=None, recovery_report=None):
+        super().__init__(message)
+        self.primary_error = primary_error
+        self.recovery_errors = list(recovery_errors or [])
+        self.recovery_report = dict(recovery_report or {})
 
 
 def validate_emulator_serial(serial):
@@ -285,83 +312,204 @@ def verify_local_apk_before_install(
     }
 
 
+def _extract_display_states(text, source_label):
+    """Collect all display state occurrences (including multi-display entries) from a dumpsys text."""
+    patterns = (
+        re.compile(r"Display Power:\s*state=([A-Z_]+)\b"),
+        re.compile(r"\bmScreenState=([A-Z_]+)\b"),
+        re.compile(r"\bDisplay State:\s*([A-Z_]+)\b"),
+        re.compile(r"\bmDisplayState=([A-Z_]+)\b"),
+        re.compile(r"\bmGlobalDisplayState=([A-Z_]+)\b"),
+        re.compile(r"DisplayDeviceInfo\{[^\n}]*?\bstate\s+([A-Z_]+)\b"),
+    )
+    found = []
+    for pat in patterns:
+        for match in pat.finditer(text or ""):
+            found.append((source_label, match.group(1)))
+    return found
+
+
 def parse_power_and_display_state(dumpsys_power, dumpsys_display=""):
-    """Strictly parse Awake vs Doze/AOD state from `dumpsys power` and `dumpsys display` outputs (AG01-AUD-04).
+    """Strictly parse Awake vs Doze/AOD state from `dumpsys power` and `dumpsys display` (AG01-AUD-04 & R05).
 
     Rules:
-    - Both `wakefulness` and `display_state` must be explicitly parsed from actual dumpsys fields.
-    - If either is `UNKNOWN`, `status="UNKNOWN"`, `is_active=False`, `is_aod=False` (never approves UNKNOWN display).
-    - `is_active` is True ONLY when `wakefulness == "Awake"` AND `display_state == "ON"`.
-    - `is_aod` is True ONLY when `wakefulness in ("Dozing", "Asleep")` AND `display_state in ("DOZE", "DOZE_SUSPEND")`.
-      (`Dozing` + `OFF` is screen-off, NOT AOD, so `is_aod=False`).
+    - Collects ALL `mWakefulness=` occurrences in `dumpsys power` and ALL display state occurrences across
+      BOTH `dumpsys power` and `dumpsys display` (including multi-display entries).
+    - Missing values, unknown tokens, multiple conflicting wakefulness values, or multiple conflicting display
+      states (across power vs display or across multiple displays) ALWAYS return `status="UNKNOWN"`,
+      `is_active=False`, `is_aod=False`.
+    - Incoherent wakefulness/display combinations (e.g. `Awake` + `DOZE`, `Dozing` + `ON`, `Awake` + `OFF`)
+      return `status="UNKNOWN"`, `is_active=False`, `is_aod=False`.
+    - `is_active` is True ONLY when single consistent `wakefulness == "Awake"` AND single consistent `display_state == "ON"`.
+    - `is_aod` is True ONLY when single consistent `wakefulness in ("Dozing", "Asleep")` AND single consistent
+      `display_state in ("DOZE", "DOZE_SUSPEND")`.
+    - `Dozing|Asleep` + `OFF` returns `status="SCREEN_OFF"`, `is_active=False`, `is_aod=False`.
     """
-    wake_match = re.search(r"^\s*mWakefulness=([A-Za-z_]+)\s*$", dumpsys_power or "", re.MULTILINE)
-    if not wake_match:
-        wake_match = re.search(r"\bmWakefulness=([A-Za-z_]+)\b", dumpsys_power or "")
-    wakefulness = wake_match.group(1) if wake_match else "UNKNOWN"
+    wake_matches = re.findall(r"\bmWakefulness=([A-Za-z_]+)\b", dumpsys_power or "")
+    unique_wakes = sorted(set(wake_matches))
 
-    display_match = re.search(r"Display Power:\s*state=([A-Z_]+)\b", dumpsys_power or "")
-    if not display_match:
-        display_match = re.search(r"\bmScreenState=([A-Z_]+)\b", dumpsys_display or "")
-    if not display_match:
-        display_match = re.search(r"Display State:\s*([A-Z_]+)\b", dumpsys_display or "")
-    display_state = display_match.group(1) if display_match else "UNKNOWN"
+    display_observations = (
+        _extract_display_states(dumpsys_power, "power")
+        + _extract_display_states(dumpsys_display, "display")
+    )
+    unique_displays = sorted({val for _, val in display_observations})
 
-    if wakefulness == "UNKNOWN" or display_state == "UNKNOWN":
+    # Detect multiple display IDs explicitly
+    display_ids = sorted(set(
+        re.findall(r"\b(?:Display Id|mDisplayId)\s*[:=]\s*(\d+)\b", (dumpsys_power or "") + "\n" + (dumpsys_display or ""))
+    ))
+
+    if len(unique_wakes) == 0:
+        return {
+            "status": "UNKNOWN",
+            "wakefulness": "UNKNOWN",
+            "display_state": unique_displays[0] if len(unique_displays) == 1 else ("CONFLICT" if len(unique_displays) > 1 else "UNKNOWN"),
+            "observed_wakefulness": unique_wakes,
+            "observed_display_states": unique_displays,
+            "observed_display_ids": display_ids,
+            "is_active": False,
+            "is_aod": False,
+            "reason": "No mWakefulness field found in dumpsys power",
+        }
+    if len(unique_wakes) > 1 or unique_wakes[0] not in VALID_WAKEFULNESS_STATES:
+        return {
+            "status": "UNKNOWN",
+            "wakefulness": "CONFLICT" if len(unique_wakes) > 1 else unique_wakes[0],
+            "display_state": unique_displays[0] if len(unique_displays) == 1 else ("CONFLICT" if len(unique_displays) > 1 else "UNKNOWN"),
+            "observed_wakefulness": unique_wakes,
+            "observed_display_states": unique_displays,
+            "observed_display_ids": display_ids,
+            "is_active": False,
+            "is_aod": False,
+            "reason": f"Conflicting or invalid mWakefulness values observed: {unique_wakes}",
+        }
+    wakefulness = unique_wakes[0]
+
+    if len(unique_displays) == 0:
         return {
             "status": "UNKNOWN",
             "wakefulness": wakefulness,
-            "display_state": display_state,
+            "display_state": "UNKNOWN",
+            "observed_wakefulness": unique_wakes,
+            "observed_display_states": unique_displays,
+            "observed_display_ids": display_ids,
             "is_active": False,
             "is_aod": False,
+            "reason": "No display state found in dumpsys power or dumpsys display",
+        }
+    if len(unique_displays) > 1 or unique_displays[0] not in VALID_DISPLAY_STATES:
+        return {
+            "status": "UNKNOWN",
+            "wakefulness": wakefulness,
+            "display_state": "CONFLICT" if len(unique_displays) > 1 else unique_displays[0],
+            "observed_wakefulness": unique_wakes,
+            "observed_display_states": unique_displays,
+            "observed_display_ids": display_ids,
+            "is_active": False,
+            "is_aod": False,
+            "reason": f"Conflicting or invalid display states observed across power/display or multiple displays: {display_observations}",
+        }
+    if len(display_ids) > 1 and len(display_observations) < len(display_ids):
+        return {
+            "status": "UNKNOWN",
+            "wakefulness": wakefulness,
+            "display_state": "INCOMPLETE_MULTI_DISPLAY",
+            "observed_wakefulness": unique_wakes,
+            "observed_display_states": unique_displays,
+            "observed_display_ids": display_ids,
+            "is_active": False,
+            "is_aod": False,
+            "reason": f"Multiple display IDs ({display_ids}) present without complete per-display state observations ({display_observations})",
+        }
+    display_state = unique_displays[0]
+
+    if wakefulness == "Awake" and display_state == "ON":
+        return {
+            "status": "ACTIVE",
+            "wakefulness": wakefulness,
+            "display_state": display_state,
+            "observed_wakefulness": unique_wakes,
+            "observed_display_states": unique_displays,
+            "observed_display_ids": display_ids,
+            "is_active": True,
+            "is_aod": False,
+        }
+    if wakefulness in ("Dozing", "Asleep") and display_state in ("DOZE", "DOZE_SUSPEND"):
+        return {
+            "status": "AOD",
+            "wakefulness": wakefulness,
+            "display_state": display_state,
+            "observed_wakefulness": unique_wakes,
+            "observed_display_states": unique_displays,
+            "observed_display_ids": display_ids,
+            "is_active": False,
+            "is_aod": True,
+        }
+    if wakefulness in ("Dozing", "Asleep") and display_state == "OFF":
+        return {
+            "status": "SCREEN_OFF",
+            "wakefulness": wakefulness,
+            "display_state": display_state,
+            "observed_wakefulness": unique_wakes,
+            "observed_display_states": unique_displays,
+            "observed_display_ids": display_ids,
+            "is_active": False,
+            "is_aod": False,
+            "reason": f"Display is OFF while {wakefulness} (screen off, not AOD)",
         }
 
-    is_active = wakefulness == "Awake" and display_state == "ON"
-    is_aod = wakefulness in ("Dozing", "Asleep") and display_state in ("DOZE", "DOZE_SUSPEND")
-    if is_active:
-        status = "ACTIVE"
-    elif is_aod:
-        status = "AOD"
-    else:
-        status = "TRANSITION_OR_OFF"
-
     return {
-        "status": status,
+        "status": "UNKNOWN",
         "wakefulness": wakefulness,
         "display_state": display_state,
-        "is_active": is_active,
-        "is_aod": is_aod,
+        "observed_wakefulness": unique_wakes,
+        "observed_display_states": unique_displays,
+        "observed_display_ids": display_ids,
+        "is_active": False,
+        "is_aod": False,
+        "reason": f"Incoherent or transitional wakefulness/display combination: wakefulness={wakefulness}, display_state={display_state}",
     }
 
 
 def verify_active_watchface_selected(dumpsys_wallpaper, expected_package):
-    """Verify from `dumpsys wallpaper` that `expected_package` is the active bound watch face (AG01-AUD-04).
+    """Verify from `dumpsys wallpaper` that `expected_package` is the active current-user watch face (AG01-AUD-04 & R05).
 
-    Never performs loose substring or regex `\b` searches across the dump.
-    Extracts only the current user's active `mWallpaperComponent=ComponentInfo{<pkg>/<cls>}` record:
-    - Rejects inactive history lines such as `previousPackage=<expected_package>`.
-    - Rejects package prefix/suffix collisions such as `<expected_package>.other/.Face` (requires exact `==`).
-    - If `mWallpaperComponent` is absent, ambiguous across users, or belongs to a WFF host without an explicit
-      confirmed active package field, returns `status="UNKNOWN", selected=False`.
+    Strict rules:
+    - Never falls back to another user's binding when the current user has no binding -> returns `status="UNKNOWN"`.
+    - Rejects user-scoped dumps that omit `mCurrentUserId` or report conflicting `mCurrentUserId` -> `status="UNKNOWN"`.
+    - Rejects inactive history lines (`previousPackage=`), suffix collisions (`<pkg>.other`), conflicting bindings,
+      conflicting `boundWatchFacePackage` lines, and unconfirmed WFF host formats.
     """
     if not expected_package or not PACKAGE_ID_RE.fullmatch(expected_package):
         raise ValueError(f"expected_package must be a valid Android package name, got '{expected_package}'")
 
     lines = (dumpsys_wallpaper or "").splitlines()
-    current_user = None
+    observed_current_users = []
     for line in lines:
         m_user = CURRENT_USER_RE.match(line)
         if m_user:
-            current_user = m_user.group(1)
-            break
+            observed_current_users.append(m_user.group(1))
 
-    # Parse per-user or top-level active mWallpaperComponent bindings
+    unique_current_users = sorted(set(observed_current_users))
+    if len(unique_current_users) > 1:
+        return {
+            "status": "UNKNOWN",
+            "selected": False,
+            "expected_package": expected_package,
+            "active_package": None,
+            "active_component": None,
+            "reason": f"Conflicting mCurrentUserId values in dumpsys wallpaper: {unique_current_users}",
+        }
+    current_user = unique_current_users[0] if unique_current_users else None
+
     section_user = None
+    saw_user_header = False
     bindings = []
     for line in lines:
         m_header = USER_WALLPAPER_HEADER_RE.match(line)
         if m_header:
-            section_user = m_header.group(1)
+            saw_user_header = True
+            section_user = m_header.group(1) if m_header.group(1) is not None else m_header.group(2)
             continue
         m_comp = ACTIVE_WALLPAPER_COMPONENT_RE.match(line)
         if m_comp:
@@ -371,13 +519,13 @@ def verify_active_watchface_selected(dumpsys_wallpaper, expected_package):
                 "package": pkg,
                 "class_name": cls,
                 "component": f"{pkg}/{cls}",
-                "bound_wff_package": None,
+                "bound_wff_packages": [],
                 "raw_line": line.strip(),
             })
             continue
         m_bound = ACTIVE_WFF_BOUND_PACKAGE_RE.match(line)
-        if m_bound and bindings:
-            bindings[-1]["bound_wff_package"] = m_bound.group(1)
+        if m_bound and bindings and bindings[-1]["user_id"] == section_user:
+            bindings[-1]["bound_wff_packages"].append(m_bound.group(1))
 
     if not bindings:
         return {
@@ -389,28 +537,90 @@ def verify_active_watchface_selected(dumpsys_wallpaper, expected_package):
             "reason": "No active mWallpaperComponent=ComponentInfo{...} line found in dumpsys wallpaper",
         }
 
-    if current_user is not None:
-        user_filtered = [b for b in bindings if b["user_id"] in (current_user, None)]
-        if user_filtered:
-            bindings = user_filtered
-
-    # If multiple bindings remain with different components, treat as ambiguous UNKNOWN
-    unique_components = {(b["package"], b["class_name"], b["bound_wff_package"]) for b in bindings}
-    if len(unique_components) != 1:
+    has_user_sections = saw_user_header or any(b["user_id"] is not None for b in bindings)
+    if has_user_sections and any(b["user_id"] is None for b in bindings):
         return {
             "status": "UNKNOWN",
             "selected": False,
             "expected_package": expected_package,
             "active_package": None,
             "active_component": None,
-            "reason": f"Ambiguous multiple mWallpaperComponent bindings in dumpsys wallpaper: {[b['component'] for b in bindings]}",
+            "reason": "Mixed unscoped and user-scoped mWallpaperComponent bindings in dumpsys wallpaper",
+        }
+    if current_user is not None:
+        if has_user_sections:
+            user_filtered = [b for b in bindings if b["user_id"] == current_user]
+            if not user_filtered:
+                other_users = sorted({b["user_id"] for b in bindings if b["user_id"] is not None})
+                return {
+                    "status": "UNKNOWN",
+                    "selected": False,
+                    "expected_package": expected_package,
+                    "active_package": None,
+                    "active_component": None,
+                    "reason": (
+                        f"No active wallpaper binding found for current user {current_user} "
+                        f"(refusing fallback to other users: {other_users})"
+                    ),
+                }
+            bindings = user_filtered
+        elif current_user != "0":
+            return {
+                "status": "UNKNOWN",
+                "selected": False,
+                "expected_package": expected_package,
+                "active_package": None,
+                "active_component": None,
+                "reason": (
+                    f"mCurrentUserId={current_user} is non-primary, but dumpsys wallpaper lacks userId sections "
+                    "to confirm the binding belongs to the current user"
+                ),
+            }
+    else:
+        if has_user_sections:
+            observed_users = sorted({b["user_id"] for b in bindings if b["user_id"] is not None})
+            return {
+                "status": "UNKNOWN",
+                "selected": False,
+                "expected_package": expected_package,
+                "active_package": None,
+                "active_component": None,
+                "reason": (
+                    f"User-scoped WallpaperData bindings ({observed_users}) present without mCurrentUserId; "
+                    "cannot confirm which user is active"
+                ),
+            }
+
+    # Verify each binding does not have conflicting boundWatchFacePackage values
+    normalized_keys = set()
+    for b in bindings:
+        uniq_bound = sorted(set(b["bound_wff_packages"]))
+        if len(uniq_bound) > 1:
+            return {
+                "status": "UNKNOWN",
+                "selected": False,
+                "expected_package": expected_package,
+                "active_package": None,
+                "active_component": None,
+                "reason": f"Conflicting boundWatchFacePackage values on {b['component']}: {uniq_bound}",
+            }
+        b["bound_wff_package"] = uniq_bound[0] if uniq_bound else None
+        normalized_keys.add((b["package"], b["class_name"], b["bound_wff_package"]))
+
+    if len(normalized_keys) != 1:
+        return {
+            "status": "UNKNOWN",
+            "selected": False,
+            "expected_package": expected_package,
+            "active_package": None,
+            "active_component": None,
+            "reason": f"Conflicting multiple active mWallpaperComponent bindings in dumpsys wallpaper: {[b['component'] for b in bindings]}",
         }
 
     active = bindings[0]
     active_pkg = active["package"]
     active_comp = active["component"]
 
-    # Case 1: Direct exact component package match (strict equality `==` prevents `.other` suffix collisions)
     if active_pkg == expected_package:
         return {
             "status": "SELECTED",
@@ -418,10 +628,10 @@ def verify_active_watchface_selected(dumpsys_wallpaper, expected_package):
             "expected_package": expected_package,
             "active_package": active_pkg,
             "active_component": active_comp,
+            "user_id": current_user,
             "matched_lines": [active["raw_line"]],
         }
 
-    # Case 2: Known WFF declarative host package
     if active_pkg in KNOWN_WFF_HOST_PACKAGES:
         bound_pkg = active["bound_wff_package"]
         if bound_pkg is None:
@@ -431,6 +641,7 @@ def verify_active_watchface_selected(dumpsys_wallpaper, expected_package):
                 "expected_package": expected_package,
                 "active_package": active_pkg,
                 "active_component": active_comp,
+                "user_id": current_user,
                 "reason": f"WFF host '{active_comp}' is active, but bound watch face package format is unconfirmed in dumpsys wallpaper",
             }
         if bound_pkg == expected_package:
@@ -440,6 +651,7 @@ def verify_active_watchface_selected(dumpsys_wallpaper, expected_package):
                 "expected_package": expected_package,
                 "active_package": bound_pkg,
                 "active_component": active_comp,
+                "user_id": current_user,
                 "matched_lines": [active["raw_line"], f"boundWatchFacePackage={bound_pkg}"],
             }
         return {
@@ -448,17 +660,146 @@ def verify_active_watchface_selected(dumpsys_wallpaper, expected_package):
             "expected_package": expected_package,
             "active_package": bound_pkg,
             "active_component": active_comp,
+            "user_id": current_user,
             "reason": f"WFF host '{active_comp}' is bound to '{bound_pkg}', not '{expected_package}'",
         }
 
-    # Case 3: Another watch face package is active (even if expected_package appears in previousPackage/history)
     return {
         "status": "NOT_SELECTED",
         "selected": False,
         "expected_package": expected_package,
         "active_package": active_pkg,
         "active_component": active_comp,
+        "user_id": current_user,
         "reason": f"Active mWallpaperComponent package is '{active_pkg}', not '{expected_package}'",
+    }
+
+
+def validate_png_bytes(data, min_width=1, min_height=1):
+    """Validate complete PNG structure and integrity (ISO/IEC 15948) using Python stdlib only.
+
+    Checks:
+    1. Exact 8-byte PNG signature (`\\x89PNG\\r\\n\\x1a\\n`).
+    2. Complete chunk framing without truncation or trailing bytes after `IEND`.
+    3. CRC-32 checksum verification for EVERY chunk.
+    4. First chunk is `IHDR` (13 bytes) with valid width/height/bit_depth/color_type/compression/filter/interlace.
+    5. At least one `IDAT` chunk whose concatenated payload decompresses cleanly with `zlib.decompress`
+       and matches exact uncompressed scanline byte length for non-interlaced PNGs.
+    6. Last chunk is `IEND` (0 bytes).
+    """
+    if not isinstance(data, (bytes, bytearray)):
+        raise RuntimeError("PNG capture output is not bytes")
+    raw = bytes(data)
+    if len(raw) < 33 or raw[:8] != PNG_SIGNATURE:
+        raise RuntimeError("Invalid PNG signature or truncated PNG header")
+
+    offset = 8
+    chunk_count = 0
+    ihdr = None
+    saw_plte = False
+    idat_parts = []
+    saw_iend = False
+
+    while offset < len(raw):
+        if saw_iend:
+            raise RuntimeError(f"Trailing {len(raw) - offset} garbage byte(s) found after PNG IEND chunk")
+        if offset + 12 > len(raw):
+            raise RuntimeError(f"Truncated PNG chunk header at offset {offset}")
+        length = struct.unpack(">I", raw[offset:offset + 4])[0]
+        chunk_type = raw[offset + 4:offset + 8]
+        if not all(65 <= b <= 90 or 97 <= b <= 122 for b in chunk_type):
+            raise RuntimeError(f"Invalid non-ASCII PNG chunk type {chunk_type!r} at offset {offset}")
+        data_start = offset + 8
+        data_end = data_start + length
+        crc_end = data_end + 4
+        if crc_end > len(raw):
+            raise RuntimeError(f"Truncated PNG chunk {chunk_type.decode('ascii')} (declared {length} bytes)")
+        chunk_data = raw[data_start:data_end]
+        expected_crc = struct.unpack(">I", raw[data_end:crc_end])[0]
+        actual_crc = zlib.crc32(chunk_type + chunk_data) & 0xFFFFFFFF
+        if actual_crc != expected_crc:
+            raise RuntimeError(
+                f"PNG CRC-32 mismatch in chunk {chunk_type.decode('ascii')}: expected 0x{expected_crc:08x}, got 0x{actual_crc:08x}"
+            )
+
+        chunk_count += 1
+        if chunk_count == 1:
+            if chunk_type != b"IHDR" or length != 13:
+                raise RuntimeError(f"First PNG chunk must be 13-byte IHDR, got {chunk_type!r} ({length} bytes)")
+            width, height, bit_depth, color_type, compression, filter_method, interlace = struct.unpack(">IIBBBBB", chunk_data)
+            if width < min_width or height < min_height:
+                raise RuntimeError(f"Invalid PNG dimensions: {width}x{height} (min {min_width}x{min_height})")
+            if color_type not in PNG_COLOR_CHANNELS:
+                raise RuntimeError(f"Unsupported PNG color_type={color_type}")
+            channels, allowed_depths = PNG_COLOR_CHANNELS[color_type]
+            if bit_depth not in allowed_depths:
+                raise RuntimeError(f"Invalid PNG bit_depth={bit_depth} for color_type={color_type}")
+            if compression != 0 or filter_method != 0 or interlace not in (0, 1):
+                raise RuntimeError(
+                    f"Invalid PNG header flags: compression={compression}, filter={filter_method}, interlace={interlace}"
+                )
+            ihdr = {
+                "width": width,
+                "height": height,
+                "bit_depth": bit_depth,
+                "color_type": color_type,
+                "channels": channels,
+                "interlace": interlace,
+            }
+        elif chunk_type == b"IHDR":
+            raise RuntimeError("Duplicate IHDR chunk found in PNG stream")
+        elif chunk_type == b"PLTE":
+            if length == 0 or length % 3 != 0 or length > 768:
+                raise RuntimeError(f"Invalid PNG PLTE chunk length: {length}")
+            saw_plte = True
+        elif chunk_type == b"IDAT":
+            if ihdr and ihdr["color_type"] == 3 and not saw_plte:
+                raise RuntimeError("Indexed-color PNG (color_type=3) is missing required PLTE chunk before IDAT")
+            idat_parts.append(chunk_data)
+        elif chunk_type == b"IEND":
+            if length != 0:
+                raise RuntimeError(f"PNG IEND chunk must have 0 length, got {length}")
+            saw_iend = True
+
+        offset = crc_end
+
+    if ihdr is None:
+        raise RuntimeError("PNG missing IHDR chunk")
+    if not idat_parts:
+        raise RuntimeError("PNG missing IDAT image data chunk")
+    if not saw_iend:
+        raise RuntimeError("PNG missing terminating IEND chunk")
+
+    try:
+        decompressed = zlib.decompress(b"".join(idat_parts))
+    except zlib.error as exc:
+        raise RuntimeError(f"Corrupt PNG IDAT zlib stream: {exc}") from exc
+
+    if ihdr["interlace"] == 0:
+        bits_per_pixel = ihdr["channels"] * ihdr["bit_depth"]
+        row_bytes = (ihdr["width"] * bits_per_pixel + 7) // 8
+        stride = 1 + row_bytes
+        expected_decompressed_len = ihdr["height"] * stride
+        if len(decompressed) != expected_decompressed_len:
+            raise RuntimeError(
+                f"Corrupt PNG IDAT payload length: expected {expected_decompressed_len} decompressed bytes for "
+                f"{ihdr['width']}x{ihdr['height']}, got {len(decompressed)}"
+            )
+        for row_idx in range(ihdr["height"]):
+            filter_byte = decompressed[row_idx * stride]
+            if filter_byte > 4:
+                raise RuntimeError(
+                    f"Invalid PNG scanline filter type {filter_byte} at row {row_idx} (must be 0..4)"
+                )
+
+    return {
+        "width": ihdr["width"],
+        "height": ihdr["height"],
+        "bit_depth": ihdr["bit_depth"],
+        "color_type": ihdr["color_type"],
+        "chunk_count": chunk_count,
+        "size_bytes": len(raw),
+        "sha256": hashlib.sha256(raw).hexdigest(),
     }
 
 
@@ -553,7 +894,8 @@ def build_safe_runtime_verification_plan(
                 ],
                 "pass_criteria": (
                     f"Active current-user mWallpaperComponent in dumpsys wallpaper explicitly matches '{package_id}' "
-                    "(status=SELECTED; inactive previousPackage, suffix collisions, or UNKNOWN host formats are rejected)"
+                    "(status=SELECTED; missing current-user binding, other-user fallback, inactive previousPackage, "
+                    "suffix collisions, or UNKNOWN host formats are rejected)"
                 ),
             },
             {
@@ -564,7 +906,7 @@ def build_safe_runtime_verification_plan(
                     f"adb -s {safe_serial} shell dumpsys display",
                     f"adb -s {safe_serial} exec-out screencap -p > {out_dir}/active_wff{wff_version}.png",
                 ],
-                "pass_criteria": "All commands rc=0, mWakefulness=Awake AND Display state=ON confirmed before valid PNG capture",
+                "pass_criteria": "All commands rc=0, single consistent mWakefulness=Awake AND Display state=ON, full PNG CRC/IHDR/IDAT/IEND validated",
             },
             {
                 "step": "5_record_aod_transition_capture_ambient_and_restore_awake",
@@ -579,11 +921,12 @@ def build_safe_runtime_verification_plan(
                     f"adb -s {safe_serial} shell dumpsys display",
                     f"adb -s {safe_serial} pull {remote_video} {out_dir}/transition_wff{wff_version}.mp4",
                     f"adb -s {safe_serial} shell rm -f {remote_video}",
+                    f"adb -s {safe_serial} shell test ! -e {remote_video}",
                 ],
                 "pass_criteria": (
-                    "All commands rc=0; mWakefulness in {Dozing,Asleep} AND Display state in {DOZE,DOZE_SUSPEND} "
-                    "confirmed before ambient PNG; post-wakeup mWakefulness=Awake AND Display state=ON confirmed; "
-                    "pulled MP4 >= 1024 bytes with valid 'ftyp' header; temporary remote file removed in finally"
+                    "All commands rc=0; consistent Dozing|Asleep + DOZE|DOZE_SUSPEND confirmed before full-integrity ambient PNG; "
+                    "final Awake+ON confirmed (including on failure recovery); pulled MP4 >= 1024 bytes with 'ftyp'; "
+                    "recorder termination, remote rm -f, and absence test ! -e verified in finally"
                 ),
             },
         ],
@@ -684,7 +1027,7 @@ def execute_runtime_verification(
     if exact_pkg_line not in [line.strip() for line in pm.stdout.splitlines()]:
         raise RuntimeError(f"Installed package '{package_id}' not found in exact package list on {safe_serial}: {pm.stdout}")
 
-    # Step 3: Verify active watch face selection in dumpsys wallpaper
+    # Step 3: Verify active current-user watch face selection in dumpsys wallpaper
     wallpaper = run_checked_adb(run_fn, ["shell", "dumpsys", "wallpaper"], timeout=30)
     selection = verify_active_watchface_selected(wallpaper.stdout, package_id)
     if selection["status"] == "UNKNOWN":
@@ -698,7 +1041,7 @@ def execute_runtime_verification(
             f"(status={selection['status']}, active_component='{selection.get('active_component')}')."
         )
 
-    # Step 4: Wake display, confirm Active (Awake + ON) state, and capture Active PNG
+    # Step 4: Wake display, confirm Active (Awake + ON) state, and capture full-integrity Active PNG
     run_checked_adb(run_fn, ["shell", "input", "keyevent", "KEYCODE_WAKEUP"], timeout=15)
     power_active = parse_power_and_display_state(
         run_checked_adb(run_fn, ["shell", "dumpsys", "power"], timeout=30).stdout,
@@ -715,12 +1058,11 @@ def execute_runtime_verification(
     out.mkdir(parents=True, exist_ok=True)
     active_png = out / f"active_wff{wff_version}.png"
     cap_active = run_checked_adb(run_fn, ["exec-out", "screencap", "-p"], timeout=30, binary=True)
-    if not isinstance(cap_active.stdout, (bytes, bytearray)) or not cap_active.stdout.startswith(b"\x89PNG"):
-        raise RuntimeError(f"Failed to capture valid active PNG bytes on {safe_serial}")
+    active_png_meta = validate_png_bytes(cap_active.stdout)
     active_png.write_bytes(cap_active.stdout)
 
-    # Step 5: Record AOD transition, verify AOD (Dozing + DOZE/DOZE_SUSPEND), capture Ambient PNG,
-    # restore Awake (Awake + ON), verify pulled MP4, and ALWAYS clean up in finally
+    # Step 5: Record AOD transition, verify AOD, capture full-integrity Ambient PNG, restore Awake+ON,
+    # pull & validate MP4, and ALWAYS verify recovery/cleanup results without swallowing errors
     remote_video = f"/sdcard/ag01_wff{wff_version}_aod_transition.mp4"
     local_video = out / f"transition_wff{wff_version}.mp4"
     ambient_png = out / f"ambient_wff{wff_version}.png"
@@ -735,6 +1077,16 @@ def execute_runtime_verification(
     recorder = spawn_recorder()
     power_aod = None
     power_restored = None
+    ambient_png_meta = None
+    video_size = None
+    primary_error = None
+    recovery_errors = []
+    recovery_report = {
+        "recorder_stopped": False,
+        "awake_restored": False,
+        "remote_file_removed": False,
+    }
+
     try:
         sleep_fn(1.0)
         run_checked_adb(run_fn, ["shell", "input", "keyevent", "KEYCODE_SLEEP"], timeout=15)
@@ -751,8 +1103,7 @@ def execute_runtime_verification(
             raise RuntimeError(f"Emulator {safe_serial} did not enter valid AOD (Dozing + DOZE/DOZE_SUSPEND) state: {power_aod}")
 
         cap_ambient = run_checked_adb(run_fn, ["exec-out", "screencap", "-p"], timeout=30, binary=True)
-        if not isinstance(cap_ambient.stdout, (bytes, bytearray)) or not cap_ambient.stdout.startswith(b"\x89PNG"):
-            raise RuntimeError(f"Failed to capture valid ambient PNG bytes on {safe_serial}")
+        ambient_png_meta = validate_png_bytes(cap_ambient.stdout)
         ambient_png.write_bytes(cap_ambient.stdout)
 
         sleep_fn(1.5)
@@ -762,37 +1113,97 @@ def execute_runtime_verification(
             run_checked_adb(run_fn, ["shell", "dumpsys", "power"], timeout=30).stdout,
             run_checked_adb(run_fn, ["shell", "dumpsys", "display"], timeout=30).stdout,
         )
+        if power_restored["status"] == "UNKNOWN":
+            raise RuntimeVerificationIncompleteError(
+                f"Post-AOD restored power/display state is UNKNOWN on {safe_serial}: {power_restored}"
+            )
         if not power_restored["is_active"]:
             raise RuntimeError(
                 f"Emulator {safe_serial} failed to return to Active (Awake+ON) state after AOD capture: {power_restored}"
             )
 
-        rec_rc = recorder.wait(timeout=15)
+        try:
+            rec_rc = recorder.wait(timeout=15)
+        except subprocess.TimeoutExpired as exc:
+            raise RuntimeError(f"screenrecord did not exit within 15s timeout on {safe_serial}") from exc
         if rec_rc != 0:
             raise RuntimeError(f"screenrecord exited with non-zero returncode={rec_rc} on {safe_serial}")
 
         run_checked_adb(run_fn, ["pull", remote_video, str(local_video)], timeout=60)
         if not local_video.is_file():
             raise RuntimeError(f"Pulled transition video file is missing at {local_video}")
-        video_size = validate_mp4_bytes(local_video.read_bytes())
+        try:
+            video_size = validate_mp4_bytes(local_video.read_bytes())
+        except Exception:
+            local_video.unlink(missing_ok=True)
+            raise
+    except Exception as exc:
+        primary_error = exc
     finally:
-        # Ensure recorder process is stopped, display is woken up, and remote temp video is ALWAYS removed
-        if recorder.poll() is None:
-            recorder.terminate()
-            try:
+        # 1. Verify recorder process is fully terminated and reaped
+        try:
+            if recorder.poll() is None:
+                recorder.terminate()
+                try:
+                    recorder.wait(timeout=5)
+                except subprocess.TimeoutExpired:
+                    recorder.kill()
+                    recorder.wait(timeout=5)
+            else:
                 recorder.wait(timeout=5)
-            except subprocess.TimeoutExpired:
-                recorder.kill()
-        if power_restored is None or not power_restored.get("is_active"):
+            if recorder.poll() is None:
+                recovery_errors.append("recorder_termination_failed: recorder process is still running after kill+wait")
+            else:
+                recovery_report["recorder_stopped"] = True
+        except Exception as rec_exc:
+            recovery_errors.append(f"recorder_termination_failed: {rec_exc}")
+
+        # 2. Verify final Awake+ON restoration (including strict adb rc/timeout + dumpsys re-verification on recovery)
+        if power_restored is not None and power_restored.get("is_active"):
+            recovery_report["awake_restored"] = True
+        else:
             try:
-                run_fn(["shell", "input", "keyevent", "KEYCODE_WAKEUP"], timeout=10, binary=False)
-            except Exception:
-                pass
+                run_checked_adb(run_fn, ["shell", "input", "keyevent", "KEYCODE_WAKEUP"], timeout=15)
+                sleep_fn(0.5)
+                recovered_state = parse_power_and_display_state(
+                    run_checked_adb(run_fn, ["shell", "dumpsys", "power"], timeout=30).stdout,
+                    run_checked_adb(run_fn, ["shell", "dumpsys", "display"], timeout=30).stdout,
+                )
+                recovery_report["recovered_state"] = recovered_state
+                if recovered_state["is_active"]:
+                    recovery_report["awake_restored"] = True
+                else:
+                    recovery_errors.append(
+                        f"awake_recovery_failed: emulator did not confirm Awake+ON after recovery wakeup ({recovered_state})"
+                    )
+            except Exception as wake_exc:
+                recovery_errors.append(f"awake_recovery_failed: {wake_exc}")
+
+        # 3. Verify remote temporary MP4 deletion (adb rc/timeout + explicit absence check `test ! -e`)
         try:
             run_checked_adb(run_fn, ["shell", "rm", "-f", remote_video], timeout=15)
-        except Exception:
-            if power_restored is not None and power_restored.get("is_active"):
-                raise
+            run_checked_adb(run_fn, ["shell", "test", "!", "-e", remote_video], timeout=15)
+            recovery_report["remote_file_removed"] = True
+        except Exception as rm_exc:
+            recovery_errors.append(f"remote_cleanup_failed: {rm_exc}")
+
+    if recovery_errors:
+        if primary_error is not None:
+            raise RecoveryFailureError(
+                f"Primary runtime error: {primary_error}; recovery verification also failed: {recovery_errors}",
+                primary_error=primary_error,
+                recovery_errors=recovery_errors,
+                recovery_report=recovery_report,
+            ) from primary_error
+        raise RecoveryFailureError(
+            f"Post-run cleanup/recovery verification failed: {recovery_errors}",
+            primary_error=None,
+            recovery_errors=recovery_errors,
+            recovery_report=recovery_report,
+        )
+
+    if primary_error is not None:
+        raise primary_error
 
     return {
         "serial": safe_serial,
@@ -803,10 +1214,13 @@ def execute_runtime_verification(
         "active_state": power_active,
         "aod_state": power_aod,
         "restored_active_state": power_restored,
+        "recovery_report": recovery_report,
         "active_png": str(active_png),
-        "active_png_sha256": hashlib.sha256(active_png.read_bytes()).hexdigest(),
+        "active_png_meta": active_png_meta,
+        "active_png_sha256": active_png_meta["sha256"],
         "ambient_png": str(ambient_png),
-        "ambient_png_sha256": hashlib.sha256(ambient_png.read_bytes()).hexdigest(),
+        "ambient_png_meta": ambient_png_meta,
+        "ambient_png_sha256": ambient_png_meta["sha256"],
         "transition_mp4": str(local_video),
         "transition_mp4_size_bytes": video_size,
         "transition_mp4_sha256": hashlib.sha256(local_video.read_bytes()).hexdigest(),
