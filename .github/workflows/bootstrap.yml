@@ -38,6 +38,8 @@ jobs:
           python tools/check_layout_reproduction.py
       - name: Check project invariants
         run: python tools/check_foundation.py
+      - name: M01 synthetic motion evidence
+        run: python tools/motion_storyboard.py --check
       - name: Validation tool regression tests
         run: python -m unittest discover -s tests/unit -p 'test_*.py' -v
       - name: Install Android SDK
