@@ -1,18 +1,18 @@
 """Build the candidate in a temporary project, without changing the product face."""
 import argparse
 import hashlib
-import subprocess
 import json
 import shutil
 import tempfile
 import zipfile
 from pathlib import Path
 
-from generate_bootstrap import ROOT, FACE, check_outputs
+from generate_bootstrap import ROOT, FACE, check_outputs, safe_path
 from generate_basic_face import OUTPUT, generate
 from check_flavor_isolation import FILES, DIRECTORIES, run
 from profile_contract import enabled_profiles, debug_apk
-from signature_dev_bundle import build_bundle, write_new, sha
+from signature_dev_bundle import build_bundle, write_new, sha, verify_bundle
+from committed_build_inputs import clean_commit, copy_committed_inputs
 
 
 def main():
@@ -23,9 +23,7 @@ def main():
     if args.development_bundle is not None:
         if args.development_bundle.exists():
             raise FileExistsError(args.development_bundle)
-        if subprocess.check_output(["git", "status", "--porcelain", "--untracked-files=no"], cwd=ROOT).strip():
-            raise ValueError("Tracked worktree changes; commit before bundling")
-        source_sha = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
+        source_sha = clean_commit(ROOT)
     original = (ROOT / FACE).read_bytes()
     outputs = generate()
     check_outputs(ROOT, outputs)
@@ -34,12 +32,25 @@ def main():
         raise ValueError("Candidate is not distinct")
     with tempfile.TemporaryDirectory(prefix="aura-basic-face-") as directory:
         root = Path(directory)
-        for name in FILES:
-            shutil.copy2(ROOT / name, root / name)
-        for name in DIRECTORIES:
-            shutil.copytree(ROOT / name, root / name, ignore=shutil.ignore_patterns("__pycache__"))
-        shutil.copy2(ROOT / "apps/watchface/build.gradle.kts", root / "apps/watchface/build.gradle.kts")
-        shutil.copytree(ROOT / ".aura-tools", root / ".aura-tools")
+        if source_sha is not None:
+            count = copy_committed_inputs(ROOT, root, source_sha,
+                                          FILES + ("apps/watchface/build.gradle.kts",), DIRECTORIES)
+            print(f"COMMITTED_INPUTS_RESULT {source_sha} {count}", flush=True)
+            run(root, "generate_basic_face.py", "--write")
+            run(root, "generate_basic_face.py", "--check")
+            if (root / OUTPUT).read_bytes() != face or (root / FACE).read_bytes() != original:
+                raise ValueError("Committed input reproduction mismatch")
+        else:
+            for name in FILES:
+                shutil.copy2(ROOT / name, root / name)
+            for name in DIRECTORIES:
+                shutil.copytree(ROOT / name, root / name, ignore=shutil.ignore_patterns("__pycache__"))
+            shutil.copy2(ROOT / "apps/watchface/build.gradle.kts", root / "apps/watchface/build.gradle.kts")
+        # Copy only pinned tool JARs. The existing validators verify their digests.
+        (root / ".aura-tools").mkdir()
+        for name in ("wff-validator.jar", "memory-footprint.jar"):
+            path = ".aura-tools/" + name
+            shutil.copy2(safe_path(ROOT, path), root / path)
         app = root / "apps/watchface"
         for p in enabled_profiles(root):
             if (app / "src" / p["name"] / "res/raw/watchface.xml").exists():
@@ -63,11 +74,14 @@ def main():
     if (ROOT / FACE).read_bytes() != original:
         raise ValueError("Product face changed")
     if args.development_bundle is not None:
-        if subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip() != source_sha or subprocess.check_output(["git", "status", "--porcelain", "--untracked-files=no"], cwd=ROOT).strip():
+        if clean_commit(ROOT) != source_sha:
             raise ValueError("Source changed during build")
         data, metadata = build_bundle(apks, face, source_sha)
-        write_new(args.development_bundle, data)
-        print("DEV_BUNDLE_RESULT " + json.dumps({"sha256": sha(data), "bytes": len(data), "manifest": metadata}, sort_keys=True))
+        stored = write_new(args.development_bundle, data)
+        if verify_bundle(stored, face, source_sha) != metadata:
+            raise ValueError("Stored development bundle manifest mismatch")
+        print("DEV_BUNDLE_RESULT " + json.dumps({"sha256": sha(stored), "bytes": len(stored),
+                                               "manifest": metadata, "readbackVerified": True}, sort_keys=True))
     print("PASS: isolated Signature basic candidate, four profiles; product unchanged")
 
 

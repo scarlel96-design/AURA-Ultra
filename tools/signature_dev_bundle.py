@@ -2,6 +2,7 @@
 import hashlib
 import io
 import json
+import os
 import re
 import zipfile
 from pathlib import Path
@@ -92,12 +93,20 @@ def verify_bundle(data, face, source_sha):
 
 
 def write_new(path, data):
-    """Never overwrite an existing output file."""
+    """Create a new file, flush it, and compare the persisted bytes."""
     path = Path(path)
-    with path.open("xb") as stream:
-        try:
-            stream.write(data)
-        except BaseException:
-            stream.close()
-            path.unlink()
-            raise
+    stream = path.open("xb")
+    try:
+        with stream:
+            if stream.write(data) != len(data):
+                raise OSError("Short bundle write")
+            stream.flush()
+            os.fsync(stream.fileno())
+        with path.open("rb") as stored:
+            actual = stored.read(len(data)+1)
+        if actual != data:
+            raise ValueError("Stored bundle bytes mismatch")
+        return actual
+    except BaseException:
+        path.unlink()
+        raise
