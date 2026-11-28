@@ -61,3 +61,5 @@ F03 R04: 664 unique artifact UNREVIEWED, graph 177/19 zero unresolved. 외부 pu
 F03 R05: 430/664 게시 SHA256 미확보(3 repos HTTP404), 234 일치도 publisher trust 아님. audit 46095753190 lock/strict/negative fixture PENDING. 미승인 metadata/lock main 적용 금지. [보고](../evidence/MID-AUDIT/F03/REPORT-R05.md).
 
 F03 R06: Domain strict/negative PASS, Android 178/178 lock graph exact; 수정 CI 46096211808 strict PENDING. publisher provenance 및 430 미확보 유지. [보고](../evidence/MID-AUDIT/F03/REPORT-R06.md).
+
+F03 R07: Android HTTP429, 동일 SHA 단일 job retry PENDING; Domain strict exact PASS. 430/664 provenance 및 owner/strict 적용 조건 [이관](../evidence/MID-AUDIT/F03/PROVENANCE-HANDOFF.md). F03 PARTIAL.
