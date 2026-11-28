@@ -41,3 +41,5 @@
 - F04 AUD-R04-08: [문서 정정](../evidence/MID-AUDIT/F04/REPORT-DOC.md) ADR-007 WFF2~5 ID/최소 API, BUILD_GUIDE 생성기·Python3.12·역사 기준선 정정. 제품 변경 0; CI 대기. AUD-R03-01/F03 차단 유지.
 
 - AUD-R04-08 GO: ca008a7 공통 3 CI/4 jobs SUCCESS, Linux·Windows 402×3 host PASS, doc 7 PASS. 감사 14/16. [F03 로컬 인계](agent-orders/CODEX-F03-HANDOFF.md) 사용자 승인 대기; F04 구현 차단, PR HOLD.
+
+- CODEX-F03 75533a9: 공식 release API JAR 2/2 해시 독립 대조, 3 CI/4 jobs SUCCESS, host 402×3. 로컬 DNS/JDK17·실바이트·신뢰 승인 0, [검수](../evidence/MID-AUDIT/F03/REPORT-CODEX-REVIEW.md) PARTIAL. 감사 14/16, 제한 작업 종료. 별도 사용자 결정 전 GPT-07/통합 금지.

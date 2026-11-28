@@ -7,7 +7,7 @@
 | Grok Build | [GB-01 D01](GB-01-D01-CLOSEOUT.md) | PR #5 HOLD; D01 불변성 GO·독립 종료, 88/108·10 jobs 확인; 권한 계약 별도 | agent/grok/GB-01-D01 | modules/domain/**, docs/evidence/GB-01/** |
 | Grok Build | [GB-02](GB-02.md) | G01 R08-CLOSEOUT 108/81 XML·8 jobs 대조; 최종 XML 108/81·8 jobs/PR 대조, 독립 개발 종료, HOLD | agent/grok/GB-02 | modules/intelligence/**, docs/evidence/GB-02/** |
 | Antigravity | [AG-01](AG-01.md) | R07 격리 재시험 38 PASS, 감사 결함 OPEN, A01 후속 지시/사용량 회복 대기, runtime NOT RUN, HOLD | agent/antigravity/AG-01 | tests/compatibility/ag-01/**, docs/evidence/AG-01/** |
-| Codex | [F03 로컬 인계](CODEX-F03-HANDOFF.md) | 승인 대기 / NOT STARTED | 격리 후보(승인 후) | 공급망 차단점·고난도 통합·실기기 |
+| Codex | [F03 로컬 인계](CODEX-F03-HANDOFF.md) | 제한 작업 종료 / PARTIAL | codex/f03-local-evidence @ 75533a9 | 공급망 차단점·고난도 통합·실기기 |
 
 매 턴 AGENTS.md PRE-FLIGHT 및 G0~G7. 사용자 지시에 따라 각 CLI에서 실행한다. 동일 파일 수정 금지. 외부 에이전트는 자기 evidence에 중앙 갱신 제안을 기록한다. 총괄만 중앙 문서 갱신. PR #2/#3 자동 병합·강제 푸시 금지. 사용량 제한 중 AG 작업을 다른 에이전트에게 임의 인수하지 않는다. 신규 SDK/AVD 설치는 사용자 승인 전 금지. 독립 모듈의 자체 GO는 총괄 통합 GO가 아니다. 제품 NO-GO.
 

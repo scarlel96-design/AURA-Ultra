@@ -49,6 +49,6 @@ R14: [보고](../evidence/MID-AUDIT/F03/REPORT-R14.md). 48 바이트 일치, 18 
 
 R15: [보고](../evidence/MID-AUDIT/F03/REPORT-R15.md). Apache JAR 강한 배포 checksum 일치, JDOM JAR 및 jose4j 태그 POM exact; Guava 소비자 키 대조. SHA512 sidecar 28/28 HTTP404, jose4j 키 미확보, 신뢰 승인 0. 동일 조회 반복 금지. 392 미확보 바이트 범위 및 라이선스 OPEN.
 
-R16: [보고](../evidence/MID-AUDIT/F03/REPORT-R16.md). 392 검사/389 일치/1 POM 불일치/2 Kotlin compiler JAR 미확보. 누적 427/430, 전체 661/664에 sidecar 또는 byte 일치 근거, 신뢰 승인 0. 425 baseline 서명 존재/12 강한 서명 검증. [R17](../evidence/MID-AUDIT/F03/REPORT-R17.md): Portal POM exact, 원본 Gradle route 미확정; JAR 2개 Central 양쪽 github.com redirect 차단. 428/430 byte 근거(경로별), 662/664 combined. 자동 출처 수집 종료, 독립 네트워크 및 trust/CVE/license/strict 도입 승인 차단. 동일 수집 반복 금지.
+R16: [보고](../evidence/MID-AUDIT/F03/REPORT-R16.md). 392 검사/389 일치/1 POM 불일치/2 Kotlin compiler JAR 미확보. 누적 427/430, 전체 661/664에 sidecar 또는 byte 일치 근거, 신뢰 승인 0. 425 baseline 서명 존재/12 강한 서명 검증. [R17](../evidence/MID-AUDIT/F03/REPORT-R17.md): Portal POM exact, 원본 Gradle route 미확정; JAR 2개 Central 양쪽 github.com redirect 차단. 428/430 byte 근거(경로별), 662/664 combined. [Codex 검수](../evidence/MID-AUDIT/F03/REPORT-CODEX-REVIEW.md) 공식 JAR 해시 2/2; 실바이트·trust/도입 OPEN. 반복 수집 금지.
 
 Host: [보고](../evidence/MID-AUDIT/HOST-REPRO/REPORT.md). Python3.14.7 zlib-ng PNG hash drift 재현, RGBA/XML 동일; fresh LF 정상. CRLF-only 복구/정본 PNG 차단 main 374×3 PASS, 범위 GO. 실제 로컬 palette 원인 미확정; 3.14 호환 미승인. 로컬 사용자는 검증된 Python3.12 사용.
