@@ -30,4 +30,6 @@ R06 아티팩트 직접 다운로드/파일 검사 성공. 설치, 실제 렌더
 GPT-06 독립 준비 종료/STOPPED. [종료 보고](../evidence/GPT-06/REPORT-FINAL-CLOSURE.md). 실제 기기, 동적 광학·모션, 후보 프리뷰 및 승격 승인 미충족. B-002/005/008 및 제품 NO-GO 유지. GPT-07 별도 승인 대기.
 
 ## 중간 감사 OPEN
-[통합 등록부](../evidence/MID-AUDIT/FINDINGS.md): 39개(12 P1, 24 P2, 1 P3, 2 정책), 이전 원본 R01~04 링크 및 모든 ID 보존. 중복 R03-08=R01-04. [개선 계획](../evidence/MID-AUDIT/REMEDIATION-PLAN.md). F01~04 GPT, G01 GB, A01 AG, D01 domain 별도 승인, F00 관리자. 관련 P1 및 필수 결함 해결 전 통합 GO 금지. 전체 공급망/CVE/license/SBOM/실기기 미실행. 사용자 후속 개선 승인 대기. PR #2/#3 HOLD, GPT-07 금지.
+[통합 등록부](../evidence/MID-AUDIT/FINDINGS.md): 39개(12 P1, 24 P2, 1 P3, 2 정책), 이전 원본 R01~04 링크 및 모든 ID 보존. 중복 R03-08=R01-04. [개선 계획](../evidence/MID-AUDIT/REMEDIATION-PLAN.md). F01~04 GPT, G01 GB, A01 AG, D01 domain 별도 승인, F00 관리자. 관련 P1 및 필수 결함 해결 전 통합 GO 금지. 전체 공급망/CVE/license/SBOM/실기기 미실행. F01 사용자 승인으로 진행. PR #2/#3 HOLD, GPT-07 금지.
+
+F01 R01: AUD-R01-02/R03-02/R04-01/R04-03 수정 후보 구현, red 22 실패 재현, green host 성공. 전체 CI/아티팩트/통합 후 재검증 전 OPEN 유지. [보고서](../evidence/MID-AUDIT/F01/REPORT-R01.md). R01-03/04/05 다음 R02. GPT-07 미착수.

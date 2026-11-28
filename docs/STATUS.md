@@ -12,7 +12,7 @@
 | 정식 WO GO | 0/38 |
 | GPT 묶음 GO | 3/12 (PARTIAL 독립 준비 종료는 GO에 포함하지 않음) |
 | 출시 | NO-GO |
-| 다음 행동 | 중간 감사 종료. 사용자 후속 개선 승인 시 MID-AUDIT F01 검증기 강화부터 시작. GPT-07 및 실기기 설치는 별도 승인 대기. |
+| 다음 행동 | F01 R01 수정 후보 전체 CI 및 아티팩트 검증 → 안전 통합 → F01 R02. GPT-07 및 실기기 설치는 별도 승인 대기. |
 
 ## 근거 및 이관
 - [GPT-06 전체 종료 보고](evidence/GPT-06/REPORT-FINAL-CLOSURE.md). R01~R06 및 OPS-07 독립 준비 산출물 통합·자동 검증 완료. 결합 후보와 main 코드·시험·자산·CI 102개, 보호 경로 38개 blob 동일. 원본 아카이브 8개 SHA 동일. 활성 8개 문서 500021→24609 B(검증 코드 기준).
@@ -25,9 +25,11 @@
 ## 중단
 사용자 요청에 따라 GPT-06 전체 독립 준비 종료 후 중단한다. GPT-07 착수 금지. PARTIAL 및 제품 NO-GO 유지.
 
-## 전체 중간 감사 — 조사 종료 / 개선 미착수
+## 전체 중간 감사 — 조사 종료 / F01 진행
 [최종 보고](evidence/MID-AUDIT/REPORT-FINAL.md) · [통합 결함 등록부](evidence/MID-AUDIT/FINDINGS.md) · [후속 개선 계획](evidence/MID-AUDIT/REMEDIATION-PLAN.md) · [26개 요구사항 추적](evidence/MID-AUDIT/REQUIREMENTS-TRACE.md).
 - R01~R04 감사 보고와 증거를 유지한다. FINAL: GPT-06 대비 비문서 114/114 blob/mode 동일, 보존 ZIP 5/5 hash/CRC, Kotlin XML 17/162 cases, 외부 dependency 29/29 재검사.
-- 40개 ID→39개(중복 1), P1 12/P2 24/P3 1/정책 2. 전부 OPEN. 전체 감사 접근 가능 조사 종료, 실기기/보안 전체 검증 PARTIAL, 출시 NO-GO.
+- 40개 ID→39개(중복 1), P1 12/P2 24/P3 1/정책 2. 해결 판정 전 전부 OPEN. 전체 감사 접근 가능 조사 종료, 실기기/보안 전체 검증 PARTIAL, 출시 NO-GO.
 - F01 검증기 → F02 재현성 → F03 공급망 → F04 보호 계약. G01/AG A01은 별도 사용자 지시 및 소유권, D01 별도 배정. F00 관리자 보호 설정, C01 실제 통합/실기기 별도 승인. 외부 PR HOLD, 감사 브랜치 병합 금지. GPT-07 미착수. 기존 B-002~008 유지.
 - 최신 확인 main CI 46087742551 SUCCESS, doc 46088719146 SUCCESS; 46088719175 PENDING at report drafting. 기록 커밋 후 CI 별도 확인.
+
+- F01 R01: [수정 기록](evidence/MID-AUDIT/F01/REPORT-R01.md). 4/7 개선 대상 구현 후보 994b5011e1cc338b482e22ca6ac942304bf8643b, [red CI](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46089721067) 330개 실행/22 실패 assertion(의도적 결함 재현), [green CI](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46089767751) host 성공/Android APK 단계 진행. [문서 CI](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46089767722) SUCCESS. 최종 후보 raw log/ZIP 검증 전 main 통합 금지. 최신 기준 main 46089232002 SUCCESS 316 PASS, doc 46089231981 SUCCESS. F01 R02 미착수.
