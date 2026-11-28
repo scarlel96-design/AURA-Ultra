@@ -12,11 +12,19 @@ fun observationKey(source: SourceId, subject: String): DomainParse<ObservationKe
     }
 }
 
+class UnsupportedPayloadException : IllegalArgumentException(IssueCode.UNSUPPORTED_PAYLOAD.name)
+
 data class RevisionCursor<T>(
     val key: ObservationKey,
     val revision: Long,
     val observation: Observation<T>,
-)
+) {
+    init {
+        if (!isStableScalar(observation.value)) {
+            throw UnsupportedPayloadException()
+        }
+    }
+}
 
 enum class RevisionOutcome {
     ACCEPTED,

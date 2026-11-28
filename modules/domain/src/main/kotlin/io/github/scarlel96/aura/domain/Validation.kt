@@ -17,6 +17,7 @@ enum class IssueCode {
     FUTURE_RECEIVED_AT,
     REFERENCE_TIME_REQUIRED,
     SOURCE_KEY_MISMATCH,
+    UNSUPPORTED_PAYLOAD,
     KIND_MISMATCH,
     LOCATION_ID_BLANK,
     VALIDITY_WINDOW_INVERTED,
@@ -75,6 +76,13 @@ private fun <T> structuralIssues(observation: Observation<T>, subject: String?):
         }
         if ((current is Double && !current.isFinite()) || (current is Float && !current.isFinite())) {
             issues += issue(IssueCode.NON_FINITE, "유한하지 않은 부동소수는 측정값이 아니다.", subject)
+        }
+        if (!isStableScalar(current)) {
+            issues += issue(
+                IssueCode.UNSUPPORTED_PAYLOAD,
+                "지원하는 불변 스칼라가 아니면 승인 상태에 넣지 않는다.",
+                subject,
+            )
         }
     }
     val observedAt = observation.observedAt
