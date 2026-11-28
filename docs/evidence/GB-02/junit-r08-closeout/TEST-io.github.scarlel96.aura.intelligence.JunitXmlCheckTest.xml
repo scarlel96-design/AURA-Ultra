@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="io.github.scarlel96.aura.intelligence.JunitXmlCheckTest" tests="20" skipped="0" failures="0" errors="0" timestamp="2026-11-28T05:17:41.421Z" hostname="서브컴퓨터" time="4.03">
+  <properties/>
+  <testcase name="rejectsMissingDirectory()" classname="io.github.scarlel96.aura.intelligence.JunitXmlCheckTest" time="0.235"/>
+  <testcase name="rejectsCountMismatch()" classname="io.github.scarlel96.aura.intelligence.JunitXmlCheckTest" time="0.232"/>
+  <testcase name="acceptsMatchingFreshResults()" classname="io.github.scarlel96.aura.intelligence.JunitXmlCheckTest" time="0.191"/>
+  <testcase name="rejectsCorruptXml()" classname="io.github.scarlel96.aura.intelligence.JunitXmlCheckTest" time="0.179"/>
+  <testcase name="rejectsHeaderCaseMismatch()" classname="io.github.scarlel96.aura.intelligence.JunitXmlCheckTest" time="0.163"/>
+  <testcase name="rejectsEmptyMethod()" classname="io.github.scarlel96.aura.intelligence.JunitXmlCheckTest" time="0.167"/>
+  <testcase name="rejectsMissingCounters()" classname="io.github.scarlel96.aura.intelligence.JunitXmlCheckTest" time="0.18"/>
+  <testcase name="rejectsMissingClassname()" classname="io.github.scarlel96.aura.intelligence.JunitXmlCheckTest" time="0.174"/>
+  <testcase name="rejectsEmptyFile()" classname="io.github.scarlel96.aura.intelligence.JunitXmlCheckTest" time="0.166"/>
+  <testcase name="rejectsDuplicateSuiteAndTestcase()" classname="io.github.scarlel96.aura.intelligence.JunitXmlCheckTest" time="0.159"/>
+  <testcase name="rejectsUnrelatedClassname()" classname="io.github.scarlel96.aura.intelligence.JunitXmlCheckTest" time="0.157"/>
+  <testcase name="rejectsHiddenFailure()" classname="io.github.scarlel96.aura.intelligence.JunitXmlCheckTest" time="0.162"/>
+  <testcase name="rejectsZeroTests()" classname="io.github.scarlel96.aura.intelligence.JunitXmlCheckTest" time="0.179"/>
+  <testcase name="rejectsMissingResultFile()" classname="io.github.scarlel96.aura.intelligence.JunitXmlCheckTest" time="0.175"/>
+  <testcase name="rejectsHiddenError()" classname="io.github.scarlel96.aura.intelligence.JunitXmlCheckTest" time="0.176"/>
+  <testcase name="rejectsHiddenSkip()" classname="io.github.scarlel96.aura.intelligence.JunitXmlCheckTest" time="0.235"/>
+  <testcase name="rejectsSuiteFilenameMismatch()" classname="io.github.scarlel96.aura.intelligence.JunitXmlCheckTest" time="0.356"/>
+  <testcase name="rejectsNestedTestcase()" classname="io.github.scarlel96.aura.intelligence.JunitXmlCheckTest" time="0.273"/>
+  <testcase name="rejectsStaleTimestamp()" classname="io.github.scarlel96.aura.intelligence.JunitXmlCheckTest" time="0.217"/>
+  <testcase name="rejectsFutureTimestamp()" classname="io.github.scarlel96.aura.intelligence.JunitXmlCheckTest" time="0.245"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

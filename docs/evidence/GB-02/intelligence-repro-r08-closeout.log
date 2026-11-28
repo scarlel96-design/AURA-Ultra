@@ -1,0 +1,126 @@
+Starting a Gradle Daemon, 1 busy and 4 incompatible and 3 stopped Daemons could not be reused, use --status for details
+> Task :domain:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :processResources NO-SOURCE
+> Task :processTestResources NO-SOURCE
+> Task :domain:compileKotlin UP-TO-DATE
+> Task :domain:compileJava NO-SOURCE
+> Task :domain:processResources NO-SOURCE
+> Task :domain:classes UP-TO-DATE
+> Task :domain:jar UP-TO-DATE
+> Task :compileKotlin UP-TO-DATE
+> Task :compileJava NO-SOURCE
+> Task :classes UP-TO-DATE
+> Task :jar UP-TO-DATE
+> Task :compileTestKotlin UP-TO-DATE
+> Task :compileTestJava NO-SOURCE
+> Task :testClasses UP-TO-DATE
+
+> Task :test FAILED
+TEST_JVM version=17 vendor=Eclipse Temurin path=C:\Users\scarl\.jdks\temurin-17
+
+Round08CloseoutTest > olderSampleDoesNotRepublishANumberWithdrawnByARejectedPolicy() FAILED
+    org.opentest4j.AssertionFailedError: actual value is not null ==> expected: <null> but was: <70.0>
+        at app//org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+        at app//org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+        at app//org.junit.jupiter.api.AssertNull.failNotNull(AssertNull.java:50)
+        at app//org.junit.jupiter.api.AssertNull.assertNull(AssertNull.java:35)
+        at app//org.junit.jupiter.api.Assertions.assertNull(Assertions.java:287)
+        at app//kotlin.test.junit5.JUnit5Asserter.assertNull(JUnitSupport.kt:52)
+        at app//kotlin.test.AssertionsKt__AssertionsKt.assertNull(Assertions.kt:310)
+        at app//kotlin.test.AssertionsKt.assertNull(Unknown Source)
+        at app//kotlin.test.AssertionsKt__AssertionsKt.assertNull$default(Assertions.kt:308)
+        at app//kotlin.test.AssertionsKt.assertNull$default(Unknown Source)
+        at app//io.github.scarlel96.aura.intelligence.Round08CloseoutTest.olderSampleDoesNotRepublishANumberWithdrawnByARejectedPolicy(Round08CloseoutTest.kt:344)
+
+Round08CloseoutTest > missingAndFutureRevocationTimesKeepALaterValueReachable() FAILED
+    java.lang.NullPointerException
+        at io.github.scarlel96.aura.intelligence.Round08CloseoutTest.missingAndFutureRevocationTimesKeepALaterValueReachable(Round08CloseoutTest.kt:210)
+
+Round08CloseoutTest > protectionArrivingBeforeTheSessionOpenerDoesNotClearAndMustBeResent() PASSED
+
+Round08CloseoutTest > lateRevocationDoesNotRestoreOlderPrecipitation() FAILED
+    org.opentest4j.AssertionFailedError: expected: <2026-11-28T00:00:20Z> but was: <2026-11-28T00:00:12Z>
+        at app//org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+        at app//org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+        at app//org.junit.jupiter.api.AssertEquals.failNotEqual(AssertEquals.java:197)
+        at app//org.junit.jupiter.api.AssertEquals.assertEquals(AssertEquals.java:182)
+        at app//org.junit.jupiter.api.Assertions.assertEquals(Assertions.java:1156)
+        at app//kotlin.test.junit5.JUnit5Asserter.assertEquals(JUnitSupport.kt:32)
+        at app//kotlin.test.AssertionsKt__AssertionsKt.assertEquals(Assertions.kt:83)
+        at app//kotlin.test.AssertionsKt.assertEquals(Unknown Source)
+        at app//kotlin.test.AssertionsKt__AssertionsKt.assertEquals$default(Assertions.kt:82)
+        at app//kotlin.test.AssertionsKt.assertEquals$default(Unknown Source)
+        at app//io.github.scarlel96.aura.intelligence.Round08CloseoutTest.lateRevocationDoesNotRestoreOlderPrecipitation(Round08CloseoutTest.kt:84)
+
+Round08CloseoutTest > ceilingNoOpDoesNotLetAnEarlierResyncBypassClockOrder() FAILED
+    org.opentest4j.AssertionFailedError: expected: <2026-11-28T00:01:40Z> but was: <2026-11-28T00:00:10Z>
+        at app//org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+        at app//org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+        at app//org.junit.jupiter.api.AssertEquals.failNotEqual(AssertEquals.java:197)
+        at app//org.junit.jupiter.api.AssertEquals.assertEquals(AssertEquals.java:182)
+        at app//org.junit.jupiter.api.Assertions.assertEquals(Assertions.java:1156)
+        at app//kotlin.test.junit5.JUnit5Asserter.assertEquals(JUnitSupport.kt:32)
+        at app//kotlin.test.AssertionsKt__AssertionsKt.assertEquals(Assertions.kt:83)
+        at app//kotlin.test.AssertionsKt.assertEquals(Unknown Source)
+        at app//kotlin.test.AssertionsKt__AssertionsKt.assertEquals$default(Assertions.kt:82)
+        at app//kotlin.test.AssertionsKt.assertEquals$default(Unknown Source)
+        at app//io.github.scarlel96.aura.intelligence.Round08CloseoutTest.ceilingNoOpDoesNotLetAnEarlierResyncBypassClockOrder(Round08CloseoutTest.kt:371)
+
+Round08CloseoutTest > lateRevocationDoesNotRestoreOlderAxes() FAILED
+    org.opentest4j.AssertionFailedError: expected: <2026-11-28T00:00:20Z> but was: <2026-11-28T00:00:12Z>
+        at app//org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+        at app//org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+        at app//org.junit.jupiter.api.AssertEquals.failNotEqual(AssertEquals.java:197)
+        at app//org.junit.jupiter.api.AssertEquals.assertEquals(AssertEquals.java:182)
+        at app//org.junit.jupiter.api.Assertions.assertEquals(Assertions.java:1156)
+        at app//kotlin.test.junit5.JUnit5Asserter.assertEquals(JUnitSupport.kt:32)
+        at app//kotlin.test.AssertionsKt__AssertionsKt.assertEquals(Assertions.kt:83)
+        at app//kotlin.test.AssertionsKt.assertEquals(Unknown Source)
+        at app//kotlin.test.AssertionsKt__AssertionsKt.assertEquals$default(Assertions.kt:82)
+        at app//kotlin.test.AssertionsKt.assertEquals$default(Unknown Source)
+        at app//io.github.scarlel96.aura.intelligence.Round08CloseoutTest.lateRevocationDoesNotRestoreOlderAxes(Round08CloseoutTest.kt:149)
+
+Round08CloseoutTest > lateRevocationDoesNotRestoreOlderBattery() FAILED
+    org.opentest4j.AssertionFailedError: expected: <2026-11-28T00:00:20Z> but was: <2026-11-28T00:00:12Z>
+        at app//org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+        at app//org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+        at app//org.junit.jupiter.api.AssertEquals.failNotEqual(AssertEquals.java:197)
+        at app//org.junit.jupiter.api.AssertEquals.assertEquals(AssertEquals.java:182)
+        at app//org.junit.jupiter.api.Assertions.assertEquals(Assertions.java:1156)
+        at app//kotlin.test.junit5.JUnit5Asserter.assertEquals(JUnitSupport.kt:32)
+        at app//kotlin.test.AssertionsKt__AssertionsKt.assertEquals(Assertions.kt:83)
+        at app//kotlin.test.AssertionsKt.assertEquals(Unknown Source)
+        at app//kotlin.test.AssertionsKt__AssertionsKt.assertEquals$default(Assertions.kt:82)
+        at app//kotlin.test.AssertionsKt.assertEquals$default(Unknown Source)
+        at app//io.github.scarlel96.aura.intelligence.Round08CloseoutTest.lateRevocationDoesNotRestoreOlderBattery(Round08CloseoutTest.kt:33)
+
+Round08CloseoutTest > olderReleaseDoesNotClearProtectionRaisedByARejectedPolicy() FAILED
+    org.opentest4j.AssertionFailedError: expected: <AOD> but was: <ECO>
+        at app//org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+        at app//org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+        at app//org.junit.jupiter.api.AssertEquals.failNotEqual(AssertEquals.java:197)
+        at app//org.junit.jupiter.api.AssertEquals.assertEquals(AssertEquals.java:182)
+        at app//org.junit.jupiter.api.Assertions.assertEquals(Assertions.java:1156)
+        at app//kotlin.test.junit5.JUnit5Asserter.assertEquals(JUnitSupport.kt:32)
+        at app//kotlin.test.AssertionsKt__AssertionsKt.assertEquals(Assertions.kt:83)
+        at app//kotlin.test.AssertionsKt.assertEquals(Unknown Source)
+        at app//kotlin.test.AssertionsKt__AssertionsKt.assertEquals$default(Assertions.kt:82)
+        at app//kotlin.test.AssertionsKt.assertEquals$default(Unknown Source)
+        at app//io.github.scarlel96.aura.intelligence.Round08CloseoutTest.olderReleaseDoesNotClearProtectionRaisedByARejectedPolicy(Round08CloseoutTest.kt:303)
+
+Round08CloseoutTest > higherRevisionCanStillPassAnOlderTimeAfterRevocation() PASSED
+
+9 tests completed, 7 failed
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':test'.
+> There were failing tests. See the report at: file:///C:/Users/scarl/AppData/Local/Temp/aura-gb02-wt/modules/intelligence/build/reports/tests/test/index.html
+
+* Try:
+> Run with --scan to get full insights from a Build Scan (powered by Develocity).
+
+6 actionable tasks: 1 executed, 5 up-to-date
+BUILD FAILED in 14s

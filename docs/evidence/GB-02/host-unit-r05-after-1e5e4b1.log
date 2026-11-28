@@ -1,0 +1,28 @@
+Command: python tools/check_doc_budget.py
+DOC_BUDGET_RESULT {"AGENTS.md": {"bytes": 7654, "limit": 8192}, "docs/STATUS.md": {"bytes": 2779, "limit": 8192}, "docs/operations/BLOCKERS.md": {"bytes": 3241, "limit": 8192}, "docs/operations/GPT-01.md": {"bytes": 3120, "limit": 10240}, "docs/operations/GPT-02.md": {"bytes": 3164, "limit": 10240}, "docs/operations/GPT-03.md": {"bytes": 4378, "limit": 10240}, "docs/operations/GPT-04.md": {"bytes": 2181, "limit": 10240}, "docs/operations/GPT-05.md": {"bytes": 2487, "limit": 10240}, "docs/operations/GPT-06.md": {"bytes": 6430, "limit": 10240}, "docs/operations/GPT_EXECUTION_PLAN.md": {"bytes": 4043, "limit": 10240}, "docs/operations/WORK_LOG.md": {"bytes": 1040, "limit": 10240}, "docs/operations/agent-orders/README.md": {"bytes": 1396, "limit": 5120}}
+
+Command: python -m unittest discover -s tests/unit -p test_*.py --buffer
+Worktree: C:\Users\scarl\AppData\Local\Temp\aura-gb02-wt
+Head before this docs record: c37365387e818d17979ddb9528d9b2887ee47d8d
+Merged main: 1e5e4b14e0414c66cc38fec582eac2f28c3ad5f7
+
+..................E.........................................................................................................................................................................................................................................................................................................
+======================================================================
+ERROR: test_checked_in_outputs (test_bootstrap_generator.GeneratorTests.test_checked_in_outputs)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\scarl\AppData\Local\Temp\aura-gb02-wt\tests\unit\test_bootstrap_generator.py", line 31, in test_checked_in_outputs
+    check_outputs(ROOT, outputs)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "C:\Users\scarl\AppData\Local\Temp\aura-gb02-wt\tools\generate_bootstrap.py", line 164, in check_outputs
+    raise ValueError("Missing or stale generated file: " + name)
+ValueError: Missing or stale generated file: assets/generated/bootstrap/palette.svg
+
+----------------------------------------------------------------------
+Ran 316 tests in 38.489s
+
+FAILED (errors=1)
+
+Count: 316 ran, 315 PASS, 0 FAIL, 1 ERROR, 0 SKIP.
+The ERROR is the existing Windows CRLF mismatch for assets/generated/bootstrap/palette.svg.
+Ubuntu bootstrap step "Validation tool regression tests" passed on heads dec78692bd7e1ae6d77a0cfd8782bddc6d838a41 and c37365387e818d17979ddb9528d9b2887ee47d8d.

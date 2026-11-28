@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="io.github.scarlel96.aura.domain.FreshnessTest" tests="11" skipped="0" failures="0" errors="0" timestamp="2026-11-28T05:11:44.214Z" hostname="서브컴퓨터" time="0.035">
+  <properties/>
+  <testcase name="structurallyInvalidInputIsNotDegraded()" classname="io.github.scarlel96.aura.domain.FreshnessTest" time="0.005"/>
+  <testcase name="lateArrivalBeforeObservedExpiryRemainsValid()" classname="io.github.scarlel96.aura.domain.FreshnessTest" time="0.005"/>
+  <testcase name="boundaryIsExpiredAtOrAfter()" classname="io.github.scarlel96.aura.domain.FreshnessTest" time="0.0"/>
+  <testcase name="expiredValidBecomesStaleCopyAndKeepsPayload()" classname="io.github.scarlel96.aura.domain.FreshnessTest" time="0.003"/>
+  <testcase name="sameInstantFromDifferentZonesHasOneFreshness()" classname="io.github.scarlel96.aura.domain.FreshnessTest" time="0.006"/>
+  <testcase name="errorDeniedAndUnavailableAreNotRewrittenWhenExpired()" classname="io.github.scarlel96.aura.domain.FreshnessTest" time="0.001"/>
+  <testcase name="undeclaredExpiryDoesNotBecomeStaleOrImmortalClaim()" classname="io.github.scarlel96.aura.domain.FreshnessTest" time="0.0"/>
+  <testcase name="instantMaxBoundary()" classname="io.github.scarlel96.aura.domain.FreshnessTest" time="0.0"/>
+  <testcase name="staleIsNotPromotedWhenStillInsideWindow()" classname="io.github.scarlel96.aura.domain.FreshnessTest" time="0.001"/>
+  <testcase name="callerReferenceTimeDecidesFreshnessWithoutAClock()" classname="io.github.scarlel96.aura.domain.FreshnessTest" time="0.001"/>
+  <testcase name="freshDeniedDoesNotBecomeValid()" classname="io.github.scarlel96.aura.domain.FreshnessTest" time="0.004"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

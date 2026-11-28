@@ -1,0 +1,100 @@
+command: .\gradlew -p modules/domain test --rerun-tasks --offline --console=plain
+worktree: C:\Users\scarl\AppData\Local\Temp\aura-gb02-wt
+modules/domain was not modified. The diff against origin/main for modules/domain is empty.
+not-before: 2026-11-27T23:38:02Z
+TEST_JVM version=17 vendor=Eclipse Temurin path=C:\Users\scarl\.jdks\temurin-17
+
+DraftContractTest > contextBlankTokenIsRejectedAndZeroCharacterStaysOpaque() PASSED
+DraftContractTest > probabilityKindIsNotRewritten() PASSED
+DraftContractTest > blankLocationIsRejected() PASSED
+DraftContractTest > wrongRainKindIsReportedAndNotCoerced() PASSED
+DraftContractTest > forecastWindowIsSeparateFromObservedAt() PASSED
+DraftContractTest > missingRainStaysNull() PASSED
+DraftContractTest > contextDraftDoesNotDefaultMissingAxes() PASSED
+DraftContractTest > blankReasonCodeIsRejected() PASSED
+DraftContractTest > observedAndForecastRainStayDistinctIncludingZero() PASSED
+DraftContractTest > invertedAndEmptyValidityWindowsFail() PASSED
+DraftContractTest > presentationRevisionZeroIsDistinctFromNull() PASSED
+DraftContractTest > nestedInvalidObservationFailsTheDraft() PASSED
+FreshnessTest > structurallyInvalidInputIsNotDegraded() PASSED
+FreshnessTest > lateArrivalBeforeObservedExpiryRemainsValid() PASSED
+FreshnessTest > boundaryIsExpiredAtOrAfter() PASSED
+FreshnessTest > expiredValidBecomesStaleCopyAndKeepsPayload() PASSED
+FreshnessTest > sameInstantFromDifferentZonesHasOneFreshness() PASSED
+FreshnessTest > errorDeniedAndUnavailableAreNotRewrittenWhenExpired() PASSED
+FreshnessTest > undeclaredExpiryDoesNotBecomeStaleOrImmortalClaim() PASSED
+FreshnessTest > instantMaxBoundary() PASSED
+FreshnessTest > staleIsNotPromotedWhenStillInsideWindow() PASSED
+FreshnessTest > callerReferenceTimeDecidesFreshnessWithoutAClock() PASSED
+FreshnessTest > freshDeniedDoesNotBecomeValid() PASSED
+IdentityTest > subjectRejectsBlankAndPaddedToken() PASSED
+IdentityTest > sourceIdKeepsCanonicalToken() PASSED
+IdentityTest > sourceIdRejectsBlankWhitespaceAndControl() PASSED
+IdentityTest > sourceIdIsCaseSensitiveAndDoesNotTrim() PASSED
+IdentityTest > subjectAcceptsUnnormalizedKoreanToken() PASSED
+PipelineTest > deniedStreamRejectsALaterZeroForgery() PASSED
+PipelineTest > zeroReadingExpiresWithoutBecomingMissing() PASSED
+PipelineTest > deniedErrorAndStaleAreNotPresentedAsFreshValidReadings() PASSED
+PipelineTest > undeclaredTtlStaysDistinctFromFresh() PASSED
+PipelineTest > corruptUnitDoesNotReplaceStoredReading() PASSED
+RevisionGateTest > invalidIncomingDoesNotCreateOrReplaceCursor() PASSED
+RevisionGateTest > negativeRevisionsCompareNumerically() PASSED
+RevisionGateTest > keyMismatchKeepsTheCurrentStream() PASSED
+RevisionGateTest > equalRevisionWithOnlyReceiveTimeChangedIsDuplicate() PASSED
+RevisionGateTest > higherRevisionReplacesAndGapIsAllowed() PASSED
+RevisionGateTest > newerRevisionWithEarlierReceiveTimeIsAcceptedAndFlagged() PASSED
+RevisionGateTest > wrongUnitDoesNotPassTheGate() PASSED
+RevisionGateTest > negativeZeroIsNotTreatedAsTheSamePayload() PASSED
+RevisionGateTest > maxLongRevisionDuplicateAndPredecessor() PASSED
+RevisionGateTest > olderRevisionDoesNotReplaceCurrent() PASSED
+RevisionGateTest > equalRevisionWithDifferentPayloadDoesNotOverwrite() PASSED
+RevisionGateTest > sourceInsideObservationMustMatchKey() PASSED
+RevisionGateTest > outOfOrderSequenceKeepsTheNewestRevision() PASSED
+RevisionGateTest > blankSubjectKeyIsRejected() PASSED
+RevisionGateTest > firstValidRevisionIsAccepted() PASSED
+SourceScanTest > mainSourcesStayFreeOfPlatformClockAndNetwork() PASSED
+ValidationTest > malformedRangesAreRejected() PASSED
+ValidationTest > exclusiveLongEndpointAndMaxValue() PASSED
+ValidationTest > absentValueSkipsExpectedUnit() PASSED
+ValidationTest > futureTimestampsStayUncheckedUnlessCallerSelectsPolicy() PASSED
+ValidationTest > expiryBeforeObservedAtIsStructural() PASSED
+ValidationTest > absentValueStillSkipsUnitCharacterChecks() PASSED
+ValidationTest > internalWhitespaceInUnitIsRejectedEvenWhenExpectedMatches() PASSED
+ValidationTest > deniedAndErrorWithoutValueStayDistinct() PASSED
+ValidationTest > longRangeAcceptsIntExactlyAndRejectsDouble() PASSED
+ValidationTest > internalWhitespaceThatIsAlsoAControlCharacterIsRejected() PASSED
+ValidationTest > allKindsRemainUnchangedByValidation() PASSED
+ValidationTest > exclusiveAdjacentLongRangeIsEmpty() PASSED
+ValidationTest > unitMatchIsExactAndDoesNotConvert() PASSED
+ValidationTest > plainUnitTokensStayAccepted() PASSED
+ValidationTest > staleZeroRemainsAStaleReading() PASSED
+ValidationTest > exclusiveDoubleBoundsRejectEndpoints() PASSED
+ValidationTest > textualZeroIsNotTreatedAsMissing() PASSED
+ValidationTest > nonWhitespaceControlCharacterInUnitIsRejected() PASSED
+ValidationTest > injectedDeniedAndUnavailableNumbersAreRejected() PASSED
+ValidationTest > injectedErrorZeroIsNotAcceptedOrCoerced() PASSED
+ValidationTest > singlePointRangeAcceptsOnlyThatPoint() PASSED
+ValidationTest > validOrStaleWithoutValueIsRejectedAndNotRewritten() PASSED
+ValidationTest > negativeZeroIsAnActualReadingAndIsNotCanonicalized() PASSED
+ValidationTest > actualZeroStaysAReading() PASSED
+ValidationTest > missingValueIsUnavailableAndNotZero() PASSED
+ValidationTest > exclusiveNeighborAndExtremeInclusivePointsStayValid() PASSED
+ValidationTest > blankOrPaddedUnitIsRejectedWhenValueExists() PASSED
+ValidationTest > conflictingRangesAreRejectedBeforeComparison() PASSED
+ValidationTest > equalReferenceTimeIsNotFuture() PASSED
+ValidationTest > exclusiveExtremeWithNoRepresentableLongIsEmpty() PASSED
+ValidationTest > nonFiniteFloatsAreRejectedWithoutBecomingZero() PASSED
+ValidationTest > doubleRangeBoundaries() PASSED
+
+BUILD SUCCESSFUL in 30s
+4 actionable tasks: 4 executed
+
+XML tally: files=7 tests=81 failures=0 errors=0 skipped=0
+DraftContractTest 12 2026-11-27T23:38:31.665Z
+FreshnessTest 11 2026-11-27T23:38:32.068Z
+IdentityTest 5 2026-11-27T23:38:32.223Z
+PipelineTest 5 2026-11-27T23:38:32.261Z
+RevisionGateTest 15 2026-11-27T23:38:32.304Z
+SourceScanTest 1 2026-11-27T23:38:32.319Z
+ValidationTest 32 2026-11-27T23:38:32.345Z
+checker: OK files=7 tests=81
