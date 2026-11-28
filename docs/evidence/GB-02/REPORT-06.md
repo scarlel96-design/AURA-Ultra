@@ -8,7 +8,9 @@
 
 PRE-FLIGHT: PASS. 시작 시점 `origin/main`은 `860b51d4f26abf44aa1608fc12184716d1380169`다. 지시서가 적던 기준 `b6de0a245c5880c9c08ddb132d90c239b49ff6f2`보다 앞이다. 같은 SHA에서 `AGENTS.md`, `docs/STATUS.md`, `docs/operations/RESUME_PROTOCOL.md`, `PROJECT_INVARIANTS.md`, `TASK_RECORD_PROTOCOL.md`, `VERIFICATION_PROTOCOL.md`, `TASK_REPORT_TEMPLATE.md`, `GPT_EXECUTION_PLAN.md`, `BLOCKERS.md`, `WORK_LOG.md`, `docs/operations/agent-orders/README.md`, `GB-02-G01-R06.md`, `docs/evidence/MID-AUDIT/REPORT-R02.md`, `FINDINGS.md`, `REMEDIATION-PLAN.md`를 읽었다. PR #3 HEAD는 시작 시점 `122d81b05fb0fc56020fb3d03b667545eb6671c3`이고 구현 정본은 `1536fd7fad37b52375e7eccbb6114b8fd1f735c6`이었다. 그때 STATUS의 다음 행동은 F01 R02 후보 검증이었다. 그 문장을 직접 바꾸지 않았다. 배정표는 GB-02를 `R05 제출, G01 R06 지시서 작성·실행 미확인, HOLD`로 적는다. 사용자 지시는 그 HOLD 아래의 R06 실행이다. 통합 HOLD를 해제하지 않는다. 그 main 차이는 중앙 문서, 감사 증거, `tests/unit/test_f01_r01.py`, `tools/` 일부다. `modules/intelligence`, `modules/domain`, `.github`와 겹치지 않아 병합 커밋 `ed16d750f9e0f058b945d16e43f2247b72aeb166`로만 반영했다. 들어온 파일은 수정하지 않았다.
 
-증거 커밋 직전 `origin/main`은 `12a5f609c8002df84547ec416566d582eef2c173`으로 이동했다. 차이는 `.github/workflows/domain-kotlin.yml`의 경로 필터, 중앙 문서, F01/F02 증거, `tests/unit/test_domain_results.py`, `tests/unit/test_f01_r02.py`, `tools/check_domain_results.py`, `tools/verify_wff.py`다. `modules/intelligence`, `modules/domain` 소스, `docs/evidence/GB-02`와 겹치지 않아 병합 커밋 `42dbb49fdcbef432c278caa4ec316d04af4d5141`로만 반영했다. 들어온 파일은 수정하지 않았다. 병합된 STATUS의 다음 행동은 `F02 R02 후보 Linux/Windows 최종 검증 → 아티팩트 확인 → 통합 조건 확인. GPT-07 및 실기기 설치는 별도 승인 대기.`다. 그 문장도 바꾸지 않는다.
+증거 커밋 직전 `origin/main`은 `12a5f609c8002df84547ec416566d582eef2c173`으로 이동했다. 차이는 `.github/workflows/domain-kotlin.yml`의 경로 필터, 중앙 문서, F01/F02 증거, `tests/unit/test_domain_results.py`, `tests/unit/test_f01_r02.py`, `tools/check_domain_results.py`, `tools/verify_wff.py`다. `modules/intelligence`, `modules/domain` 소스, `docs/evidence/GB-02`와 겹치지 않아 병합 커밋 `42dbb49fdcbef432c278caa4ec316d04af4d5141`로만 반영했다. 들어온 파일은 수정하지 않았다.
+
+그 증거 커밋 뒤 `origin/main`은 `59b808d0c542e09e0eaa95caaa781648d2c1377d`로 다시 이동했다. 차이는 `.gitattributes`, `bootstrap.yml`의 번들 없는 Signature 단계, 새 `windows-repro.yml`, 중앙 문서, F02 증거, `tests/unit/test_f02_r01.py`, `tests/unit/test_f02_r02.py`, `tools/check_basic_face_build.py`, `tools/check_flavor_isolation.py`, `tools/committed_build_inputs.py`다. 같은 세 경로와 겹치지 않아 병합 커밋 `6ed59e48069e05370b05a83b9c104964456e92d9`로만 반영했다. 들어온 파일은 수정하지 않았다. 현재 STATUS의 다음 행동은 `F02 통합 main Linux/Windows/문서 CI 및 아티팩트 확인 → F02 종료 → F03 공급망 개선. GPT-07 및 실기기 설치는 별도 승인 대기.`다. 그 문장을 바꾸지 않는다.
 
 작업 목표: AUD-R02-01, AUD-R02-05, AUD-R02-08, AUD-R01-06만 고친다. R05의 72개 intelligence 시험, 81개 domain 시험, 시드 `20261128`의 100000회 전이, `reasonCodes` 불변화는 유지한다. 공통 CI, domain, WFF, 중앙 문서는 수정하지 않는다.
 
@@ -49,13 +51,14 @@ PRE-FLIGHT: PASS. 시작 시점 `origin/main`은 `860b51d4f26abf44aa1608fc121847
 | JUnit 창 | `check_junit_xml.py --not-before 2026-11-28T01:20:51.968Z --not-after 2026-11-28T01:22:09.401Z` | `OK files=10 tests=82`, `OK files=7 tests=81` | PASS | 같은 실행의 XML |
 | 호스트, 구현 직후 | `python -m unittest discover -s tests/unit -p test_*.py` | 330 ran, 328 PASS, 1 FAIL, 1 ERROR, 0 SKIP, 60.654s | 환경 | [host-unit-r06.log](host-unit-r06.log) |
 | 호스트, main `12a5f60` 병합 후 | 같은 명령 | 346 ran, 344 PASS, 1 FAIL, 1 ERROR, 0 SKIP, 36.858s | 환경 | [host-unit-r06-postmerge.log](host-unit-r06-postmerge.log) |
-| 문서 예산, 같은 병합 후 | `python tools/check_doc_budget.py` | 모든 활성 문서가 한도 안. exit 0 | PASS | 이 표 |
-| domain 증거 검사, 같은 병합 후 | `python tools/check_domain_results.py docs/evidence/GB-02/junit-r06-domain` | `DOMAIN_RESULT 81 PASS / 0 FAIL / 0 ERROR / 0 SKIP` | PASS | 저장한 domain XML |
+| 호스트, main `59b808d` 병합 후 | 같은 명령 | 361 ran, 359 PASS, 1 FAIL, 1 ERROR, 0 SKIP, 62.044s | 환경 | [host-unit-r06-postmerge2.log](host-unit-r06-postmerge2.log) |
+| 문서 예산, `59b808d` 병합 후 | `python tools/check_doc_budget.py` | 모든 활성 문서가 한도 안. exit 0 | PASS | 이 표 |
+| domain 증거 검사, main `12a5f60` 병합 후 | `python tools/check_domain_results.py docs/evidence/GB-02/junit-r06-domain` | `DOMAIN_RESULT 81 PASS / 0 FAIL / 0 ERROR / 0 SKIP` | PASS | 저장한 domain XML |
 | 실기기, 공급원, WFF, 배터리, intelligence용 GitHub CI | 미실행 | NOT RUN | NOT RUN | 없음 |
 
 환경: Windows. ASCII worktree `C:\Users\scarl\AppData\Local\Temp\aura-gb02-wt`. 테스트 JVM Eclipse Temurin 17, `C:\Users\scarl\.jdks\temurin-17`. Gradle 9.3.1. Kotlin 2.4.21. Python 3.14.7. Intelligence XML `2026-11-28T01:21:20Z`대, domain XML `2026-11-28T01:21:46Z`대. 시각은 UTC다.
 
-호스트 1 ERROR는 기존 Windows `palette.svg` CRLF다. 소유 경로 밖이라 수정하지 않았다. 1 FAIL은 `tests/unit/test_f01_r01.py`의 `test_normal_artifact_preserved`다. Windows에서 `signature_material.generate()`가 만든 PNG 다이제스트가 기록된 값과 다르다. `tools/`는 수정하지 않았다. 두 결과는 구현 직후 330개와 main `12a5f60` 병합 후 346개에서 같다. 추가된 16개는 PASS다. main Ubuntu CI `46090317180`은 당시 330개를 PASS로 기록했다. 이 브랜치의 Ubuntu bootstrap이 현재 스위트를 다시 실행한다. `modules/intelligence`와 `modules/domain` 소스는 두 번째 main 병합으로 바뀌지 않아 82개와 81개 Gradle 시험은 재실행하지 않았다. 저장한 domain XML은 병합된 `check_domain_results.py`에서 81 PASS다.
+호스트 1 ERROR는 기존 Windows `palette.svg` CRLF다. 소유 경로 밖이라 수정하지 않았다. 1 FAIL은 `tests/unit/test_f01_r01.py`의 `test_normal_artifact_preserved`다. Windows에서 `signature_material.generate()`가 만든 PNG 다이제스트가 기록된 값과 다르다. `tools/`와 `.gitattributes`는 수정하지 않았다. 같은 두 건은 구현 직후 330개, main `12a5f60` 병합 후 346개, main `59b808d` 병합 후 361개에서 같다. 추가된 시험은 PASS다. main Ubuntu CI `46090317180`은 당시 330개를 PASS로 기록했다. 이 브랜치의 Ubuntu bootstrap과 Windows host reproducibility가 현재 스위트를 다시 실행한다. `modules/intelligence`와 `modules/domain` 소스는 뒤의 main 병합으로 바뀌지 않아 82개와 81개 Gradle 시험은 재실행하지 않았다. 저장한 domain XML은 병합된 `check_domain_results.py`에서 81 PASS다.
 
 CI 실행 ID: 이 보고서 시점에는 회차 06 head의 bootstrap이 아직 없다. push 뒤의 기록 커밋에 적는다. bootstrap은 intelligence 시험을 실행하지 않는다. 모듈 시험은 위 로컬 로그가 정본이다.
 
@@ -84,12 +87,12 @@ CI 실행 ID: 이 보고서 시점에는 회차 06 head의 bootstrap이 아직 �
 | GB02-R05-ASYNC | P2 유지 | 호출 순서, null이 아닌 `deliveredIntent()`, 더 이른 `processedAt` 폐기. Wear/WFF 코드는 없다. |
 | AUD-R02-02/03/04/06/07, AUD-R02-10/11 | R07 후보, 미구현 | R06 범위 밖. 미래 관측 오차와 제품 임계값은 정하지 않았다. |
 | 공통 CI | 미적용 | 총괄이 `CI_PROPOSAL.md`를 적용한다. 기대 수량은 10/82와 7/81이다. |
-| 호스트 Windows | 환경 | 병합 후 346개 중 344 PASS, 1 FAIL, 1 ERROR. CRLF와 로컬 PNG 다이제스트. Ubuntu bootstrap으로 재확인. |
+| 호스트 Windows | 환경 | 최신 병합 후 361개 중 359 PASS, 1 FAIL, 1 ERROR. CRLF와 로컬 PNG 다이제스트. Ubuntu bootstrap과 Windows reproducibility로 재확인. |
 | 제품 출시 | NO-GO | 실기기, 공급원, WFF, 배터리, 확정 임계값 없음. |
 
 ## 중앙 문서 제안
 
-- STATUS: 현재 다음 행동인 F02 R02 후보 Linux/Windows 최종 검증을 빼지 않는다. GB-02 PR #3 회차 06은 로컬 intelligence 82 PASS, domain 81 PASS, 로컬 호스트 346 중 344 PASS / 1 FAIL / 1 ERROR, 실기기와 intelligence 모듈 CI는 NOT RUN, 제품 NO-GO, PR은 미병합이라고 한 줄 추가할 수 있다.
+- STATUS: 현재 다음 행동인 F02 통합 main Linux/Windows/문서 CI 확인을 빼지 않는다. GB-02 PR #3 회차 06은 로컬 intelligence 82 PASS, domain 81 PASS, 로컬 호스트 361 중 359 PASS / 1 FAIL / 1 ERROR, 실기기와 intelligence 모듈 CI는 NOT RUN, 제품 NO-GO, PR은 미병합이라고 한 줄 추가할 수 있다.
 - WORK_LOG: 같은 한 줄을 추가할 수 있다.
 - BLOCKERS: 변경하지 않는다. R07 후보와 GB02-R05-ASYNC는 이 보고서의 차단점이다.
 - FINDINGS: 총괄이 네 ID의 해결 증거를 이 보고서와 맞춘 뒤에만 상태를 바꾼다.
