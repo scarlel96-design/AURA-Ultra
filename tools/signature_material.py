@@ -61,9 +61,19 @@ def build_ring(parent, t):
     return draw
 
 
-def check_face(face, original, layout):
+def canonical(element):
+    """Compare structure and content, ignoring indentation-only whitespace."""
+    def content(value):
+        return value if value and value.strip() else ""
+    return (element.tag, tuple(sorted(element.attrib.items())), content(element.text),
+            content(element.tail), tuple(canonical(child) for child in element))
+
+
+def check_face(face, original, layout, *, ring_tokens=None):
     root=ET.fromstring(face)
     scene=root.find("Scene")
+    if scene is None or not len(scene):
+        raise ValueError("Missing Scene or material layer")
     groups=scene.findall("Group")
     selected=[g for g in groups if g.get("name")=="SignatureMaterials"]
     if len(selected)!=1 or scene[0] is not selected[0]:
@@ -78,15 +88,27 @@ def check_face(face, original, layout):
     draw=group[1]
     if len(draw.findall("Ellipse"))!=4 or len(draw.findall("Line"))!=60 or len(draw.findall("Arc"))!=1:
         raise ValueError("Missing ring geometry")
+    # Reconstruct the full ring from the approved token source, not the candidate XML.
+    if ring_tokens is None:
+        ring_tokens = ring.parse(safe_path(ROOT, ring.SOURCE).read_bytes())
+    expected = build_ring(ET.Element("Group"), ring_tokens)
+    if canonical(draw) != canonical(expected):
+        raise ValueError("Ring attributes, geometry or paint differ from tokens")
     for e,name in zip(group.findall("PartImage"),("weather","heart")):
         if e.attrib!={**{k:str(v) for k,v in bounds(layout["regions"][name]).items()},
                       "name":"Glass_"+name} or len(e)!=1 or e[0].tag!="Image" or e[0].attrib!={"resource":RESOURCE}:
             raise ValueError("Wrong panel reference or bounds")
+    # Check the entire material subtree, including any unexpected content.
+    expected_group = ET.Element("Group", dict(group.attrib))
+    node(expected_group, "Variant", mode="AMBIENT", target="alpha", value=0)
+    expected_group.append(expected)
+    for name in ("weather", "heart"):
+        part = node(expected_group, "PartImage", **bounds(layout["regions"][name]), name="Glass_"+name)
+        node(part, "Image", resource=RESOURCE)
+    if canonical(group) != canonical(expected_group):
+        raise ValueError("Unexpected material attributes or content")
     scene.remove(group)
-    # Ignore indentation only. Preserve all original basic information semantics.
-    def canonical(e):
-        return (e.tag,tuple(sorted(e.attrib.items())),(e.text or "").strip(),
-                tuple(canonical(c) for c in e))
+    # Preserve text and tails, including Template mixed content.
     if canonical(root)!=canonical(ET.fromstring(original)):
         raise ValueError("Original information contract changed")
 
@@ -119,7 +141,7 @@ def generate(root=ROOT):
     scene.insert(0,group)
     ET.indent(face,space="    ")
     xml=ET.tostring(face,encoding="utf-8",xml_declaration=True)+b"\n"
-    check_face(xml,original,l)
+    check_face(xml,original,l,ring_tokens=t)
     report={"schemaVersion":1,"scope":"static Balanced material candidate; not runtime verified",
             "xmlSha256":digest(xml),"basicXmlSha256":digest(original),
             "panelSha256":digest(png),"panelRgbaSha256":digest(rgba),

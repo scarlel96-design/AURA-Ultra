@@ -108,8 +108,30 @@ def digit_frame(transition, elapsed_ms):
             "visualAnchor": anchor.text}
 
 
+def verify_transition(transition):
+    """Check metadata against clock samples and the supported policy reasons."""
+    if type(transition) is not Transition:
+        raise ValueError("Invalid transition")
+    baseline = plan(transition.previous, transition.current)
+    if (type(transition.changed) is not tuple or
+            any(type(i) is not int for i in transition.changed) or
+            transition.changed != baseline.changed):
+        raise ValueError("Incorrect changed digit slots")
+    if type(transition.reason) is not str or type(transition.duration_ms) is not int:
+        raise ValueError("Invalid transition metadata")
+    if transition.reason in ("resync", "interrupted"):
+        expected = plan(transition.previous, transition.current, **{transition.reason: True})
+    elif transition.reason == "static-policy":
+        expected = plan(transition.previous, transition.current, ambient=True)
+    else:
+        expected = baseline
+    if transition != expected:
+        raise ValueError("Transition reason or duration differs from plan")
+
+
 def verify_frame(transition, elapsed_ms, value):
-    """Reject wrong symbols, hidden slots, unsafe offsets and stale semantics."""
+    """Reject wrong metadata, symbols, geometry and semantics."""
+    verify_transition(transition)
     old,new = transition.previous,transition.current
     p = phase(transition,elapsed_ms)
     anchor = old if p < Fraction(1,2) else new

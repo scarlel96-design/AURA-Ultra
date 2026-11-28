@@ -13,8 +13,8 @@
 
 | 추가 항목 | 상태 / 조치 |
 |---|---|
-| AG01-AUD-01~09 | PR #2 HOLD. R07 사용량 제한, 실제 runtime NOT RUN. 보고서/독립 검토 후 판정. |
-| GB02-AUD-05~08 및 revision 보호 | PR #3 HOLD. R04 보완 보고; R05 복합 전이/소비자/CI 제안 검증 후 독립 감사. |
+| AG01-AUD-01~09 | PR #2 HOLD. R07 원시 로그 38 PASS 확인, 실제 runtime NOT RUN. 최종 감사 완료, AG A01 해결 및 별도 검토 전 HOLD. |
+| GB02-AUD-05~08 및 revision 보호 | PR #3 HOLD. R05 제출, 별도 Kotlin CI 72+81 PASS. 소비자·TTL·관측 순서 및 검증기 결함 해결 전 HOLD. |
 | GB01-E1 | 비ASCII Windows Gradle worker 제한. ASCII worktree 사용. |
 | GPT06-D1 | 호스트 링 충돌 해결: CI 46080386050. 실제 소재 승인 미확보. |
 | B-011 | 현재 validator/evaluator pin RESOLVED: CI 46056609237. release 변경 시 재확인. |
@@ -23,8 +23,17 @@
 
 신규 차단점은 ID, 심각도, 재현, 증거, 담당 및 해결 조건을 기록한다. 과거 세부 이력은 보관소 및 해당 evidence에 연결한다.
 
-OPS-07: 문서 검사 CI 46083441202 SUCCESS; GitHub 필수 상태 검사 설정 미확인. 통합 및 main CI 46083911794 SUCCESS. 실기기 설치 승인/접근 없음; 기기 검사 NOT RUN.
+OPS-07: 문서 검사 CI 46083441202 SUCCESS; GitHub main 보호 OFF 및 ruleset 0 확인. 통합 및 main CI 46083911794 SUCCESS. 실기기 설치 승인/접근 없음; 기기 검사 NOT RUN.
 
 R06 아티팩트 직접 다운로드/파일 검사 성공. 설치, 실제 렌더링, 로컬 서명 재검사 미실행; main 회귀 성공. B-002/005/008 유지.
 
 GPT-06 독립 준비 종료/STOPPED. [종료 보고](../evidence/GPT-06/REPORT-FINAL-CLOSURE.md). 실제 기기, 동적 광학·모션, 후보 프리뷰 및 승격 승인 미충족. B-002/005/008 및 제품 NO-GO 유지. GPT-07 별도 승인 대기.
+
+## 중간 감사 OPEN
+[통합 등록부](../evidence/MID-AUDIT/FINDINGS.md): 39개(12 P1, 24 P2, 1 P3, 2 정책), 이전 원본 R01~04 링크 및 모든 ID 보존. 중복 R03-08=R01-04. [개선 계획](../evidence/MID-AUDIT/REMEDIATION-PLAN.md). F01~04 GPT, G01 GB, A01 AG, D01 domain 별도 승인, F00 관리자. 관련 P1 및 필수 결함 해결 전 통합 GO 금지. 전체 공급망/CVE/license/SBOM/실기기 미실행. F01 사용자 승인으로 진행. PR #2/#3 HOLD, GPT-07 금지.
+
+F01 R01: AUD-R01-02/R03-02/R04-01/R04-03 수정 후보 구현, red 22 실패 재현, green host 성공. 전체 CI/아티팩트/통합 후 재검증 전 OPEN 유지. [보고서](../evidence/MID-AUDIT/F01/REPORT-R01.md). R01-03/04/05 다음 R02. GPT-07 미착수.
+
+F01 R01 4개 ID 후보 자동 검증 PASS, main 통합 회귀 PENDING. G01 R06 첫 개선 지시서 준비, 외부 실행 미확인. [검증](../evidence/MID-AUDIT/F01/REPORT-R01-VERIFIED.md). 전체 39개 등록부 이력 유지; 해결 판정은 main CI 이후.
+
+F01 R01 main CI SUCCESS 330 PASS 및 소재 원본 hash 일치. F01 R02 AUD-R01-03/04/05 후보 구현, Red 20 실패 재현; 전체 Green 검증 및 main 통합 회귀 전 OPEN 유지. [보고](../evidence/MID-AUDIT/F01/REPORT-R02.md). GPT-07 금지.
