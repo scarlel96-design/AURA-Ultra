@@ -12,7 +12,6 @@ import kotlin.test.assertFalse
 import kotlin.test.assertIs
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
-import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
 class Round05Test {
@@ -249,7 +248,9 @@ class Round05Test {
         assertNotNull(reduced.deliveredIntent())
         assertEquals(Long.MAX_VALUE, reduced.intent.revision)
         assertFalse(reduced.intent.motionAllowed)
-        assertSame(reduced.state, blocked.state)
+        assertEquals(at(3), blocked.state.processedAt)
+        assertEquals(Long.MAX_VALUE, blocked.state.revision)
+        assertFalse(blocked.state.emission.motionAllowed)
         assertNull(blocked.deliveredIntent())
         assertIs<StepResult.PolicyRejected>(rejected)
         assertNull(rejected.deliveredIntent())

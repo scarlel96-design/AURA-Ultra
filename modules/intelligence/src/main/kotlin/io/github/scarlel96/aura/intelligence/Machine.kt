@@ -102,6 +102,7 @@ data class MachineState(
     val emission: Emission,
     val settings: CallerSettings,
     val observationMemory: ObservationMemory = ObservationMemory(),
+    val protectionWatermark: Instant = Instant.EPOCH,
 )
 
 data class IntelligenceIntent(
@@ -246,6 +247,7 @@ fun step(
         previousPublished = previous?.emission?.publishedBatteryPercent,
         previousExpiresAt = previous?.observationMemory?.batteryExpiresAt,
         allowForecastPublication = false,
+        referenceTime = sample.referenceTime,
     )
     val precipitationDecision = decideNumber(
         channel = gated.precipitation,
@@ -255,13 +257,14 @@ fun step(
         previousPublished = previous?.emission?.publishedPrecipitation,
         previousExpiresAt = previous?.observationMemory?.precipitationExpiresAt,
         allowForecastPublication = true,
+        referenceTime = sample.referenceTime,
     )
-    val chargingOrder = orderChannel(gated.charging, sample.charging, previous?.observationMemory?.charging)
-    val alertOrder = orderChannel(gated.alert, sample.weatherAlert, previous?.observationMemory?.alert)
-    val activityOrder = orderChannel(gated.activity, sample.activity, previous?.observationMemory?.activity)
-    val lightOrder = orderChannel(gated.light, sample.light, previous?.observationMemory?.light)
-    val connectivityOrder = orderChannel(gated.connectivity, sample.connectivity, previous?.observationMemory?.connectivity)
-    val userModeOrder = orderChannel(gated.userMode, sample.userMode, previous?.observationMemory?.userMode)
+    val chargingOrder = orderChannel(gated.charging, sample.charging, previous?.observationMemory?.charging, sample.referenceTime)
+    val alertOrder = orderChannel(gated.alert, sample.weatherAlert, previous?.observationMemory?.alert, sample.referenceTime)
+    val activityOrder = orderChannel(gated.activity, sample.activity, previous?.observationMemory?.activity, sample.referenceTime)
+    val lightOrder = orderChannel(gated.light, sample.light, previous?.observationMemory?.light, sample.referenceTime)
+    val connectivityOrder = orderChannel(gated.connectivity, sample.connectivity, previous?.observationMemory?.connectivity, sample.referenceTime)
+    val userModeOrder = orderChannel(gated.userMode, sample.userMode, previous?.observationMemory?.userMode, sample.referenceTime)
     val reasons = mutableListOf<ReasonCode>()
     reasons += gated.reasons
     listOf(
@@ -341,7 +344,17 @@ fun step(
         batteryAccepted = batteryDecision.accepted,
         precipitationAccepted = precipitationDecision.accepted,
     )
-    val settings = CallerSettings(sample.motionReduction, sample.ambientDisplay)
+    val requested = CallerSettings(sample.motionReduction, sample.ambientDisplay)
+    val settings = if (previous != null && sample.referenceTime < previous.protectionWatermark) {
+        previous.settings.raisedBy(requested.motionReduction, requested.ambientDisplay)
+    } else {
+        requested
+    }
+    val protectionWatermark = if (previous != null && sample.referenceTime < previous.protectionWatermark) {
+        previous.protectionWatermark
+    } else {
+        sample.referenceTime
+    }
     if (previous == null) {
         val created = assemble(
             power = desiredPower,
@@ -456,6 +469,7 @@ fun step(
         settings = settings,
         graphicsLow = graphicsLow,
         observationMemory = memory,
+        protectionWatermark = protectionWatermark,
     )
     return finish(
         skeleton = next,
@@ -577,9 +591,14 @@ private fun deliverAtCeiling(
         precipitation = precipitationCursor,
     )
     if (!settingsRose && !graphicsRose && !withdrew && !adopted && nextMemory == memory) {
+        val marked = if (!clockInverted && sample.referenceTime.isAfter(previous.processedAt)) {
+            previous.copy(processedAt = sample.referenceTime)
+        } else {
+            previous
+        }
         return StepResult.LimitReached(
             ReasonCode.REVISION_EXHAUSTED,
-            previous,
+            marked,
             delivery.sequence,
             delivery.epoch,
             delivery.opened,
@@ -686,7 +705,10 @@ private fun nextDelivery(lastSequence: Long, lastEpoch: Long, openSession: Boole
 }
 
 private fun ceilingCursor(adopt: Boolean, incoming: StreamCursor?, previous: StreamCursor?): StreamCursor? {
-    if (adopt || incoming?.revoked == true) {
+    if (incoming?.revoked == true) {
+        return if (cursorMovesBackward(incoming, previous)) previous else incoming
+    }
+    if (adopt) {
         return incoming
     }
     return previous
@@ -729,9 +751,31 @@ private fun retainedAfterRejectedPolicy(previous: MachineState?, sample: Intelli
         val memory = previous.observationMemory.copy(
             batteryExpiresAt = if (battery == null) null else previous.observationMemory.batteryExpiresAt,
             precipitationExpiresAt = if (precipitation == null) null else previous.observationMemory.precipitationExpiresAt,
-            battery = revokedCursor(sample.batteryPercent, previous.observationMemory.battery, inverted),
-            precipitation = revokedCursor(sample.precipitationProbability, previous.observationMemory.precipitation, inverted),
+            battery = withdrawnCursor(
+                publishedNow = battery,
+                observation = sample.batteryPercent,
+                previous = previous.observationMemory.battery,
+                inverted = inverted,
+                referenceTime = sample.referenceTime,
+                revision = sample.batteryRevision,
+            ),
+            precipitation = withdrawnCursor(
+                publishedNow = precipitation,
+                observation = sample.precipitationProbability,
+                previous = previous.observationMemory.precipitation,
+                inverted = inverted,
+                referenceTime = sample.referenceTime,
+                revision = sample.precipitationRevision,
+            ),
         )
+        val protectionWatermark = if (
+            raised != previous.settings &&
+            !sample.referenceTime.isBefore(previous.protectionWatermark)
+        ) {
+            sample.referenceTime
+        } else {
+            previous.protectionWatermark
+        }
         return previous.copy(
             settings = raised,
             emission = previous.emission.copy(
@@ -739,6 +783,7 @@ private fun retainedAfterRejectedPolicy(previous: MachineState?, sample: Intelli
                 publishedPrecipitation = precipitation,
             ),
             observationMemory = memory,
+            protectionWatermark = protectionWatermark,
         )
     }
     return assemble(
@@ -781,17 +826,55 @@ private fun retainedPublished(
     return published
 }
 
-private fun revokedCursor(observation: Observation<*>?, previous: StreamCursor?, inverted: Boolean): StreamCursor? {
-    if (inverted || observation == null || !isRevocation(observation)) {
+private fun withdrawnCursor(
+    publishedNow: Double?,
+    observation: Observation<*>?,
+    previous: StreamCursor?,
+    inverted: Boolean,
+    referenceTime: Instant,
+    revision: Long?,
+): StreamCursor? {
+    if (inverted) {
         return previous
     }
+    if (observation != null && isRevocation(observation)) {
+        return monotonicRevocation(observation, revision, previous, referenceTime)
+    }
+    if (publishedNow == null && previous != null) {
+        val floor = StreamCursor(
+            source = previous.source,
+            observedAt = referenceTime,
+            revision = previous.revision,
+            revoked = true,
+        )
+        return if (cursorMovesBackward(floor, previous)) previous else floor
+    }
+    return previous
+}
+
+/** 철회 시각이 없거나 처리 시각보다 뒤면 처리 시각을 쓴다. 이미 있는 커서보다 과거로는 내리지 않는다. */
+private fun monotonicRevocation(
+    observation: Observation<*>,
+    revision: Long?,
+    previous: StreamCursor?,
+    referenceTime: Instant,
+): StreamCursor {
     val source = observation.source.value
-    return StreamCursor(
+    val observed = observation.observedAt
+    val at = if (observed == null || observed.isAfter(referenceTime)) referenceTime else observed
+    val incoming = StreamCursor(
         source = source,
-        observedAt = observation.observedAt,
-        revision = if (source == previous?.source) previous.revision else null,
+        observedAt = at,
+        revision = revision ?: if (source == previous?.source) previous.revision else null,
         revoked = true,
     )
+    return if (cursorMovesBackward(incoming, previous)) checkNotNull(previous) else incoming
+}
+
+private fun cursorMovesBackward(incoming: StreamCursor, previous: StreamCursor?): Boolean {
+    val previousAt = previous?.observedAt ?: return false
+    val incomingAt = incoming.observedAt ?: return true
+    return incomingAt.isBefore(previousAt)
 }
 
 private fun isRevocation(observation: Observation<*>): Boolean {
@@ -822,6 +905,7 @@ private fun decideNumber(
     previousPublished: Double?,
     previousExpiresAt: Instant?,
     allowForecastPublication: Boolean,
+    referenceTime: Instant,
 ): NumberDecision {
     if (observation == null || channel is Channel.Absent) {
         return NumberDecision(Channel.Absent, null, previousCursor, previousExpiresAt, null, keepGraphics = false)
@@ -838,19 +922,15 @@ private fun decideNumber(
             )
         }
         if (isPermissionLoss(channel.reason)) {
-            val source = observation.source.value
+            val cursor = monotonicRevocation(observation, revision, previousCursor, referenceTime)
+            val stale = previousCursor != null && cursor == previousCursor
             return NumberDecision(
-                control = channel,
-                published = null,
-                cursor = StreamCursor(
-                    source = source,
-                    observedAt = observation.observedAt,
-                    revision = revision ?: if (source == previousCursor?.source) previousCursor.revision else null,
-                    revoked = true,
-                ),
-                expiresAt = null,
-                reason = null,
-                keepGraphics = false,
+                control = if (stale) Channel.Absent else channel,
+                published = if (stale) previousPublished else null,
+                cursor = cursor,
+                expiresAt = if (stale) previousExpiresAt else null,
+                reason = if (stale) ReasonCode.SUPERSEDED_OBSERVATION else null,
+                keepGraphics = stale,
             )
         }
         return NumberDecision(channel, null, previousCursor, null, null, keepGraphics = false)
@@ -930,6 +1010,7 @@ private fun <T> orderChannel(
     channel: Channel<T>,
     observation: Observation<*>?,
     previousCursor: StreamCursor?,
+    referenceTime: Instant,
 ): AxisDecision<T> {
     if (observation == null || channel is Channel.Absent) {
         return AxisDecision(Channel.Absent, previousCursor, null)
@@ -939,16 +1020,11 @@ private fun <T> orderChannel(
     }
     if (channel is Channel.Unusable) {
         if (isPermissionLoss(channel.reason)) {
-            return AxisDecision(
-                channel = channel,
-                cursor = StreamCursor(
-                    source = observation.source.value,
-                    observedAt = observation.observedAt,
-                    revision = null,
-                    revoked = true,
-                ),
-                reason = null,
-            )
+            val cursor = monotonicRevocation(observation, null, previousCursor, referenceTime)
+            if (previousCursor != null && cursor == previousCursor) {
+                return AxisDecision(Channel.Absent, previousCursor, ReasonCode.SUPERSEDED_OBSERVATION)
+            }
+            return AxisDecision(channel, cursor, null)
         }
         return AxisDecision(channel, previousCursor, null)
     }
@@ -1168,6 +1244,7 @@ private fun assemble(
     settings: CallerSettings,
     graphicsLow: Boolean,
     observationMemory: ObservationMemory,
+    protectionWatermark: Instant = processedAt,
 ): MachineState {
     return MachineState(
         power = power,
@@ -1198,6 +1275,7 @@ private fun assemble(
         ),
         settings = settings,
         observationMemory = observationMemory,
+        protectionWatermark = protectionWatermark,
     )
 }
 

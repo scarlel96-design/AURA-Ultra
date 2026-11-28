@@ -8,7 +8,6 @@ import kotlin.test.assertFalse
 import kotlin.test.assertIs
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
-import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
 class Round04Test {
@@ -88,7 +87,9 @@ class Round04Test {
         val unchanged = assertIs<StepResult.LimitReached>(
             step(reduced.state, sample(moment = at(2), motionReduction = false), openPolicy()),
         )
-        assertSame(reduced.state, unchanged.state)
+        assertEquals(at(2), unchanged.state.processedAt)
+        assertEquals(Long.MAX_VALUE, unchanged.state.revision)
+        assertFalse(unchanged.state.emission.motionAllowed)
         assertNull(unchanged.deliveredIntent())
     }
 

@@ -299,7 +299,8 @@ class Round02Test {
             step(maxed, sample(moment = at(1), light = reading("NIGHT", "token")), policy),
         )
         assertEquals(ReasonCode.REVISION_EXHAUSTED, blocked.reason)
-        assertSame(maxed, blocked.state)
+        assertEquals(at(1), blocked.state.processedAt)
+        assertEquals(50.0, blocked.state.emission.publishedBatteryPercent)
         assertEquals(LightAxis.DAY, blocked.state.light)
         assertEquals(Long.MAX_VALUE, blocked.state.revision)
         val almost = base.state.copy(revision = Long.MAX_VALUE - 1L)

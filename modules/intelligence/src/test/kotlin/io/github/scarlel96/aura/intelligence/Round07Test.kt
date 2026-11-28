@@ -9,7 +9,6 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertIs
 import kotlin.test.assertNull
-import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
 class Round07Test {
@@ -150,7 +149,8 @@ class Round07Test {
         val published = advanced(step(null, sample(battery = reading(80.0, "percent", expiresAt = at(30))), policy))
         val maxed = published.state.copy(revision = Long.MAX_VALUE)
         val stillFresh = assertIs<StepResult.LimitReached>(step(maxed, sample(moment = at(29)), policy))
-        assertSame(maxed, stillFresh.state)
+        assertEquals(at(29), stillFresh.state.processedAt)
+        assertEquals(Long.MAX_VALUE, stillFresh.state.revision)
         assertEquals(80.0, stillFresh.state.emission.publishedBatteryPercent)
         val expired = advanced(step(maxed, sample(moment = at(30)), policy))
         assertNull(expired.intent.publishedBatteryPercent)
@@ -252,7 +252,9 @@ class Round07Test {
         val stalled = assertIs<StepResult.LimitReached>(
             step(ceiling, sample(moment = at(2)), policy, explicitRelease.deliverySequence),
         )
-        assertSame(ceiling, stalled.state)
+        assertEquals(at(2), stalled.state.processedAt)
+        assertFalse(stalled.state.emission.motionAllowed)
+        assertEquals(Long.MAX_VALUE, stalled.state.revision)
         assertTrue(stalled.deliverySequence > explicitRelease.deliverySequence)
         assertNull(stalled.deliveredIntent())
         val consumer = ProtectionConsumer()

@@ -31,6 +31,6 @@
 
 ## 시험 전용 소비자
 
-`ProtectionConsumer`는 음수 순서·epoch와 더 이전 epoch를 무시한다. 같은 epoch에서 더 작은 순서는 무시한다. 같은 상한 순서는 세 보호를 켜기만 하고 끄지 않는다. 더 큰 epoch는 `deliverySessionOpened`가 참일 때만 새 워터마크로 전체를 적용한다. 품질이 `AOD`이면 항상 표시를 켠다. 이유에 `MOTION_REDUCTION`이 있고 `motionAllowed`가 거짓이면 모션 감소를 켠다. `graphicsPowerLimited`가 참이면 그래픽 제한을 켠다. 전체를 적용할 때는 그 셋이 거짓이면 각각 끈다. `deliveredIntent()`가 null이면 워터마크만 올리고 보호는 유지한다. `PolicyRejected.failSafe`는 그 순서 규칙으로만 본다.
+`ProtectionConsumer`는 음수 순서·epoch와 더 이전 epoch를 무시한다. 같은 epoch에서 더 작은 순서는 무시한다. 같은 상한 순서는 세 보호를 켜기만 하고 끄지 않는다. 더 큰 epoch의 결과가 세션을 열기 전에 도착하면 적용하지 않는다. 그 보호나 해제는 세션을 연 결과 뒤에 다시 보내야 적용된다. 더 큰 epoch는 `deliverySessionOpened`가 참일 때만 새 워터마크로 전체를 적용한다. 실제 호출자의 세션 동기화와 재전송은 F04와 C01 인계이며 이 모듈이 구현하지 않는다. 품질이 `AOD`이면 항상 표시를 켠다. 이유에 `MOTION_REDUCTION`이 있고 `motionAllowed`가 거짓이면 모션 감소를 켠다. `graphicsPowerLimited`가 참이면 그래픽 제한을 켠다. 전체를 적용할 때는 그 셋이 거짓이면 각각 끈다. `deliveredIntent()`가 null이면 워터마크만 올리고 보호는 유지한다. `PolicyRejected.failSafe`는 그 순서 규칙으로만 본다.
 
 이 소비자는 배터리를 측정하지 않고 화면을 그리지 않는다. F04가 같은 수용·거부 표를 실기기 없이 다시 검증할 때 이 표를 쓴다. 합의 전에는 제품 경로에 연결하지 않는다.

@@ -7,7 +7,6 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertIs
 import kotlin.test.assertNull
-import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
 class Round03Test {
@@ -160,7 +159,8 @@ class Round03Test {
             step(reduced.state, sample(moment = at(3), motionReduction = false), openPolicy()),
         )
         assertEquals(ReasonCode.REVISION_EXHAUSTED, clearing.reason)
-        assertSame(reduced.state, clearing.state)
+        assertEquals(at(3), clearing.state.processedAt)
+        assertEquals(Long.MAX_VALUE, clearing.state.revision)
         assertFalse(clearing.state.emission.motionAllowed)
     }
 
