@@ -12,7 +12,7 @@
 | 정식 WO GO | 0/38 |
 | GPT 묶음 GO | 3/12 (PARTIAL 독립 준비 종료는 GO에 포함하지 않음) |
 | 출시 | NO-GO |
-| 다음 행동 | [RV01 검수](evidence/MID-AUDIT/RV01-REVIEW.md) 102/108·15 CI 성공; 권한 경계 2건 [마감 수정](operations/agent-orders/GB-01-RV01-CLOSEOUT.md) 대기. PR #6 HOLD, F03/F04 차단. |
+| 다음 행동 | [RV01](evidence/MID-AUDIT/RV01-REVIEW.md) C1/C2 수정 검수 GO·독립 종료; [RV02](operations/agent-orders/GB-02-RV02.md) 격리 경계 후보 대기. PR #6 HOLD; F03/F04 차단. |
 
 ## 근거 및 이관
 - [GPT-06 전체 종료 보고](evidence/GPT-06/REPORT-FINAL-CLOSURE.md). R01~R06 및 OPS-07 독립 준비 산출물 통합·자동 검증 완료. 결합 후보와 main 코드·시험·자산·CI 102개, 보호 경로 38개 blob 동일. 원본 아카이브 8개 SHA 동일. 활성 8개 문서 500021→24609 B(검증 코드 기준).

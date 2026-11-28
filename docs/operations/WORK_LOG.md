@@ -29,3 +29,5 @@
 - RV01 로컬 보고 56675d8: 102/108, 100000 PASS(미독립 확인). [검사기](../evidence/MID-AUDIT/RV01-JUNIT/REPORT.md) 정확한 81/88/102 등록·24 자체 시험 PASS, main CI 대기. 사용자 승인: GPT-09 종료 전면 감사 대신 변경 영향 통합 검증, 최종 감사 유지.
 
 - RV01 8f53bff 독립 검수: 22 XML 102/108, 26 Domain blob 동일, 15 CI SUCCESS; capability seal 재사용 및 대상 scope 미대조 정적 결함 2건. [마감](agent-orders/GB-01-RV01-CLOSEOUT.md), HOLD. 사용자 승인: 최종 감사 Codex 주력/GPT 검수, GB/AG 가용성 기반 배정.
+
+- RV01-CLOSEOUT 558e188→68f52eb: red 2 FAIL, green 22 XML 102/108, 15 CI SUCCESS, 3 Domain 원본 로그 대조; C1/C2 범위 GO·독립 종료. [RV02](agent-orders/GB-02-RV02.md) 격리 데이터 경계 후보 준비, 사용자 전달 대기. HOLD 유지.
