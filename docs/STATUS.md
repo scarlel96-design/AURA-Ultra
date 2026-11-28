@@ -12,7 +12,7 @@
 | 정식 WO GO | 0/38 |
 | GPT 묶음 GO | 3/12 (PARTIAL 독립 준비 종료는 GO에 포함하지 않음) |
 | 출시 | NO-GO |
-| 다음 행동 | F03 R12 후보 잔여 9 권고 및 새 UTP/lint/detached 범위 검토. GPT-07 및 실기기 설치는 별도 승인 대기. |
+| 다음 행동 | F03 R12 audit 후보 CI 조회·원본 증거 확인. AGP9.5.3/Gradle9.6.1, assemble/lint 16 tasks 요청; UTP detached 미검증. GPT-07 및 실기기 설치는 별도 승인 대기. |
 
 ## 근거 및 이관
 - [GPT-06 전체 종료 보고](evidence/GPT-06/REPORT-FINAL-CLOSURE.md). R01~R06 및 OPS-07 독립 준비 산출물 통합·자동 검증 완료. 결합 후보와 main 코드·시험·자산·CI 102개, 보호 경로 38개 blob 동일. 원본 아카이브 8개 SHA 동일. 활성 8개 문서 500021→24609 B(검증 코드 기준).
@@ -57,3 +57,5 @@
 - [F03 R10](evidence/MID-AUDIT/F03/REPORT-R10.md): 52/52 권고 원문, CRITICAL 3/HIGH 21/MODERATE 26/LOW 2; 92 버전 일치, 관측상 buildscript/UTP. Portal 원본 해시 일치, Central 별도 metadata; trust OPEN. R11 개선 후보 검토.
 
 - [F03 R11](evidence/MID-AUDIT/F03/REPORT-R11.md): 공식 호환 후보 AGP9.5.1/Gradle9.6.1, scratch audit 6a651984c3e3377b5cf15baf8d175cf5e26a38d8, CI 46103946447 8 builds PASS, OSV 8 MATCH/9 IDs로 fail-closed, ZIP 직접 검사. 43 IDs 관측상 감소, 새 UTP coverage OPEN. [결과](evidence/MID-AUDIT/F03/REPORT-R11-RESULT.md). 제품 미변경.
+
+- [F03 R12 착수](evidence/MID-AUDIT/F03/REPORT-R12-START.md): AGP9.5.3 격리 후보 a1158e8b430c5c7aa7eee437b1d70477e4649662, 9 권고 패치 기준 확인, R11 ZIP 재검증, named lint/UTP gate 및 2 focused tests 추가. CI 미확인; 제품 미변경.
