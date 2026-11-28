@@ -1,0 +1,25 @@
+// Resolve existing test and buildscript artifacts; record hashes without changing dependencies.
+import java.security.MessageDigest
+allprojects { p ->
+    afterEvaluate {
+        tasks.register("auditResolvedInputs") {
+            doLast {
+                def targets = [p.configurations.findByName("testRuntimeClasspath"), p.buildscript.configurations.findByName("classpath")].findAll { it != null && it.canBeResolved }
+                targets.each { cfg ->
+                    def artifacts = cfg.resolvedConfiguration.resolvedArtifacts.sort { it.moduleVersion.id.toString() + ":" + it.file.name }
+                    artifacts.each { a ->
+                        if (a.file.isFile()) {
+                            def digest=MessageDigest.getInstance("SHA-256")
+                            a.file.withInputStream { input ->
+                                byte[] buf = new byte[65536]; int n
+                                while ((n=input.read(buf))!=-1) digest.update(buf,0,n)
+                            }
+                            println("AUDIT_DEP " + cfg.name + " " + a.moduleVersion.id + " " + a.file.name + " " + digest.digest().encodeHex().toString())
+                        }
+                    }
+                    println("AUDIT_DEP_COUNT " + cfg.name + " " + artifacts.size())
+                }
+            }
+        }
+    }
+}

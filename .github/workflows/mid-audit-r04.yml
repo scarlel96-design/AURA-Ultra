@@ -1,0 +1,61 @@
+name: Mid-audit R04 supply chain and source boundaries
+on:
+  push:
+    branches: [audit-mid-r04]
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify committed baseline
+        run: |
+          git merge-base --is-ancestor a70cb592a60582ae44ff9f7ad91b4d07009d8c56 HEAD
+          test -z "$(git diff a70cb592a60582ae44ff9f7ad91b4d07009d8c56 HEAD -- tools apps modules/domain design-system assets tests/unit)"
+          echo 'b3a875ddc1f044746e1b1a55f645584505f4a10438c1afea9f15e92a7c42ec13  gradle/wrapper/gradle-wrapper.jar' | sha256sum -c -
+          mkdir -p audit-r04
+          git cat-file -e 122d81b05fb0fc56020fb3d03b667545eb6671c3^{commit}
+          git cat-file -e fc98c3ad5993e131f733a9444b5849e737a49086^{commit}
+          python - <<'PY'
+          import json,subprocess
+          from pathlib import Path
+          m=json.loads(Path('tests/audit/R04/gb-blobs.json').read_text())
+          for p,s in m.items():
+              assert subprocess.check_output(['git','hash-object',p],text=True).strip()==s,p
+          print("AUDIT_GB_BLOBS",len(m),"match")
+          PY
+      - name: Committed secret-pattern inventory and boundary probes
+        run: |
+          set -o pipefail
+          python tests/audit/R04/probes.py audit-r04 a70cb592a60582ae44ff9f7ad91b4d07009d8c56 fc98c3ad5993e131f733a9444b5849e737a49086 122d81b05fb0fc56020fb3d03b667545eb6671c3 | tee audit-r04/probes.log
+      - name: Resolve domain dependency graph and artifact hashes
+        run: |
+          set -o pipefail
+          ./gradlew -p modules/domain --no-daemon dependencies --configuration testRuntimeClasspath | tee audit-r04/domain-dependencies.log
+          ./gradlew -p modules/domain --no-daemon -I "$PWD/tests/audit/R04/inventory.gradle" auditResolvedInputs | tee audit-r04/domain-hashes.log
+      - name: Resolve intelligence dependency graph and artifact hashes
+        run: |
+          set -o pipefail
+          ./gradlew -p modules/intelligence --no-daemon dependencies --configuration testRuntimeClasspath | tee audit-r04/intelligence-dependencies.log
+          ./gradlew -p modules/intelligence --no-daemon -I "$PWD/tests/audit/R04/inventory.gradle" auditResolvedInputs | tee audit-r04/intelligence-hashes.log
+      - name: Upload exact audit evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mid-audit-r04-evidence
+          path: |
+            audit-r04/
+            tests/audit/R04/
+          if-no-files-found: error
