@@ -1,6 +1,6 @@
 # GB-02 RV02 로컬 증거
 
-상태: 로컬 구현과 로컬 시험만 완료. 브랜치 `agent/grok/GB-02-RV02`는 push하지 않았다. 공통 CI와 검사기 등록 전이다. 제품 판정은 NO-GO. PR #3, PR #5, PR #6은 변경하지 않았고 병합하지 않았다.
+상태: 원격 제출 완료. 제품 판정은 NO-GO. PR #7은 HOLD이며 main에 병합하지 않았다. PR #3, PR #5, PR #6은 변경하지 않았고 병합하지 않았다.
 
 구현 커밋: `dbacc75d559699963eeeb8d9da40692f07b8ddf2`
 부모: `0c4890ea7f69c6145791d17d51b98c97fed45c1d` (`agent/grok/GB-02` G01 최종 HEAD)
@@ -74,15 +74,42 @@ Gradle 디스크 XML은 CRLF다. Git blob은 autocrlf clean 뒤 LF다.
 
 ## 이번 로컬 후보가 닫지 않는 것
 
-RV-01~16 제품 수용을 완료로 말하지 않는다. 실제 배터리·건강·날씨 권한 범주, SDK 결과 결합, 기계 필드 소거, 이력 허용 정책, OS 캐시, 동시성, 소비자 지연, 공통 CI, 검사기 등록은 NOT RUN이다. 합성 scope와 stream만 사용했다.
+RV-01~16 제품 수용을 완료로 말하지 않는다. 실제 배터리·건강·날씨 권한 범주, SDK 결과 결합, 기계 필드 소거, 이력 허용 정책, OS 캐시, 동시성, 소비자 지연은 NOT RUN이다. 합성 scope와 stream만 사용했다.
 
 ## G0–G7
 
 G0: 작업지시, ADR-008 Central disposition, RV01 최종 검수, 현재 Authority와 Intelligence 계약을 확인했다.
 G1: 격리된 수신·공개 경계만 추가했다.
-G2: 로컬 clean 시험이다. 공통 CI는 실행하지 않았다.
+G2: 로컬 clean 시험과 등록된 Intelligence RV02 복합 CI를 실행했다. 아래 원격 제출을 본다.
 G3: Intelligence 124 PASS, 그중 기존 108과 100000회. Domain 102 PASS. FAIL/ERROR/SKIP 0.
 G4: SDK, 실기기, 동시성은 NOT RUN.
 G5: 독립 검수 전이 아니다.
-G6: 로컬 후보. 제품 NO-GO. PR HOLD 유지.
-G7: 이 문서와 원본 XML.
+G6: 원격 후보. 제품 NO-GO. PR #7 HOLD. main 병합 없음.
+G7: 이 문서와 원본 XML. 원본 XML 시각은 바꾸지 않았다.
+
+## 원격 제출
+
+등록 커밋 `00118b4228a5e18d0cb621cef90de8b246d247b5`의 main CI가 성공한 뒤에만 `origin/main`을 병합했다. main Intelligence RV02 `46139294149`는 도구 자체 시험 10개만 실행했다. main에서는 복합 Gradle 단계가 조건으로 빠진다. 그 실행을 Domain 102 또는 Intelligence 124로 세지 않는다.
+
+병합 커밋: `20370a6fcacbd25df12edc4aabc97acf9ff66a1c`
+부모: `a611bda7518f8d9971899048e318216319887201`, `00118b4228a5e18d0cb621cef90de8b246d247b5`
+Intelligence 트리: `cbbb838836f206ae0363796bc1812f5dcc8e9083` (구현 커밋과 동일, 29개 파일)
+`ProtectedBoundary.kt`: `22ae61652623ff20da274c825f6a6f4dde6c8857`
+`ProtectedBoundaryTest.kt`: `c9423cebeba480e0cef874f5eadb94f9307107bb`
+커밋된 Domain 트리: `65c0180c6706c138370e0a465a6cc53f92f331a4` (`origin/main`과 동일)
+고정 Domain 트리: `c51dfeb3fe4e87201f123cd89aceb48b373a0aaf`, 26개 파일. 합성 복원만 사용한다.
+
+로컬 스크래치 `C:\Users\scarl\AppData\Local\Temp\rv02-composite-20370a6`에서 등록 도구로 복원한 뒤 JDK 17 clean offline 시험을 다시 실행했다. 시험 전후 `--verify-only`가 같은 pin을 출력했다. `check_domain_results.py --profile rv01`은 102, `check_intelligence_results.py --profile rv02`는 124였다. 등록 도구 자체 시험은 10 PASS다.
+
+`20370a6` push Intelligence RV02 `46140337455`:
+`RV02_DOMAIN commit=558e18804d08ebd4d79be620962c256e0af07f96 tree=c51dfeb3fe4e87201f123cd89aceb48b373a0aaf files=26`
+`RV02_INTELLIGENCE commit=20370a6fcacbd25df12edc4aabc97acf9ff66a1c tree=cbbb838836f206ae0363796bc1812f5dcc8e9083 files=29`
+도구 시험 Ran 10 tests. `DOMAIN_RESULT 102 PASS / 0 FAIL / 0 ERROR / 0 SKIP`. `INTELLIGENCE_RESULT 124 PASS / 0 FAIL / 0 ERROR / 0 SKIP`. `longRunKeepsInvariants()` PASSED. 시험 후 verify-only가 같은 두 줄을 다시 출력했다. artifact `rv02-composite-junit-xml` ID 15261302261.
+
+`20370a6` pull_request Intelligence RV02 `46140347797`는 GitHub PR 병합 checkout `90e75e0a00432d6caa3fd52385946c56fdefcfb5`를 검사했다. Intelligence 트리는 같은 `cbbb838836f206ae0363796bc1812f5dcc8e9083`, 29개 파일이다. Domain pin, 102, 124, 10 tests, longRun, verify-only, artifact 15261468125가 같다.
+
+같은 SHA의 공통 CI는 모두 success다. 문서 예산 push `46140337718`, pull_request `46140347741`. Windows push `46140337616`, pull_request `46140347752`. Bootstrap push `46140337539`, pull_request `46140347724`.
+
+Domain Kotlin push `46140337510`은 `DOMAIN_INVENTORY baseline`, `DOMAIN_RESULT 81 PASS / 0 FAIL / 0 ERROR / 0 SKIP`이다. 커밋된 baseline이며 overlay 102가 아니다. pull_request Domain Kotlin은 경로 필터로 시작되지 않았다.
+
+도구 자체 시험 로그에 나오는 다른 `RV02_DOMAIN` SHA는 합성 저장소 시험이다. 제품 pin은 `558e188`뿐이다.
