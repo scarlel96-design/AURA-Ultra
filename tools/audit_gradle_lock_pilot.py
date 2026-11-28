@@ -4,7 +4,6 @@ import hashlib
 import json
 import os
 from pathlib import Path
-import shutil
 import subprocess
 import tempfile
 import zipfile
@@ -18,6 +17,74 @@ def sha(data):
 
 def run(command, cwd, env, output, name):
     return run_logged(command, cwd, env, output / (name + ".log"))
+
+
+def graph_index(rows):
+    result = {}
+    for row in rows:
+        key = (row["project"], row["scope"], row["configuration"])
+        modules = row["modules"]
+        if key in result or row["unresolved"] or row["error"] or len(set(modules)) != len(modules):
+            raise ValueError("Duplicate or unresolved configuration: " + repr(key))
+        result[key] = set(modules)
+    return result
+
+
+def compare_graphs(baseline, locked, build):
+    before, after = graph_index(baseline), graph_index(locked)
+    additional = after.keys() - before.keys()
+    # AGP exposes androidApis under locking. It must contain no external module.
+    allowed = {(":apps:watchface", "project", "androidApis")} if build == "android" else set()
+    if before.keys() - after.keys() or additional - allowed:
+        raise ValueError("Unexpected configuration change")
+    if any(after[k] for k in additional) or any(before[k] != after[k] for k in before):
+        raise ValueError("Dependency graph changed")
+    return sorted(additional)
+
+
+def lock_index(build, locks):
+    result = {}
+    for path in locks:
+        relative = path.relative_to(build)
+        project = ":" + ":".join(relative.parts[:-1])
+        if path.name not in ("gradle.lockfile", "buildscript-gradle.lockfile"):
+            raise ValueError("Unexpected lock filename: " + str(relative))
+        scope = "buildscript" if path.name.startswith("buildscript-") else "project"
+        seen = set()
+        empty_keys = set()
+        for line in path.read_text(encoding="utf-8").splitlines():
+            if not line or line.startswith("#"):
+                continue
+            module, sep, configs = line.partition("=")
+            if not sep or module in seen or (module != "empty" and len(module.split(":")) != 3):
+                raise ValueError("Invalid lock entry: " + line)
+            seen.add(module)
+            names = configs.split(",") if configs else []
+            if len(names) != len(set(names)) or any(not n for n in names):
+                raise ValueError("Invalid configuration list: " + line)
+            if not names and module != "empty":
+                raise ValueError("Module lacks configuration: " + line)
+            for name in names:
+                key = (project, scope, name)
+                values = result.setdefault(key, set())
+                if module == "empty":
+                    if values:
+                        raise ValueError("Contradictory empty lock entry")
+                    empty_keys.add(key)
+                else:
+                    if key in empty_keys:
+                        raise ValueError("Contradictory module lock entry")
+                    values.add(module)
+    return result
+
+
+def read_graph_parts(folder, projects):
+    parts = [json.loads(p.read_text(encoding="utf-8")) for p in sorted(folder.glob("*.json"))]
+    if sorted(p["project"] for p in parts) != sorted(projects):
+        raise ValueError("Unexpected project inventory")
+    if any(r["project"] != p["project"] for p in parts for r in p["rows"]):
+        raise ValueError("Incorrect project ownership")
+    return [r for p in parts for r in p["rows"]]
 
 
 def fixture(wrapper, work, env, output):
@@ -135,19 +202,34 @@ def main():
             destination.write_bytes(data)
             result["lockfiles"].append({"path": relative.as_posix(), "sha256": sha(data),
                                        "bytes": len(data)})
-        if (result["commands"]["writeLocks"] == 0 and locks
-                and sorted(result["graph"]["projects"]) == sorted(projects)
-                and result["graph"]["configurations"] == summary["graph"]["configurations"]
-                and result["graph"]["unresolved"] == 0 and result["graph"]["unique"]):
-            metadata.parent.mkdir(parents=True, exist_ok=True)
-            metadata.write_bytes(provisional)
-            # This tests mechanics only against unreviewed bytes in a scratch tree.
-            result["commands"]["strictPilot"] = run(
-                cmd + ["--dependency-verification=strict", "--rerun-tasks", *graph_tasks, *tasks],
-                work, env, output, "strict-pilot")
-            result["lockBytesUnchanged"] = all(
-                sha((build / row["path"]).read_bytes()) == row["sha256"]
-                for row in result["lockfiles"])
+        baseline_rows = json.loads((args.inventory / "graph.json").read_text(encoding="utf-8"))
+        if result["commands"]["writeLocks"] == 0 and locks:
+            try:
+                if len(baseline_rows) != summary["graph"]["configurations"]:
+                    raise ValueError("Baseline configuration count mismatch")
+                locked_rows = read_graph_parts(graph_dir, projects)
+                result["additionalEmptyConfigurations"] = compare_graphs(
+                    baseline_rows, locked_rows, args.build)
+                if lock_index(build, locks) != graph_index(locked_rows):
+                    raise ValueError("Lock content differs from resolved graph")
+                result["lockGraphExact"] = True
+                metadata.parent.mkdir(parents=True, exist_ok=True)
+                metadata.write_bytes(provisional)
+                # Provisional metadata is only used in this private scratch build.
+                strict_dir = output / "strict-graph-parts"
+                strict_dir.mkdir()
+                env["AURA_INVENTORY_GRAPH_DIR"] = str(strict_dir)
+                result["commands"]["strictPilot"] = run(
+                    cmd + ["--dependency-verification=strict", "--rerun-tasks", *graph_tasks, *tasks],
+                    work, env, output, "strict-pilot")
+                result["lockBytesUnchanged"] = all(
+                    sha((build / row["path"]).read_bytes()) == row["sha256"]
+                    for row in result["lockfiles"])
+                if result["commands"]["strictPilot"] == 0:
+                    strict_rows = read_graph_parts(strict_dir, projects)
+                    result["strictGraphExact"] = graph_index(strict_rows) == graph_index(locked_rows)
+            except (ValueError, OSError) as exc:
+                result["gateError"] = str(exc)
         if args.build == "domain":
             result["fixture"] = fixture(wrapper, temp, env, output)
     (output / "summary.json").write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
@@ -157,7 +239,8 @@ def main():
                   and f.get("positive") == 0 and f.get("tamperRejected")
                   and f.get("restored") == 0 and f.get("missingLockRejected"))
     if (result["commands"].get("strictPilot") != 0
-            or not result.get("lockBytesUnchanged") or not fixture_ok):
+            or not result.get("lockBytesUnchanged") or not result.get("lockGraphExact")
+            or not result.get("strictGraphExact") or not fixture_ok):
         raise SystemExit("Lock pilot incomplete; inspect evidence. Do not promote metadata.")
 
 

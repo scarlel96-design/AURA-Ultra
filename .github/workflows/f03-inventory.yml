@@ -6,6 +6,9 @@ on:
       - '.github/workflows/f03-inventory.yml'
       - 'tools/audit_gradle_inventory.py'
       - 'tools/gradle_inventory.init.gradle'
+      - 'tools/audit_gradle_lock_pilot.py'
+      - 'tools/gradle_lock_pilot.init.gradle'
+      - 'tests/unit/test_f03_r06.py'
   workflow_dispatch:
 permissions:
   contents: read
