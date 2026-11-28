@@ -46,3 +46,5 @@ R12: [결과](../evidence/MID-AUDIT/F03/REPORT-R12-RESULT.md). AGP9.5.3 16 tasks
 R13: [보고](../evidence/MID-AUDIT/F03/REPORT-R13.md). 우선 48 exact bytes/.asc 확보; 기존 미확보 38개 바이트 보완(원본 sidecar는 여전히 430 UNAVAILABLE). 서명 검증·신뢰·라이선스 승인 0; 나머지 392 바이트 재확인 및 전체 범위 OPEN.
 
 R14: [보고](../evidence/MID-AUDIT/F03/REPORT-R14.md). 48 바이트 일치, 18 강한 서명 검증(12 공식 키 대조/6 발견 전용), 28 SHA-1/2 공개키 미확보 차단. 신뢰 승격 0; 독립 강한 출처, 서명자 승인, 전체 라이선스/392 바이트 범위 OPEN.
+
+R15: [보고](../evidence/MID-AUDIT/F03/REPORT-R15.md). Apache JAR 강한 배포 checksum 일치, JDOM JAR 및 jose4j 태그 POM exact; Guava 소비자 키 대조. SHA512 sidecar 28/28 HTTP404, jose4j 키 미확보, 신뢰 승인 0. 동일 조회 반복 금지. 392 미확보 바이트 범위 및 라이선스 OPEN.

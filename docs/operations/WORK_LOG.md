@@ -53,3 +53,5 @@
 - F03 R13: 466fc5f00064, 46109603011 SUCCESS, 664 ledger/48 exact bytes/48 .asc, ZIP 검증. [보고](../evidence/MID-AUDIT/F03/REPORT-R13.md). 서명/배포자 미승인; 공통 CI SUCCESS (R14 확인).
 
 - F03 R14: be0bd7b2be4c, 46109868360 정책상 FAIL, 6+10 시험 PASS; 48 bytes/18 VALID/30 차단, 12 공식 키 대조. [보고](../evidence/MID-AUDIT/F03/REPORT-R14.md). 증거 ZIP 검증, 제품 변경 없음.
+
+- F03 R15: d9a05594825f, 46110391691 SUCCESS(증거 수집), 7+10 PASS, 28 SHA512 404, 3 공식 출처 exact/Guava 키 대조. R14 공통 CI SUCCESS. [보고](../evidence/MID-AUDIT/F03/REPORT-R15.md). 승격 없음.
