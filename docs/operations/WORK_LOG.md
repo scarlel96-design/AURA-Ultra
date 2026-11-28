@@ -19,3 +19,5 @@
 - D01 최종 검수: ef57005 → c7cef1d, 원본 XML 21개/88+108 PASS, red 1 FAIL, 9/10 CI jobs SUCCESS; push 구 검사기 FAIL. [검수](../evidence/MID-AUDIT/D01-CLOSEOUT-REVIEW.md). 최신 main 반영·push/PR CI 재검증 대기, HOLD.
 
 - D01 bfb115a main 병합, Domain 소스 변경 없음, 신규 CI PENDING. [권한 철회 계약 후보·14 시험](../evidence/MID-AUDIT/REVOCATION-CONTRACT-REVIEW.md) 사전 검토, 미승인/PARTIAL. 소스 변경 없음.
+
+- D01 FINAL-CI: bfb115a 8 runs/10 jobs SUCCESS, push/PR 88 exact, 검사기 15 each, Domain 17 source/test blobs 동일, 최종 d847028 기록만 변경. [검수](../evidence/MID-AUDIT/D01-CLOSEOUT-REVIEW.md). 불변성 범위 GO·독립 종료, HOLD; 권한 계약 합의 대기.
