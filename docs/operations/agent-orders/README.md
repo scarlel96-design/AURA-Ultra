@@ -3,9 +3,9 @@
 
 | 담당 | ID | 상태 | 브랜치 | 소유 경로 |
 |---|---|---|---|---|
-| ChatGPT | GPT-04/05/06 | GPT-06 독립 준비 종료·중단 / PARTIAL; 중간 감사 종료; F01 R01 main 회귀 SUCCESS; F01 자동 범위 종료; F02 자동 범위 종료; F03 R03 pin/checkout 종료; Gradle inventory; GPT-07 미착수 | main 및 격리 후보 | 그래픽, 공통 도구/CI, 중앙 운영 문서 |
+| ChatGPT | GPT-04/05/06 | GPT-06 독립 준비 종료·중단 / PARTIAL; 중간 감사 종료; F01 R01 main 회귀 SUCCESS; F01 자동 범위 종료; F02 자동 범위 종료; F03 R06 exact lock/strict 검증; GPT-07 미착수 | main 및 격리 후보 | 그래픽, 공통 도구/CI, 중앙 운영 문서 |
 | Grok Build | [GB-01](GB-01.md) | 독립 모듈 통합 GO | agent/grok/GB-01 | modules/domain/**, docs/evidence/GB-01/** |
-| Grok Build | [GB-02](GB-02.md) | G01 R06 제출(자체 82/81 PASS 보고), 총괄 독립 검토 전 HOLD | agent/grok/GB-02 | modules/intelligence/**, docs/evidence/GB-02/** |
+| Grok Build | [GB-02](GB-02.md) | G01 R06 XML 82/81 대조, 공통 CI SUCCESS; 로컬 host 2건 및 G01 잔여 OPEN, HOLD | agent/grok/GB-02 | modules/intelligence/**, docs/evidence/GB-02/** |
 | Antigravity | [AG-01](AG-01.md) | R07 격리 재시험 38 PASS, 감사 결함 OPEN, A01 후속 지시/사용량 회복 대기, runtime NOT RUN, HOLD | agent/antigravity/AG-01 | tests/compatibility/ag-01/**, docs/evidence/AG-01/** |
 | Codex | 미배정 | NOT STARTED | 추후 지정 | 고난도 통합·실기기 |
 
@@ -14,3 +14,5 @@
 중간 감사 후속 배정 제안: [통합 등록부](../../evidence/MID-AUDIT/FINDINGS.md), [실행 계획](../../evidence/MID-AUDIT/REMEDIATION-PLAN.md). 기존 소유권 유지. D01 domain 작업은 별도 사용자 승인 및 배정 필요. 감사 branch 병합 금지. 제안은 agent 작업 시작 또는 병합 승인이 아니다.
 
 [GB-02 G01 R06](GB-02-G01-R06.md): 사용자 전달용 후속 개선 지시. 기존 R05 및 소유권 유지, PR #3 HOLD.
+
+[GB-02 G01 R07](GB-02-G01-R07.md): 사용자 전달용. 잔여 G01 및 F04 보호 계약 후보. 실행 여부 미확인, PR #3 HOLD.

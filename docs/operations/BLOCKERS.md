@@ -55,3 +55,9 @@ F03 R01: AUD-R01-07/R04-06 후보 구현, red 확인. 최종 Linux/Windows/Domai
 F03 R02: pin/checkout 후보 5 CI 및 4 ZIP PASS, 8 경로 main 통합. 통합 CI·아티팩트 전 두 ID OPEN. Gradle root/domain 인벤토리, 신뢰 원본·strict/lock 및 소유권 확인 필요. [보고](../evidence/MID-AUDIT/F03/REPORT-R02.md).
 
 F03 R03: AUD-R01-07/R04-06 scoped RESOLVED, main 5 CI 및 4 ZIP PASS. AUD-R04-05 OPEN: audit 46094868997 결과/신뢰 원본/strict/lock/변조 거부/도메인 소유권 확인. [보고](../evidence/MID-AUDIT/F03/REPORT-R03.md).
+
+F03 R04: 664 unique artifact UNREVIEWED, graph 177/19 zero unresolved. 외부 published SHA256 대조 CI 46095415032 진행 중; trust/strict/lock 미적용. GB R06 로컬 palette/PNG 2건 미해결, 3.12 CI PASS; G01 잔여/ASYNC 및 PR HOLD. [보고](../evidence/MID-AUDIT/F03/REPORT-R04.md).
+
+F03 R05: 430/664 게시 SHA256 미확보(3 repos HTTP404), 234 일치도 publisher trust 아님. audit 46095753190 lock/strict/negative fixture PENDING. 미승인 metadata/lock main 적용 금지. [보고](../evidence/MID-AUDIT/F03/REPORT-R05.md).
+
+F03 R06: Domain strict/negative PASS, Android 178/178 lock graph exact; 수정 CI 46096211808 strict PENDING. publisher provenance 및 430 미확보 유지. [보고](../evidence/MID-AUDIT/F03/REPORT-R06.md).
