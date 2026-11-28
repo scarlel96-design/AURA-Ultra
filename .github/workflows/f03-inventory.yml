@@ -43,6 +43,8 @@ jobs:
           packages: 'platform-tools platforms;android-37.0 build-tools;36.0.0'
       - name: Collect untrusted dependency evidence
         run: python tools/audit_gradle_inventory.py --build "${{ matrix.build }}" --output "$RUNNER_TEMP/f03-inventory-${{ matrix.build }}"
+      - name: Compare published checksum sidecars
+        run: python tools/audit_published_checksums.py --inventory "$RUNNER_TEMP/f03-inventory-${{ matrix.build }}/artifacts.json" --output "$RUNNER_TEMP/f03-inventory-${{ matrix.build }}/published-checksums.json"
       - name: Upload provisional inventory
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
