@@ -1,0 +1,62 @@
+name: Mid-audit R02 Kotlin
+on:
+  push:
+    branches: [audit-mid-r02]
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify audit parent and wrapper
+        run: |
+          test "$(git rev-parse HEAD^)" = 122d81b05fb0fc56020fb3d03b667545eb6671c3
+          test "$(git diff HEAD^ HEAD --name-only | wc -l)" -eq 3
+          test -z "$(git diff HEAD^ HEAD -- modules/domain modules/intelligence apps)"
+          echo "b3a875ddc1f044746e1b1a55f645584505f4a10438c1afea9f15e92a7c42ec13  gradle/wrapper/gradle-wrapper.jar" | sha256sum -c -
+      - name: Clean baseline domain
+        run: |
+          ./gradlew -p modules/domain clean test --rerun-tasks --no-build-cache --no-daemon
+          python tools/check_domain_results.py modules/domain/build/test-results/test
+      - name: Clean baseline intelligence
+        run: |
+          ./gradlew -p modules/intelligence clean test --rerun-tasks --no-build-cache --no-daemon
+          python modules/intelligence/tools/check_junit_xml.py --dir modules/intelligence/build/test-results/test --files 9 --tests 72
+      - name: Preserve baseline XML
+        run: |
+          mkdir -p audit-results/domain audit-results/intelligence
+          cp modules/domain/build/test-results/test/TEST-*.xml audit-results/domain/
+          cp modules/intelligence/build/test-results/test/TEST-*.xml audit-results/intelligence/
+      - name: Run isolated audit probes
+        run: |
+          cp tests/audit/R02/MidAuditR02.kt modules/intelligence/src/test/kotlin/MidAuditR02.kt
+          ./gradlew -p modules/intelligence clean test --tests io.github.scarlel96.aura.audit.MidAuditR02 --rerun-tasks --no-build-cache --no-daemon
+          python modules/intelligence/tools/check_junit_xml.py --dir modules/intelligence/build/test-results/test --files 1 --tests 9
+          python - <<'PY'
+          import xml.etree.ElementTree as ET
+          from pathlib import Path
+          p = Path('modules/intelligence/build/test-results/test/TEST-io.github.scarlel96.aura.audit.MidAuditR02.xml')
+          root = ET.parse(p).getroot()
+          for out in root.findall('.//system-out'):
+              print(out.text or '')
+          PY
+      - name: Upload audit evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mid-audit-r02-junit
+          path: |
+            audit-results/
+            modules/intelligence/build/test-results/test/TEST-*.xml
+          if-no-files-found: error
