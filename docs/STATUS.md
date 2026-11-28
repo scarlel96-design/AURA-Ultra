@@ -4,15 +4,15 @@
 | 항목 | 현재 값 |
 |---|---|
 | 정본 | main |
-| 최종 검증 코드 | 27c2f6f891731bcfaed4fa6ccc8a9a5eb7b13f36 |
-| main 회귀 | [46114370240](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46114370240) Linux 374 PASS; [46114370204](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46114370204) Windows 374×2 PASS; doc SUCCESS. Domain 이전 81 PASS. |
+| 최종 검증 코드 | b7c8542123901cc49430a35f696a01e21efba915 |
+| main 회귀 | [46117540962](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46117540962) Linux 383 PASS; [46117540990](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46117540990) Windows 383×2 PASS; [Domain](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46117540979) 81 PASS·검사기 15 PASS; doc SUCCESS. |
 | GPT-06 | 독립 준비 종료·중단 / PARTIAL (실기기 및 동적 효과 미검증) |
 | GPT-04/05 | PARTIAL |
 | GPT-07 | NOT STARTED / 사용자 별도 승인 대기 |
 | 정식 WO GO | 0/38 |
 | GPT 묶음 GO | 3/12 (PARTIAL 독립 준비 종료는 GO에 포함하지 않음) |
 | 출시 | NO-GO |
-| 다음 행동 | D01 JUnit 81+7 등록 통합, 후보 CI SUCCESS. [보고](evidence/MID-AUDIT/D01-JUNIT/REPORT.md). main CI·Grok 시험 복원 대기. PR #5 HOLD; F03/F04 차단. |
+| 다음 행동 | D01 JUnit 등록 GO, PR #5 ef57005a2177 88 PASS 확인. [보고](evidence/MID-AUDIT/D01-JUNIT/REPORT.md). push CI·최종 composite 증거 대기. HOLD; F03/F04 차단. |
 
 ## 근거 및 이관
 - [GPT-06 전체 종료 보고](evidence/GPT-06/REPORT-FINAL-CLOSURE.md). R01~R06 및 OPS-07 독립 준비 산출물 통합·자동 검증 완료. 결합 후보와 main 코드·시험·자산·CI 102개, 보호 경로 38개 blob 동일. 원본 아카이브 8개 SHA 동일. 활성 8개 문서 500021→24609 B(검증 코드 기준).

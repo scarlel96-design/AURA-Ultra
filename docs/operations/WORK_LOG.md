@@ -13,3 +13,5 @@
 - D01 PR #5 df843d75bff5: 81 PASS direct XML; 88 test CI checker FAIL. [마감 지시](agent-orders/GB-01-D01-CLOSEOUT.md). HOLD.
 
 - D01 JUnit 후보 f476e37720e7: 81+7 exact, 15 checker PASS, Domain 81, host 383×3, 4 ZIP/8 APK 직접 검사. 3 경로 선택 통합, main CI PENDING. [보고](../evidence/MID-AUDIT/D01-JUNIT/REPORT.md). PR #5 HOLD.
+
+- D01 JUnit main b7c854212390: Domain 81/검사기 15, host 383×3 PASS, 4 CI SUCCESS, 4 ZIP/8 APK/47 layout 직접 검증. 검사기 GO. D01 ef57005 시험 복원/PR 88 PASS 직접 XML 확인; push 구 검사기 FAIL, 최신 composite 증거 대기. [보고](../evidence/MID-AUDIT/D01-JUNIT/REPORT.md).
