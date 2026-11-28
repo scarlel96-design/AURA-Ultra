@@ -159,6 +159,7 @@ class Round03Test {
             step(reduced.state, sample(moment = at(3), motionReduction = false), openPolicy()),
         )
         assertEquals(ReasonCode.REVISION_EXHAUSTED, clearing.reason)
+        assertEquals(reduced.state.copy(processedAt = at(3)), clearing.state)
         assertEquals(at(3), clearing.state.processedAt)
         assertEquals(Long.MAX_VALUE, clearing.state.revision)
         assertFalse(clearing.state.emission.motionAllowed)

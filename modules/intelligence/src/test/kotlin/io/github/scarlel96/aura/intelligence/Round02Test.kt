@@ -299,6 +299,7 @@ class Round02Test {
             step(maxed, sample(moment = at(1), light = reading("NIGHT", "token")), policy),
         )
         assertEquals(ReasonCode.REVISION_EXHAUSTED, blocked.reason)
+        assertEquals(maxed.copy(processedAt = at(1)), blocked.state)
         assertEquals(at(1), blocked.state.processedAt)
         assertEquals(50.0, blocked.state.emission.publishedBatteryPercent)
         assertEquals(LightAxis.DAY, blocked.state.light)

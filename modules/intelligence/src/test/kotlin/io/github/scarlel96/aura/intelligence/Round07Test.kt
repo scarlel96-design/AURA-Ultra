@@ -149,6 +149,7 @@ class Round07Test {
         val published = advanced(step(null, sample(battery = reading(80.0, "percent", expiresAt = at(30))), policy))
         val maxed = published.state.copy(revision = Long.MAX_VALUE)
         val stillFresh = assertIs<StepResult.LimitReached>(step(maxed, sample(moment = at(29)), policy))
+        assertEquals(maxed.copy(processedAt = at(29)), stillFresh.state)
         assertEquals(at(29), stillFresh.state.processedAt)
         assertEquals(Long.MAX_VALUE, stillFresh.state.revision)
         assertEquals(80.0, stillFresh.state.emission.publishedBatteryPercent)
@@ -252,6 +253,7 @@ class Round07Test {
         val stalled = assertIs<StepResult.LimitReached>(
             step(ceiling, sample(moment = at(2)), policy, explicitRelease.deliverySequence),
         )
+        assertEquals(ceiling.copy(processedAt = at(2)), stalled.state)
         assertEquals(at(2), stalled.state.processedAt)
         assertFalse(stalled.state.emission.motionAllowed)
         assertEquals(Long.MAX_VALUE, stalled.state.revision)

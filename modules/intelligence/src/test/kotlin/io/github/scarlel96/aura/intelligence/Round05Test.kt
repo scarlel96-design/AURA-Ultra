@@ -248,6 +248,7 @@ class Round05Test {
         assertNotNull(reduced.deliveredIntent())
         assertEquals(Long.MAX_VALUE, reduced.intent.revision)
         assertFalse(reduced.intent.motionAllowed)
+        assertEquals(reduced.state.copy(processedAt = at(3)), blocked.state)
         assertEquals(at(3), blocked.state.processedAt)
         assertEquals(Long.MAX_VALUE, blocked.state.revision)
         assertFalse(blocked.state.emission.motionAllowed)

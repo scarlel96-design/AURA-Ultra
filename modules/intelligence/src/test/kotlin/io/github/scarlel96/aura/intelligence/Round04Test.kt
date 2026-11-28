@@ -87,6 +87,7 @@ class Round04Test {
         val unchanged = assertIs<StepResult.LimitReached>(
             step(reduced.state, sample(moment = at(2), motionReduction = false), openPolicy()),
         )
+        assertEquals(reduced.state.copy(processedAt = at(2)), unchanged.state)
         assertEquals(at(2), unchanged.state.processedAt)
         assertEquals(Long.MAX_VALUE, unchanged.state.revision)
         assertFalse(unchanged.state.emission.motionAllowed)
