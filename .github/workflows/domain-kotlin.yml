@@ -51,8 +51,12 @@ jobs:
         run: echo "b3a875ddc1f044746e1b1a55f645584505f4a10438c1afea9f15e92a7c42ec13  gradle/wrapper/gradle-wrapper.jar" | sha256sum -c -
       - name: Clean Kotlin domain tests
         run: ./gradlew -p modules/domain clean test --rerun-tasks --no-build-cache --no-daemon
+      - name: Verify evidence checker
+        run: python -m unittest discover -s tests/unit -p test_domain_results.py -v
       - name: Validate JUnit evidence
-        run: python tools/check_domain_results.py modules/domain/build/test-results/test
+        env:
+          DOMAIN_HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+        run: python tools/check_domain_results.py modules/domain/build/test-results/test --ci
       - name: Upload JUnit XML
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
