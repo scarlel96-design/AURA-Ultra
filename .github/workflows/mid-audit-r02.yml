@@ -12,6 +12,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
+          fetch-depth: 0
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -21,9 +22,9 @@ jobs:
           python-version: '3.12'
       - name: Verify audit parent and wrapper
         run: |
-          test "$(git rev-parse HEAD^)" = 122d81b05fb0fc56020fb3d03b667545eb6671c3
-          test "$(git diff HEAD^ HEAD --name-only | wc -l)" -eq 3
-          test -z "$(git diff HEAD^ HEAD -- modules/domain modules/intelligence apps)"
+          git merge-base --is-ancestor 122d81b05fb0fc56020fb3d03b667545eb6671c3 HEAD
+          test "$(git diff 122d81b05fb0fc56020fb3d03b667545eb6671c3 HEAD --name-only | wc -l)" -eq 3
+          test -z "$(git diff 122d81b05fb0fc56020fb3d03b667545eb6671c3 HEAD -- modules/domain modules/intelligence apps)"
           echo "b3a875ddc1f044746e1b1a55f645584505f4a10438c1afea9f15e92a7c42ec13  gradle/wrapper/gradle-wrapper.jar" | sha256sum -c -
       - name: Clean baseline domain
         run: |
