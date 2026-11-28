@@ -55,3 +55,5 @@
 - F03 R10 시작: R09 정책 CI SUCCESS, 7bb1331b024f80d47ab349dc51c37ff0defa0ae8 권고/marker 수집. GB R07 18 XML 93/81, 25 blobs 및 6 CI/8 jobs 대조; R08 지시서 작성. [기록](../evidence/MID-AUDIT/F03/REPORT-R10-START.md).
 
 - F03 R10: 46102297170 SUCCESS, 52/52 권고 원문 및 POM 2개 direct ZIP 검증; 3 critical/21 high, 92 exact version associations, buildscript/UTP; Portal hash match. [보고](../evidence/MID-AUDIT/F03/REPORT-R10.md). 제품/신뢰 미변경.
+
+- F03 R11: 6a651984c3e3377b5cf15baf8d175cf5e26a38d8 AGP9.5.1/Gradle9.6.1 scratch 후보, 46103946447 focused PASS/실행 PENDING. [보고](../evidence/MID-AUDIT/F03/REPORT-R11.md). R10 전체 CI SUCCESS. 제품 미변경.
