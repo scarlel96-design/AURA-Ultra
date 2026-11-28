@@ -44,14 +44,62 @@ revision 비교, 중복, 충돌, TTL, 0, null, 단위, 오류 상태는 바꾸�
 
 Bootstrap은 intelligence 시험이 아니다. Domain Kotlin이 이번 도메인 변경의 CI다.
 
+## D01-CLOSEOUT
+
+최종 코드 SHA `ef57005a2177bf87db3193c454ca6888be819df0`. 위 81개 배치의 본문에 `ClassifiedValue.Reading`, `StatusDerivation.Unchanged`, `StatusDerivation.DegradedToStale` 생성과 `copy`의 스칼라 검사를 더했다. `Observation`과 `StatusDerivation.Rejected`는 검증 전 입력으로 남긴다. 공개 생성자 시그니처는 바꾸지 않았다. 직접 생성 호출은 `classifiedValue()`와 `deriveStatus()`뿐이다. Intelligence는 이 생성자를 호출하지 않는다. revision 우선순위, F04, C01은 바꾸지 않았다.
+
+`PayloadIntegrityTest` 7개 메서드를 `4cf8584`에서 복원했다. 기존 81개 `@Test` 이름과 단언은 유지했다. `df843d7`이 기존 메서드 안에 넣었던 보조 호출은 복원된 시험과 범위가 같아 제거했다. 검사는 숨기지 않았다. 공통 검사기와 CI는 수정하지 않았다.
+
+GPT가 등록할 정확한 추가 메서드 이름은 다음 7개다.
+
+- `mutableListDoesNotReplaceStoredScalarOrChangeDuplicateVerdict`
+- `mapSetNestedArrayAndCustomPayloadsAreRejected`
+- `cyclicCustomObjectIsRejectedWithoutBeingWalked`
+- `classifiedValueDoesNotPublishAMutablePayload`
+- `directCursorConstructionRejectsMutablePayload`
+- `scalarZeroNullAndDeniedStayAccepted`
+- `higherRevisionStillReplacesEarlierDenial`
+
+생성자 보완 전 [junit-d01-boundary-red](junit-d01-boundary-red): `classifiedValueDoesNotPublishAMutablePayload` 1건 실패. `ClassifiedValue.Reading`이 가변 리스트 `[1]`을 `VALID`로 만들었다. 나머지 6개 메서드는 통과했다. 시각 `2026-11-28T06:36:50.463Z`.
+
+수정 후 JDK 17 clean `--offline --no-daemon --no-build-cache`:
+
+| 시험 | 결과 | 로그 |
+|---|---|---|
+| Domain | 88 PASS, 0 FAIL, 0 ERROR, 0 SKIP. XML 8파일. `2026-11-28T06:38:45.360Z`–`2026-11-28T06:38:45.616Z`. BUILD SUCCESSFUL in 31s | [domain-test-summary-d01-closeout.log](domain-test-summary-d01-closeout.log), [junit-d01-closeout](junit-d01-closeout) |
+| Intelligence `e050937`, `includeBuild("../domain")`, 도메인 본문 SHA256 8파일 일치 | 108 PASS, 0 FAIL, 0 ERROR, 0 SKIP. XML 13파일. `longRunKeepsInvariants` PASS. `2026-11-28T06:40:10.945Z`–`2026-11-28T06:40:15.670Z`. BUILD SUCCESSFUL in 46s | [intelligence-test-summary-d01-closeout.log](intelligence-test-summary-d01-closeout.log), [junit-d01-closeout-intelligence](junit-d01-closeout-intelligence) |
+
+로컬 `tools/check_domain_results.py`는 `Unknown or duplicate suite: io.github.scarlel96.aura.domain.PayloadIntegrityTest`로 실패했다. 이 실패를 PASS로 적지 않는다. 이 브랜치는 검사기를 수정하지 않았다.
+
+## CI
+
+코드 SHA `ef57005a2177bf87db3193c454ca6888be819df0`. Historical WFF는 시작하지 않았다. 마감 증거 커밋은 기록 커밋이 가리킨다.
+
+브랜치 push의 Domain Kotlin은 등록 전 검사기다. `Clean Kotlin domain tests`는 success이고 `Validate JUnit evidence`만 실패했다. 원인은 `Unknown or duplicate suite: io.github.scarlel96.aura.domain.PayloadIntegrityTest`다. 이 결과를 PASS로 적지 않는다.
+
+main `6645d35`가 같은 7개 메서드를 D01 목록으로 등록했다. pull_request는 그 목록으로 병합 커밋을 검사해 `DOMAIN_RESULT 88 PASS / 0 FAIL / 0 ERROR / 0 SKIP`을 출력했다. 이 브랜치에 tools나 workflow를 병합하지 않았다.
+
+| 워크플로 | 이벤트 | run | job | 결과 |
+|---|---|---|---|---|
+| Domain Kotlin | push | 46117711549 | 140895136540 | failure. 시험 success, JUnit 목록 단계 failure |
+| Domain Kotlin | pull_request | 46117715542 | 140895149260 | success. Clean Kotlin domain tests, Validate JUnit evidence, 88 PASS |
+| AURA Bootstrap | push | 46117711548 | 140895137119 | success, 31 steps |
+| AURA Bootstrap | pull_request | 46117715589 | 140895149661 | success, 31 steps |
+| Windows host reproducibility | push | 46117711553 | 140895136633 host(true), 140895136808 host(false) | success. Full host regression |
+| Windows host reproducibility | pull_request | 46117715539 | 140895149268 host(true), 140895149536 host(false) | success. Full host regression |
+| Active documentation budget | push | 46117711562 | 140895136381 | success |
+| Active documentation budget | pull_request | 46117715521 | 140895149024 | success |
+
+보고 시점 `origin/main`은 `c646860948860d14b376a548fb50019a88c3dc9f`다. 차이는 중앙 문서와 이 마감 지시서다. Domain 파일과 겹치지 않아 병합하지 않았다. 중앙 STATUS 문장은 바꾸지 않았다.
+
 ## 게이트
 
 | 게이트 | 결과 |
 |---|---|
 | G0 | PASS. 착수 main에서 새 브랜치. 제품 NO-GO. 이후 main `f3f3340`과 충돌 없음 |
 | G1 | PASS, 한계 있음. 가변 페이로드는 거절. revision과 철회 시각의 우선순위는 합의 전 |
-| G2 | PASS. 기존 81개 메서드와 고정 검사기 |
-| G3 | PASS. 81, 108, 100000. FAIL/ERROR/SKIP 0 |
+| G2 | 브랜치 push 검사기는 등록 전 FAIL. main과 합친 pull_request 검사는 `DOMAIN_RESULT 88 PASS` |
+| G3 | PASS. Domain 88, Intelligence 108, 100000. JUnit FAIL/ERROR/SKIP 0 |
 | G4 | PASS, 제한. 스칼라 소비자와 거절 경로. 실기기 NOT RUN |
 | G5 | PASS, 자기 재검토. 독립 검수 NOT RUN |
 | G6 | PASS, 제품 NO-GO. 로그와 XML. Bootstrap은 intelligence 시험이 아니다 |
