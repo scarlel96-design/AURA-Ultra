@@ -110,6 +110,8 @@ class Round08CloseoutTest {
                     alert = reading(true, "flag", observedAt = at(10)),
                     activity = reading("EXERCISE", "token", observedAt = at(10)),
                     light = reading("NIGHT", "token", observedAt = at(10)),
+                    connectivity = reading("OFFLINE", "token", observedAt = at(10)),
+                    userMode = reading("WORK", "token", observedAt = at(10)),
                 ),
                 policy,
             ),
@@ -118,6 +120,8 @@ class Round08CloseoutTest {
         assertEquals(WeatherAxis.ALERT, current.state.weather)
         assertEquals(ActivityAxis.EXERCISE, current.state.activity)
         assertEquals(LightAxis.NIGHT, current.state.light)
+        assertEquals(ConnectivityAxis.OFFLINE, current.state.connectivity)
+        assertEquals(UserModeAxis.WORK, current.state.userMode)
         val revoked = advanced(
             step(
                 current.state,
@@ -128,6 +132,8 @@ class Round08CloseoutTest {
                     alert = reading(null, "flag", status = ObservationStatus.ERROR, observedAt = at(20)),
                     activity = reading(null, "token", status = ObservationStatus.UNAVAILABLE, observedAt = at(20)),
                     light = reading(null, "token", status = ObservationStatus.DENIED, observedAt = at(20)),
+                    connectivity = reading(null, "token", status = ObservationStatus.ERROR, observedAt = at(20)),
+                    userMode = reading(null, "token", status = ObservationStatus.UNAVAILABLE, observedAt = at(20)),
                 ),
                 policy,
             ),
@@ -142,6 +148,8 @@ class Round08CloseoutTest {
                     alert = reading(null, "flag", status = ObservationStatus.ERROR, observedAt = at(12)),
                     activity = reading(null, "token", status = ObservationStatus.UNAVAILABLE, observedAt = at(12)),
                     light = reading(null, "token", status = ObservationStatus.DENIED, observedAt = at(12)),
+                    connectivity = reading(null, "token", status = ObservationStatus.ERROR, observedAt = at(12)),
+                    userMode = reading(null, "token", status = ObservationStatus.UNAVAILABLE, observedAt = at(12)),
                 ),
                 policy,
             ),
@@ -150,6 +158,8 @@ class Round08CloseoutTest {
         assertEquals(at(20), late.state.observationMemory.alert?.observedAt)
         assertEquals(at(20), late.state.observationMemory.activity?.observedAt)
         assertEquals(at(20), late.state.observationMemory.light?.observedAt)
+        assertEquals(at(20), late.state.observationMemory.connectivity?.observedAt)
+        assertEquals(at(20), late.state.observationMemory.userMode?.observedAt)
         val midpoint = advanced(
             step(
                 late.state,
@@ -160,6 +170,8 @@ class Round08CloseoutTest {
                     alert = reading(true, "flag", observedAt = at(15)),
                     activity = reading("REST", "token", observedAt = at(15)),
                     light = reading("DAY", "token", observedAt = at(15)),
+                    connectivity = reading("ONLINE", "token", observedAt = at(15)),
+                    userMode = reading("DEFAULT", "token", observedAt = at(15)),
                 ),
                 policy,
             ),
@@ -168,6 +180,8 @@ class Round08CloseoutTest {
         assertEquals(WeatherAxis.UNKNOWN, midpoint.state.weather)
         assertEquals(ActivityAxis.UNKNOWN, midpoint.state.activity)
         assertEquals(LightAxis.NIGHT, midpoint.state.light)
+        assertEquals(ConnectivityAxis.OFFLINE, midpoint.state.connectivity)
+        assertEquals(UserModeAxis.WORK, midpoint.state.userMode)
         val later = advanced(
             step(
                 midpoint.state,
@@ -176,12 +190,16 @@ class Round08CloseoutTest {
                     battery = battery(80.0, at(10)),
                     charging = reading(false, "flag", observedAt = at(24)),
                     light = reading("DAY", "token", observedAt = at(24)),
+                    connectivity = reading("ONLINE", "token", observedAt = at(24)),
+                    userMode = reading("SLEEP", "token", observedAt = at(24)),
                 ),
                 policy,
             ),
         )
         assertEquals(PowerAxis.NORMAL, later.state.power)
         assertEquals(LightAxis.DAY, later.state.light)
+        assertEquals(ConnectivityAxis.ONLINE, later.state.connectivity)
+        assertEquals(UserModeAxis.SLEEP, later.state.userMode)
     }
 
     @Test
