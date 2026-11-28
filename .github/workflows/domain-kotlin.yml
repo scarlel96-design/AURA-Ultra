@@ -45,7 +45,7 @@ jobs:
         shell: bash
         run: |
           rc=0
-          git config --local --get-regexp '^http\..*\.extraheader$' >/dev/null 2>&1 || rc=$?
+          git config --local --name-only --get-regexp '^http\..*\.extraheader$' >/dev/null 2>&1 || rc=$?
           test "$rc" -eq 1
       - name: Verify Gradle wrapper
         run: echo "b3a875ddc1f044746e1b1a55f645584505f4a10438c1afea9f15e92a7c42ec13  gradle/wrapper/gradle-wrapper.jar" | sha256sum -c -

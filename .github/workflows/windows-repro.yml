@@ -28,8 +28,9 @@ jobs:
       - name: Confirm checkout credentials are not persisted
         shell: pwsh
         run: |
-          $null = git config --local --get-regexp '^http\..*\.extraheader$' 2>$null
+          $null = git config --local --name-only --get-regexp '^http\..*\.extraheader$' 2>$null
           if ($LASTEXITCODE -ne 1) { throw "Unexpected checkout credential state" }
+          exit 0
       - name: Confirm checkout mode
         shell: pwsh
         run: |
