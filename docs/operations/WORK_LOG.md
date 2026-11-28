@@ -17,3 +17,5 @@
 - D01 JUnit main b7c854212390: Domain 81/검사기 15, host 383×3 PASS, 4 CI SUCCESS, 4 ZIP/8 APK/47 layout 직접 검증. 검사기 GO. D01 ef57005 시험 복원/PR 88 PASS 직접 XML 확인; push 구 검사기 FAIL, 최신 composite 증거 대기. [보고](../evidence/MID-AUDIT/D01-JUNIT/REPORT.md).
 
 - D01 최종 검수: ef57005 → c7cef1d, 원본 XML 21개/88+108 PASS, red 1 FAIL, 9/10 CI jobs SUCCESS; push 구 검사기 FAIL. [검수](../evidence/MID-AUDIT/D01-CLOSEOUT-REVIEW.md). 최신 main 반영·push/PR CI 재검증 대기, HOLD.
+
+- D01 bfb115a main 병합, Domain 소스 변경 없음, 신규 CI PENDING. [권한 철회 계약 후보·14 시험](../evidence/MID-AUDIT/REVOCATION-CONTRACT-REVIEW.md) 사전 검토, 미승인/PARTIAL. 소스 변경 없음.
