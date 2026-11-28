@@ -2,6 +2,7 @@
 
 상태: 로컬 구현과 로컬 시험만 완료. 브랜치 `agent/grok/GB-02-RV02`는 push하지 않았다. 공통 CI와 검사기 등록 전이다. 제품 판정은 NO-GO. PR #3, PR #5, PR #6은 변경하지 않았고 병합하지 않았다.
 
+구현 커밋: `dbacc75d559699963eeeb8d9da40692f07b8ddf2`
 부모: `0c4890ea7f69c6145791d17d51b98c97fed45c1d` (`agent/grok/GB-02` G01 최종 HEAD)
 Domain 오버레이: `558e18804d08ebd4d79be620962c256e0af07f96`
 이 오버레이의 `modules/domain` blob은 그 SHA와 같고, 이 브랜치 커밋에는 넣지 않는다.
