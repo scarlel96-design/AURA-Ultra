@@ -4,7 +4,7 @@ on:
     branches: [audit-f03-r03-gradle-inventory]
     paths:
       - '.github/workflows/f03-review.yml'
-      - 'tools/audit_dependency_review.py'
+      - 'tools/audit_advisory_details.py'
       - 'tests/unit/test_f03_r09.py'
 permissions:
   contents: read
@@ -28,14 +28,13 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          curl --fail --silent --show-error --location --max-time 90 -H "Authorization: Bearer $GH_TOKEN" "https://api.github.com/repos/${{ github.repository }}/actions/artifacts/15244580797/zip" -o "$RUNNER_TEMP/android.zip"
-          curl --fail --silent --show-error --location --max-time 90 -H "Authorization: Bearer $GH_TOKEN" "https://api.github.com/repos/${{ github.repository }}/actions/artifacts/15243159878/zip" -o "$RUNNER_TEMP/domain.zip"
-      - name: Review prior inventory without rebuilding
-        run: python tools/audit_dependency_review.py --android "$RUNNER_TEMP/android.zip" --domain "$RUNNER_TEMP/domain.zip" --output "$RUNNER_TEMP/f03-review"
+          curl --fail --silent --show-error --location --max-time 90 -H "Authorization: Bearer $GH_TOKEN" "https://api.github.com/repos/${{ github.repository }}/actions/artifacts/15245995993/zip" -o "$RUNNER_TEMP/review.zip"
+      - name: Retrieve advisory details and compare marker POMs
+        run: python tools/audit_advisory_details.py --review "$RUNNER_TEMP/review.zip" --output "$RUNNER_TEMP/f03-review"
       - name: Preserve dependency review
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: f03-dependency-review
+          name: f03-advisory-details
           path: ${{ runner.temp }}/f03-review/
           if-no-files-found: error

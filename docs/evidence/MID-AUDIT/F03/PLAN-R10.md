@@ -1,0 +1,1 @@
+R10 audit-only evidence retrieval. Exact R09 ZIP SHA; retrieve 52 OSV GHSA records and original affected/severity/range/alias data, preserve raw repository marker POM bytes for comparison with prior hash. No inferred fixed version, no trust promotion or production change. Original R09 workflow preserved in its commit. Independent semantic triage and graph scope review pending.
