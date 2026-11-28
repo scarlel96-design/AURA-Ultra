@@ -4,7 +4,7 @@
 
 일자: 2026-11-28. 작업자: Grok Build. G5는 자기 재검토다.
 
-기준: 착수 시점 `origin/main` `300edd17c95d22d6a0eceeba243299c9f8260664`. 보고 시점 `origin/main`은 `f3f3340ff5875176b526c5bb0e7c418c8c8a2739`다. 그 차이는 host repair, 중앙 문서, tools다. `modules/domain`과 겹치지 않고 PR #5는 MERGEABLE이다. D01은 그 커밋을 병합하지 않았고 tools와 중앙 문서를 수정하지 않았다. 브랜치 `agent/grok/GB-01-D01`. 동작 SHA `4cf85845a768e469d34fb26ae36914fffd009130`. 시험 배치 SHA `df843d75bff522dfd13f895e82ee07827626c9a5`. 두 SHA의 `modules/domain/src/main`은 같다. Intelligence 후보는 `e050937fd34709d143836e44bbf91ec5221bdc48`이고, 그 작업 트리의 `modules/domain/src/main`은 위 SHA와 차이가 없다. 연결은 `modules/intelligence/settings.gradle.kts`의 `includeBuild("../domain")`다. 증거 커밋 SHA는 기록 커밋이 가리킨다.
+기준: 착수 시점 `origin/main` `300edd17c95d22d6a0eceeba243299c9f8260664`. 보고 시점 `origin/main`은 `f3f3340ff5875176b526c5bb0e7c418c8c8a2739`다. 그 차이는 host repair, 중앙 문서, tools다. `modules/domain`과 겹치지 않고 PR #5는 MERGEABLE이다. D01은 그 커밋을 병합하지 않았고 tools와 중앙 문서를 수정하지 않았다. 브랜치 `agent/grok/GB-01-D01`. 동작 SHA `4cf85845a768e469d34fb26ae36914fffd009130`. 시험 배치 SHA `df843d75bff522dfd13f895e82ee07827626c9a5`. 두 SHA의 `modules/domain/src/main`은 같다. Intelligence 후보는 `e050937fd34709d143836e44bbf91ec5221bdc48`이고, 그 작업 트리의 `modules/domain/src/main`은 위 SHA와 차이가 없다. 연결은 `modules/intelligence/settings.gradle.kts`의 `includeBuild("../domain")`다. 증거 커밋은 `fd5a5c4547728d279ab1ffee9aa657bd40914fe5`다.
 
 PRE-FLIGHT: PASS. PR #3은 OPEN이고 `mergedAt`은 null이며 head는 `0c4890ea7f69c6145791d17d51b98c97fed45c1d`다. STATUS의 다음 행동은 “Host 재현성 후보 4cf403199dd1; 3.14.7 PNG drift 재현. 공통 CI 확인 후 선택 통합. GPT-07/실기기 별도 승인.”이다. 그 문장을 바꾸지 않았다. 변경 전 Domain 시험은 81 PASS였다. 실제 소비 타입은 `Double`, `Boolean`, `String`, `Int`, `Long`, `Float`다.
 
