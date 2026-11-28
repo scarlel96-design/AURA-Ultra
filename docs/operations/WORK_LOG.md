@@ -17,3 +17,5 @@
 - F01 사용자 착수 승인. R01 4개 개선 대상 후보 994b5011e1cc338b482e22ca6ac942304bf8643b; [red](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46089721067) 330 tests/22 실패 assertions, [green](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46089767751) host SUCCESS/Android 단계 PENDING, doc SUCCESS. [체크포인트](../evidence/MID-AUDIT/F01/REPORT-R01.md). 제품/외부 브랜치 변경 없음. 전체 CI 후 통합 및 R02.
 
 - F01 R01 후보 46089767751 SUCCESS 330 PASS/4 APK, artifact 15240069149 직접 hash/CRC/XML/PNG PASS; 정확한 7개 blob 통합, main CI PENDING. [검증](../evidence/MID-AUDIT/F01/REPORT-R01-VERIFIED.md). GB R05 최신 PR 대조, [G01 R06 지시서](agent-orders/GB-02-G01-R06.md) 작성. GPT-07 미착수.
+
+- F01 R01 main 46090317180 SUCCESS 330 PASS, doc 46090317238 SUCCESS. F01 R02 2f6e78d04b328e3bb58e157f1623196f101fb796 후보 16 신규 methods, red 46091036843 346 tests/20 failed assertions. Green 46091098873/46091098810 및 doc 46091098801, [R02 보고](../evidence/MID-AUDIT/F01/REPORT-R02.md). main 코드 미변경, 출시 NO-GO.
