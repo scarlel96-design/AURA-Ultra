@@ -19,3 +19,5 @@
 - F01 R01 후보 46089767751 SUCCESS 330 PASS/4 APK, artifact 15240069149 직접 hash/CRC/XML/PNG PASS; 정확한 7개 blob 통합, main CI PENDING. [검증](../evidence/MID-AUDIT/F01/REPORT-R01-VERIFIED.md). GB R05 최신 PR 대조, [G01 R06 지시서](agent-orders/GB-02-G01-R06.md) 작성. GPT-07 미착수.
 
 - F01 R01 main 46090317180 SUCCESS 330 PASS, doc 46090317238 SUCCESS. F01 R02 2f6e78d04b328e3bb58e157f1623196f101fb796 후보 16 신규 methods, red 46091036843 346 tests/20 failed assertions. Green 46091098873/46091098810 및 doc 46091098801, [R02 보고](../evidence/MID-AUDIT/F01/REPORT-R02.md). main 코드 미변경, 출시 NO-GO.
+
+- F01 R03: 후보 Bootstrap 46091098873 SUCCESS 346 PASS; Domain 46091098810 SUCCESS 81 PASS; doc 46091098801 SUCCESS. 4 artifacts 직접 검사, XML/PNG 동일. 이전 main 46091179097 FAIL (HTTP 429). exact 6 paths 통합 및 [보고](../evidence/MID-AUDIT/F01/REPORT-R03.md); 통합 회귀 PENDING. F02 미착수.

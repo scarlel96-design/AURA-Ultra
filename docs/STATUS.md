@@ -12,7 +12,7 @@
 | 정식 WO GO | 0/38 |
 | GPT 묶음 GO | 3/12 (PARTIAL 독립 준비 종료는 GO에 포함하지 않음) |
 | 출시 | NO-GO |
-| 다음 행동 | F01 R02 후보 CI/증거 검증 → 안전 통합 → main 회귀 확인. GPT-07 및 실기기 설치는 별도 승인 대기. |
+| 다음 행동 | F01 R02 통합 main 회귀 확인 → F01 종료 판정 → F02 재현성 개선. GPT-07 및 실기기 설치는 별도 승인 대기. |
 
 ## 근거 및 이관
 - [GPT-06 전체 종료 보고](evidence/GPT-06/REPORT-FINAL-CLOSURE.md). R01~R06 및 OPS-07 독립 준비 산출물 통합·자동 검증 완료. 결합 후보와 main 코드·시험·자산·CI 102개, 보호 경로 38개 blob 동일. 원본 아카이브 8개 SHA 동일. 활성 8개 문서 500021→24609 B(검증 코드 기준).
@@ -36,4 +36,6 @@
 
 - [F01 R01 후보 검증](evidence/MID-AUDIT/F01/REPORT-R01-VERIFIED.md): 330 PASS, 4 APK/메모리/서명/원본 XML·PNG SHA 일치. 다음 F01 R02 후보 검증. [GB-02 G01 R06 지시서](operations/agent-orders/GB-02-G01-R06.md): 사용자 전달용, 실행 확인 전; PR #3 HOLD. 기존 72/81 재시험 증거 보존.
 
-- [F01 R02](evidence/MID-AUDIT/F01/REPORT-R02.md): AUD-R01-03/04/05 후보 2f6e78d04b328e3bb58e157f1623196f101fb796; red 346 methods/20 실패 assertions 재현. Green Bootstrap 46091098873 PENDING, Domain 46091098810 PENDING, doc 46091098801 SUCCESS. 전체 증거 확인 전 main 통합 금지. GPT-07 미착수.
+- [F01 R02](evidence/MID-AUDIT/F01/REPORT-R02.md): AUD-R01-03/04/05 후보 2f6e78d04b328e3bb58e157f1623196f101fb796; red 346 methods/20 실패 assertions 재현. Green Bootstrap 46091098873 SUCCESS 346 PASS, Domain 46091098810 SUCCESS 81 PASS, doc 46091098801 SUCCESS. 후보 검증 완료. GPT-07 미착수.
+
+- [F01 R03](evidence/MID-AUDIT/F01/REPORT-R03.md): 후보 raw log 및 4 artifact 직접 무결성 검사 완료. 6개 exact blob main 통합, 통합 CI PENDING. 이전 main 46091179097 FAIL (Maven Central 429), doc 46091179110 SUCCESS. 의존성/검증 기준 유지. F01 PARTIAL, F02 미착수.
