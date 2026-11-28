@@ -29,3 +29,7 @@
 - F02 R02: R01 Linux 46092110757 및 Windows 46092110752 양쪽 SUCCESS 356 PASS, 3 ZIP/47 layout/4+4 APK 자산 검증. b867b097ec10fcd3f5569db089275536bed43bb6 basic 비번들 입력 통일 및 신규 5 tests; red Linux 361/4 실패 assertions, Windows red 양쪽 FAIL. Green Linux host SUCCESS/Android PENDING, Windows false 361 PASS/true PENDING, doc SUCCESS. [보고](../evidence/MID-AUDIT/F02/REPORT-R02.md). main 코드 미변경.
 
 - F02 R03: b867b097ec10fcd3f5569db089275536bed43bb6, Linux 46092446205/Windows 46092446130 양쪽/문서 46092446153 SUCCESS. 361 PASS씩, 3 ZIP/8 APK/47 layout 직접 검사. 10 exact blob main 통합; 통합 회귀 PENDING. [보고](../evidence/MID-AUDIT/F02/REPORT-R03.md).
+
+- F02 R04: main 59b808d0c542e09e0eaa95caaa781648d2c1377d, Linux 46093358694, Windows 46093358711 양쪽, doc 46093358730 SUCCESS. 361 PASS씩, 3 ZIP/8 APK/47 layout 및 RGBA 직접 검증. F02 4개 scoped RESOLVED; [종료 보고](../evidence/MID-AUDIT/F02/REPORT-R04-FINAL.md). F03 진입.
+
+- F03 R01: c0a75d94dfc37e32a5fea1b52078dfaa215505c1, Actions 19 pin/checkout 5 false, 9 tests 추가. Red 46093822834 370 methods/9 policy errors; 중간 Bootstrap 치환 및 Windows exit 1 오류 수정. 최종 CI 46093989694/46093989703/46093989816/46093989668/46093989722 진행 중. [보고](../evidence/MID-AUDIT/F03/REPORT-R01.md). main 코드 미변경.
