@@ -1,0 +1,41 @@
+name: F03 dependency review
+on:
+  push:
+    branches: [audit-f03-r03-gradle-inventory]
+    paths:
+      - '.github/workflows/f03-review.yml'
+      - 'tools/audit_dependency_review.py'
+      - 'tests/unit/test_f03_r09.py'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: '3.12'
+      - name: Check evidence tool
+        run: python -m unittest discover -s tests/unit -p test_f03_r09.py -v
+      - name: Retrieve exact prior evidence
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --silent --show-error --location --max-time 90 -H "Authorization: Bearer $GH_TOKEN" "https://api.github.com/repos/${{ github.repository }}/actions/artifacts/15244580797/zip" -o "$RUNNER_TEMP/android.zip"
+          curl --fail --silent --show-error --location --max-time 90 -H "Authorization: Bearer $GH_TOKEN" "https://api.github.com/repos/${{ github.repository }}/actions/artifacts/15243159878/zip" -o "$RUNNER_TEMP/domain.zip"
+      - name: Review prior inventory without rebuilding
+        run: python tools/audit_dependency_review.py --android "$RUNNER_TEMP/android.zip" --domain "$RUNNER_TEMP/domain.zip" --output "$RUNNER_TEMP/f03-review"
+      - name: Preserve dependency review
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: f03-dependency-review
+          path: ${{ runner.temp }}/f03-review/
+          if-no-files-found: error
