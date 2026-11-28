@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="io.github.scarlel96.aura.domain.ValidationTest" tests="32" skipped="0" failures="0" errors="0" timestamp="2026-11-28T02:56:55.347Z" hostname="서브컴퓨터" time="0.044">
+  <properties/>
+  <testcase name="malformedRangesAreRejected()" classname="io.github.scarlel96.aura.domain.ValidationTest" time="0.004"/>
+  <testcase name="exclusiveLongEndpointAndMaxValue()" classname="io.github.scarlel96.aura.domain.ValidationTest" time="0.001"/>
+  <testcase name="absentValueSkipsExpectedUnit()" classname="io.github.scarlel96.aura.domain.ValidationTest" time="0.001"/>
+  <testcase name="futureTimestampsStayUncheckedUnlessCallerSelectsPolicy()" classname="io.github.scarlel96.aura.domain.ValidationTest" time="0.001"/>
+  <testcase name="expiryBeforeObservedAtIsStructural()" classname="io.github.scarlel96.aura.domain.ValidationTest" time="0.001"/>
+  <testcase name="absentValueStillSkipsUnitCharacterChecks()" classname="io.github.scarlel96.aura.domain.ValidationTest" time="0.001"/>
+  <testcase name="internalWhitespaceInUnitIsRejectedEvenWhenExpectedMatches()" classname="io.github.scarlel96.aura.domain.ValidationTest" time="0.0"/>
+  <testcase name="deniedAndErrorWithoutValueStayDistinct()" classname="io.github.scarlel96.aura.domain.ValidationTest" time="0.002"/>
+  <testcase name="longRangeAcceptsIntExactlyAndRejectsDouble()" classname="io.github.scarlel96.aura.domain.ValidationTest" time="0.002"/>
+  <testcase name="internalWhitespaceThatIsAlsoAControlCharacterIsRejected()" classname="io.github.scarlel96.aura.domain.ValidationTest" time="0.001"/>
+  <testcase name="allKindsRemainUnchangedByValidation()" classname="io.github.scarlel96.aura.domain.ValidationTest" time="0.002"/>
+  <testcase name="exclusiveAdjacentLongRangeIsEmpty()" classname="io.github.scarlel96.aura.domain.ValidationTest" time="0.001"/>
+  <testcase name="unitMatchIsExactAndDoesNotConvert()" classname="io.github.scarlel96.aura.domain.ValidationTest" time="0.001"/>
+  <testcase name="plainUnitTokensStayAccepted()" classname="io.github.scarlel96.aura.domain.ValidationTest" time="0.001"/>
+  <testcase name="staleZeroRemainsAStaleReading()" classname="io.github.scarlel96.aura.domain.ValidationTest" time="0.0"/>
+  <testcase name="exclusiveDoubleBoundsRejectEndpoints()" classname="io.github.scarlel96.aura.domain.ValidationTest" time="0.001"/>
+  <testcase name="textualZeroIsNotTreatedAsMissing()" classname="io.github.scarlel96.aura.domain.ValidationTest" time="0.001"/>
+  <testcase name="nonWhitespaceControlCharacterInUnitIsRejected()" classname="io.github.scarlel96.aura.domain.ValidationTest" time="0.001"/>
+  <testcase name="injectedDeniedAndUnavailableNumbersAreRejected()" classname="io.github.scarlel96.aura.domain.ValidationTest" time="0.0"/>
+  <testcase name="injectedErrorZeroIsNotAcceptedOrCoerced()" classname="io.github.scarlel96.aura.domain.ValidationTest" time="0.001"/>
+  <testcase name="singlePointRangeAcceptsOnlyThatPoint()" classname="io.github.scarlel96.aura.domain.ValidationTest" time="0.001"/>
+  <testcase name="validOrStaleWithoutValueIsRejectedAndNotRewritten()" classname="io.github.scarlel96.aura.domain.ValidationTest" time="0.001"/>
+  <testcase name="negativeZeroIsAnActualReadingAndIsNotCanonicalized()" classname="io.github.scarlel96.aura.domain.ValidationTest" time="0.0"/>
+  <testcase name="actualZeroStaysAReading()" classname="io.github.scarlel96.aura.domain.ValidationTest" time="0.0"/>
+  <testcase name="missingValueIsUnavailableAndNotZero()" classname="io.github.scarlel96.aura.domain.ValidationTest" time="0.001"/>
+  <testcase name="exclusiveNeighborAndExtremeInclusivePointsStayValid()" classname="io.github.scarlel96.aura.domain.ValidationTest" time="0.002"/>
+  <testcase name="blankOrPaddedUnitIsRejectedWhenValueExists()" classname="io.github.scarlel96.aura.domain.ValidationTest" time="0.0"/>
+  <testcase name="conflictingRangesAreRejectedBeforeComparison()" classname="io.github.scarlel96.aura.domain.ValidationTest" time="0.0"/>
+  <testcase name="equalReferenceTimeIsNotFuture()" classname="io.github.scarlel96.aura.domain.ValidationTest" time="0.001"/>
+  <testcase name="exclusiveExtremeWithNoRepresentableLongIsEmpty()" classname="io.github.scarlel96.aura.domain.ValidationTest" time="0.0"/>
+  <testcase name="nonFiniteFloatsAreRejectedWithoutBecomingZero()" classname="io.github.scarlel96.aura.domain.ValidationTest" time="0.002"/>
+  <testcase name="doubleRangeBoundaries()" classname="io.github.scarlel96.aura.domain.ValidationTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

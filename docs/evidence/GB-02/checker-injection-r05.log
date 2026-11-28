@@ -1,0 +1,25 @@
+tool: modules/intelligence/tools/check_junit_xml.py
+suite: io.github.scarlel96.aura.intelligence.JunitXmlCheckTest
+xml: docs/evidence/GB-02/junit-r05/TEST-io.github.scarlel96.aura.intelligence.JunitXmlCheckTest.xml
+xml tests=13 failures=0 errors=0 skipped=0 timestamp=2026-11-27T23:37:41.264Z
+
+injected defects, all detected:
+rejectsMissingResultFile: empty directory, no TEST-*.xml
+rejectsMissingDirectory: directory does not exist
+rejectsEmptyFile: empty XML
+rejectsCorruptXml: truncated XML
+rejectsZeroTests: tests=0
+rejectsCountMismatch: header total does not match --tests
+rejectsHiddenFailure: failure child with failures=0
+rejectsHiddenError: error child with errors=0
+rejectsHiddenSkip: skipped child with skipped=0
+rejectsDuplicateSuiteAndTestcase: same suite name and same testcase in two files
+rejectsStaleTimestamp: 2020-01-01 timestamp against not-before 2026-11-28
+rejectsHeaderCaseMismatch: tests=2 with one testcase
+acceptsMatchingFreshResults: OK files=2 tests=5
+
+real results after the suites, not reused from an earlier round:
+python modules/intelligence/tools/check_junit_xml.py --dir modules/intelligence/build/test-results/test --files 9 --tests 72 --not-before 2026-11-27T23:37:06Z
+OK files=9 tests=72
+python modules/intelligence/tools/check_junit_xml.py --dir modules/domain/build/test-results/test --files 7 --tests 81 --not-before 2026-11-27T23:38:02Z
+OK files=7 tests=81

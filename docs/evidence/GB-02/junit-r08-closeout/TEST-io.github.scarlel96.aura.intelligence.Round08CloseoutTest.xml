@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="io.github.scarlel96.aura.intelligence.Round08CloseoutTest" tests="9" skipped="0" failures="0" errors="0" timestamp="2026-11-28T05:17:46.872Z" hostname="서브컴퓨터" time="0.027">
+  <properties/>
+  <testcase name="olderSampleDoesNotRepublishANumberWithdrawnByARejectedPolicy()" classname="io.github.scarlel96.aura.intelligence.Round08CloseoutTest" time="0.002"/>
+  <testcase name="missingAndFutureRevocationTimesKeepALaterValueReachable()" classname="io.github.scarlel96.aura.intelligence.Round08CloseoutTest" time="0.001"/>
+  <testcase name="protectionArrivingBeforeTheSessionOpenerDoesNotClearAndMustBeResent()" classname="io.github.scarlel96.aura.intelligence.Round08CloseoutTest" time="0.003"/>
+  <testcase name="lateRevocationDoesNotRestoreOlderPrecipitation()" classname="io.github.scarlel96.aura.intelligence.Round08CloseoutTest" time="0.001"/>
+  <testcase name="ceilingNoOpDoesNotLetAnEarlierResyncBypassClockOrder()" classname="io.github.scarlel96.aura.intelligence.Round08CloseoutTest" time="0.001"/>
+  <testcase name="lateRevocationDoesNotRestoreOlderAxes()" classname="io.github.scarlel96.aura.intelligence.Round08CloseoutTest" time="0.003"/>
+  <testcase name="lateRevocationDoesNotRestoreOlderBattery()" classname="io.github.scarlel96.aura.intelligence.Round08CloseoutTest" time="0.002"/>
+  <testcase name="olderReleaseDoesNotClearProtectionRaisedByARejectedPolicy()" classname="io.github.scarlel96.aura.intelligence.Round08CloseoutTest" time="0.001"/>
+  <testcase name="higherRevisionCanStillPassAnOlderTimeAfterRevocation()" classname="io.github.scarlel96.aura.intelligence.Round08CloseoutTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

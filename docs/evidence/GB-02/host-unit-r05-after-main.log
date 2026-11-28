@@ -1,0 +1,14 @@
+command: python -m unittest discover -s tests/unit -p test_*.py
+head: 14efa08885a7f336bec2138f1d35eed78f3dcaea
+main: 53d43d918c3e3c1002b70473f5de843c0f946d8e
+doc budget: DOC_BUDGET_RESULT pass
+Ran 316 tests in 39.693s
+FAILED (errors=1)
+ERROR: test_checked_in_outputs (test_bootstrap_generator.GeneratorTests.test_checked_in_outputs)
+ValueError: Missing or stale generated file: assets/generated/bootstrap/palette.svg
+cause: Windows working tree CRLF 1329 bytes, generator LF 1309 bytes, git status clean
+PASS: 315
+FAIL: 0
+ERROR: 1
+SKIP: 0
+main Ubuntu record: CI 46083441184 reported 316 PASS for the same test count

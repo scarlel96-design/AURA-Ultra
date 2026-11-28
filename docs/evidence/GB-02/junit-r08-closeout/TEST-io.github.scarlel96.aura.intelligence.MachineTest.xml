@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="io.github.scarlel96.aura.intelligence.MachineTest" tests="17" skipped="0" failures="0" errors="0" timestamp="2026-11-28T05:17:45.452Z" hostname="서브컴퓨터" time="0.096">
+  <properties/>
+  <testcase name="firstStepStartsAtRevisionOneAndDoesNotInferActivity()" classname="io.github.scarlel96.aura.intelligence.MachineTest" time="0.048"/>
+  <testcase name="lowPowerKeepsFreshWeatherNumbersWhileRemovingParticles()" classname="io.github.scarlel96.aura.intelligence.MachineTest" time="0.004"/>
+  <testcase name="urgentAlertBypassesHoldAndCommitsTheCurrentDesiredSensors()" classname="io.github.scarlel96.aura.intelligence.MachineTest" time="0.002"/>
+  <testcase name="freshAlertSurvivesABadPrecipitationSample()" classname="io.github.scarlel96.aura.intelligence.MachineTest" time="0.001"/>
+  <testcase name="chargingIsNotLowPowerAndBypassesHold()" classname="io.github.scarlel96.aura.intelligence.MachineTest" time="0.001"/>
+  <testcase name="powerHysteresisUsesTheCandidateBand()" classname="io.github.scarlel96.aura.intelligence.MachineTest" time="0.002"/>
+  <testcase name="callerScaleIsNotTheDocumentedPercentScale()" classname="io.github.scarlel96.aura.intelligence.MachineTest" time="0.001"/>
+  <testcase name="omittedChannelsKeepStateAndUnusableSettingsDoNotWipeIt()" classname="io.github.scarlel96.aura.intelligence.MachineTest" time="0.002"/>
+  <testcase name="repeatedSamplesAndReturningDesiredDoNotBumpRevision()" classname="io.github.scarlel96.aura.intelligence.MachineTest" time="0.006"/>
+  <testcase name="precipitationHysteresisDoesNotTreatAlertAsPrecip()" classname="io.github.scarlel96.aura.intelligence.MachineTest" time="0.002"/>
+  <testcase name="immediateAxesDoNotResetTheSensorHold()" classname="io.github.scarlel96.aura.intelligence.MachineTest" time="0.002"/>
+  <testcase name="badObservationsAreNotPromotedAndDoNotBecomeZero()" classname="io.github.scarlel96.aura.intelligence.MachineTest" time="0.004"/>
+  <testcase name="clockInversionPublishesNoNumbersAndKeepsTheMachineState()" classname="io.github.scarlel96.aura.intelligence.MachineTest" time="0.001"/>
+  <testcase name="presentationChangesBumpRevisionWhenAxesStay()" classname="io.github.scarlel96.aura.intelligence.MachineTest" time="0.001"/>
+  <testcase name="priorityPrefersCriticalThenPowerThenExerciseThenWeatherThenContext()" classname="io.github.scarlel96.aura.intelligence.MachineTest" time="0.003"/>
+  <testcase name="documentedHoldAndSeparateDebounceKeepThePreviousSensorAxis()" classname="io.github.scarlel96.aura.intelligence.MachineTest" time="0.003"/>
+  <testcase name="suppliedFreshChannelsStayFreshAndObservationsAreUnchanged()" classname="io.github.scarlel96.aura.intelligence.MachineTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

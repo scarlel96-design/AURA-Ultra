@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="io.github.scarlel96.aura.domain.DraftContractTest" tests="12" skipped="0" failures="0" errors="0" timestamp="2026-11-28T12:38:47.817Z" hostname="서브컴퓨터" time="0.031">
+  <properties/>
+  <testcase name="contextBlankTokenIsRejectedAndZeroCharacterStaysOpaque()" classname="io.github.scarlel96.aura.domain.DraftContractTest" time="0.005"/>
+  <testcase name="probabilityKindIsNotRewritten()" classname="io.github.scarlel96.aura.domain.DraftContractTest" time="0.001"/>
+  <testcase name="blankLocationIsRejected()" classname="io.github.scarlel96.aura.domain.DraftContractTest" time="0.001"/>
+  <testcase name="wrongRainKindIsReportedAndNotCoerced()" classname="io.github.scarlel96.aura.domain.DraftContractTest" time="0.001"/>
+  <testcase name="forecastWindowIsSeparateFromObservedAt()" classname="io.github.scarlel96.aura.domain.DraftContractTest" time="0.001"/>
+  <testcase name="missingRainStaysNull()" classname="io.github.scarlel96.aura.domain.DraftContractTest" time="0.0"/>
+  <testcase name="contextDraftDoesNotDefaultMissingAxes()" classname="io.github.scarlel96.aura.domain.DraftContractTest" time="0.0"/>
+  <testcase name="blankReasonCodeIsRejected()" classname="io.github.scarlel96.aura.domain.DraftContractTest" time="0.01"/>
+  <testcase name="observedAndForecastRainStayDistinctIncludingZero()" classname="io.github.scarlel96.aura.domain.DraftContractTest" time="0.0"/>
+  <testcase name="invertedAndEmptyValidityWindowsFail()" classname="io.github.scarlel96.aura.domain.DraftContractTest" time="0.0"/>
+  <testcase name="presentationRevisionZeroIsDistinctFromNull()" classname="io.github.scarlel96.aura.domain.DraftContractTest" time="0.001"/>
+  <testcase name="nestedInvalidObservationFailsTheDraft()" classname="io.github.scarlel96.aura.domain.DraftContractTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="io.github.scarlel96.aura.intelligence.GateTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-11-27T23:37:41.117Z" hostname="서브컴퓨터" time="0.144">
+  <properties/>
+  <testcase name="scaleBoundsAreInclusiveAndAreNotConverted()" classname="io.github.scarlel96.aura.intelligence.GateTest" time="0.088"/>
+  <testcase name="expiryBoundaryAndBadStatusStayUnusable()" classname="io.github.scarlel96.aura.intelligence.GateTest" time="0.033"/>
+  <testcase name="absentIsNotZero()" classname="io.github.scarlel96.aura.intelligence.GateTest" time="0.003"/>
+  <testcase name="uncheckedTokenIsNotExercise()" classname="io.github.scarlel96.aura.intelligence.GateTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

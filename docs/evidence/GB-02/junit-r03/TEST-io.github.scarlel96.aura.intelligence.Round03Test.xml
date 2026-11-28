@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="io.github.scarlel96.aura.intelligence.Round03Test" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-11-27T22:06:56.621Z" hostname="서브컴퓨터" time="0.012">
+  <properties/>
+  <testcase name="chargingExceptionDoesNotBypassUnrelatedWeatherOrActivity()" classname="io.github.scarlel96.aura.intelligence.Round03Test" time="0.001"/>
+  <testcase name="missingExpiryDenialInversionAndRapidRepeatsStayDistinct()" classname="io.github.scarlel96.aura.intelligence.Round03Test" time="0.001"/>
+  <testcase name="olderSampleCannotClearLatestAodAndMotionReduction()" classname="io.github.scarlel96.aura.intelligence.Round03Test" time="0.001"/>
+  <testcase name="missingChargingAndLowBatteryDoNotAddAPowerAxis()" classname="io.github.scarlel96.aura.intelligence.Round03Test" time="0.003"/>
+  <testcase name="revisionCeilingAppliesProtectionWithoutWrapping()" classname="io.github.scarlel96.aura.intelligence.Round03Test" time="0.001"/>
+  <testcase name="sameInstantReplacesSettingsBecauseItIsNotAnOlderObservation()" classname="io.github.scarlel96.aura.intelligence.Round03Test" time="0.0"/>
+  <testcase name="urgentAlertDoesNotBypassAnUnrelatedActivityDebounce()" classname="io.github.scarlel96.aura.intelligence.Round03Test" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

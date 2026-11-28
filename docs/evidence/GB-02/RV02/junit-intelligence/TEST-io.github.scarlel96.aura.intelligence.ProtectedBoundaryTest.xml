@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="io.github.scarlel96.aura.intelligence.ProtectedBoundaryTest" tests="16" skipped="0" failures="0" errors="0" timestamp="2026-11-28T11:04:12.500Z" hostname="서브컴퓨터" time="0.044">
+  <properties/>
+  <testcase name="revocationRejectsQueuedHigherRevision()" classname="io.github.scarlel96.aura.intelligence.ProtectedBoundaryTest" time="0.02"/>
+  <testcase name="finalReadRechecksPermitAndDropsQueuedMessage()" classname="io.github.scarlel96.aura.intelligence.ProtectedBoundaryTest" time="0.001"/>
+  <testcase name="orderSaturationFailsClosedWithoutWrapping()" classname="io.github.scarlel96.aura.intelligence.ProtectedBoundaryTest" time="0.001"/>
+  <testcase name="historyStaysUnpublishedByDefault()" classname="io.github.scarlel96.aura.intelligence.ProtectedBoundaryTest" time="0.001"/>
+  <testcase name="ordinaryErrorWithdrawsOnlyThatStream()" classname="io.github.scarlel96.aura.intelligence.ProtectedBoundaryTest" time="0.001"/>
+  <testcase name="unknownMappingRejectsProtectedData()" classname="io.github.scarlel96.aura.intelligence.ProtectedBoundaryTest" time="0.001"/>
+  <testcase name="currentCapabilityPublishesOnlyItsScopeAndRequest()" classname="io.github.scarlel96.aura.intelligence.ProtectedBoundaryTest" time="0.001"/>
+  <testcase name="staleReplayAfterWithdrawalCannotResurrect()" classname="io.github.scarlel96.aura.intelligence.ProtectedBoundaryTest" time="0.001"/>
+  <testcase name="regrantRejectsOldResultAndAcceptsFreshAcquisition()" classname="io.github.scarlel96.aura.intelligence.ProtectedBoundaryTest" time="0.001"/>
+  <testcase name="missingInvalidForecastAndTtlStaySeparateFromAuthority()" classname="io.github.scarlel96.aura.intelligence.ProtectedBoundaryTest" time="0.001"/>
+  <testcase name="genericRevisionStillAcceptsHigherRevisionOutsideTheBoundary()" classname="io.github.scarlel96.aura.intelligence.ProtectedBoundaryTest" time="0.0"/>
+  <testcase name="independentStreamsStayIsolated()" classname="io.github.scarlel96.aura.intelligence.ProtectedBoundaryTest" time="0.001"/>
+  <testcase name="unavailableWithdrawsStreamWithoutChangingAuthority()" classname="io.github.scarlel96.aura.intelligence.ProtectedBoundaryTest" time="0.001"/>
+  <testcase name="foreignScopeAndRequestCannotPublish()" classname="io.github.scarlel96.aura.intelligence.ProtectedBoundaryTest" time="0.001"/>
+  <testcase name="forgedRecordAndMutablePayloadCannotReplaceEnvelope()" classname="io.github.scarlel96.aura.intelligence.ProtectedBoundaryTest" time="0.006"/>
+  <testcase name="unprotectedObservationAndOtherScopeStayUntouched()" classname="io.github.scarlel96.aura.intelligence.ProtectedBoundaryTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

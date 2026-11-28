@@ -1,0 +1,14 @@
+test: io.github.scarlel96.aura.intelligence.Round05Test.longRunKeepsInvariants
+seed: 20261128
+generator: kotlin.random.Random(20261128)
+transitions: 100000
+counting: one test method. These are not 100000 independent unit tests.
+policy: PolicyCandidates.documented with debounce 5s and minimumHold 15s
+inputs: fresh 80, fresh 10, charging plus low, charging, alert plus precipitation 80, STALE 5, DENIED battery plus OFFLINE, NaN, charging false, alert false plus precipitation 10, EXERCISE/NIGHT/ONLINE/WORK, fresh 0, same timestamp, and older timestamps
+result: PASS
+invariant_violations: 0
+unexpected_exceptions: 0
+failing_sequence: none. The fixed seed completed, so no minimal repro was extracted.
+xml: docs/evidence/GB-02/junit-r05/TEST-io.github.scarlel96.aura.intelligence.Round05Test.xml
+xml tests=7 failures=0 errors=0 skipped=0 timestamp=2026-11-27T23:37:43.742Z
+code: 1536fd7fad37b52375e7eccbb6114b8fd1f735c6
