@@ -58,7 +58,9 @@ def main():
                        check=True, timeout=60)
         env = dict(os.environ)
         env["GRADLE_USER_HOME"] = str(temp / "gradle-home")
-        env["AURA_INVENTORY_GRAPH"] = str(output / "graph.json")
+        graph_dir = output / "graph-parts"
+        graph_dir.mkdir()
+        env["AURA_INVENTORY_GRAPH_DIR"] = str(graph_dir)
         build = work if args.build == "android" else work / "modules/domain"
         metadata = build / "gradle/verification-metadata.xml"
         if metadata.exists():
@@ -82,15 +84,22 @@ def main():
                                   "components": len({r["coordinate"] for r in rows})}
             # Never use generated values as approved metadata.
             metadata.unlink()
+        projects = (":", ":apps", ":apps:watchface") if args.build == "android" else (":",)
+        graph_tasks = [p.rstrip(":") + ":auraAuditDependencyGraph" for p in projects]
         result["commands"]["graph"] = run_logged(
-            command + ["-I", str(work / "tools/gradle_inventory.init.gradle"),
-                       "auraAuditDependencyGraph"], work, env, output / "graph.log")
-        graph = output / "graph.json"
-        if graph.exists():
-            rows = json.loads(graph.read_text(encoding="utf-8"))
+            command + ["--no-parallel", "-I", str(work / "tools/gradle_inventory.init.gradle"),
+                       *graph_tasks], work, env, output / "graph.log")
+        parts = [json.loads(p.read_text(encoding="utf-8")) for p in sorted(graph_dir.glob("*.json"))]
+        actual_projects = [p["project"] for p in parts]
+        rows = [r for part in parts for r in part["rows"]]
+        keys = [(r["project"], r["scope"], r["configuration"]) for r in rows]
+        if (sorted(actual_projects) == sorted(projects) and len(keys) == len(set(keys))
+                and all(r["project"] == part["project"] for part in parts for r in part["rows"])):
+            (output / "graph.json").write_text(json.dumps(rows, indent=2) + "\n", encoding="utf-8")
             result["graph"] = {"configurations": len(rows),
                                "unresolved": sum(bool(r["unresolved"] or r["error"]) for r in rows),
-                               "modules": len({m for r in rows for m in r["modules"]})}
+                               "modules": len({m for r in rows for m in r["modules"]}),
+                               "projects": actual_projects}
     (output / "summary.json").write_text(json.dumps(result, indent=2) + "\n",
                                          encoding="utf-8")
     print(json.dumps(result, sort_keys=True), flush=True)
