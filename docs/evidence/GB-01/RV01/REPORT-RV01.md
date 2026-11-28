@@ -204,4 +204,17 @@ Intelligence는 제품 코드가 바뀌었으므로 다시 실행했다. 작업 
 
 Gradle 디스크 XML은 CRLF다. Git blob은 autocrlf clean 뒤 LF다.
 
-push refspec은 `558e18804d08ebd4d79be620962c256e0af07f96:refs/heads/agent/grok/GB-01-RV01`다. 이 절을 쓴 시점의 원격 CI는 아직 이 문서의 PASS가 아니다.
+push refspec은 `558e18804d08ebd4d79be620962c256e0af07f96:refs/heads/agent/grok/GB-01-RV01`다. 이 SHA의 Domain Kotlin push `46134983359`와 pull_request `46134988468`은 각각 `BUILD SUCCESSFUL`, 검사기 `Ran 24 tests`, `DOMAIN_INVENTORY rv01`, `DOMAIN_RESULT 102 PASS / 0 FAIL / 0 ERROR / 0 SKIP`이다.
+
+| 이벤트 | 워크플로 | run | 결과 |
+| --- | --- | --- | --- |
+| push | Active documentation budget | 46134983365 | success |
+| push | Domain Kotlin | 46134983359 | success |
+| push | Windows host reproducibility | 46134983399 | success |
+| push | AURA Bootstrap | 46134983402 | success |
+| pull_request | Active documentation budget | 46134988484 | success |
+| pull_request | Domain Kotlin | 46134988468 | success |
+| pull_request | Windows host reproducibility | 46134988488 | success |
+| pull_request | AURA Bootstrap | 46134988466 | success |
+
+위 8건은 모두 success다. 이 표를 담은 증거 커밋의 CI는 이 표에 포함하지 않는다.
