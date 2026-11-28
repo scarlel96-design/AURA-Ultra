@@ -23,3 +23,5 @@
 - D01 FINAL-CI: bfb115a 8 runs/10 jobs SUCCESS, push/PR 88 exact, 검사기 15 each, Domain 17 source/test blobs 동일, 최종 d847028 기록만 변경. [검수](../evidence/MID-AUDIT/D01-CLOSEOUT-REVIEW.md). 불변성 범위 GO·독립 종료, HOLD; 권한 계약 합의 대기.
 
 - 권한 계약 ADR-008 PROPOSED, 격리 oracle 16/16·부정 변형 5/5 검출; 실제 제품 시험 NOT RUN. [소유자 검토](agent-orders/GB-REVOCATION-REVIEW.md) 준비; D01/G01 종료 유지.
+
+- ADR-008 GB 양 역할 검토 수령·총괄 대조; 권한 ticket 발급·무효화·provenance·출력 경계 보완. [RV01](agent-orders/GB-01-RV01.md) Domain 격리 후보 지시 준비, 사용자 전달 전 미착수. 기존 88/108 유지.
