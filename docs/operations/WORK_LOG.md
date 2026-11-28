@@ -37,3 +37,5 @@
 - RV02 75c9ab4 검수: 23 XML 102/124, 29 Intelligence blob 동일, 16 CI SUCCESS, 실제 composite 로그 3건. [검수](../evidence/MID-AUDIT/RV02-REVIEW.md) 3 경계 보완, PARTIAL. [마감](agent-orders/GB-02-RV02-CLOSEOUT.md) 사용자 전달 대기.
 
 - RV02-CLOSEOUT 8dd1c7c→7501dcf: red 5 FAIL, green 23 XML 102/124, 8 CI SUCCESS, 2 실제 복합 로그 대조. 재현 수정 검수 완료, 독립 개발 중지/PARTIAL. [잔여 계약 및 통합 인계](../evidence/MID-AUDIT/RV02-REVIEW.md); 승인 전 인수·병합 금지.
+
+- F04 AUD-R04-08: [문서 정정](../evidence/MID-AUDIT/F04/REPORT-DOC.md) ADR-007 WFF2~5 ID/최소 API, BUILD_GUIDE 생성기·Python3.12·역사 기준선 정정. 제품 변경 0; CI 대기. AUD-R03-01/F03 차단 유지.
