@@ -41,3 +41,5 @@
 - F03 R04: GB a1d1933391749ea65e07c1030f28c739f07fa1bc 17 XML/82+81 및 공통 CI 확인, 로컬 palette/PNG 2건 OPEN. Gradle 46095101030 graph 177/19 zero unresolved, 664 unique; audit e7dd34de38012410d057460b03a74e4c12378d1d, published checksum CI 46095415032 진행 중. [보고](../evidence/MID-AUDIT/F03/REPORT-R04.md). main 문서만 갱신.
 
 - F03 R05: 46095415032 고유 234 MATCH/430 UNAVAILABLE/0 MISMATCH, 2 ZIP 직접 검사. Audit 378×3 PASS. strict/lock pilot fc3ffa3da8f06e911c5177be09843fa18db8c58f, CI 46095753190 진행 중. [보고](../evidence/MID-AUDIT/F03/REPORT-R05.md). GB R06 기록 HEAD 60d5b47517e09591793901731a43e57ddf3d60a1 HOLD.
+
+- F03 R06: 46095753190 Domain strict 81 PASS 및 변조/잠금 누락 거부, Android writeLocks PASS/strict 미실행(count gate), 6 lock/197 configs 정확 대조. 수정 3609f3890c69267653badcef03961d75934de35a, 46096211808 진행 중. [보고](../evidence/MID-AUDIT/F03/REPORT-R06.md). main 문서만 갱신.
