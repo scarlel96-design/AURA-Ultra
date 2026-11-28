@@ -54,7 +54,9 @@ XML: 9 files, `2026-11-28T08:57:00.401Z`–`2026-11-28T08:57:00.892Z`
 - `ordinaryDataStatusDoesNotGrantOrRevokeAuthority()`
 - `genericRevisionAndScalarContractRemainIndependent()`
 
-102개 전체 식별자는 `domain-junit-summary.txt`와 `junit-domain/`의 원본 XML에 있다. `PayloadIntegrityTest.higherRevisionStillReplacesEarlierDenial()`은 유지됐고 PASSED다.
+102개 전체 식별자는 `domain-junit-summary.txt`와 `junit-domain/` XML에 있다. `PayloadIntegrityTest.higherRevisionStillReplacesEarlierDenial()`은 유지됐고 PASSED다.
+
+Gradle이 디스크에 쓴 XML은 CRLF다. 이 저장소 커밋의 blob은 Git `autocrlf` clean 필터를 거친 LF다. `AuthorityContractTest` XML의 clean 해시 `6edc11af370c3e9eee20f17e823cee00c6264b27`는 빌드 파일의 `git hash-object`와 같다. 시험 식별자와 집계 문자는 같다.
 
 ## 등록된 검사기
 
