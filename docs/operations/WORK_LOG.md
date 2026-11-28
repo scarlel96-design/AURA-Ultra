@@ -47,3 +47,5 @@
 - 사용자 승인(2026-11-28): F03/F04/RV02와 독립 기능 개발 분리, 게이트 유지. GPT-07 R01 WO-23 RetryPlanner 후보 0253347: Kotlin 21 PASS·50,000 산술 대조·3 결함 검출, 원격 blob 일치, 정식 Gradle/JDK17 NOT RUN. [계획 및 증거](GPT-07.md). 제품/main 코드 변경 없음.
 
 - GPT-07 R02 24edfc5: RecoveryEpisode 구현, R01 21+R02 22=43 PASS, 10,000 복구 회차·3/3 결함 검출. R01/main 공통 CI 각 3 SUCCESS. 후보 blob 일치; [계획/증거](GPT-07.md). 정식 통합 NOT RUN; F03/F04/RV02 유지.
+
+- GPT-07 R03 7f2a197: 기상 7개 metric·10개 unit 정규화, 21+22+20=63 PASS, 60,000 환산 비교·3/3 결함 검출. R02/main CI 각 3 SUCCESS. 신규 blob 및 기존 로그 일치. [계획/증거](GPT-07.md). 실제 provider/통합 NOT RUN.
