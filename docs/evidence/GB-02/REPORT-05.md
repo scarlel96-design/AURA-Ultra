@@ -59,18 +59,18 @@ PRE-FLIGHT: 최신 `origin/main` `c258521bdda148f886151d15cda228af0601797b`의 `
 | GB02-LONG | 필수 | 결정론적 연속 전이 | 위 intelligence 스위트 안의 한 메서드 | 시드 20261128, 전이 100000, 불변 조건 위반 0 | PASS. 실패 시퀀스 없음 | PASS | [long-run-r05.log](long-run-r05.log) |
 | GB02-JUNIT-TOOL | 필수 | 실패 주입과 정상 XML | `JunitXmlCheckTest`와 스위트 이후 도구 실행 | 주입 13 검출, 정상 9/72와 7/81 통과 | PASS | PASS | [checker-injection-r05.log](checker-injection-r05.log) |
 | GB02-SCAN | 필수 | 소스 의존성 | SourceScanTest | 심은 `Instant.now(`와 네트워크 import를 잡고, 본소스에는 없다 | PASS | PASS | 같은 intelligence 로그 |
-| GB02-HOST | 필수 | 최신 main 호스트 | `python -m unittest discover -s tests/unit -p test_*.py -v` | main의 호스트 시험 | 273 ran, 272 PASS, 0 FAIL, 1 ERROR, 0 SKIP. `palette.svg` 작업 트리가 CRLF라 생성 LF와 불일치. GB-02 diff 밖 | ERROR, 환경 | [host-unit-r05.log](host-unit-r05.log) |
+| GB02-HOST | 필수 | 최신 main 호스트 | `python -m unittest discover -s tests/unit -p test_*.py -v` | main의 호스트 시험 | 병합 전 273 ran / 272 PASS / 1 ERROR. main `53d43d9` 병합 후 316 ran / 315 PASS / 1 ERROR. main `1e5e4b1` 병합 후 316 ran / 315 PASS / 0 FAIL / 1 ERROR / 0 SKIP, 38.489s. ERROR는 Windows `palette.svg` CRLF. Ubuntu bootstrap의 같은 시험 step은 success | ERROR, 환경 | [host-unit-r05.log](host-unit-r05.log), [host-unit-r05-after-main.log](host-unit-r05-after-main.log), [host-unit-r05-after-1e5e4b1.log](host-unit-r05-after-1e5e4b1.log) |
 | 실기기, 네트워크 공급원, WFF 렌더링, 배터리 | 제외 | 실기기 | 미실행 | NOT RUN | NOT RUN | NOT RUN | 없음 |
 | intelligence용 GitHub CI | 제외 | CI | `.github` 미수정 | 이 워크플로에는 없음 | NOT RUN | NOT RUN | [CI_PROPOSAL.md](../../../modules/intelligence/docs/CI_PROPOSAL.md) |
 
 환경 및 도구 버전: Windows. 테스트 JVM은 Eclipse Temurin 17.0.20.1+1, `C:\Users\scarl\.jdks\temurin-17`. 로그 한 줄은 `TEST_JVM version=17 vendor=Eclipse Temurin path=C:\Users\scarl\.jdks\temurin-17`. Gradle 9.3.1. Kotlin 2.4.21. Python 3.14.7. ASCII worktree `C:\Users\scarl\AppData\Local\Temp\aura-gb02-wt`. Wrapper SHA-256 `b3a875ddc1f044746e1b1a55f645584505f4a10438c1afea9f15e92a7c42ec13`. Intelligence XML은 `2026-11-27T23:37:41Z`부터 `2026-11-27T23:37:44Z`. Domain XML은 `2026-11-27T23:38:31Z`부터 `2026-11-27T23:38:32Z`. 이 시각은 UTC다.
-총 시험 수, PASS, FAIL, SKIP, NOT RUN, PENDING: intelligence 72 PASS / 0 FAIL / 0 SKIP / 0 ERROR. 구성은 기존 52에 `Round05Test` 7과 `JunitXmlCheckTest` 13을 더한 것이다. 10만 회는 그 7개 중 1개 메서드 안의 전이다. 도메인 회귀 81 PASS / 0 FAIL / 0 SKIP / 0 ERROR. 호스트 273 중 272 PASS / 1 ERROR. 실기기·실공급원·WFF·배터리·모듈 GitHub CI는 NOT RUN. PENDING은 없다.
-CI 실행 ID / head SHA / job / step: 이 보고서 시점의 공통 bootstrap 증거는 회차 04 head `27e8aa6f293e9d115b2cb539161dc465694d1d00`다. push [46079624268](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46079624268), job `140775321987`. pull_request [46079625581](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46079625581), job `140775326333`. 둘 다 26 steps success다. 회차 05 push 이후의 실행 ID는 그 push가 끝난 뒤의 기록 커밋에 적는다. 그 워크플로는 `modules/intelligence` 시험을 실행하지 않는다.
+총 시험 수, PASS, FAIL, SKIP, NOT RUN, PENDING: intelligence 72 PASS / 0 FAIL / 0 SKIP / 0 ERROR. 구성은 기존 52에 `Round05Test` 7과 `JunitXmlCheckTest` 13을 더한 것이다. 10만 회는 그 7개 중 1개 메서드 안의 전이다. 도메인 회귀 81 PASS / 0 FAIL / 0 SKIP / 0 ERROR. 호스트는 병합 전 273 중 272 PASS / 1 ERROR, main `53d43d9`와 `1e5e4b1` 병합 후 각각 316 중 315 PASS / 0 FAIL / 1 ERROR / 0 SKIP이다. ERROR는 Windows `palette.svg` CRLF다. 실기기·실공급원·WFF·배터리·intelligence 모듈 GitHub CI는 NOT RUN. PENDING은 없다.
+CI 실행 ID / head SHA / job / step: 회차 04 head `27e8aa6f293e9d115b2cb539161dc465694d1d00`의 push [46079624268](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46079624268), job `140775321987`과 pull_request [46079625581](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46079625581), job `140775326333`은 각 26 steps success다. 회차 05 head `dec78692bd7e1ae6d77a0cfd8782bddc6d838a41`의 bootstrap push [46084408379](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46084408379), job `140790489215`과 pull_request [46084414340](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46084414340), job `140790508005`은 각 29 steps success다. 같은 head의 Active documentation budget push [46084408351](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46084408351), job `140790489280`과 pull_request [46084414268](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46084414268), job `140790507655`은 각 8 steps success다. main `1e5e4b14e0414c66cc38fec582eac2f28c3ad5f7` 병합 head `c37365387e818d17979ddb9528d9b2887ee47d8d`의 bootstrap push [46085246265](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46085246265), job `140793187145`과 pull_request [46085250966](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46085250966), job `140793202025`은 각 29 steps success다. 같은 head의 documentation budget push [46085246181](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46085246181), job `140793186624`과 pull_request [46085250975](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46085250975), job `140793201736`은 각 8 steps success다. 네 bootstrap의 `Validation tool regression tests`는 success다. 이 워크플로는 `modules/intelligence` 시험을 실행하지 않는다.
 Artifact 파일명·해시·재생성 명령(해당 시): 이 모듈은 APK를 만들지 않는다. JUnit XML은 [junit-r05](junit-r05)와 [junit-r05-domain](junit-r05-domain)에 있다. 재실행은 `.\gradlew -p modules/intelligence clean test --rerun-tasks`.
 정상/실패/경계/회귀 시험 증거: 충전과 신선한 10%와 운동은 축 `CHARGING`, 포커스 `POWER`, 품질 `BALANCED`, 모션 허용, 입자 거짓이다. 그 다음 배터리 생략은 축 `CHARGING`, 포커스 `EXERCISE`, 그래픽 제한 거짓, 배터리 null이다. 경보와 저전력과 운동은 포커스 `CRITICAL`, 품질 `ECO`다. 만료 배터리는 null이고 `STALE_IGNORED`다. 디바운스 30초에서 20초의 활동 변경은 전원·날씨 보류 시작 `at(10)`을 유지한다. `Long.MAX_VALUE`의 모션 감소는 `deliveredIntent()`가 있고 revision은 최댓값이다. 보호를 끄는 입력은 이전 객체의 `LimitReached`다. 뒤집힌 정책은 `PolicyRejected`다. `Instant.MAX.minusSeconds(1)`의 신선한 10%는 `LOW`다. `Instant.MAX`에서 만료 시각이 같은 배터리는 null이다. 회차 02부터 04의 시험과 도메인 81개는 다시 통과했다.
 검사 도구의 실패 검출 시험: 주입 13개는 모두 실패로 끝났고 정상 합성 XML은 `OK files=2 tests=5`다. 이번 clean 결과도 도구가 `OK files=9 tests=72`와 `OK files=7 tests=81`로 통과했다. SourceScanTest는 `Instant.now(`와 `import java.net`을 실패로 보고, 본소스에서는 보고하지 않는다.
 실기기 및 성능 시험 미실시 이유: 지시 범위 밖이고 연결된 기기가 없다. B-002는 유지된다. 임계값은 실측 전 후보로 남긴다. 성능 개선은 주장하지 않았으므로 전후 측정은 없다.
-호스트 1 ERROR의 원인: `tests/unit/test_bootstrap_generator.py`의 `test_checked_in_outputs`가 `assets/generated/bootstrap/palette.svg`를 생성 바이트와 비교한다. 저장소 blob은 LF 1309바이트이고 Windows 작업 트리는 CRLF 1329바이트다. `git status`는 그 파일을 수정으로 보이지 않는다. GB-02 diff에는 `assets/**`가 없다. 파일을 고치지 않았다. Ubuntu bootstrap은 이 체크아웃 차이를 만들지 않는다. 회차 05 push의 bootstrap이 그 시험을 다시 실행한다.
+호스트 1 ERROR의 원인: `tests/unit/test_bootstrap_generator.py`의 `test_checked_in_outputs`가 `assets/generated/bootstrap/palette.svg`를 생성 바이트와 비교한다. 저장소 blob은 LF 1309바이트이고 Windows 작업 트리는 CRLF 1329바이트다. `git status`는 그 파일을 수정으로 보이지 않는다. GB-02 diff에는 `assets/**`가 없다. 파일을 고치지 않았다. Ubuntu bootstrap은 이 체크아웃 차이를 만들지 않는다. head `dec78692bd7e1ae6d77a0cfd8782bddc6d838a41`과 병합 head `c37365387e818d17979ddb9528d9b2887ee47d8d`의 step `Validation tool regression tests`는 둘 다 success다.
 
 ## 구현 후 검토
 
@@ -82,7 +82,7 @@ Artifact 파일명·해시·재생성 명령(해당 시): 이 모듈은 APK를 �
 |---|---|---|---|---|---|
 | GB02-R05-LIST | P2, 상태 오염 | 공개 이유 목록이 가변이고 emission과 같은 객체 | 재현 로그에서 `UnsupportedOperationException`이 나지 않음 | `List.copyOf` | 복합 시험 PASS |
 | GB02-R05-ASYNC | P2, 통합 차단 | `deliveredIntent()`만 적용하는 재정렬 소비자가 최신 보호를 이전 의도로 덮음 | `reorderedIntentCanOverwriteNewerProtection` | 기계에 순서 필드를 넣지 않음. 호출 순서와 `processedAt` 규칙을 계약에 고정. 해결 조건은 아래 차단점 | 시험은 위험을 검출. 통합 전 호출자 규칙 필요 |
-| GB02-HOST-CRLF | P3, 환경 | Windows 작업 트리의 `palette.svg` CRLF | 호스트 273 중 1 ERROR | 소유 경로 밖이라 수정하지 않음 | Ubuntu bootstrap에서 재확인 |
+| GB02-HOST-CRLF | P3, 환경 | Windows 작업 트리의 `palette.svg` CRLF | 병합 후 로컬 호스트 316 중 1 ERROR | 소유 경로 밖이라 수정하지 않음 | 두 bootstrap head의 호스트 시험 step success |
 
 남은 P0와 P1은 없다. 도달 불가 분기를 지우기 위한 리팩터링은 하지 않았다. `step`, `finish`, `deliverAtCeiling`, `desiredPower`, `desiredWeather`, `focusOf`, `intentFor`, `gateReading`에서 모순된 전이를 새로 찾지 못했다. 본소스에 `Instant.now`, Android, `java.net`은 없다. 네트워크 클라이언트는 없다. 민감 데이터 로그는 없다. 나쁜 입력으로 자라는 캐시는 없다.
 
@@ -96,10 +96,10 @@ Artifact 파일명·해시·재생성 명령(해당 시): 이 모듈은 APK를 �
 | G3 시험/회귀 | PASS, 호스트 환경 예외 | intelligence 72 PASS, 도메인 81 PASS. 기존 52개 메서드 유지. 로컬 호스트 1 ERROR는 CRLF이며 모듈 시험이 아님 |
 | G4 분야별 검증 | PASS, 데이터/FSM 범위 | 그래픽·성능 실측·건강 네트워크·WFF는 NOT RUN |
 | G5 별도 재검토 | PASS, 자기 재검토 | 독립 검토자는 NOT RUN. 이유 목록 재현은 수정 전 실패 후 수정. 열린 P0/P1 없음 |
-| G6 증거 및 판정 | PASS, CI 기록 전 | 코드 SHA `1536fd7`. 회차 04 bootstrap은 success. 회차 05 bootstrap ID는 push 뒤 기록. 제품 GO로 올리지 않음 |
+| G6 증거 및 판정 | PASS | 코드 SHA `1536fd7`. head `dec7869`와 병합 head `c373653`의 bootstrap 29 steps와 documentation budget 8 steps가 success. 제품 GO로 올리지 않음 |
 | G7 문서/재개 | PASS, 제한 적용 | 중앙 STATUS/WORK_LOG/BLOCKERS는 지시대로 수정하지 않았다. 제안만 아래에 둔다 |
 
-최종 작업 판정 및 이유: 독립 모듈 통합 후보 제출. 기존 52개와 도메인 81개를 유지하고 신규 20개가 통과했다. intelligence와 domain은 FAIL 0, ERROR 0, SKIP 0이다. 10만 회 불변 조건 위반은 0이다. 검증 도구 실패 주입은 통과했다. 담당 경로 위반은 0이다. 열린 P0/P1은 0이다. 로컬 호스트 1 ERROR는 소유 경로 밖의 CRLF이며 모듈 판정을 바꾸지 않는다. 공통 CI와 main은 바꾸지 않았다. 총괄 통합 판정은 이 보고서의 권한이 아니다.
+최종 작업 판정 및 이유: 독립 모듈 통합 후보 제출. 기존 52개와 도메인 81개를 유지하고 신규 20개가 통과했다. intelligence와 domain은 FAIL 0, ERROR 0, SKIP 0이다. 10만 회 불변 조건 위반은 0이다. 검증 도구 실패 주입은 통과했다. 담당 경로 위반은 0이다. 열린 P0/P1은 0이다. 로컬 호스트 1 ERROR는 소유 경로 밖의 CRLF이며 모듈 판정을 바꾸지 않는다. 공통 워크플로는 수정하지 않았고 main으로는 병합하지 않았다. 최신 main은 이 브랜치로만 병합했다. 총괄 통합 판정은 이 보고서의 권한이 아니다.
 제품 출시 판정(별도): NO-GO. 실기기, 실공급원, WFF, 배터리, 확정 임계값이 없다.
 미해결 장애 / 이관 및 해결 조건: B-002/B-003/B-004/B-005/B-006/B-007/B-008 유지. PR #3 통합 HOLD 유지. GB02-R05-ASYNC는 아래 조건 전에는 Wear·WFF에 연결하지 않는다. 임계값과 이유 코드 어휘는 승인 전 후보다.
 
@@ -111,13 +111,13 @@ Artifact 파일명·해시·재생성 명령(해당 시): 이 모듈은 APK를 �
 | 공통 CI | `bootstrap.yml`은 intelligence 시험을 실행하지 않는다. | 총괄이 `CI_PROPOSAL.md`의 별도 워크플로를 적용한다. 기대 수량은 9/72와 7/81이며 낮추지 않는다. | `.github` 미수정 |
 | 제품 출시 | 실기기, 실공급원, WFF, 배터리, 확정 임계값 없음 | 해당 WO와 실측 승인 | NOT RUN, NO-GO |
 
-다음 작업 ID, 읽을 문서, 첫 행동·명령, 기대 결과: 총괄이 PR #3을 검토한다. 먼저 이 보고서와 `modules/intelligence/docs/INTERFACE_CONTRACT.md`, `modules/intelligence/docs/CI_PROPOSAL.md`를 읽는다. main 병합, 공통 워크플로 수정, GB-03 착수는 하지 않는다. 기대 결과는 총괄의 통합 판정이며, 제품 출시 GO가 아니다. 다음 안전한 중앙 행동은 STATUS에 적힌 R03 CI `46080536642`와 R04 CI `46080845104` 확인이다.
+다음 작업 ID, 읽을 문서, 첫 행동·명령, 기대 결과: 총괄이 PR #3을 검토한다. 먼저 이 보고서와 `modules/intelligence/docs/INTERFACE_CONTRACT.md`, `modules/intelligence/docs/CI_PROPOSAL.md`를 읽는다. main 병합, 공통 워크플로 수정, GB-03 착수는 하지 않는다. 기대 결과는 총괄의 통합 판정이며, 제품 출시 GO가 아니다. 다음 안전한 중앙 행동은 병합된 STATUS의 다음 행동인 사용자 결정 대기다. 그 문장을 바꾸지 않는다.
 
 STATUS / WORK_LOG / BLOCKERS / evidence / 정본 문서 갱신 여부: 회차 05 evidence와 모듈 문서만 갱신했다. 회차 01 `REPORT.md`, 회차 02 `REPORT-02.md`, 회차 03 `REPORT-03.md`, 회차 04 `REPORT-04.md`는 유지했다. 중앙 문서 제안은 적용하지 않았다.
 
 중앙 문서 제안:
 
-- STATUS: 다음 안전한 행동인 R03 CI `46080536642`와 R04 CI `46080845104` 확인을 빼지 않는다. GB-02 PR #3에 회차 05가 추가됐고 로컬 intelligence 72 PASS, 도메인 81 PASS, 로컬 호스트 272 PASS / 1 ERROR(Windows CRLF, 모듈 변경 아님), 실기기와 모듈 CI는 NOT RUN, 제품 NO-GO, PR은 미병합이라고 한 줄 추가할 수 있다.
+- STATUS: 다음 행동인 사용자 결정 대기를 빼지 않는다. GB-02 PR #3 회차 05는 로컬 intelligence 72 PASS, 도메인 81 PASS, 로컬 호스트 316 중 315 PASS / 1 ERROR(Windows CRLF, 모듈 변경 아님), bootstrap과 documentation budget은 head `c37365387e818d17979ddb9528d9b2887ee47d8d`에서 step success, 실기기와 intelligence 모듈 CI는 NOT RUN, 제품 NO-GO, PR은 미병합이라고 한 줄 추가할 수 있다.
 - WORK_LOG: 같은 한 줄을 추가할 수 있다.
 - BLOCKERS: 변경하지 않는다. GB02-R05-ASYNC는 이 보고서의 통합 차단점이며 중앙 BLOCKERS에 올리지 않는다.
 - DATA_INTELLIGENCE: 변경하지 않는다. 후보 규칙은 모듈 가정에 있다.
@@ -126,4 +126,6 @@ STATUS / WORK_LOG / BLOCKERS / evidence / 정본 문서 갱신 여부: 회차 05
 
 저장소 반영 확인(커밋/브랜치; 자기 참조 SHA 금지): 구현 커밋 `1536fd7fad37b52375e7eccbb6114b8fd1f735c6`, 브랜치 `agent/grok/GB-02`. 이 보고서 커밋은 `modules/intelligence` 소스를 바꾸지 않아야 한다. 그 확인은 보고서 커밋 뒤 `git diff 1536fd7fad37b52375e7eccbb6114b8fd1f735c6 -- modules/intelligence`가 비어 있는지로 한다.
 
-증거 기록 뒤 `origin/main`이 `53d43d918c3e3c1002b70473f5de843c0f946d8e`로 이동했다. 병합 커밋 `14efa08885a7f336bec2138f1d35eed78f3dcaea`는 들어온 GPT-06·OPS 파일만 반영하고 `modules/intelligence`와 `modules/domain`을 수정하지 않았다. `python tools/check_doc_budget.py`는 `DOC_BUDGET_RESULT`로 통과했다. 영향받는 호스트 시험을 다시 실행했다. 316 ran, 315 PASS, 0 FAIL, 1 ERROR, 0 SKIP, 39.693s. ERROR는 같은 `palette.svg` CRLF다. main의 Ubuntu CI `46083441184`는 같은 316개를 PASS로 기록했다. intelligence 72개와 domain 81개는 병합으로 소스가 변하지 않아 다시 실행하지 않았다. 병합 후 STATUS의 다음 행동은 main 최신 통합 SHA와 두 CI 확인 뒤 GPT-06 종료 감사다. 그 행동을 바꾸지 않는다.
+증거 기록 뒤 `origin/main`이 `53d43d918c3e3c1002b70473f5de843c0f946d8e`로 이동했다. 병합 커밋 `14efa08885a7f336bec2138f1d35eed78f3dcaea`는 들어온 GPT-06·OPS 파일만 반영하고 `modules/intelligence`와 `modules/domain`을 수정하지 않았다. `python tools/check_doc_budget.py`는 `DOC_BUDGET_RESULT`로 통과했다. 영향받는 호스트 시험을 다시 실행했다. 316 ran, 315 PASS, 0 FAIL, 1 ERROR, 0 SKIP, 39.693s. ERROR는 같은 `palette.svg` CRLF다. main의 Ubuntu CI `46083441184`는 같은 316개를 PASS로 기록했다. intelligence 72개와 domain 81개는 병합으로 소스가 변하지 않아 다시 실행하지 않았다. 병합 후 STATUS의 다음 행동은 main 최신 통합 SHA와 두 CI 확인 뒤 GPT-06 종료 감사다. 그 행동은 이후 main에서 바뀌었다.
+
+그 다음 `origin/main`이 `1e5e4b14e0414c66cc38fec582eac2f28c3ad5f7`로 이동했다. 변경은 `docs/STATUS.md`, `docs/operations/BLOCKERS.md`, `docs/operations/WORK_LOG.md`, `docs/operations/GPT-06.md`, `docs/operations/GPT_EXECUTION_PLAN.md`, `docs/operations/agent-orders/README.md`, `docs/evidence/GPT-06/REPORT-FINAL-CLOSURE.md`뿐이다. 병합 커밋 `c37365387e818d17979ddb9528d9b2887ee47d8d`는 들어온 파일을 수정하지 않았다. `modules/intelligence`와 `modules/domain`은 그대로다. `python tools/check_doc_budget.py`는 `DOC_BUDGET_RESULT`로 통과했다. 호스트 시험을 다시 실행했다. 316 ran, 315 PASS, 0 FAIL, 1 ERROR, 0 SKIP, 38.489s. ERROR는 같은 `palette.svg` CRLF다. intelligence 72개와 domain 81개는 소스가 변하지 않아 다시 실행하지 않았다. 병합 head의 bootstrap push `46085246265` job `140793187145`, pull_request `46085250966` job `140793202025`은 각 29 steps success다. documentation budget push `46085246181` job `140793186624`, pull_request `46085250975` job `140793201736`은 각 8 steps success다. 현재 STATUS의 다음 행동은 사용자 결정 대기다. 그 문장을 바꾸지 않는다. 제품 출시 NO-GO와 PR #3 미병합은 유지한다.
