@@ -1,5 +1,5 @@
 # GPT-07 — 도메인·장애 복구 기반
-2026-11-28 KST. IN_PROGRESS / PARTIAL. 사용자 승인: 독립 기능 개발과 잔여 감사 차단점 분리. 실제 통합 및 출시 조건은 변경하지 않는다. 기준 main af06adc90e9d4c086b3441275092303691619802. R-03/04/11/12/13/14/15/16/17/18/21/22, WO-17~23. 정식 WO GO 0/38, GPT GO 3/12, 감사 14/16. 제품 NO-GO.
+2026-11-28 KST. 독립 개발 종료 / PARTIAL. 사용자 승인: 독립 기능 개발과 잔여 감사 차단점 분리. 실제 통합 및 출시 조건은 변경하지 않는다. 기준 main af06adc90e9d4c086b3441275092303691619802. R-03/04/11/12/13/14/15/16/17/18/21/22, WO-17~23. 정식 WO GO 0/38, GPT GO 3/12, 감사 14/16. 제품 NO-GO.
 ## 기존 후보 재사용 및 소유권
 | 후보 | SHA | 범위 |
 |---|---|---|
@@ -8,25 +8,19 @@
 | G01 / #3 | 0c4890ea7f69c6145791d17d51b98c97fed45c1d | FSM 108, 독립 종료 |
 | RV02 / #7 | 7501dcfe990c7f16123b8fdc44a90baf7354533b | 경계 124, PARTIAL/독립 중지 |
 기존 후보 모두 HOLD. 합성 시험을 재사용하고 기존 기능을 다시 작성하지 않는다. modules/domain/**, modules/intelligence/**, AG 경로 변경 및 인수는 별도 승인 전 금지한다. GPT는 신규 독립 경로와 중앙 운영 문서를 소유한다. F03/F04/RV02 및 기기 차단은 필수 통합 조건이다. [F03 검수](../evidence/MID-AUDIT/F03/REPORT-CODEX-REVIEW.md), [RV02 검수](../evidence/MID-AUDIT/RV02-REVIEW.md), [차단점](BLOCKERS.md).
-## R01 — WO-23 재시도 계산기
-후보 branch candidate/gpt-07-r01, commit 02533470f141077d530acbfa04f6b20136b3763e. [보고서](https://github.com/scarlel96-design/AURA-Ultra/blob/02533470f141077d530acbfa04f6b20136b3763e/docs/evidence/GPT-07/R01/REPORT.md), [시험 로그](https://github.com/scarlel96-design/AURA-Ultra/blob/02533470f141077d530acbfa04f6b20136b3763e/docs/evidence/GPT-07/R01/retry-test.log).
-구현: modules/cache/src/main/kotlin/io/github/scarlel96/aura/cache/RetryPlanner.kt. 별도 순수 Kotlin 파일, 신규 의존성 및 Gradle 변경 없음. 합성 일시 오류/요청 제한, 지수 백오프·지연 상한·횟수·server delay floor·jitter·deadline·overflow. 실제 네트워크/캐시/권한/센서 사용 없음. 설정값은 호출자 입력이며 정식 정책 미확정. 허용된 retry 계획은 권한 증명이 아니다. 호출자는 실제 요청 직전 권한·세션·연결·AOD·기한·횟수를 검증해야 한다.
-검증: 로컬 kotlinc 1.9.0 / JDK21 / JVM17 target; 21 named PASS, seed20261128 50,000 BigInteger 산술 대조, 결함 3/3 검출. exact source/test/log blob 일치. 기존 402 host, 102 Domain, 124 Intelligence와 별도 집계한다. 정식 Gradle/JDK17 및 실제 통합 NOT RUN. 후보 common CI doc 46151376704, Windows 46151376694, Bootstrap 46151376713 SUCCESS. 기준 main 3a494a2 CI 3건 SUCCESS. Common CI는 신규 Kotlin harness 실행 증거가 아니다. 이 후보의 제품 승격 또는 main 병합은 수행하지 않았다.
-## R02 — WO-23 유한 복구 제어기
-후보 candidate/gpt-07-r02, commit 24edfc5e82aae648d5918b749dd881cf11ed269c. [보고서](https://github.com/scarlel96-design/AURA-Ultra/blob/24edfc5e82aae648d5918b749dd881cf11ed269c/docs/evidence/GPT-07/R02/REPORT.md), [실행 로그](https://github.com/scarlel96-design/AURA-Ultra/blob/24edfc5e82aae648d5918b749dd881cf11ed269c/docs/evidence/GPT-07/R02/recovery.log).
-R01을 변경 없이 재사용한다. RecoveryEpisode는 한 회차에서 동시에 한 요청만 계획한다. 지연 전 재시도와 오래된 완료 신호를 거부한다. 준비 상태가 해제되면 새 시작을 멈춘다. 횟수와 대기 시간은 보존한다. 완료, 취소, 기한 초과, 시계 후퇴, 재시도 중단은 종료 상태다. 실제 요청 취소 및 접근 권한 확인은 호출자 책임이다. 실제 권한/페이로드 경계와 별개이며 동시 호출은 아직 지원하지 않는다.
-로컬 Kotlin 1.9.0/JDK21, JVM17 target: R01 21 + R02 22 = 43 PASS. seed20261128 산술 50,000/복구 회차 10,000, R02 결함 주입 3/3 검출. 원격 blob 일치. 초기 실행의 stdlib 경로 오류는 수정 후 전체 재실행 성공. 정식 Gradle/JDK17, SDK 및 소비자 통합 NOT RUN. 후보 문서 46152146761, Windows 46152146803, Bootstrap 46152146801 SUCCESS. 직전 main 0520cf5 CI 3건 SUCCESS. 기존 PR 및 main 제품 코드 변경 없음.
-## R03 — WO-18/19 기상 수치 정규화
-후보 candidate/gpt-07-r03, commit 7f2a197b624f48574a867d19b0789fa619f5863f. [보고서](https://github.com/scarlel96-design/AURA-Ultra/blob/7f2a197b624f48574a867d19b0789fa619f5863f/docs/evidence/GPT-07/R03/REPORT.md), [시험 로그](https://github.com/scarlel96-design/AURA-Ultra/blob/7f2a197b624f48574a867d19b0789fa619f5863f/docs/evidence/GPT-07/R03/quantity.log), [실행 계획](https://github.com/scarlel96-design/AURA-Ultra/blob/7f2a197b624f48574a867d19b0789fa619f5863f/docs/evidence/GPT-07/R03/PLAN.md).
-Domain 검증을 대체하지 않는다. 7개 metric 및 10개 unit을 사용한다. 온도/체감은 Celsius, 습도/강수확률은 percent, 관측/예상 강수량은 mm, 풍속은 m/s로 환산한다. 명시적 단위·필드 일치, null/0 구분, 비유한 값·범위·overflow/완전 underflow 거부. 강수율과 강수량을 혼합하지 않는다. 공급원 문자열 매핑·실제 시간/범위·관측/예측 provenance·권한 검증은 별도다. 후보 공통 단위는 생산 계약 승인 전 확정하지 않는다.
-로컬 Kotlin 1.9.0/JDK21, JVM17 target: 21+22+20=63 PASS. 20,000 입력 반복×3=60,000 환산 비교, 7×10 단위 매트릭스, 결함 주입 3/3 검출. R01/R02 원본 blob 및 재실행 출력 동일. 신규 source/test/log/plan blob 일치. 정식 Gradle/JDK17 및 실제 provider/SDK 통합 NOT RUN. 후보 공통 CI 46152779560/564/697 SUCCESS; 기준 main f4c0f77 CI 46152819422/401/461 SUCCESS (실행 메타데이터 확인). 기존 PR 및 제품 코드 변경 없음.
-## R04 — WO-19 강수 예보 구간 분석
-후보 candidate/gpt-07-r04, commit 200ea2fdaac30b0b2d9c47b70436aa2e0ea6428c. [보고서](https://github.com/scarlel96-design/AURA-Ultra/blob/200ea2fdaac30b0b2d9c47b70436aa2e0ea6428c/docs/evidence/GPT-07/R04/REPORT.md), [시험 로그](https://github.com/scarlel96-design/AURA-Ultra/blob/200ea2fdaac30b0b2d9c47b70436aa2e0ea6428c/docs/evidence/GPT-07/R04/timeline.log), [실행 계획](https://github.com/scarlel96-design/AURA-Ultra/blob/200ea2fdaac30b0b2d9c47b70436aa2e0ea6428c/docs/evidence/GPT-07/R04/PLAN.md).
-R03 수치 환산 재사용. 명시한 예보 범위 내 정렬된 중복 없는 반개구간만 허용한다. 첫 연속 양수 강수량 구간과 종료 근거를 구한다. 전체 예보 범위의 0만 무강수다. 누락/공백은 불명, 이전 구간 불명이면 첫 강수 구간 불명으로 처리한다. 무강수 구간·공백·누락·예보 끝을 구분한다. 전체 입력 검증 후 결과를 계산한다. 정확한 강수 시작/종료, 지속 강수, 누적량, 공급원 혼합 및 실제 예보 권한/TTL 판정 아님. 합성 입력 한도는 호출자가 제공한다.
-로컬 Kotlin 1.9.0/JDK21, JVM17 target: 21+22+20+20=83 PASS. seed20261128 예보 조합 10,000건 oracle 대조, 신규 결함 주입 3/3 검출. R01~R03 소스/시험/로그 동일, 신규 blob 일치. 정식 Gradle/JDK17, 실제 공급원/SDK/소비자 NOT RUN. 후보 공통 CI 확인 시점: AURA Bootstrap 46153351804 in_progress; Windows host reproducibility 46153351808 in_progress; Active documentation budget 46153351848 success. 기존 PR 및 제품 코드 변경 없음.
-## 남은 개발 순서
-1. 후보 R04 공통 CI 및 정확한 blob 상태를 확인한다. R01~R04 실행 증거를 보존한다.
-2. WO-17~23에서 기존 Domain/Intelligence와 중복되지 않는 독립 데이터 정규화·오류·복구 경계를 선택한다. 실제 소스와 요구사항을 대조한 후 시험 가능한 최소 구현부터 진행한다. 실제 권한/캐시 상태의 연결은 차단점 해결 이후다.
-3. 필요한 경우 GPT-08/09와 연결할 인터페이스의 합성 시험을 준비한다. 생산 정책·수치·SDK를 미확정 상태에서 확정하지 않는다. 실제 네트워크 및 데이터 수집 금지.
-4. 관련 필수 결함과 F03/F04/RV02를 해결한 후 승인된 통합 및 정식 JDK17/Gradle/실기기 검증을 진행한다. 기존 의존성 검증/라이선스/SBOM, 보호 철회·시간·순서·실제 소비자 계약을 유지한다.
-완료 기준: 독립 산출물별 정확한 코드/시험/증거와 관련 게이트 검증. 합성 시험 PASS를 제품 GO로 계산하지 않는다. GPT-09 종료 변경 영향 중심 검증, GPT-12 종료 최종 전면 감사 유지. 다음 요청에서 main/candidate/기존 PR HEAD 및 CI 확인 → AGENTS PRE-FLIGHT → 위 2번 실행. 무관 변경·반복 감사 금지. 사용자 승인을 받기 전 실제 기기 변경/제품 통합 금지.
+## R01~R06 독립 구현 및 시험
+기존 상세 원본은 [보관 문서](../archive/2026-11-28-gpt07-r04/GPT-07.md)에 보존한다. 기준 main d718f4e744984be88bcc130c29abaab011d2ca4a, 원본 blob f80e3cba859c29870b5f9e47e04d19b2d85bf347. 각 회차 정확한 코드·시험·명령·제약은 아래 보고서가 정본이다.
+| 회차 | 후보 SHA | 기능 | 실제 명명 시험 |
+|---|---|---|---:|
+| R01 | 02533470f141077d530acbfa04f6b20136b3763e | [재시도 계산](https://github.com/scarlel96-design/AURA-Ultra/blob/02533470f141077d530acbfa04f6b20136b3763e/docs/evidence/GPT-07/R01/REPORT.md) | 21 |
+| R02 | 24edfc5e82aae648d5918b749dd881cf11ed269c | [복구 회차](https://github.com/scarlel96-design/AURA-Ultra/blob/24edfc5e82aae648d5918b749dd881cf11ed269c/docs/evidence/GPT-07/R02/REPORT.md) | 22 |
+| R03 | 7f2a197b624f48574a867d19b0789fa619f5863f | [기상 수치 정규화](https://github.com/scarlel96-design/AURA-Ultra/blob/7f2a197b624f48574a867d19b0789fa619f5863f/docs/evidence/GPT-07/R03/REPORT.md) | 20 |
+| R04 | 200ea2fdaac30b0b2d9c47b70436aa2e0ea6428c | [강수 구간](https://github.com/scarlel96-design/AURA-Ultra/blob/200ea2fdaac30b0b2d9c47b70436aa2e0ea6428c/docs/evidence/GPT-07/R04/REPORT.md) | 20 |
+| R05/R06 | 942b92be09dae7bc6334ae7fa17b79cb74b8ab3e | [캐시 대체 판단·공급원 오류](https://github.com/scarlel96-design/AURA-Ultra/blob/942b92be09dae7bc6334ae7fa17b79cb74b8ab3e/docs/evidence/GPT-07/R05-R06/REPORT.md) | 9+13 |
+현재 누적 후보 branch candidate/gpt-07-r06, exact HEAD 942b92be09dae7bc6334ae7fa17b79cb74b8ab3e. 기존 R01~04 원본 18개 blob 및 mode 보존, 신규 4 Kotlin 파일·계획·원본 로그 2개 일치 확인. R04와 main d718f4e 공통 CI 각각 3/3 SUCCESS. R06 공통 CI 46154444055/117/050 SUCCESS. main 80ac513 CI 46154511692/693/745 SUCCESS. Common CI는 독립 Kotlin 시험 실행 증거가 아니다.
+R05는 명시적 비보호 범위의 캐시 메타데이터 판정만 구현한다. 현재 검증된 TTL/status 입력을 재사용하며 TTL 계산을 복제하지 않는다. 보호/불명 범위, 권한 거부·보안 실패·영구/불명/잘못된 응답은 대체 후보 거부. stale은 명시적 허용 시만 stale 후보로 유지한다. 실제 캐시 저장·읽기·암호화·삭제 및 보호 데이터 통합 NOT RUN. 호출자 범위 라벨은 권한 증명이 아니다.
+R06은 분류된 공급원 오류를 기존 RetryFailure로 매핑한다. 오프라인 대기, 영구 오류 중단, ASCII 정수 초 단위 서버 지연 검증 및 밀리초 오버플로 거부. HTTP 날짜, 헤더 중복·공백 처리 및 실제 HTTP 분류는 어댑터 작업이다. 잘못된 지연값은 재시도 중단. 보안 실패의 원래 분류 보존, 오프라인 현재 요청의 취소/종료 및 재연결 횟수 제어, 유효 오류 분류의 캐시 전달은 실제 통합 책임이다. 실제 요청·권한·SDK 호출 없음.
+실제 로컬 Kotlin 1.9.0/JDK21 JVM17 target: 105/105 PASS (R01~04 83+R05 9+R06 13). 기존 네 로그 재실행 바이트 동일. 합성 50,000 산술, 10,000 복구, 60,000 환산, 10,000 강수, 300 캐시 조합; 별도 시험 수가 아니다. R05/06 결함 주입 3/3 검출; 잘못된 클래스명으로 발생한 초기 실행 오류는 검출로 계산하지 않고 정정 후 실제 단언 실패 확인. 정식 Gradle/JDK17·실제 통합 NOT RUN. [계획](https://github.com/scarlel96-design/AURA-Ultra/blob/942b92be09dae7bc6334ae7fa17b79cb74b8ab3e/docs/evidence/GPT-07/R05-R06/PLAN.md) · [공급원 로그](https://github.com/scarlel96-design/AURA-Ultra/blob/942b92be09dae7bc6334ae7fa17b79cb74b8ab3e/docs/evidence/GPT-07/R05-R06/provider.log) · [캐시 로그](https://github.com/scarlel96-design/AURA-Ultra/blob/942b92be09dae7bc6334ae7fa17b79cb74b8ab3e/docs/evidence/GPT-07/R05-R06/fallback.log).
+## R07 — 독립 개발 종료
+[최종 검수 및 통합 인계](../evidence/GPT-07/R07/REPORT-FINAL.md). 최종 후보 942b92be09dae7bc6334ae7fa17b79cb74b8ab3e 유지. 12 Kotlin blob 및 6 실행 로그 원격 일치, 깨끗한 scratch에서 재컴파일·6 entrypoint 105 PASS, 이전 로그와 바이트 동일. 105개 실행 이름·순서 일치. 후보 공통 3 runs/4 jobs SUCCESS, 직접 로그 402×3 host·doc 7·5 Gradle builds SUCCESS(기존 APK 범위). 실제 신규 Kotlin Gradle/JDK17 및 보호 데이터/SDK/저장/기기 통합 NOT RUN. GPT-07 R01~06 독립 구현 마감, 추가 독립 회차 없음. 정식 WO/GPT GO 승격 및 병합 없음.
+다음 요청: 최신 main·후보·PR 및 기록 CI 확인, AGENTS PRE-FLIGHT, DATA_INTELLIGENCE/REFERENCES/공급원 공식 규격 대조 후 GPT-08 독립 공급원 어댑터 합성 fixture 개발. 기존 정규화/재시도/강수 분석/오류·캐시 계약 재사용. R07 인계의 필수 adapter 검증 사항 준수. 실제 API 키·계정·위치·권한·생산 의존성 변경·기기·병합 별도 승인. F03/F04/RV02/AG/B-002~008 관련 통합 게이트 유지. GPT-09 변경 영향 검증, GPT-12 최종 전면 감사 유지. 제품 NO-GO, 감사 14/16, 정식 WO GO 0/38, GPT GO 3/12. GPT-08 구현은 이번 R07에서 시작하지 않음.
