@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="io.github.scarlel96.aura.domain.RevisionGateTest" tests="15" skipped="0" failures="0" errors="0" timestamp="2026-11-28T02:56:55.271Z" hostname="서브컴퓨터" time="0.017">
+  <properties/>
+  <testcase name="invalidIncomingDoesNotCreateOrReplaceCursor()" classname="io.github.scarlel96.aura.domain.RevisionGateTest" time="0.001"/>
+  <testcase name="negativeRevisionsCompareNumerically()" classname="io.github.scarlel96.aura.domain.RevisionGateTest" time="0.001"/>
+  <testcase name="keyMismatchKeepsTheCurrentStream()" classname="io.github.scarlel96.aura.domain.RevisionGateTest" time="0.0"/>
+  <testcase name="equalRevisionWithOnlyReceiveTimeChangedIsDuplicate()" classname="io.github.scarlel96.aura.domain.RevisionGateTest" time="0.0"/>
+  <testcase name="higherRevisionReplacesAndGapIsAllowed()" classname="io.github.scarlel96.aura.domain.RevisionGateTest" time="0.0"/>
+  <testcase name="newerRevisionWithEarlierReceiveTimeIsAcceptedAndFlagged()" classname="io.github.scarlel96.aura.domain.RevisionGateTest" time="0.001"/>
+  <testcase name="wrongUnitDoesNotPassTheGate()" classname="io.github.scarlel96.aura.domain.RevisionGateTest" time="0.001"/>
+  <testcase name="negativeZeroIsNotTreatedAsTheSamePayload()" classname="io.github.scarlel96.aura.domain.RevisionGateTest" time="0.001"/>
+  <testcase name="maxLongRevisionDuplicateAndPredecessor()" classname="io.github.scarlel96.aura.domain.RevisionGateTest" time="0.001"/>
+  <testcase name="olderRevisionDoesNotReplaceCurrent()" classname="io.github.scarlel96.aura.domain.RevisionGateTest" time="0.001"/>
+  <testcase name="equalRevisionWithDifferentPayloadDoesNotOverwrite()" classname="io.github.scarlel96.aura.domain.RevisionGateTest" time="0.001"/>
+  <testcase name="sourceInsideObservationMustMatchKey()" classname="io.github.scarlel96.aura.domain.RevisionGateTest" time="0.001"/>
+  <testcase name="outOfOrderSequenceKeepsTheNewestRevision()" classname="io.github.scarlel96.aura.domain.RevisionGateTest" time="0.001"/>
+  <testcase name="blankSubjectKeyIsRejected()" classname="io.github.scarlel96.aura.domain.RevisionGateTest" time="0.001"/>
+  <testcase name="firstValidRevisionIsAccepted()" classname="io.github.scarlel96.aura.domain.RevisionGateTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,212 @@
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/9.3.1/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
+> Task :domain:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :clean
+> Task :checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :processResources NO-SOURCE
+> Task :processTestResources NO-SOURCE
+> Task :domain:compileKotlin UP-TO-DATE
+> Task :domain:compileJava NO-SOURCE
+> Task :domain:processResources NO-SOURCE
+> Task :domain:classes UP-TO-DATE
+> Task :domain:jar UP-TO-DATE
+> Task :compileKotlin
+> Task :compileJava NO-SOURCE
+> Task :classes UP-TO-DATE
+> Task :jar
+> Task :compileTestKotlin
+> Task :compileTestJava NO-SOURCE
+> Task :testClasses UP-TO-DATE
+
+> Task :test
+TEST_JVM version=17 vendor=Eclipse Temurin path=C:\Users\scarl\.jdks\temurin-17
+
+GateTest > scaleBoundsAreInclusiveAndAreNotConverted() PASSED
+
+GateTest > expiryBoundaryAndBadStatusStayUnusable() PASSED
+
+GateTest > absentIsNotZero() PASSED
+
+GateTest > uncheckedTokenIsNotExercise() PASSED
+
+JunitXmlCheckTest > rejectsMissingDirectory() PASSED
+
+JunitXmlCheckTest > rejectsCountMismatch() PASSED
+
+JunitXmlCheckTest > acceptsMatchingFreshResults() PASSED
+
+JunitXmlCheckTest > rejectsCorruptXml() PASSED
+
+JunitXmlCheckTest > rejectsHeaderCaseMismatch() PASSED
+
+JunitXmlCheckTest > rejectsEmptyMethod() PASSED
+
+JunitXmlCheckTest > rejectsMissingCounters() PASSED
+
+JunitXmlCheckTest > rejectsMissingClassname() PASSED
+
+JunitXmlCheckTest > rejectsEmptyFile() PASSED
+
+JunitXmlCheckTest > rejectsDuplicateSuiteAndTestcase() PASSED
+
+JunitXmlCheckTest > rejectsUnrelatedClassname() PASSED
+
+JunitXmlCheckTest > rejectsHiddenFailure() PASSED
+
+JunitXmlCheckTest > rejectsZeroTests() PASSED
+
+JunitXmlCheckTest > rejectsMissingResultFile() PASSED
+
+JunitXmlCheckTest > rejectsHiddenError() PASSED
+
+JunitXmlCheckTest > rejectsHiddenSkip() PASSED
+
+JunitXmlCheckTest > rejectsSuiteFilenameMismatch() PASSED
+
+JunitXmlCheckTest > rejectsNestedTestcase() PASSED
+
+JunitXmlCheckTest > rejectsStaleTimestamp() PASSED
+
+JunitXmlCheckTest > rejectsFutureTimestamp() PASSED
+
+MachineTest > firstStepStartsAtRevisionOneAndDoesNotInferActivity() PASSED
+
+MachineTest > lowPowerKeepsFreshWeatherNumbersWhileRemovingParticles() PASSED
+
+MachineTest > urgentAlertBypassesHoldAndCommitsTheCurrentDesiredSensors() PASSED
+
+MachineTest > freshAlertSurvivesABadPrecipitationSample() PASSED
+
+MachineTest > chargingIsNotLowPowerAndBypassesHold() PASSED
+
+MachineTest > powerHysteresisUsesTheCandidateBand() PASSED
+
+MachineTest > callerScaleIsNotTheDocumentedPercentScale() PASSED
+
+MachineTest > omittedChannelsKeepStateAndUnusableSettingsDoNotWipeIt() PASSED
+
+MachineTest > repeatedSamplesAndReturningDesiredDoNotBumpRevision() PASSED
+
+MachineTest > precipitationHysteresisDoesNotTreatAlertAsPrecip() PASSED
+
+MachineTest > immediateAxesDoNotResetTheSensorHold() PASSED
+
+MachineTest > badObservationsAreNotPromotedAndDoNotBecomeZero() PASSED
+
+MachineTest > clockInversionPublishesNoNumbersAndKeepsTheMachineState() PASSED
+
+MachineTest > presentationChangesBumpRevisionWhenAxesStay() PASSED
+
+MachineTest > priorityPrefersCriticalThenPowerThenExerciseThenWeatherThenContext() PASSED
+
+MachineTest > documentedHoldAndSeparateDebounceKeepThePreviousSensorAxis() PASSED
+
+MachineTest > suppliedFreshChannelsStayFreshAndObservationsAreUnchanged() PASSED
+
+PolicyTest > durationsAndScalesAndUnitsMustBeUsable() PASSED
+
+PolicyTest > powerBandMustRise() PASSED
+
+PolicyTest > precipitationBandMustFall() PASSED
+
+PolicyTest > documentedCandidatesRemainConfigurable() PASSED
+
+PolicyTest > rejectedPolicyDoesNotAdvance() PASSED
+
+Round02Test > freshChargingFalseUsesHysteresisAndDoesNotInventZero() PASSED
+
+Round02Test > olderSampleCannotClearChargingOrRaiseAlert() PASSED
+
+Round02Test > thresholdsOutsideTheConfiguredScaleAreRejected() PASSED
+
+Round02Test > unchangedInputStillRejectsAnOlderSample() PASSED
+
+Round02Test > staleReadingDuringUrgentDoesNotLeaveLowOrPublishANumber() PASSED
+
+Round02Test > extremeInstantAndDurationDoNotEscapeStep() PASSED
+
+Round02Test > scaleEdgesRemainAccepted() PASSED
+
+Round02Test > revisionDoesNotWrapAndStopsAtTheLimit() PASSED
+
+Round02Test > inBandBatteryWithDeniedActivityStaysNormalAndDegraded() PASSED
+
+Round02Test > equalProcessedTimeIsNotInversion() PASSED
+
+Round02Test > hysteresisDebounceUrgentAndLowPowerInteract() PASSED
+
+Round02Test > missingOrInvalidChargingDoesNotClearCharging() PASSED
+
+Round03Test > chargingExceptionDoesNotBypassUnrelatedWeatherOrActivity() PASSED
+
+Round03Test > missingExpiryDenialInversionAndRapidRepeatsStayDistinct() PASSED
+
+Round03Test > olderSampleCannotClearLatestAodAndMotionReduction() PASSED
+
+Round03Test > missingChargingAndLowBatteryDoNotAddAPowerAxis() PASSED
+
+Round03Test > revisionCeilingAppliesProtectionWithoutWrapping() PASSED
+
+Round03Test > sameInstantReplacesSettingsBecauseItIsNotAnOlderObservation() PASSED
+
+Round03Test > urgentAlertDoesNotBypassAnUnrelatedActivityDebounce() PASSED
+
+Round04Test > ceilingProtectionIsDeliveredWhenRevisionStaysAtTheLimit() PASSED
+
+Round04Test > lowPowerGraphicsDoNotWaitForDebounceOrHold() PASSED
+
+Round04Test > freshLowBatteryLimitsDecorationWithoutChangingTheChargingAxis() PASSED
+
+Round04Test > ceilingWithdrawsExpiredAndDeniedPublications() PASSED
+
+Round04Test > anotherAxisDoesNotRestartDebounceOrHold() PASSED
+
+Round05Test > continuousChangesDoNotResetOtherAxisClocks() PASSED
+
+Round05Test > revisionOnlyConsumerMissesSameRevisionProtection() PASSED
+
+Round05Test > sameInstantAndOlderSamplesKeepProtection() PASSED
+
+Round05Test > timeAndPolicyBoundariesStayInsideStep() PASSED
+
+Round05Test > compositeConflictsKeepCanonicalPriority() PASSED
+
+Round05Test > longRunKeepsInvariants() PASSED
+
+Round05Test > reorderedIntentCanOverwriteNewerProtection() PASSED
+
+Round06Test > permissionStatusStaysDistinctFromTtl() PASSED
+
+Round06Test > nonFiniteAndInvertedBoundsAreRejected() PASSED
+
+Round06Test > abnormalUnitTokensAreRejected() PASSED
+
+Round07Test > newerSourceCanReplaceAnOlderSource() PASSED
+
+Round07Test > sameObservationTimeWithoutRevisionFollowsCallOrder() PASSED
+
+Round07Test > forecastDoesNotReplaceAnAcceptedObservation() PASSED
+
+Round07Test > equalRevisionConflictKeepsTheFirstBattery() PASSED
+
+Round07Test > ceilingDropsOmittedBatteryAfterStoredTtlAndResyncCanReplaceIt() PASSED
+
+Round07Test > deniedBatteryIsNotRedisplayedByAnOlderSample() PASSED
+
+Round07Test > badPolicyKeepsProtectionWithoutPretendingThePolicyIsValid() PASSED
+
+Round07Test > chargingAndLowWaitKeepGraphicsInsideTheCandidateBand() PASSED
+
+Round07Test > olderObservationDoesNotReplaceNewerBattery() PASSED
+
+Round07Test > deliverySequenceKeepsLateReleaseFromClearingNewerProtection() PASSED
+
+Round07Test > futureObservedValueIsRejectedWithoutAProductSkew() PASSED
+
+SourceScanTest > plantedClockAndNetworkTokensAreDetected() PASSED
+
+SourceScanTest > mainSourcesStayFreeOfPlatformClockAndNetwork() PASSED
+
+BUILD SUCCESSFUL in 29s
+7 actionable tasks: 5 executed, 2 up-to-date
+Consider enabling configuration cache to speed up this build: https://docs.gradle.org/9.3.1/userguide/configuration_cache_enabling.html
