@@ -14,3 +14,8 @@
 | [docs/operations/agent-orders/README.md](https://github.com/scarlel96-design/AURA-Ultra/blob/c4791149928ce1d90fadc31dcb7af73403e6d02f/docs/operations/agent-orders/README.md) | [snapshot](2026-11-28-pre-compaction/operations/agent-orders/README.md) | eff6a8aa1f043b5a3182d3e59a98999d3073ab90 | 61399 |
 
 기존 evidence 및 Git 이력은 이동하거나 삭제하지 않는다. 이후 보관은 새 날짜/기준 SHA의 별도 디렉터리에 추가한다.
+
+## 2026-11-28 — F03 R08 active blocker compaction
+| 원본 경로 | 보관 경로 | Git blob | 원본 바이트 |
+|---|---|---|---:|
+| [docs/operations/BLOCKERS.md](https://github.com/scarlel96-design/AURA-Ultra/blob/225f9dd0ae567116f470e9b5a89a8f0abfb22358/docs/operations/BLOCKERS.md) | [snapshot](2026-11-28-225f9dd/operations/BLOCKERS.md) | 53eaf8d80e9b086e32a90c3321b68f5810f678f1 | 7913 |

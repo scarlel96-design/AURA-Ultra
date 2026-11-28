@@ -47,3 +47,5 @@
 - GB-02 G01 R07 지시서 작성: 기준 18c61ee6442b7bd05f1126ac1f1c2e3f3f1c3e44, GB 60d5b47517e09591793901731a43e57ddf3d60a1. 잔여 G01/ASYNC/F04 계약 후보, 실행 여부 미확인. [지시서](agent-orders/GB-02-G01-R07.md). 소유권/HOLD 유지, F03 다음 행동 유지.
 
 - F03 R07: audit 3609f3890c69267653badcef03961d75934de35a, host 383×3 PASS, Domain strict/19 graph/negative PASS, Android HTTP429 strict 미실행. 46096211808 Android 단일 job 재실행 요청. [보고](../evidence/MID-AUDIT/F03/REPORT-R07.md), 출처 검증 이관. main 문서만 갱신.
+
+- F03 R08: audit 3609f3890c69267653badcef03961d75934de35a, Android retry 140833754657 strict PASS, 8 build tasks, Domain strict 81 PASS, 197 configs/6 locks exact. 출처 승인 BLOCKED, security API 접근 제한; 반복 pilot 종료. [보고](../evidence/MID-AUDIT/F03/REPORT-R08.md). BLOCKERS 원본 blob 보관. 사용자 GPT-09 추가 감사 계획(재개 시 적용) 기록.

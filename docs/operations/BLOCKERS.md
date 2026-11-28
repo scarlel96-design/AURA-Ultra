@@ -14,7 +14,7 @@
 | 추가 항목 | 상태 / 조치 |
 |---|---|
 | AG01-AUD-01~09 | PR #2 HOLD. R07 원시 로그 38 PASS 확인, 실제 runtime NOT RUN. 최종 감사 완료, AG A01 해결 및 별도 검토 전 HOLD. |
-| GB02-AUD-05~08 및 revision 보호 | PR #3 HOLD. R05 제출, 별도 Kotlin CI 72+81 PASS. 소비자·TTL·관측 순서 및 검증기 결함 해결 전 HOLD. |
+| GB02-AUD-05~08 및 revision 보호 | PR #3 HOLD. R06 로컬 Kotlin XML 82/81 PASS 대조, 공통 CI SUCCESS. R07 잔여 관측/TTL/보호 순서 및 정책 검토와 전용 CI 미적용; HOLD. 로컬 Python 3.14.7 호스트 2건 OPEN. |
 | GB01-E1 | 비ASCII Windows Gradle worker 제한. ASCII worktree 사용. |
 | GPT06-D1 | 호스트 링 충돌 해결: CI 46080386050. 실제 소재 승인 미확보. |
 | B-011 | 현재 validator/evaluator pin RESOLVED: CI 46056609237. release 변경 시 재확인. |
@@ -32,34 +32,7 @@ GPT-06 독립 준비 종료/STOPPED. [종료 보고](../evidence/GPT-06/REPORT-F
 ## 중간 감사 OPEN
 [통합 등록부](../evidence/MID-AUDIT/FINDINGS.md): 39개(12 P1, 24 P2, 1 P3, 2 정책), 이전 원본 R01~04 링크 및 모든 ID 보존. 중복 R03-08=R01-04. [개선 계획](../evidence/MID-AUDIT/REMEDIATION-PLAN.md). F01~04 GPT, G01 GB, A01 AG, D01 domain 별도 승인, F00 관리자. 관련 P1 및 필수 결함 해결 전 통합 GO 금지. 전체 공급망/CVE/license/SBOM/실기기 미실행. F01 사용자 승인으로 진행. PR #2/#3 HOLD, GPT-07 금지.
 
-F01 R01: AUD-R01-02/R03-02/R04-01/R04-03 수정 후보 구현, red 22 실패 재현, green host 성공. 전체 CI/아티팩트/통합 후 재검증 전 OPEN 유지. [보고서](../evidence/MID-AUDIT/F01/REPORT-R01.md). R01-03/04/05 다음 R02. GPT-07 미착수.
-
-F01 R01 4개 ID 후보 자동 검증 PASS, main 통합 회귀 PENDING. G01 R06 첫 개선 지시서 준비, 외부 실행 미확인. [검증](../evidence/MID-AUDIT/F01/REPORT-R01-VERIFIED.md). 전체 39개 등록부 이력 유지; 해결 판정은 main CI 이후.
-
-F01 R01 main CI SUCCESS 330 PASS 및 소재 원본 hash 일치. F01 R02 AUD-R01-03/04/05 후보 구현, Red 20 실패 재현; 전체 Green 검증 및 main 통합 회귀 전 OPEN 유지. [보고](../evidence/MID-AUDIT/F01/REPORT-R02.md). GPT-07 금지.
-
-F01 R03: R02 후보 전체 CI 및 직접 artifact 검사 PASS, 6 경로 통합. main 회귀 전 3개 ID OPEN 유지. 이전 main 46091179097 Gradle Maven Central HTTP 429 FAIL; 새 통합 CI로 확인, 재발 시 제한 재실행. [보고](../evidence/MID-AUDIT/F01/REPORT-R03.md).
-
-F01 R04: 7개 F01 ID scoped RESOLVED. main Bootstrap 46091554292, Domain 46091554286, doc 46091554290 SUCCESS; 이전 HTTP 429 실패 이력 유지. F02 4개 재현 완료, Windows NOT RUN, 후보 검증 대기. [종료 보고](../evidence/MID-AUDIT/F01/REPORT-R04-FINAL.md). 제품/실기기 차단 유지.
-
-F02 R01 4개 ID 후보 구현/재현·focused local PASS. 실제 Linux full APK 및 Windows 두 matrix 최종 결과/원시 로그/아티팩트, 인접 basic 비번들 입력 경로 검토, 통합 회귀 전 OPEN. [보고](../evidence/MID-AUDIT/F02/REPORT-R01.md). 사용자 실기기 미실행.
-
-F02 R02: R01 전체 후보 CI/ZIP PASS. 추가 basic 비번들 경로 수정 후보, red 재현 및 일부 green 성공. 전체 Linux/Windows, 아티팩트, 통합 main 회귀 전 4개 F02 ID OPEN. [보고](../evidence/MID-AUDIT/F02/REPORT-R02.md).
-
-F02 R03: R02 후보 전체 CI/3 ZIP 직접 검사 PASS, 10 경로 통합. 통합 main Linux/Windows/문서 및 아티팩트 확인 전 4개 ID OPEN 유지. [보고](../evidence/MID-AUDIT/F02/REPORT-R03.md). F03 미착수.
-
-F02 R04: 4개 F02 ID 자동 범위 RESOLVED. main 361 PASS씩 3환경, doc 및 직접 artifact PASS. [종료 보고](../evidence/MID-AUDIT/F02/REPORT-R04-FINAL.md). F03 세 ID OPEN; 실기기 차단 유지.
-
-F03 R01: AUD-R01-07/R04-06 후보 구현, red 확인. 최종 Linux/Windows/Domain/historical/doc 및 artifact 미완료, 통합 전 OPEN. setup-java v4 deprecated; major migration 별도. AUD-R04-05 Gradle 전체 검증/잠금 및 CVE/license/SBOM 미완료. [보고](../evidence/MID-AUDIT/F03/REPORT-R01.md).
-
-F03 R02: pin/checkout 후보 5 CI 및 4 ZIP PASS, 8 경로 main 통합. 통합 CI·아티팩트 전 두 ID OPEN. Gradle root/domain 인벤토리, 신뢰 원본·strict/lock 및 소유권 확인 필요. [보고](../evidence/MID-AUDIT/F03/REPORT-R02.md).
-
-F03 R03: AUD-R01-07/R04-06 scoped RESOLVED, main 5 CI 및 4 ZIP PASS. AUD-R04-05 OPEN: audit 46094868997 결과/신뢰 원본/strict/lock/변조 거부/도메인 소유권 확인. [보고](../evidence/MID-AUDIT/F03/REPORT-R03.md).
-
-F03 R04: 664 unique artifact UNREVIEWED, graph 177/19 zero unresolved. 외부 published SHA256 대조 CI 46095415032 진행 중; trust/strict/lock 미적용. GB R06 로컬 palette/PNG 2건 미해결, 3.12 CI PASS; G01 잔여/ASYNC 및 PR HOLD. [보고](../evidence/MID-AUDIT/F03/REPORT-R04.md).
-
-F03 R05: 430/664 게시 SHA256 미확보(3 repos HTTP404), 234 일치도 publisher trust 아님. audit 46095753190 lock/strict/negative fixture PENDING. 미승인 metadata/lock main 적용 금지. [보고](../evidence/MID-AUDIT/F03/REPORT-R05.md).
-
-F03 R06: Domain strict/negative PASS, Android 178/178 lock graph exact; 수정 CI 46096211808 strict PENDING. publisher provenance 및 430 미확보 유지. [보고](../evidence/MID-AUDIT/F03/REPORT-R06.md).
-
-F03 R07: Android HTTP429, 동일 SHA 단일 job retry PENDING; Domain strict exact PASS. 430/664 provenance 및 owner/strict 적용 조건 [이관](../evidence/MID-AUDIT/F03/PROVENANCE-HANDOFF.md). F03 PARTIAL.
+## 현재 후속 감사 차단점
+- F01 자동 범위 7/7 RESOLVED: [종료](../evidence/MID-AUDIT/F01/REPORT-R04-FINAL.md). F02 자동 범위 4/4 RESOLVED: [종료](../evidence/MID-AUDIT/F02/REPORT-R04-FINAL.md). 이전 세부 원본 [보관](../archive/2026-11-28-225f9dd/operations/BLOCKERS.md).
+- F03 AUD-R01-07/R04-06 RESOLVED: [R03](../evidence/MID-AUDIT/F03/REPORT-R03.md). setup-java v4 major migration 별도. AUD-R04-05 OPEN: [R08](../evidence/MID-AUDIT/F03/REPORT-R08.md) Android/Domain strict pilot PASS, 197 configs/6 locks exact, synthetic tamper/missing lock 거부. 미승인 metadata/lock main 적용 금지. 234/664 sidecar 일치도 독립 publisher trust 아님; 430 미확보. settings/detached coverage, owner 승인, isolated snapshot, 전체 CVE/license/SBOM 및 독립 검토 OPEN. GitHub 보안 API 조회 차단으로 경보 UNKNOWN. [이관](../evidence/MID-AUDIT/F03/PROVENANCE-HANDOFF.md). 동일 pilot 반복하지 않는다. 가능한 독립 SBOM/CVE/license 조사 선행, trust 적용 차단 유지.
+- F04 AUD-R03-01: F03 및 G01 보호 계약 합의 전 구현 착수 금지. AUD-R04-08 문서 개선 별도 범위. G01 R07 지시서 등록, 실행/계약 미확인. PR #2/#3 HOLD. 제품 NO-GO, GPT-07 미착수.
