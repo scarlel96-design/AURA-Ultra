@@ -63,3 +63,5 @@
 - GB R08-CLOSEOUT 총괄 검토: 63fbb8056428, 20 XML 108/81, 7 red→PASS, 8 jobs SUCCESS; 기존 6 상태 단언 보강/PR 본문 인계. [검토](../evidence/MID-AUDIT/GB-02-R08-CLOSEOUT-REVIEW.md). R09 금지, D01 별도 승인.
 
 - Host 재현성 후보 4cf403199dd1: CRLF 복구/정본 패키징 guard. 46113219202 Python3.14.7 4 PASS, PNG drift exact 재현·의도된 FAIL. [보고](../evidence/MID-AUDIT/HOST-REPRO/REPORT.md). 공통 CI PENDING; main 제품 미변경.
+
+- G01 최종 검수: e050937fd347 5 시험 파일/6 단언 추가, 삭제 0. 최종 XML/Bootstrap/PR 기록 대기. [D01 지시서](agent-orders/GB-01-D01.md) 준비(별도 승인).
