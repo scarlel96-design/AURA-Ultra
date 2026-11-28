@@ -12,7 +12,7 @@
 | 정식 WO GO | 0/38 |
 | GPT 묶음 GO | 3/12 (PARTIAL 독립 준비 종료는 GO에 포함하지 않음) |
 | 출시 | NO-GO |
-| 다음 행동 | F03 출처·라이선스 증거 검토; 동일 후보 재시험 금지. R12 16 tasks PASS/9 권고 잔여, 승격 BLOCKED. GPT-07 및 실기기 설치는 별도 승인 대기. |
+| 다음 행동 | F03 R13 48/48 바이트·서명 확보; 다음 서명자 신원/서명 검증. 승격 BLOCKED. GPT-07 및 실기기 설치는 별도 승인 대기. |
 
 ## 근거 및 이관
 - [GPT-06 전체 종료 보고](evidence/GPT-06/REPORT-FINAL-CLOSURE.md). R01~R06 및 OPS-07 독립 준비 산출물 통합·자동 검증 완료. 결합 후보와 main 코드·시험·자산·CI 102개, 보호 경로 38개 blob 동일. 원본 아카이브 8개 SHA 동일. 활성 8개 문서 500021→24609 B(검증 코드 기준).
@@ -58,4 +58,4 @@
 
 - [F03 R11](evidence/MID-AUDIT/F03/REPORT-R11.md): 공식 호환 후보 AGP9.5.1/Gradle9.6.1, scratch audit 6a651984c3e3377b5cf15baf8d175cf5e26a38d8, CI 46103946447 8 builds PASS, OSV 8 MATCH/9 IDs로 fail-closed, ZIP 직접 검사. 43 IDs 관측상 감소, 새 UTP coverage OPEN. [결과](evidence/MID-AUDIT/F03/REPORT-R11-RESULT.md). 제품 미변경.
 
-- [F03 R12 결과](evidence/MID-AUDIT/F03/REPORT-R12-RESULT.md): a1158e8b430c, 46108927818 8 assemble/8 lint PASS, 197 OSV/9 IDs 동일, 4 공통 jobs SUCCESS. ZIP 검증. 제품 미변경; trust/detached OPEN.
+- [R12](evidence/MID-AUDIT/F03/REPORT-R12-RESULT.md): 16 tasks PASS/9 IDs 잔여. [R13](evidence/MID-AUDIT/F03/REPORT-R13.md): 48 exact bytes/48 .asc, 38 기존 미확보 보완; 서명자·trust OPEN.
