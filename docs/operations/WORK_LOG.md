@@ -37,3 +37,5 @@
 - F03 R02: c0a75d94dfc37e32a5fea1b52078dfaa215505c1, Linux 46093989694, Windows 46093989703, Domain 46093989816, historical 46093989668, doc 46093989722 SUCCESS; 370×3+81 PASS, 4 ZIP 직접 검사. 8 exact blob main 통합; [보고](../evidence/MID-AUDIT/F03/REPORT-R02.md). 통합 회귀 PENDING. GB R06 제출/HOLD.
 
 - F03 R03: main 56db9192add22b7fef279dc6f4831516d7f00c32, 5 CI SUCCESS, 370×3+81 PASS/4 ZIP 직접 검증. pin/checkout 2개 scoped RESOLVED; Gradle 격리 audit 4cae0a70f3dfb6507846aad04336128229a85b6f, 46094868997 수집 중. [보고](../evidence/MID-AUDIT/F03/REPORT-R03.md). 제품 NO-GO.
+
+- F03 R04: GB a1d1933391749ea65e07c1030f28c739f07fa1bc 17 XML/82+81 및 공통 CI 확인, 로컬 palette/PNG 2건 OPEN. Gradle 46095101030 graph 177/19 zero unresolved, 664 unique; audit e7dd34de38012410d057460b03a74e4c12378d1d, published checksum CI 46095415032 진행 중. [보고](../evidence/MID-AUDIT/F03/REPORT-R04.md). main 문서만 갱신.

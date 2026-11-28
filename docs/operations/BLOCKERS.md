@@ -55,3 +55,5 @@ F03 R01: AUD-R01-07/R04-06 후보 구현, red 확인. 최종 Linux/Windows/Domai
 F03 R02: pin/checkout 후보 5 CI 및 4 ZIP PASS, 8 경로 main 통합. 통합 CI·아티팩트 전 두 ID OPEN. Gradle root/domain 인벤토리, 신뢰 원본·strict/lock 및 소유권 확인 필요. [보고](../evidence/MID-AUDIT/F03/REPORT-R02.md).
 
 F03 R03: AUD-R01-07/R04-06 scoped RESOLVED, main 5 CI 및 4 ZIP PASS. AUD-R04-05 OPEN: audit 46094868997 결과/신뢰 원본/strict/lock/변조 거부/도메인 소유권 확인. [보고](../evidence/MID-AUDIT/F03/REPORT-R03.md).
+
+F03 R04: 664 unique artifact UNREVIEWED, graph 177/19 zero unresolved. 외부 published SHA256 대조 CI 46095415032 진행 중; trust/strict/lock 미적용. GB R06 로컬 palette/PNG 2건 미해결, 3.12 CI PASS; G01 잔여/ASYNC 및 PR HOLD. [보고](../evidence/MID-AUDIT/F03/REPORT-R04.md).
