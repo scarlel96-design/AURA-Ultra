@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="io.github.scarlel96.aura.intelligence.Round04Test" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-11-28T05:40:01.277Z" hostname="서브컴퓨터" time="0.007">
+  <properties/>
+  <testcase name="ceilingProtectionIsDeliveredWhenRevisionStaysAtTheLimit()" classname="io.github.scarlel96.aura.intelligence.Round04Test" time="0.002"/>
+  <testcase name="lowPowerGraphicsDoNotWaitForDebounceOrHold()" classname="io.github.scarlel96.aura.intelligence.Round04Test" time="0.001"/>
+  <testcase name="freshLowBatteryLimitsDecorationWithoutChangingTheChargingAxis()" classname="io.github.scarlel96.aura.intelligence.Round04Test" time="0.001"/>
+  <testcase name="ceilingWithdrawsExpiredAndDeniedPublications()" classname="io.github.scarlel96.aura.intelligence.Round04Test" time="0.001"/>
+  <testcase name="anotherAxisDoesNotRestartDebounceOrHold()" classname="io.github.scarlel96.aura.intelligence.Round04Test" time="0.002"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

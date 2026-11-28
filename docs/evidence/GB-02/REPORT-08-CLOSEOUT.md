@@ -121,3 +121,33 @@ FINDINGS의 AUD-R02와 AUD-R03-01은 총괄이 갱신하기 전까지 OPEN이다
 - 15/20, 70/50, 60초와 출처별 미래 허용은 제품 상수로 올리지 않는다.
 - 로컬 Python 3.14.7의 palette.svg와 PNG 다이제스트는 GPT 담당이다.
 - FINDINGS는 OPEN이다.
+
+## 최종 인계
+
+G01 독립 개발은 이 추가 증거로 종료한다. R09가 아니다. 제품 코드는 바꾸지 않았다. 상한에서 처리 시각만 달라지는 여섯 기존 시험은 `previous.copy(processedAt = 기대 시각)`과 전체 상태가 같다. 그 비교는 통과했고 불일치는 재현되지 않았다. 더 이른 시각의 동일 객체 단언과 기존 안전 단언은 유지했다.
+
+시험 대상 SHA와 제출 코드 SHA는 `e050937fd34709d143836e44bbf91ec5221bdc48`이다. 직전 동작 구현 `5e1150ada2170cc06cfe862ec00fb68feae1ee0b`과 제출 head `f71efaf14451364c63b01f19ab9912c882cc6e05` 위에 시험 6행만 더했다. `origin/main` `98e98639fd6fb25979c77524a28635fdb6859cfd`는 문서뿐이라 병합 `67d4f15017c23b34e747167b19a6c8e55dfc618c`로 반영했다. 들어온 파일은 수정하지 않았다. STATUS의 다음 행동은 “F03 자동 출처 수집 종료/PARTIAL. R17 428/430 근거; 통합 차단 인계. 다음 실행 코드 우선 범위 승인 확인. GPT-07 및 실기기 설치는 별도 승인 대기.”다. 그 문장을 바꾸지 않는다.
+
+| 시험 | 결과 | 로그 |
+|---|---|---|
+| intelligence clean JDK 17 `--no-daemon --offline --no-build-cache` | 108 PASS, 0 FAIL, 0 ERROR, 0 SKIP. XML 13파일. BUILD SUCCESSFUL in 40s. `TEST_JVM` 17. `2026-11-28T05:39:57.074Z`–`2026-11-28T05:40:02.366Z` | [intelligence-test-summary-r08-handoff.log](intelligence-test-summary-r08-handoff.log), [junit-r08-handoff](junit-r08-handoff) |
+| domain clean 같은 옵션 | 81 PASS, 0 FAIL, 0 ERROR, 0 SKIP. XML 7파일. BUILD SUCCESSFUL in 24s. `2026-11-28T05:40:35.595Z`–`2026-11-28T05:40:36.042Z` | [domain-regression-r08-handoff.log](domain-regression-r08-handoff.log), [junit-r08-handoff-domain](junit-r08-handoff-domain) |
+| `longRunKeepsInvariants` | 시드 20261128, 100000회, 1메서드 PASS | 같은 intelligence 로그 |
+| JUnit 부정 7종 | `rejectsEmptyMethod`, `rejectsMissingCounters`, `rejectsMissingClassname`, `rejectsUnrelatedClassname`, `rejectsSuiteFilenameMismatch`, `rejectsNestedTestcase`, `rejectsFutureTimestamp` 유지. `OK files=13 tests=108`, `OK files=7 tests=81` | 위 XML |
+
+로컬 호스트 370개와 palette.svg·PNG 2건은 다시 실행하지 않았다. GPT 담당으로 남긴다. 문서 예산 로컬 검사는 exit 0이다. STATUS 8134/8192, WORK_LOG 9321/10240, BLOCKERS 7706/8192.
+
+CI head는 `e050937fd34709d143836e44bbf91ec5221bdc48`다. 적용 대상은 Bootstrap, 문서 예산, Windows 재현의 push와 pull_request다. Domain Kotlin과 Historical WFF는 이 SHA의 run 목록에 없다. Bootstrap은 intelligence 시험을 실행하지 않는다. 여섯 run의 conclusion은 success이고 재확인한 step `BAD`는 0이다. Bootstrap step 13과 step 23, Windows step 9는 push와 pull_request 모두 success다.
+
+| 워크플로 | 이벤트 | run | job | steps |
+|---|---|---|---|---|
+| AURA Bootstrap | push | [46113199714](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46113199714) | 140881103900 | 31 |
+| AURA Bootstrap | pull_request | [46113203946](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46113203946) | 140881117275 | 31 |
+| Active documentation budget | push | [46113199708](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46113199708) | 140881103726 | 9 |
+| Active documentation budget | pull_request | [46113203955](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46113203955) | 140881117363 | 9 |
+| Windows host reproducibility | push | [46113199651](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46113199651) | 140881103783 `host (true)`, 140881103922 `host (false)` | 12, 12 |
+| Windows host reproducibility | pull_request | [46113203947](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46113203947) | 140881117471 `host (true)`, 140881117609 `host (false)` | 12, 12 |
+
+이 최종 증거의 커밋 SHA는 기록 커밋이 가리킨다. 기록 커밋은 `[skip ci]`이고 `modules/intelligence`를 바꾸지 않는다.
+
+인계로 남긴다. D01은 별도 승인이 나기 전에는 GB-02에서 구현하지 않는다. 더 높은 호출자 revision과 철회 시각의 우선순위는 총괄 합의 전이다. F04와 C01의 실제 소비자 재전송은 구현하지 않는다. intelligence 모듈 CI, 실기기, 공급원, WFF는 NOT RUN이다. 후보 15/20, 70/50, 60초는 승격하지 않는다. FINDINGS는 OPEN이다. PR #3 HOLD. 제품 출시 NO-GO. R09, GB-03, GPT-07은 시작하지 않는다.
