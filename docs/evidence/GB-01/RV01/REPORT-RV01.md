@@ -108,4 +108,45 @@ XML: 13 files, `2026-11-28T08:59:03.080Z`–`2026-11-28T08:59:08.454Z`
 
 ## 하지 않은 일
 
-브랜치를 push하지 않았다. `origin`에 `agent/grok/GB-01-RV01` ref는 없다. main 병합과 강제 푸시를 하지 않았다. PR #3과 PR #5의 본문, head, 상태를 바꾸지 않았다. D01 재작업, Intelligence 수정, 검사기 우회, 기존 시험 삭제, 단언 약화를 하지 않았다.
+이 절은 로컬 제출 시점의 기록이다. 원격 제출은 아래 절에 있다. D01 재작업, Intelligence 수정, 검사기 수정, 기존 시험 삭제, 단언 약화, PR #3·#5 변경, main 병합, 강제 푸시는 하지 않았다.
+
+## 원격 제출
+
+PRE-FLIGHT 기준 SHA는 `origin/main` `4dc69f8ca595f49b90b0660d9afc0ea248779cbb`다. AGENTS, STATUS, RESUME, INVARIANTS, TASK_RECORD, VERIFICATION, TASK_REPORT, GPT 계획, BLOCKERS, WORK_LOG, QUALITY_GATES, RV01 지시, 배정표를 그 SHA에서 읽었다. 출시는 NO-GO. PR #5는 `d847028dc914ebb0acfbf47ff6b83a179d9bf486`, PR #3은 `0c4890ea7f69c6145791d17d51b98c97fed45c1d`이며 둘 다 OPEN, 미병합이다.
+
+등록 커밋 main CI 4건은 모두 success다.
+
+| 워크플로 | run | 결과 |
+| --- | --- | --- |
+| Active documentation budget | 46129144032 | success |
+| Domain Kotlin | 46129144051 | success |
+| Windows host reproducibility | 46129144033 | success |
+| AURA Bootstrap | 46129144036 | success |
+
+그 다음에만 `origin/main`을 이 브랜치에 병합했다. 병합 SHA `1ec894d54ff3b0aa93e590194e1ab1982e077690`. 부모는 `0b9ae00`과 `4dc69f8`이다. `modules/domain/src` 19개 blob은 구현 SHA `56675d84d1c95bee5554decc6564b3cc9faded60`와 같다. domain 계약 문서 2개 blob도 같다. 검사기 blob `21b588b3dcd5c4b093879bc67c41aaafd3751d60`와 검사기 시험 blob `eac4b8ed30d6c46b09dd44ef9c922a2f48d456cc`는 main과 같다. 제품 코드와 시험이 같으므로 Intelligence 108과 100000회 증거는 재실행하지 않았다.
+
+저장된 `junit-domain` XML에 대한 등록 프로파일 결과:
+
+```
+DOMAIN_INVENTORY rv01
+DOMAIN_RESULT 102 PASS / 0 FAIL / 0 ERROR / 0 SKIP
+```
+
+종료 코드 0. 같은 XML의 baseline과 d01 프로파일은 `AuthorityContractTest`를 알 수 없는 suite로 거절한다. 그 거절은 PASS가 아니다.
+
+push refspec은 `1ec894d54ff3b0aa93e590194e1ab1982e077690:refs/heads/agent/grok/GB-01-RV01`다. PR #6 https://github.com/scarlel96-design/AURA-Ultra/pull/6 은 OPEN, HOLD, 미병합이다. main은 `4dc69f8`에 그대로 있다.
+
+`1ec894d`의 push와 pull_request CI 8건은 모두 success다. Domain Kotlin push `46129593048`과 pull_request `46129609178`은 각각 `BUILD SUCCESSFUL`, 검사기 자체 시험 24 ok, `DOMAIN_INVENTORY rv01`, `DOMAIN_RESULT 102 PASS / 0 FAIL / 0 ERROR / 0 SKIP`을 출력했다.
+
+| 이벤트 | 워크플로 | run | 결과 |
+| --- | --- | --- | --- |
+| push | Active documentation budget | 46129593089 | success |
+| push | Domain Kotlin | 46129593048 | success |
+| push | Windows host reproducibility | 46129593060 | success |
+| push | AURA Bootstrap | 46129593051 | success |
+| pull_request | Active documentation budget | 46129609340 | success |
+| pull_request | Domain Kotlin | 46129609178 | success |
+| pull_request | Windows host reproducibility | 46129609259 | success |
+| pull_request | AURA Bootstrap | 46129609199 | success |
+
+이 절을 담은 커밋은 문서다. 그 커밋의 CI는 이 표에 포함하지 않는다.
