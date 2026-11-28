@@ -89,6 +89,18 @@
 4. 표시 전 `deriveStatus`와 `classifiedValue`를 사용한다. WFF 패키지 안에는 이 코드를 넣지 않는다.
 5. 루트 `settings.gradle.kts`에 이 모듈을 넣는 변경은 중앙 소유자가 한다. 그 전에 빌드는 [BUILD.md](BUILD.md)의 독립 명령을 사용한다.
 
+## 권한 검증
+
+`AuthorityCoordinator`는 관측 revision과 분리된 순수 계약이다. `applyRevision`, `classifiedValue`, `deriveStatus`는 이 상태를 읽지 않는다. 관측 상태 `VALID`, `DENIED`, `ERROR`, `UNAVAILABLE`은 권한을 허가하거나 철회하지 않는다.
+
+scope는 `authority`, `principal`, `category` 불투명 토큰이다. `SourceId`만으로 scope를 만들지 않는다. session과 ticket은 발급한 coordinator 인스턴스에 묶인다. 같은 문자와 같은 번호라도 다른 인스턴스의 ticket은 거절한다. `CheckTicket`과 `AcquisitionCapability`는 data class가 아니고, 호출자가 만든 복제 seal은 허가로 받지 않는다. 공개 `verified = true` 경로는 없다.
+
+신뢰된 확인 결과는 `TrustedCheckResult.GRANTED`, `DENIED`, `FAILED`다. 미발급, 오래된, 다른 인스턴스 ticket은 상태를 바꾸지 않는다. 같은 완료의 반복은 그대로 두고, 같은 ticket의 모순된 반복은 `UNKNOWN`으로 닫는다. 신뢰된 무효화는 이미 `UNKNOWN`이어도 generation을 돌리고 미완료 확인을 취소한다. 검증되지 않은 입력은 어떤 scope도 바꾸지 않는다. 상태가 같고 무효화가 없으면 generation을 유지한다. ticket과 generation이 `Long.MAX_VALUE`를 넘기려 하면 그 scope를 잠그고, 새 coordinator와 새 확인으로만 다시 연다.
+
+획득 capability는 scope, session, generation, 요청 stream에 묶인다. 다른 stream으로 다시 붙이지 않는다. 이전 generation은 재허가 뒤에도 통과하지 않는다. 재허가 이전의 과거 측정값 공개는 이 함수에 없다.
+
+이 타입은 SDK 권한, 동시성, 저장, 소비자 화면 삭제를 증명하지 않는다. 같은 프로세스의 리플렉션을 막지 않는다. `openNearCeiling`은 모듈 내부에서 카운터만 옮기며 `GRANTED`를 만들지 않는다.
+
 ## 이 계약에 없는 것
 
 FSM, 히스테리시스, 우선순위, 캐시 저장소, 백오프, Complication 변환, 단위 환산, 실제 기상·건강 요청, 그래픽. 해당 항목은 GPT-07과 WO-17~23의 남은 범위다.
