@@ -1,0 +1,23 @@
+================================================================================
+AG-01 R07 POST-FIX VERIFICATION LOG (5 STABILIZATION DEFECTS)
+Target file: tests/compatibility/ag-01/wear_emulator_runtime.py
+Target SHA-256 (post-fix R07): 1d65bb7142d05e004d3d229e442c2e799b72bc599ab6c2e4b5a6977742876789
+================================================================================
+
+--- [DEFECT 1 & 2] Post-fix verification ---
+Case 1A (staged_video.unlink raises PermissionError in finally): raised RecoveryFailureError with recovery_errors=['staged_cleanup_failed: WinError 32: staged_video locked by another process']
+  recorder_terminated=True recovery_wakeup_ran=True remote_rm_ran=True -> FIXED=YES
+
+--- [DEFECT 3] Post-fix verification ---
+Case 3A (Duplicate stsz box): REJECTED (Duplicate 'stsz' sample table box inside video 'stbl') -> FIXED=YES
+Case 3B (Multi-sample chunk overflow past mdat end): REJECTED (Video chunk #1 byte span [160, 352) (3 samples, 192 bytes) overflows 'mdat' payload bounds [(32, 224)]) -> FIXED=YES
+Case 3C (1 sample in stsz vs 3 chunks in stco): REJECTED (Invalid MP4 sample-to-chunk count: sample_count (1) < chunk_count (3)) -> FIXED=YES
+
+--- [DEFECT 4] Post-fix verification ---
+Case 4A (ffprobe omits codec_type): REJECTED (ffprobe stream is missing or has non-video codec_type=None (must be explicitly 'video')) -> FIXED=YES
+Case 4B (Partial decode 3/24 frames + stderr decode errors): REJECTED (ffprobe reported stream decoding error(s) on stderr for C:\Users\scarl\AppData\Local\Temp\tmp7v00nbf_\test.mp4 (partial or corrupt video rejected): [h264 @ 0x1234] error while decoding MB 12 15) -> FIXED=YES
+Case 4C (Partial decode 3/24 frames with empty stderr): REJECTED (Partial video decoding detected in C:\Users\scarl\AppData\Local\Temp\tmp7v00nbf_\test.mp4: decoded 3 frame(s), but MP4 container declares 24 frame sample(s)) -> FIXED=YES
+
+--- [DEFECT 5] Post-fix verification ---
+Case 5A (Logical Display 0 no state + blank line + unscoped Display Power Controller): status=UNKNOWN by_id={'0': []} unscoped=['ON'] -> FIXED=YES
+Case 5B (Inline DisplayDeviceInfo displayId 0 followed by ID-less DisplayDeviceInfo state DOZE): status=UNKNOWN by_id={'0': ['ON']} unscoped=['DOZE'] -> FIXED=YES

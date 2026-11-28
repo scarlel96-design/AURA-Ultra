@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  AG-01 PoC (WFF 4): Official <Reference> data sharing & synthetic Complication multi-element control.
+  Demonstrates:
+  1. Single-source <Reference> publication from transformable attributes (numeric float/int and ARGB hex color).
+  2. Multi-element consumption via [REFERENCE.<name>] across outer gauge Arc, glass panel RoundRectangle,
+     highlight Stroke/Fill color, and conditional status text.
+  3. Synthetic ComplicationSlot (RANGED_VALUE / SHORT_TEXT) driving multiple graphical elements via Reference,
+     with explicit missing/empty data fallback (never rendering missing values as 0).
+-->
+<WatchFace width="450" height="450">
+    <Metadata key="CLOCK_TYPE" value="DIGITAL" />
+    <Metadata key="PREVIEW_TIME" value="10:08:00" />
+    <Scene backgroundColor="#FF000000">
+        <!--
+          1. Scene-level Single-Source Telemetry Reference Publisher:
+             Computes normalized progress [0..100], dynamic panel width [180..280], and status color once,
+             then publishes them via <Reference> for multiple scene elements to consume.
+        -->
+        <Group name="ActiveDecoration" x="0" y="0" width="450" height="450" alpha="255">
+            <Variant mode="AMBIENT" target="alpha" value="0" startOffset="0.10" duration="0.80" interpolation="EASE_OUT" />
+
+            <!-- Publisher node: Group can act as a pure state/transform Reference publisher without requiring a DrawElement child -->
+            <Group name="TelemetryReferencePublisher" x="50" y="0" width="220" height="1" alpha="0" tintColor="#FF79D4F2">
+                <Transform target="x" value="clamp([STEP_PERCENT], 0, 100)" />
+                <Transform target="width" value="180 + clamp([STEP_PERCENT], 0, 100) * 1.0" />
+                <Transform target="tintColor" value="[BATTERY_PERCENT] &lt;= 15 ? #FFFFA84D : ([STEP_PERCENT] &gt;= 100 ? #FF81D7AF : #FF79D4F2)" />
+                <Reference name="ref_telemetry_ratio" source="x" defaultValue="50" />
+                <Reference name="ref_panel_width" source="width" defaultValue="220" />
+                <Reference name="ref_status_color" source="tintColor" defaultValue="#FF79D4F2" />
+            </Group>
+
+            <!-- Consumer 1 & 2: Outer precision ring and orbital progress arc driven by [REFERENCE.ref_telemetry_ratio] and [REFERENCE.ref_status_color] -->
+            <PartDraw name="OrbitalRingConsumer" x="0" y="0" width="450" height="450">
+                <Ellipse x="15" y="15" width="420" height="420">
+                    <Stroke color="#FF314B60" thickness="2" />
+                </Ellipse>
+                <Arc centerX="225" centerY="225" width="412" height="412" startAngle="0" endAngle="180" direction="CLOCKWISE">
+                    <Transform target="endAngle" value="[REFERENCE.ref_telemetry_ratio] * 3.6">
+                        <Animation duration="0.35" interpolation="EASE_OUT" />
+                    </Transform>
+                    <Stroke color="#FF79D4F2" thickness="4" cap="ROUND">
+                        <Transform target="color" value="[REFERENCE.ref_status_color]" />
+                    </Stroke>
+                </Arc>
+            </PartDraw>
+
+            <!-- Consumer 3: Dynamic Glass Panel centered horizontally via [REFERENCE.ref_panel_width] and tinted by [REFERENCE.ref_status_color] -->
+            <PartDraw name="DynamicGlassPanelConsumer" x="0" y="242" width="450" height="48">
+                <RoundRectangle x="85" y="0" width="280" height="46" cornerRadiusX="23" cornerRadiusY="23">
+                    <Transform target="x" value="225 - ([REFERENCE.ref_panel_width] / 2)" />
+                    <Transform target="width" value="[REFERENCE.ref_panel_width]" />
+                    <Fill color="#FF101E2A" />
+                    <Stroke color="#FF314B60" thickness="2">
+                        <Transform target="color" value="[REFERENCE.ref_status_color]" />
+                    </Stroke>
+                </RoundRectangle>
+            </PartDraw>
+
+            <!-- Consumer 4: Header and telemetry text synchronized with [REFERENCE.ref_status_color] and [REFERENCE.ref_telemetry_ratio] -->
+            <PartText name="BrandHeaderConsumer" x="145" y="52" width="160" height="28">
+                <Text align="CENTER">
+                    <Font family="SYNC_TO_DEVICE" size="15" color="#FF79D4F2">
+                        <Transform target="color" value="[REFERENCE.ref_status_color]" />
+                        AURA ULTRA
+                    </Font>
+                </Text>
+            </PartText>
+            <PartText name="DateHeader" x="90" y="90" width="270" height="34">
+                <Text align="CENTER">
+                    <Font family="SYNC_TO_DEVICE" size="22" color="#FFA9BACB">
+                        <Template>%s.%s · %s<Parameter expression="[MONTH_Z]" /><Parameter expression="[DAY_Z]" /><Parameter expression="[DAY_OF_WEEK_S]" /></Template>
+                    </Font>
+                </Text>
+            </PartText>
+            <PartText name="TelemetrySummaryConsumer" x="95" y="248" width="260" height="34">
+                <Text align="CENTER">
+                    <Font family="SYNC_TO_DEVICE" size="21" color="#FF79D4F2">
+                        <Transform target="color" value="[REFERENCE.ref_status_color]" />
+                        <Template>GOAL %s%% · BAT %s%%<Parameter expression="round([REFERENCE.ref_telemetry_ratio])" /><Parameter expression="[BATTERY_PERCENT]" /></Template>
+                    </Font>
+                </Text>
+            </PartText>
+        </Group>
+
+        <!--
+          2. Synthetic ComplicationSlot driving multiple graphical elements via WFF 4 <Reference>:
+             Uses RANGED_VALUE to compute normalized complication sweep and severity color once,
+             then drives an arc gauge, a badge capsule, and formatted text with missing-data fallback.
+        -->
+        <ComplicationSlot name="AuraSyntheticContextSlot" slotId="1" x="85" y="298" width="280" height="84"
+                          supportedTypes="RANGED_VALUE SHORT_TEXT EMPTY" isCustomizable="TRUE">
+            <Variant mode="AMBIENT" target="alpha" value="0" startOffset="0.30" duration="0.70" interpolation="EASE_IN" />
+            <DefaultProviderPolicy defaultSystemProvider="WATCH_BATTERY" defaultSystemProviderType="RANGED_VALUE" />
+            <BoundingRoundBox x="0" y="0" width="280" height="84" cornerRadius="20" />
+
+            <Complication type="RANGED_VALUE">
+                <PartDraw name="ComplicationMultiGraphics" x="0" y="0" width="280" height="84">
+                    <!-- Source Arc publishes ref_comp_sweep and its Stroke publishes ref_comp_color -->
+                    <Arc centerX="42" centerY="42" width="56" height="56" startAngle="0" endAngle="180" direction="CLOCKWISE">
+                        <Transform target="endAngle" value="([COMPLICATION.RANGED_VALUE_MAX] &gt; [COMPLICATION.RANGED_VALUE_MIN]) ? (clamp(([COMPLICATION.RANGED_VALUE_VALUE] - [COMPLICATION.RANGED_VALUE_MIN]) / ([COMPLICATION.RANGED_VALUE_MAX] - [COMPLICATION.RANGED_VALUE_MIN]), 0, 1) * 360) : 0" />
+                        <Reference name="ref_comp_sweep" source="endAngle" defaultValue="0" />
+                        <Stroke color="#FF79D4F2" thickness="5" cap="ROUND">
+                            <Transform target="color" value="[COMPLICATION.RANGED_VALUE_VALUE] &gt;= ([COMPLICATION.RANGED_VALUE_MIN] + ([COMPLICATION.RANGED_VALUE_MAX] - [COMPLICATION.RANGED_VALUE_MIN]) * 0.7) ? #FF81D7AF : #FF79D4F2" />
+                            <Reference name="ref_comp_color" source="color" defaultValue="#FF79D4F2" />
+                        </Stroke>
+                    </Arc>
+                    <!-- Driven Graphic 2: Progress bar width and border color follow ref_comp_sweep & ref_comp_color -->
+                    <RoundRectangle x="84" y="48" width="176" height="14" cornerRadiusX="7" cornerRadiusY="7">
+                        <Transform target="width" value="24 + ([REFERENCE.ref_comp_sweep] / 360) * 152" />
+                        <Fill color="#FF172C39" />
+                        <Stroke color="#FF79D4F2" thickness="1">
+                            <Transform target="color" value="[REFERENCE.ref_comp_color]" />
+                        </Stroke>
+                    </RoundRectangle>
+                </PartDraw>
+                <!-- Driven Graphic 3: Text label tinted by [REFERENCE.ref_comp_color] -->
+                <PartText name="ComplicationValueLabel" x="84" y="12" width="180" height="30">
+                    <Text align="START">
+                        <Font family="SYNC_TO_DEVICE" size="20" color="#FFF3F7FA">
+                            <Transform target="color" value="[REFERENCE.ref_comp_color]" />
+                            <Template>%s %s<Parameter expression="[COMPLICATION.TITLE]" /><Parameter expression="[COMPLICATION.TEXT]" /></Template>
+                        </Font>
+                    </Text>
+                </PartText>
+            </Complication>
+
+            <Complication type="SHORT_TEXT">
+                <Condition>
+                    <Expressions>
+                        <Expression name="has_comp_text">textLength([COMPLICATION.TEXT]) &gt; 0</Expression>
+                    </Expressions>
+                    <Compare expression="has_comp_text">
+                        <PartText name="ShortTextValid" x="20" y="24" width="240" height="34">
+                            <Text align="CENTER">
+                                <Font family="SYNC_TO_DEVICE" size="20" color="#FFF3F7FA">
+                                    <Template>%s · %s<Parameter expression="[COMPLICATION.TITLE]" /><Parameter expression="[COMPLICATION.TEXT]" /></Template>
+                                </Font>
+                            </Text>
+                        </PartText>
+                    </Compare>
+                    <Default>
+                        <PartText name="ShortTextMissingFallback" x="20" y="24" width="240" height="34">
+                            <Text align="CENTER">
+                                <Font family="SYNC_TO_DEVICE" size="20" color="#FFA9BACB">DATA --</Font>
+                            </Text>
+                        </PartText>
+                    </Default>
+                </Condition>
+            </Complication>
+
+            <Complication type="EMPTY">
+                <PartText name="EmptySlotFallback" x="20" y="24" width="240" height="34">
+                    <Text align="CENTER">
+                        <Font family="SYNC_TO_DEVICE" size="19" color="#FFA9BACB">NO SOURCE --</Font>
+                    </Text>
+                </PartText>
+            </Complication>
+        </ComplicationSlot>
+
+        <!-- Primary Clock with WFF 4 continuous AOD Variant transition -->
+        <DigitalClock x="40" y="131" width="370" height="118" pivotX="0.5" pivotY="0.5" scaleX="1.0" scaleY="1.0" alpha="255" tintColor="#FFF3F7FA">
+            <Variant mode="AMBIENT" target="y" value="166" startOffset="0.00" duration="0.85" interpolation="EASE_IN_OUT" />
+            <Variant mode="AMBIENT" target="scaleX" value="0.88" startOffset="0.00" duration="0.85" interpolation="EASE_IN_OUT" />
+            <Variant mode="AMBIENT" target="scaleY" value="0.88" startOffset="0.00" duration="0.85" interpolation="EASE_IN_OUT" />
+            <Variant mode="AMBIENT" target="tintColor" value="#FFB7C0C9" startOffset="0.00" duration="0.85" interpolation="EASE_IN_OUT" />
+            <TimeText x="0" y="0" width="370" height="118" format="hh:mm" hourFormat="SYNC_TO_DEVICE" align="CENTER" alpha="255">
+                <Font family="SYNC_TO_DEVICE" size="96" weight="NORMAL" color="#FFF3F7FA" />
+            </TimeText>
+        </DigitalClock>
+    </Scene>
+</WatchFace>

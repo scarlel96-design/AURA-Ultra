@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- AG-01 PoC (WFF 3): Static AOD fallback combined with WFF 3 Part-level blendMode (SCREEN / SRC_OVER). -->
+<WatchFace width="450" height="450">
+    <Metadata key="CLOCK_TYPE" value="DIGITAL" />
+    <Metadata key="PREVIEW_TIME" value="10:08:00" />
+    <Scene backgroundColor="#FF000000">
+        <Group name="ActiveDecoration" x="0" y="0" width="450" height="450" alpha="255">
+            <Variant mode="AMBIENT" target="alpha" value="0" />
+            <PartDraw name="BaseRingAndPanel" x="0" y="0" width="450" height="450" blendMode="SRC_OVER">
+                <Ellipse x="15" y="15" width="420" height="420">
+                    <Stroke color="#FF314B60" thickness="2" />
+                </Ellipse>
+                <RoundRectangle x="85" y="242" width="280" height="46" cornerRadiusX="23" cornerRadiusY="23">
+                    <Fill color="#FF101E2A" />
+                    <Stroke color="#FF314B60" thickness="1" />
+                </RoundRectangle>
+            </PartDraw>
+            <!-- WFF 3 Part-level blendMode="SCREEN" optical highlight layer -->
+            <PartDraw name="OpticalHighlightPart" x="65" y="40" width="320" height="160" blendMode="SCREEN" alpha="180">
+                <Variant mode="AMBIENT" target="alpha" value="0" />
+                <RoundRectangle x="20" y="10" width="280" height="36" cornerRadiusX="18" cornerRadiusY="18">
+                    <Fill color="#FF172C39" />
+                </RoundRectangle>
+            </PartDraw>
+            <PartText name="BrandHeader" x="145" y="52" width="160" height="28" blendMode="SCREEN">
+                <Text align="CENTER">
+                    <Font family="SYNC_TO_DEVICE" size="15" color="#FF79D4F2">AURA ULTRA</Font>
+                </Text>
+            </PartText>
+            <PartText name="DateHeader" x="90" y="90" width="270" height="34">
+                <Text align="CENTER">
+                    <Font family="SYNC_TO_DEVICE" size="22" color="#FFA9BACB">
+                        <Template>%s.%s · %s<Parameter expression="[MONTH_Z]" /><Parameter expression="[DAY_Z]" /><Parameter expression="[DAY_OF_WEEK_S]" /></Template>
+                    </Font>
+                </Text>
+            </PartText>
+            <PartText name="TelemetryRow" x="85" y="248" width="280" height="34">
+                <Text align="CENTER">
+                    <Font family="SYNC_TO_DEVICE" size="21" color="#FF79D4F2">
+                        <Template>BAT %s%% · %s/%s<Parameter expression="[BATTERY_PERCENT]" /><Parameter expression="[STEP_COUNT]" /><Parameter expression="[STEP_GOAL]" /></Template>
+                    </Font>
+                </Text>
+            </PartText>
+        </Group>
+
+        <!-- Single clock object with static WFF 3 AMBIENT Variant fallback -->
+        <DigitalClock x="40" y="131" width="370" height="118" pivotX="0.5" pivotY="0.5" scaleX="1.0" scaleY="1.0" alpha="255" tintColor="#FFF3F7FA">
+            <Variant mode="AMBIENT" target="y" value="166" />
+            <Variant mode="AMBIENT" target="scaleX" value="0.88" />
+            <Variant mode="AMBIENT" target="scaleY" value="0.88" />
+            <Variant mode="AMBIENT" target="tintColor" value="#FFB7C0C9" />
+            <TimeText x="0" y="0" width="370" height="118" format="hh:mm" hourFormat="SYNC_TO_DEVICE" align="CENTER" alpha="255">
+                <Font family="SYNC_TO_DEVICE" size="96" weight="NORMAL" color="#FFF3F7FA" />
+            </TimeText>
+        </DigitalClock>
+    </Scene>
+</WatchFace>

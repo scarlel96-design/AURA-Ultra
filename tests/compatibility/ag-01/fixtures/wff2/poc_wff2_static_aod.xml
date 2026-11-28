@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- AG-01 PoC (WFF 2): Static AOD fallback using single DigitalClock/TimeText object without WFF 4 transition attributes. -->
+<WatchFace width="450" height="450">
+    <Metadata key="CLOCK_TYPE" value="DIGITAL" />
+    <Metadata key="PREVIEW_TIME" value="10:08:00" />
+    <Scene backgroundColor="#FF000000">
+        <!-- Active-only decorative and telemetry layers: suppressed in AMBIENT via static Variant alpha=0 -->
+        <Group name="ActiveDecoration" x="0" y="0" width="450" height="450" alpha="255">
+            <Variant mode="AMBIENT" target="alpha" value="0" />
+            <PartDraw x="0" y="0" width="450" height="450">
+                <Ellipse x="15" y="15" width="420" height="420">
+                    <Stroke color="#FF314B60" thickness="2" />
+                </Ellipse>
+                <Ellipse x="23" y="23" width="404" height="404">
+                    <Stroke color="#FF172C39" thickness="1" />
+                </Ellipse>
+                <Arc centerX="225" centerY="225" width="412" height="412" startAngle="0" endAngle="0" direction="CLOCKWISE">
+                    <Transform target="endAngle" value="clamp([STEP_PERCENT], 0, 100) * 3.6" />
+                    <Stroke color="#FF81D7AF" thickness="4" cap="ROUND" />
+                </Arc>
+                <RoundRectangle x="85" y="242" width="280" height="46" cornerRadiusX="23" cornerRadiusY="23">
+                    <Fill color="#FF101E2A" />
+                    <Stroke color="#FF314B60" thickness="1" />
+                </RoundRectangle>
+            </PartDraw>
+            <PartText x="145" y="52" width="160" height="28">
+                <Text align="CENTER">
+                    <Font family="SYNC_TO_DEVICE" size="15" color="#FF79D4F2">AURA ULTRA</Font>
+                </Text>
+            </PartText>
+            <PartText x="90" y="90" width="270" height="34">
+                <Text align="CENTER">
+                    <Font family="SYNC_TO_DEVICE" size="22" color="#FFA9BACB">
+                        <Template>%s.%s · %s<Parameter expression="[MONTH_Z]" /><Parameter expression="[DAY_Z]" /><Parameter expression="[DAY_OF_WEEK_S]" /></Template>
+                    </Font>
+                </Text>
+            </PartText>
+            <!-- Weather panel with explicit missing/error fallback (never render missing data as 0) -->
+            <Condition>
+                <Expressions>
+                    <Expression name="weather_ok">[WEATHER.IS_AVAILABLE] == 1 &amp;&amp; [WEATHER.IS_ERROR] == 0</Expression>
+                </Expressions>
+                <Compare expression="weather_ok">
+                    <PartText x="95" y="248" width="260" height="34">
+                        <Text align="CENTER">
+                            <Font family="SYNC_TO_DEVICE" size="21" color="#FF79D4F2">
+                                <Template>%s° · %s%%<Parameter expression="[WEATHER.TEMPERATURE]" /><Parameter expression="[WEATHER.CHANCE_OF_PRECIPITATION]" /></Template>
+                            </Font>
+                        </Text>
+                    </PartText>
+                </Compare>
+                <Default>
+                    <PartText x="95" y="248" width="260" height="34">
+                        <Text align="CENTER">
+                            <Font family="SYNC_TO_DEVICE" size="21" color="#FFA9BACB">WEATHER --</Font>
+                        </Text>
+                    </PartText>
+                </Default>
+            </Condition>
+            <PartText x="85" y="302" width="280" height="34">
+                <Text align="CENTER">
+                    <Font family="SYNC_TO_DEVICE" size="20" color="#FFA9BACB">
+                        <Template>%s / %s · %s%%<Parameter expression="[STEP_COUNT]" /><Parameter expression="[STEP_GOAL]" /><Parameter expression="[BATTERY_PERCENT]" /></Template>
+                    </Font>
+                </Text>
+            </PartText>
+        </Group>
+
+        <!-- Single clock object repositioned and scaled statically in AMBIENT for WFF 2 compatibility -->
+        <DigitalClock x="40" y="131" width="370" height="118" pivotX="0.5" pivotY="0.5" scaleX="1.0" scaleY="1.0" alpha="255" tintColor="#FFF3F7FA">
+            <Variant mode="AMBIENT" target="y" value="166" />
+            <Variant mode="AMBIENT" target="scaleX" value="0.88" />
+            <Variant mode="AMBIENT" target="scaleY" value="0.88" />
+            <Variant mode="AMBIENT" target="tintColor" value="#FFB7C0C9" />
+            <TimeText x="0" y="0" width="370" height="118" format="hh:mm" hourFormat="SYNC_TO_DEVICE" align="CENTER" alpha="255">
+                <Font family="SYNC_TO_DEVICE" size="96" weight="NORMAL" color="#FFF3F7FA" />
+            </TimeText>
+        </DigitalClock>
+    </Scene>
+</WatchFace>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Negative Fixture 3: WFF 4 <Reference> element leaked into WFF 2/3. -->
+<WatchFace width="450" height="450">
+    <Scene backgroundColor="#FF000000">
+        <Group name="ActiveDecoration" x="0" y="0" width="450" height="450">
+            <Variant mode="AMBIENT" target="alpha" value="0" />
+            <Transform target="x" value="[STEP_PERCENT]" />
+            <Reference name="ref_step_x" source="x" defaultValue="0" />
+            <PartDraw x="0" y="0" width="450" height="450">
+                <Transform target="x" value="[REFERENCE.ref_step_x]" />
+                <Ellipse x="15" y="15" width="420" height="420">
+                    <Stroke color="#FF314B60" thickness="2" />
+                </Ellipse>
+            </PartDraw>
+        </Group>
+        <DigitalClock x="40" y="131" width="370" height="118">
+            <TimeText x="0" y="0" width="370" height="118" format="hh:mm" hourFormat="SYNC_TO_DEVICE" align="CENTER">
+                <Font family="SYNC_TO_DEVICE" size="96" color="#FFF3F7FA" />
+            </TimeText>
+        </DigitalClock>
+    </Scene>
+</WatchFace>

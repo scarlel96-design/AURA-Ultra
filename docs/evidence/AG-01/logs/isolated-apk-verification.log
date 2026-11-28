@@ -1,0 +1,697 @@
+================================================================================
+AG-01 ISOLATED 6-APK CLEAN BUILD, MANIFEST, MEMORY & SIGNATURE RAW LOG
+Validator JAR SHA-256:        0e2204137fca618264e82f9a053c6c9ec6d4fad08d2b56aa8a57d75c0508a804
+Memory Evaluator JAR SHA-256: 503c5f7bc9209ec4d4d4974f973cf66ad6fbb435e8422c310aac5b820f1f991a
+Active Memory Limit (bytes):  73400320 (70 MiB)
+Ambient Memory Limit (bytes): 7340032 (7 MiB)
+================================================================================
+
+================================================================================
+[APK 1/6] poc_wff2_static_aod (profile=wff2, WFF#2, minSdk=34)
+================================================================================
+Source XML Path:          tests/compatibility/ag-01/fixtures/wff2/poc_wff2_static_aod.xml
+Source XML SHA-256:       2b77582a27a201c96925e631f8d6cd9147d207258b6161613fee063deb62f401
+Packaged XML SHA-256:     2b77582a27a201c96925e631f8d6cd9147d207258b6161613fee063deb62f401
+XML Byte-for-Byte Match:  True
+APK Filename:             watchface-wff2-debug.apk
+APK Size (bytes):         73238
+APK SHA-256:              a7d1235318e7b1c4af82454acccba5be2a500a35d83f0a23c496c81a41d923af
+ZIP Entries (14):         AndroidManifest.xml, META-INF/com/android/build/gradle/app-metadata.properties, kotlin/annotation/annotation.kotlin_builtins, kotlin/collections/collections.kotlin_builtins, kotlin/concurrent/atomics/atomics.kotlin_builtins, kotlin/coroutines/coroutines.kotlin_builtins, kotlin/internal/internal.kotlin_builtins, kotlin/kotlin.kotlin_builtins, kotlin/ranges/ranges.kotlin_builtins, kotlin/reflect/reflect.kotlin_builtins, res/drawable-nodpi-v4/preview.png, res/raw/watchface.xml, res/xml/watch_face_info.xml, resources.arsc
+Resource-Only Check:      PASS (0 .dex, 0 .so, 0 assets/)
+
+--- [1] Compiled AndroidManifest.xml (apkanalyzer manifest print) ---
+<?xml version="1.0" encoding="utf-8"?>
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:versionCode="1"
+    android:versionName="0.1.0-bootstrap"
+    android:compileSdkVersion="37"
+    android:compileSdkVersionCodename="17"
+    package="io.github.scarlel96.aura.watchface.wff2"
+    platformBuildVersionCode="37"
+    platformBuildVersionName="17">
+
+    <uses-sdk
+        android:minSdkVersion="34"
+        android:targetSdkVersion="37" />
+
+    <uses-feature
+        android:name="android.hardware.type.watch"
+        android:required="true" />
+
+    <application
+        android:label="@ref/0x7f030000"
+        android:icon="@ref/0x7f010000"
+        android:hasCode="false"
+        android:debuggable="true"
+        android:allowBackup="false"
+        android:extractNativeLibs="false">
+
+        <meta-data
+            android:name="com.google.android.wearable.standalone"
+            android:value="true" />
+
+        <property
+            android:name="com.google.wear.watchface.format.version"
+            android:value="2" />
+    </application>
+</manifest>
+
+--- [2] Memory Footprint JSON Report (memory-footprint.jar --report) ---
+{
+  "totalBytes": 2371712,
+  "maxActiveBytes": 2371712,
+  "maxAmbientBytes": 2371712
+}
+
+--- [3] Memory Footprint Verbose Layer Analysis (memory-footprint.jar --verbose) ---
+Starting memory footprint test with C:\Users\scarl\AppData\Local\Temp\aura-ag01-isolated-2tdwmn1c\apps\watchface\build\outputs\apk\wff2\debug\watchface-wff2-debug.apk
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+>> Starting active evaluation
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Watch face has 0 configs
+Using system default font for unknown font family SYNC_TO_DEVICE
+Counting resource Roboto; 2371712 bytes, 2.2618408203125 mb, 0 x 0 ARGB8888
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+>> Starting ambient evaluation
+Using system default font for unknown font family SYNC_TO_DEVICE
+Watch face has 0 configs
+Using system default font for unknown font family SYNC_TO_DEVICE
+Counting resource Roboto; 2371712 bytes, 2.2618408203125 mb, 0 x 0 ARGB8888
+Number of layers: 0, maximumResourceUsage: 2371712
+Finished memory computation in 72 ms
+Number of supported layouts: 1
+Total images memory footprint: 2.26 MB
+Max memory footprint in active: 2.26 MB
+Max memory footprint in ambient: 2.26 MB
+Test report:
+[MEMORY_FOOTPRINT]: ✅PASS✅ Watch Face has passed the memory footprint test. ✅
+
+--- [4] APK Signature Verification (apksigner verify --verbose --print-certs) ---
+Verifies
+Verified using v1 scheme (JAR signing): false
+Verified using v2 scheme (APK Signature Scheme v2): true
+Verified using v3 scheme (APK Signature Scheme v3): false
+Verified using v3.1 scheme (APK Signature Scheme v3.1): false
+Verified using v4 scheme (APK Signature Scheme v4): false
+Verified for SourceStamp: false
+Number of signers: 1
+Signer #1 certificate DN: C=US, O=Android, CN=Android Debug
+Signer #1 certificate SHA-256 digest: a3e1948058ced1f9d2730870b8fcdbfab3db9f3616ba4030ebe10a373b22c442
+Signer #1 certificate SHA-1 digest: cbe5ec628e1e294246b8828352451803ae4c5c51
+Signer #1 certificate MD5 digest: 59d1e1ab7acc19f139dee19d438dc4e5
+Signer #1 key algorithm: RSA
+Signer #1 key size (bits): 2048
+Signer #1 public key SHA-256 digest: 082bc0e639b1a9d23657d8f4db741b84b41197a8dfa56e068cfd45e84109ff12
+Signer #1 public key SHA-1 digest: ceade6f153f71413bb41c2fff4b192c829a2785a
+Signer #1 public key MD5 digest: 772673d668a56d0152cfc2132bf2e5d8
+
+================================================================================
+[APK 2/6] poc_wff3_part_blend_aod (profile=wff3, WFF#3, minSdk=35)
+================================================================================
+Source XML Path:          tests/compatibility/ag-01/fixtures/wff3/poc_wff3_part_blend_aod.xml
+Source XML SHA-256:       4914c959de127803753c93609d79ed27e51006416129b6221adc3ce2331c7a5d
+Packaged XML SHA-256:     4914c959de127803753c93609d79ed27e51006416129b6221adc3ce2331c7a5d
+XML Byte-for-Byte Match:  True
+APK Filename:             watchface-wff3-debug.apk
+APK Size (bytes):         72910
+APK SHA-256:              7a588ef13ed383c063bff225c08018f927bdc5d624aa470e735eaf981bf2ece5
+ZIP Entries (14):         AndroidManifest.xml, META-INF/com/android/build/gradle/app-metadata.properties, kotlin/annotation/annotation.kotlin_builtins, kotlin/collections/collections.kotlin_builtins, kotlin/concurrent/atomics/atomics.kotlin_builtins, kotlin/coroutines/coroutines.kotlin_builtins, kotlin/internal/internal.kotlin_builtins, kotlin/kotlin.kotlin_builtins, kotlin/ranges/ranges.kotlin_builtins, kotlin/reflect/reflect.kotlin_builtins, res/drawable-nodpi-v4/preview.png, res/raw/watchface.xml, res/xml/watch_face_info.xml, resources.arsc
+Resource-Only Check:      PASS (0 .dex, 0 .so, 0 assets/)
+
+--- [1] Compiled AndroidManifest.xml (apkanalyzer manifest print) ---
+<?xml version="1.0" encoding="utf-8"?>
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:versionCode="1"
+    android:versionName="0.1.0-bootstrap"
+    android:compileSdkVersion="37"
+    android:compileSdkVersionCodename="17"
+    package="io.github.scarlel96.aura.watchface.wff3"
+    platformBuildVersionCode="37"
+    platformBuildVersionName="17">
+
+    <uses-sdk
+        android:minSdkVersion="35"
+        android:targetSdkVersion="37" />
+
+    <uses-feature
+        android:name="android.hardware.type.watch"
+        android:required="true" />
+
+    <application
+        android:label="@ref/0x7f030000"
+        android:icon="@ref/0x7f010000"
+        android:hasCode="false"
+        android:debuggable="true"
+        android:allowBackup="false"
+        android:extractNativeLibs="false">
+
+        <meta-data
+            android:name="com.google.android.wearable.standalone"
+            android:value="true" />
+
+        <property
+            android:name="com.google.wear.watchface.format.version"
+            android:value="3" />
+    </application>
+</manifest>
+
+--- [2] Memory Footprint JSON Report (memory-footprint.jar --report) ---
+{
+  "totalBytes": 2371712,
+  "maxActiveBytes": 2371712,
+  "maxAmbientBytes": 2371712
+}
+
+--- [3] Memory Footprint Verbose Layer Analysis (memory-footprint.jar --verbose) ---
+Starting memory footprint test with C:\Users\scarl\AppData\Local\Temp\aura-ag01-isolated-2tdwmn1c\apps\watchface\build\outputs\apk\wff3\debug\watchface-wff3-debug.apk
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+>> Starting active evaluation
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Watch face has 0 configs
+Using system default font for unknown font family SYNC_TO_DEVICE
+Counting resource Roboto; 2371712 bytes, 2.2618408203125 mb, 0 x 0 ARGB8888
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+>> Starting ambient evaluation
+Using system default font for unknown font family SYNC_TO_DEVICE
+Watch face has 0 configs
+Using system default font for unknown font family SYNC_TO_DEVICE
+Counting resource Roboto; 2371712 bytes, 2.2618408203125 mb, 0 x 0 ARGB8888
+Number of layers: 0, maximumResourceUsage: 2371712
+Finished memory computation in 71 ms
+Number of supported layouts: 1
+Total images memory footprint: 2.26 MB
+Max memory footprint in active: 2.26 MB
+Max memory footprint in ambient: 2.26 MB
+Test report:
+[MEMORY_FOOTPRINT]: ✅PASS✅ Watch Face has passed the memory footprint test. ✅
+
+--- [4] APK Signature Verification (apksigner verify --verbose --print-certs) ---
+Verifies
+Verified using v1 scheme (JAR signing): false
+Verified using v2 scheme (APK Signature Scheme v2): true
+Verified using v3 scheme (APK Signature Scheme v3): false
+Verified using v3.1 scheme (APK Signature Scheme v3.1): false
+Verified using v4 scheme (APK Signature Scheme v4): false
+Verified for SourceStamp: false
+Number of signers: 1
+Signer #1 certificate DN: C=US, O=Android, CN=Android Debug
+Signer #1 certificate SHA-256 digest: a3e1948058ced1f9d2730870b8fcdbfab3db9f3616ba4030ebe10a373b22c442
+Signer #1 certificate SHA-1 digest: cbe5ec628e1e294246b8828352451803ae4c5c51
+Signer #1 certificate MD5 digest: 59d1e1ab7acc19f139dee19d438dc4e5
+Signer #1 key algorithm: RSA
+Signer #1 key size (bits): 2048
+Signer #1 public key SHA-256 digest: 082bc0e639b1a9d23657d8f4db741b84b41197a8dfa56e068cfd45e84109ff12
+Signer #1 public key SHA-1 digest: ceade6f153f71413bb41c2fff4b192c829a2785a
+Signer #1 public key MD5 digest: 772673d668a56d0152cfc2132bf2e5d8
+
+================================================================================
+[APK 3/6] poc_wff4_continuity (profile=wff4, WFF#4, minSdk=36)
+================================================================================
+Source XML Path:          tests/compatibility/ag-01/fixtures/wff4/poc_wff4_continuity.xml
+Source XML SHA-256:       f70f8ef90b3f3418381f1b749c8fd6ef3cb01a88dc5302008f560d045b04c582
+Packaged XML SHA-256:     f70f8ef90b3f3418381f1b749c8fd6ef3cb01a88dc5302008f560d045b04c582
+XML Byte-for-Byte Match:  True
+APK Filename:             watchface-wff4-debug.apk
+APK Size (bytes):         73574
+APK SHA-256:              cd2732fb26bbf3a6d22f7e459fbaba8ea4047f9b6530051005ce8c135afb8da7
+ZIP Entries (14):         AndroidManifest.xml, META-INF/com/android/build/gradle/app-metadata.properties, kotlin/annotation/annotation.kotlin_builtins, kotlin/collections/collections.kotlin_builtins, kotlin/concurrent/atomics/atomics.kotlin_builtins, kotlin/coroutines/coroutines.kotlin_builtins, kotlin/internal/internal.kotlin_builtins, kotlin/kotlin.kotlin_builtins, kotlin/ranges/ranges.kotlin_builtins, kotlin/reflect/reflect.kotlin_builtins, res/drawable-nodpi-v4/preview.png, res/raw/watchface.xml, res/xml/watch_face_info.xml, resources.arsc
+Resource-Only Check:      PASS (0 .dex, 0 .so, 0 assets/)
+
+--- [1] Compiled AndroidManifest.xml (apkanalyzer manifest print) ---
+<?xml version="1.0" encoding="utf-8"?>
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:versionCode="1"
+    android:versionName="0.1.0-bootstrap"
+    android:compileSdkVersion="37"
+    android:compileSdkVersionCodename="17"
+    package="io.github.scarlel96.aura.watchface.wff4"
+    platformBuildVersionCode="37"
+    platformBuildVersionName="17">
+
+    <uses-sdk
+        android:minSdkVersion="36"
+        android:targetSdkVersion="37" />
+
+    <uses-feature
+        android:name="android.hardware.type.watch"
+        android:required="true" />
+
+    <application
+        android:label="@ref/0x7f030000"
+        android:icon="@ref/0x7f010000"
+        android:hasCode="false"
+        android:debuggable="true"
+        android:allowBackup="false"
+        android:extractNativeLibs="false">
+
+        <meta-data
+            android:name="com.google.android.wearable.standalone"
+            android:value="true" />
+
+        <property
+            android:name="com.google.wear.watchface.format.version"
+            android:value="4" />
+    </application>
+</manifest>
+
+--- [2] Memory Footprint JSON Report (memory-footprint.jar --report) ---
+{
+  "totalBytes": 2371712,
+  "maxActiveBytes": 2371712,
+  "maxAmbientBytes": 2371712
+}
+
+--- [3] Memory Footprint Verbose Layer Analysis (memory-footprint.jar --verbose) ---
+Starting memory footprint test with C:\Users\scarl\AppData\Local\Temp\aura-ag01-isolated-2tdwmn1c\apps\watchface\build\outputs\apk\wff4\debug\watchface-wff4-debug.apk
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+>> Starting active evaluation
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Watch face has 0 configs
+Using system default font for unknown font family SYNC_TO_DEVICE
+Counting resource Roboto; 2371712 bytes, 2.2618408203125 mb, 0 x 0 ARGB8888
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+>> Starting ambient evaluation
+Using system default font for unknown font family SYNC_TO_DEVICE
+Watch face has 0 configs
+Using system default font for unknown font family SYNC_TO_DEVICE
+Counting resource Roboto; 2371712 bytes, 2.2618408203125 mb, 0 x 0 ARGB8888
+Number of layers: 0, maximumResourceUsage: 2371712
+Finished memory computation in 78 ms
+Number of supported layouts: 1
+Total images memory footprint: 2.26 MB
+Max memory footprint in active: 2.26 MB
+Max memory footprint in ambient: 2.26 MB
+Test report:
+[MEMORY_FOOTPRINT]: ✅PASS✅ Watch Face has passed the memory footprint test. ✅
+
+--- [4] APK Signature Verification (apksigner verify --verbose --print-certs) ---
+Verifies
+Verified using v1 scheme (JAR signing): false
+Verified using v2 scheme (APK Signature Scheme v2): true
+Verified using v3 scheme (APK Signature Scheme v3): false
+Verified using v3.1 scheme (APK Signature Scheme v3.1): false
+Verified using v4 scheme (APK Signature Scheme v4): false
+Verified for SourceStamp: false
+Number of signers: 1
+Signer #1 certificate DN: C=US, O=Android, CN=Android Debug
+Signer #1 certificate SHA-256 digest: a3e1948058ced1f9d2730870b8fcdbfab3db9f3616ba4030ebe10a373b22c442
+Signer #1 certificate SHA-1 digest: cbe5ec628e1e294246b8828352451803ae4c5c51
+Signer #1 certificate MD5 digest: 59d1e1ab7acc19f139dee19d438dc4e5
+Signer #1 key algorithm: RSA
+Signer #1 key size (bits): 2048
+Signer #1 public key SHA-256 digest: 082bc0e639b1a9d23657d8f4db741b84b41197a8dfa56e068cfd45e84109ff12
+Signer #1 public key SHA-1 digest: ceade6f153f71413bb41c2fff4b192c829a2785a
+Signer #1 public key MD5 digest: 772673d668a56d0152cfc2132bf2e5d8
+
+================================================================================
+[APK 4/6] poc_wff5_blend_features (profile=wff5, WFF#5, minSdk=37)
+================================================================================
+Source XML Path:          tests/compatibility/ag-01/fixtures/wff5/poc_wff5_blend_features.xml
+Source XML SHA-256:       72b280c1f5579a05460dc5ea18164fae4a3125dd8ef0825034fb013164136f47
+Packaged XML SHA-256:     72b280c1f5579a05460dc5ea18164fae4a3125dd8ef0825034fb013164136f47
+XML Byte-for-Byte Match:  True
+APK Filename:             watchface-wff5-debug.apk
+APK Size (bytes):         73650
+APK SHA-256:              565aa87b8a76d33ea592fed384a107c03e5ab31dfbea78fc966e987d5ce32027
+ZIP Entries (14):         AndroidManifest.xml, META-INF/com/android/build/gradle/app-metadata.properties, kotlin/annotation/annotation.kotlin_builtins, kotlin/collections/collections.kotlin_builtins, kotlin/concurrent/atomics/atomics.kotlin_builtins, kotlin/coroutines/coroutines.kotlin_builtins, kotlin/internal/internal.kotlin_builtins, kotlin/kotlin.kotlin_builtins, kotlin/ranges/ranges.kotlin_builtins, kotlin/reflect/reflect.kotlin_builtins, res/drawable-nodpi-v4/preview.png, res/raw/watchface.xml, res/xml/watch_face_info.xml, resources.arsc
+Resource-Only Check:      PASS (0 .dex, 0 .so, 0 assets/)
+
+--- [1] Compiled AndroidManifest.xml (apkanalyzer manifest print) ---
+<?xml version="1.0" encoding="utf-8"?>
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:versionCode="1"
+    android:versionName="0.1.0-bootstrap"
+    android:compileSdkVersion="37"
+    android:compileSdkVersionCodename="17"
+    package="io.github.scarlel96.aura.watchface.wff5"
+    platformBuildVersionCode="37"
+    platformBuildVersionName="17">
+
+    <uses-sdk
+        android:minSdkVersion="37"
+        android:targetSdkVersion="37" />
+
+    <uses-feature
+        android:name="android.hardware.type.watch"
+        android:required="true" />
+
+    <application
+        android:label="@ref/0x7f030000"
+        android:icon="@ref/0x7f010000"
+        android:hasCode="false"
+        android:debuggable="true"
+        android:allowBackup="false"
+        android:extractNativeLibs="false">
+
+        <meta-data
+            android:name="com.google.android.wearable.standalone"
+            android:value="true" />
+
+        <property
+            android:name="com.google.wear.watchface.format.version"
+            android:value="5" />
+    </application>
+</manifest>
+
+--- [2] Memory Footprint JSON Report (memory-footprint.jar --report) ---
+{
+  "totalBytes": 2371712,
+  "maxActiveBytes": 2371712,
+  "maxAmbientBytes": 2371712
+}
+
+--- [3] Memory Footprint Verbose Layer Analysis (memory-footprint.jar --verbose) ---
+Starting memory footprint test with C:\Users\scarl\AppData\Local\Temp\aura-ag01-isolated-2tdwmn1c\apps\watchface\build\outputs\apk\wff5\debug\watchface-wff5-debug.apk
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+>> Starting active evaluation
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Watch face has 0 configs
+Using system default font for unknown font family SYNC_TO_DEVICE
+Counting resource Roboto; 2371712 bytes, 2.2618408203125 mb, 0 x 0 ARGB8888
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+>> Starting ambient evaluation
+Using system default font for unknown font family SYNC_TO_DEVICE
+Watch face has 0 configs
+Using system default font for unknown font family SYNC_TO_DEVICE
+Counting resource Roboto; 2371712 bytes, 2.2618408203125 mb, 0 x 0 ARGB8888
+Number of layers: 0, maximumResourceUsage: 2371712
+Finished memory computation in 105 ms
+Number of supported layouts: 1
+Total images memory footprint: 2.26 MB
+Max memory footprint in active: 2.26 MB
+Max memory footprint in ambient: 2.26 MB
+Test report:
+[MEMORY_FOOTPRINT]: ✅PASS✅ Watch Face has passed the memory footprint test. ✅
+
+--- [4] APK Signature Verification (apksigner verify --verbose --print-certs) ---
+Verifies
+Verified using v1 scheme (JAR signing): false
+Verified using v2 scheme (APK Signature Scheme v2): true
+Verified using v3 scheme (APK Signature Scheme v3): false
+Verified using v3.1 scheme (APK Signature Scheme v3.1): false
+Verified using v4 scheme (APK Signature Scheme v4): false
+Verified for SourceStamp: false
+Number of signers: 1
+Signer #1 certificate DN: C=US, O=Android, CN=Android Debug
+Signer #1 certificate SHA-256 digest: a3e1948058ced1f9d2730870b8fcdbfab3db9f3616ba4030ebe10a373b22c442
+Signer #1 certificate SHA-1 digest: cbe5ec628e1e294246b8828352451803ae4c5c51
+Signer #1 certificate MD5 digest: 59d1e1ab7acc19f139dee19d438dc4e5
+Signer #1 key algorithm: RSA
+Signer #1 key size (bits): 2048
+Signer #1 public key SHA-256 digest: 082bc0e639b1a9d23657d8f4db741b84b41197a8dfa56e068cfd45e84109ff12
+Signer #1 public key SHA-1 digest: ceade6f153f71413bb41c2fff4b192c829a2785a
+Signer #1 public key MD5 digest: 772673d668a56d0152cfc2132bf2e5d8
+
+================================================================================
+[APK 5/6] poc_wff4_reference_complication (profile=wff4, WFF#4, minSdk=36)
+================================================================================
+Source XML Path:          tests/compatibility/ag-01/fixtures/wff4/poc_wff4_reference_complication.xml
+Source XML SHA-256:       e7abd38b9c36efde20c1b40923aeed2a244750e1e0b7a5d77c2c58b4187a6f6d
+Packaged XML SHA-256:     e7abd38b9c36efde20c1b40923aeed2a244750e1e0b7a5d77c2c58b4187a6f6d
+XML Byte-for-Byte Match:  True
+APK Filename:             watchface-wff4-debug.apk
+APK Size (bytes):         74682
+APK SHA-256:              713dea16b5f9956b0243fcca10babff5feec8e92fd7455a2d0cc301ebee7c2e6
+ZIP Entries (14):         AndroidManifest.xml, META-INF/com/android/build/gradle/app-metadata.properties, kotlin/annotation/annotation.kotlin_builtins, kotlin/collections/collections.kotlin_builtins, kotlin/concurrent/atomics/atomics.kotlin_builtins, kotlin/coroutines/coroutines.kotlin_builtins, kotlin/internal/internal.kotlin_builtins, kotlin/kotlin.kotlin_builtins, kotlin/ranges/ranges.kotlin_builtins, kotlin/reflect/reflect.kotlin_builtins, res/drawable-nodpi-v4/preview.png, res/raw/watchface.xml, res/xml/watch_face_info.xml, resources.arsc
+Resource-Only Check:      PASS (0 .dex, 0 .so, 0 assets/)
+
+--- [1] Compiled AndroidManifest.xml (apkanalyzer manifest print) ---
+<?xml version="1.0" encoding="utf-8"?>
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:versionCode="1"
+    android:versionName="0.1.0-bootstrap"
+    android:compileSdkVersion="37"
+    android:compileSdkVersionCodename="17"
+    package="io.github.scarlel96.aura.watchface.wff4"
+    platformBuildVersionCode="37"
+    platformBuildVersionName="17">
+
+    <uses-sdk
+        android:minSdkVersion="36"
+        android:targetSdkVersion="37" />
+
+    <uses-feature
+        android:name="android.hardware.type.watch"
+        android:required="true" />
+
+    <application
+        android:label="@ref/0x7f030000"
+        android:icon="@ref/0x7f010000"
+        android:hasCode="false"
+        android:debuggable="true"
+        android:allowBackup="false"
+        android:extractNativeLibs="false">
+
+        <meta-data
+            android:name="com.google.android.wearable.standalone"
+            android:value="true" />
+
+        <property
+            android:name="com.google.wear.watchface.format.version"
+            android:value="4" />
+    </application>
+</manifest>
+
+--- [2] Memory Footprint JSON Report (memory-footprint.jar --report) ---
+{
+  "totalBytes": 2371712,
+  "maxActiveBytes": 2371712,
+  "maxAmbientBytes": 2371712
+}
+
+--- [3] Memory Footprint Verbose Layer Analysis (memory-footprint.jar --verbose) ---
+Starting memory footprint test with C:\Users\scarl\AppData\Local\Temp\aura-ag01-isolated-2tdwmn1c\apps\watchface\build\outputs\apk\wff4\debug\watchface-wff4-debug.apk
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+>> Starting active evaluation
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Watch face has 0 configs
+Using system default font for unknown font family SYNC_TO_DEVICE
+Counting resource Roboto; 2371712 bytes, 2.2618408203125 mb, 0 x 0 ARGB8888
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+>> Starting ambient evaluation
+Using system default font for unknown font family SYNC_TO_DEVICE
+Watch face has 0 configs
+Using system default font for unknown font family SYNC_TO_DEVICE
+Counting resource Roboto; 2371712 bytes, 2.2618408203125 mb, 0 x 0 ARGB8888
+Number of layers: 0, maximumResourceUsage: 2371712
+Finished memory computation in 81 ms
+Number of supported layouts: 1
+Total images memory footprint: 2.26 MB
+Max memory footprint in active: 2.26 MB
+Max memory footprint in ambient: 2.26 MB
+Test report:
+[MEMORY_FOOTPRINT]: ✅PASS✅ Watch Face has passed the memory footprint test. ✅
+
+--- [4] APK Signature Verification (apksigner verify --verbose --print-certs) ---
+Verifies
+Verified using v1 scheme (JAR signing): false
+Verified using v2 scheme (APK Signature Scheme v2): true
+Verified using v3 scheme (APK Signature Scheme v3): false
+Verified using v3.1 scheme (APK Signature Scheme v3.1): false
+Verified using v4 scheme (APK Signature Scheme v4): false
+Verified for SourceStamp: false
+Number of signers: 1
+Signer #1 certificate DN: C=US, O=Android, CN=Android Debug
+Signer #1 certificate SHA-256 digest: a3e1948058ced1f9d2730870b8fcdbfab3db9f3616ba4030ebe10a373b22c442
+Signer #1 certificate SHA-1 digest: cbe5ec628e1e294246b8828352451803ae4c5c51
+Signer #1 certificate MD5 digest: 59d1e1ab7acc19f139dee19d438dc4e5
+Signer #1 key algorithm: RSA
+Signer #1 key size (bits): 2048
+Signer #1 public key SHA-256 digest: 082bc0e639b1a9d23657d8f4db741b84b41197a8dfa56e068cfd45e84109ff12
+Signer #1 public key SHA-1 digest: ceade6f153f71413bb41c2fff4b192c829a2785a
+Signer #1 public key MD5 digest: 772673d668a56d0152cfc2132bf2e5d8
+
+================================================================================
+[APK 6/6] poc_wff4_motion_triggers (profile=wff4, WFF#4, minSdk=36)
+================================================================================
+Source XML Path:          tests/compatibility/ag-01/fixtures/wff4/poc_wff4_motion_triggers.xml
+Source XML SHA-256:       745df3951f3d0333f3baef8e7cc2e405fa6e8cba69ff052510f6a21d7ab507d3
+Packaged XML SHA-256:     745df3951f3d0333f3baef8e7cc2e405fa6e8cba69ff052510f6a21d7ab507d3
+XML Byte-for-Byte Match:  True
+APK Filename:             watchface-wff4-debug.apk
+APK Size (bytes):         73738
+APK SHA-256:              3dd6808d06baa48024139ecf6193111d3ceae3baa8be3efe19794c13fa0291e9
+ZIP Entries (14):         AndroidManifest.xml, META-INF/com/android/build/gradle/app-metadata.properties, kotlin/annotation/annotation.kotlin_builtins, kotlin/collections/collections.kotlin_builtins, kotlin/concurrent/atomics/atomics.kotlin_builtins, kotlin/coroutines/coroutines.kotlin_builtins, kotlin/internal/internal.kotlin_builtins, kotlin/kotlin.kotlin_builtins, kotlin/ranges/ranges.kotlin_builtins, kotlin/reflect/reflect.kotlin_builtins, res/drawable-nodpi-v4/preview.png, res/raw/watchface.xml, res/xml/watch_face_info.xml, resources.arsc
+Resource-Only Check:      PASS (0 .dex, 0 .so, 0 assets/)
+
+--- [1] Compiled AndroidManifest.xml (apkanalyzer manifest print) ---
+<?xml version="1.0" encoding="utf-8"?>
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:versionCode="1"
+    android:versionName="0.1.0-bootstrap"
+    android:compileSdkVersion="37"
+    android:compileSdkVersionCodename="17"
+    package="io.github.scarlel96.aura.watchface.wff4"
+    platformBuildVersionCode="37"
+    platformBuildVersionName="17">
+
+    <uses-sdk
+        android:minSdkVersion="36"
+        android:targetSdkVersion="37" />
+
+    <uses-feature
+        android:name="android.hardware.type.watch"
+        android:required="true" />
+
+    <application
+        android:label="@ref/0x7f030000"
+        android:icon="@ref/0x7f010000"
+        android:hasCode="false"
+        android:debuggable="true"
+        android:allowBackup="false"
+        android:extractNativeLibs="false">
+
+        <meta-data
+            android:name="com.google.android.wearable.standalone"
+            android:value="true" />
+
+        <property
+            android:name="com.google.wear.watchface.format.version"
+            android:value="4" />
+    </application>
+</manifest>
+
+--- [2] Memory Footprint JSON Report (memory-footprint.jar --report) ---
+{
+  "totalBytes": 2371712,
+  "maxActiveBytes": 2371712,
+  "maxAmbientBytes": 3181712
+}
+
+--- [3] Memory Footprint Verbose Layer Analysis (memory-footprint.jar --verbose) ---
+Starting memory footprint test with C:\Users\scarl\AppData\Local\Temp\aura-ag01-isolated-2tdwmn1c\apps\watchface\build\outputs\apk\wff4\debug\watchface-wff4-debug.apk
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+>> Starting active evaluation
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Watch face has 0 configs
+Using system default font for unknown font family SYNC_TO_DEVICE
+Counting resource Roboto; 2371712 bytes, 2.2618408203125 mb, 0 x 0 ARGB8888
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+>> Starting ambient evaluation
+Layer 1 starts at: #document/WatchFace/Scene/Group name = "FluidClockContainer"/PartText name = "ClockColon"
+Using system default font for unknown font family SYNC_TO_DEVICE
+Using system default font for unknown font family SYNC_TO_DEVICE
+Watch face has 0 configs
+Using system default font for unknown font family SYNC_TO_DEVICE
+Counting resource Roboto; 2371712 bytes, 2.2618408203125 mb, 0 x 0 ARGB8888
+Using system default font for unknown font family SYNC_TO_DEVICE
+Number of layers: 1, maximumResourceUsage: 2371712
+Finished memory computation in 77 ms
+Number of supported layouts: 1
+Total images memory footprint: 2.26 MB
+Max memory footprint in active: 2.26 MB
+Max memory footprint in ambient: 3.03 MB
+Test report:
+[MEMORY_FOOTPRINT]: ✅PASS✅ Watch Face has passed the memory footprint test. ✅
+
+--- [4] APK Signature Verification (apksigner verify --verbose --print-certs) ---
+Verifies
+Verified using v1 scheme (JAR signing): false
+Verified using v2 scheme (APK Signature Scheme v2): true
+Verified using v3 scheme (APK Signature Scheme v3): false
+Verified using v3.1 scheme (APK Signature Scheme v3.1): false
+Verified using v4 scheme (APK Signature Scheme v4): false
+Verified for SourceStamp: false
+Number of signers: 1
+Signer #1 certificate DN: C=US, O=Android, CN=Android Debug
+Signer #1 certificate SHA-256 digest: a3e1948058ced1f9d2730870b8fcdbfab3db9f3616ba4030ebe10a373b22c442
+Signer #1 certificate SHA-1 digest: cbe5ec628e1e294246b8828352451803ae4c5c51
+Signer #1 certificate MD5 digest: 59d1e1ab7acc19f139dee19d438dc4e5
+Signer #1 key algorithm: RSA
+Signer #1 key size (bits): 2048
+Signer #1 public key SHA-256 digest: 082bc0e639b1a9d23657d8f4db741b84b41197a8dfa56e068cfd45e84109ff12
+Signer #1 public key SHA-1 digest: ceade6f153f71413bb41c2fff4b192c829a2785a
+Signer #1 public key MD5 digest: 772673d668a56d0152cfc2132bf2e5d8

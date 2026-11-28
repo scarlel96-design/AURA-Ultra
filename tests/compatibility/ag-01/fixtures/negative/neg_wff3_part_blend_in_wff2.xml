@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Negative Fixture 1: WFF 3 Part-level blendMode leaked into WFF 2 target (must FAIL in WFF 2, PASS in WFF 3+). -->
+<WatchFace width="450" height="450">
+    <Scene backgroundColor="#FF000000">
+        <Group name="ActiveDecoration" x="0" y="0" width="450" height="450">
+            <Variant mode="AMBIENT" target="alpha" value="0" />
+            <PartDraw x="0" y="0" width="450" height="450" blendMode="SCREEN">
+                <Ellipse x="15" y="15" width="420" height="420">
+                    <Stroke color="#FF314B60" thickness="2" />
+                </Ellipse>
+            </PartDraw>
+        </Group>
+        <DigitalClock x="40" y="131" width="370" height="118">
+            <TimeText x="0" y="0" width="370" height="118" format="hh:mm" hourFormat="SYNC_TO_DEVICE" align="CENTER">
+                <Font family="SYNC_TO_DEVICE" size="96" color="#FFF3F7FA" />
+            </TimeText>
+        </DigitalClock>
+    </Scene>
+</WatchFace>

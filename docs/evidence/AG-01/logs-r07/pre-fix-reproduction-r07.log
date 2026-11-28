@@ -1,0 +1,28 @@
+================================================================================
+AG-01 R07 PRE-FIX DEFECT REPRODUCTION LOG (5 STABILIZATION DEFECTS)
+Target file: tests/compatibility/ag-01/wear_emulator_runtime.py
+Target SHA-256 (pre-fix R06): c5a23026cea262ae99737619141b60ee3395f833da0f952b3b3e8d2802807d12
+================================================================================
+
+--- [DEFECT 1 & 2] staged_video.unlink(missing_ok=True) failure blocks all subsequent finally recovery steps ---
+Case 1A (staged_video.unlink raises PermissionError in finally): raised PermissionError: WinError 32: staged_video locked by another process
+  recorder_terminated=False recovery_wakeup_ran=False remote_rm_ran=False
+  BUG REPRODUCED: YES (staged_video.unlink exception aborted recorder termination, Awake recovery, and remote rm -f!)
+
+--- [DEFECT 3] MP4 duplicate sample tables, sample/chunk mismatch & chunk sample range overflow ---
+Case 3A (Duplicate stsz box where first has 0 samples and second overwrites it): PASSED pre-fix -> sample_count=2
+  BUG REPRODUCED: YES (duplicate sample table box silently overwritten in stbl_by_type)
+Case 3B (Single chunk of 3x64B=192B starting 64B before mdat end -> 128B overflow past mdat): PASSED pre-fix -> [{'codec': 'avc1', 'sample_count': 3, 'total_sample_bytes': 192, 'chunk_offset_count': 1}]
+  BUG REPRODUCED: YES (only checked off + min_sample_size <= m_end, missed multi-sample chunk overflow)
+Case 3C (1 sample in stsz but 3 chunks in stco): PASSED pre-fix -> [{'codec': 'avc1', 'sample_count': 1, 'total_sample_bytes': 64, 'chunk_offset_count': 3}]
+  BUG REPRODUCED: YES (chunk count > sample count and missing stsc correspondence accepted)
+
+--- [DEFECT 4] ffprobe missing codec_type, stderr decode errors & partial frame decode ---
+Case 4A (ffprobe output omits codec_type): Pre-fix status=VERIFIED -> BUG REPRODUCED=YES
+Case 4B (Partial decode 3/24 frames + stderr decode errors): Pre-fix status=VERIFIED decoded=3 -> BUG REPRODUCED=YES
+
+--- [DEFECT 5] Display parser bleeds previous Display ID across section boundaries ---
+Case 5A (Logical Display 0 has NO state; blank line + separate unscoped Display Power Controller has state=ON):
+  Pre-fix result: status=ACTIVE by_id={'0': ['ON']} -> BUG REPRODUCED=YES (Display Id=0 bled across section boundary)
+Case 5B (First DisplayDeviceInfo has displayId 0 state ON; second DisplayDeviceInfo omits displayId and has state DOZE):
+  Pre-fix by_id={'0': ['DOZE', 'ON']} unscoped=[] -> BUG REPRODUCED=YES (second DisplayDeviceInfo wrongly attributed to displayId 0)

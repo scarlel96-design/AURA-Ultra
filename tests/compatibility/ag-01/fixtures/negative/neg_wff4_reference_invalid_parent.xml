@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  AG-01 Negative Fixture 9 (Separated from combined fixture for AG01-AUD-02):
+  Tests ONLY illegal <Reference> placement under prohibited parent <DigitalClock>,
+  with valid Variant timing attributes so the validator must reject specifically on Reference parent rules.
+-->
+<WatchFace width="450" height="450">
+    <Metadata key="CLOCK_TYPE" value="DIGITAL" />
+    <Scene backgroundColor="#FF000000">
+        <DigitalClock x="40" y="150" width="370" height="118">
+            <Variant mode="AMBIENT" target="y" value="166" startOffset="0.00" duration="0.85" interpolation="EASE_IN_OUT" />
+            <Reference name="illegalClockRef" source="[BATTERY_PERCENT]" defaultValue="0" />
+            <TimeText x="0" y="0" width="370" height="118" format="hh:mm" hourFormat="SYNC_TO_DEVICE" align="CENTER">
+                <Font family="SYNC_TO_DEVICE" size="92" color="#FFF3F7FA" />
+            </TimeText>
+        </DigitalClock>
+    </Scene>
+</WatchFace>

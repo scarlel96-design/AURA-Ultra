@@ -1,0 +1,78 @@
+================================================================================
+AG-01 R03 LIVE ENVIRONMENT, TOOL HASHES & WEAR OS EMULATOR READINESS LOG
+================================================================================
+OS Platform:                         Windows-11-10.0.26300-SP0 (AMD64)
+Python Version:                      3.14.7 (tags/v3.14.7:823f032, Aug  5 2026, 10:51:32) [MSC v.1944 64 bit (AMD64)]
+Java Version:
+openjdk version "21.0.5" 2024-10-15 LTS
+OpenJDK Runtime Environment Temurin-21.0.5+11 (build 21.0.5+11-LTS)
+OpenJDK 64-Bit Server VM Temurin-21.0.5+11 (build 21.0.5+11-LTS, mixed mode, sharing)
+WFF Validator JAR:                   .aura-tools/wff-validator.jar (v1.7.0, SHA-256: 0e2204137fca618264e82f9a053c6c9ec6d4fad08d2b56aa8a57d75c0508a804)
+Memory Evaluator JAR:                .aura-tools/memory-footprint.jar (v1.5.1, SHA-256: 503c5f7bc9209ec4d4d4974f973cf66ad6fbb435e8422c310aac5b820f1f991a)
+Android SDK Root:                    C:\Users\scarl\AppData\Local\Android\Sdk
+Available Free Disk Space:           98.98 GiB
+Wear Emulator Readiness Status:      NOT RUN
+Readiness Reason:                    no Wear OS system image (android-wear / android-wear-signed) is installed locally; no Wear OS AVD is configured (non-Wear phone AVDs and physical devices are excluded); downloading new SDK system images or creating AVDs without explicit user approval is prohibited
+
+--- Live Tool Execution Status ---
+  * sdkmanager: status=OK, rc=0, error=''
+  * avdmanager_devices: status=OK, rc=0, error=''
+  * avdmanager_avds: status=OK, rc=0, error=''
+  * emulator: status=OK, rc=0, error=''
+  * adb: status=OK, rc=0, error=''
+
+--- Live Observed Installed Wear OS Images (sdkmanager --list) ---
+  (none)
+
+--- Live Observed Available Wear OS Images (sdkmanager --list, verbatim parsed rows) ---
+  * system-images;android-25;android-wear;armeabi-v7a | rev 3 | Android Wear ARM EABI v7a System Image
+  * system-images;android-25;android-wear;x86 | rev 3 | Android Wear Intel x86 Atom System Image
+  * system-images;android-26;android-wear;x86 | rev 4 | Android Wear Intel x86 Atom System Image
+  * system-images;android-28;android-wear;x86 | rev 9 | Wear OS Intel x86 Atom System Image
+  * system-images;android-30;android-wear-cn;arm64-v8a | rev 12 | China version of Wear OS 3 ARM 64 v8a System Image
+  * system-images;android-30;android-wear-cn;x86 | rev 12 | China version of Wear OS 3 Intel x86 Atom System Image
+  * system-images;android-30;android-wear;arm64-v8a | rev 12 | Wear OS 3 ARM 64 v8a System Image
+  * system-images;android-30;android-wear;x86 | rev 12 | Wear OS 3 Intel x86 Atom System Image
+  * system-images;android-33;android-wear;arm64-v8a | rev 4 | Wear OS 4 ARM 64 v8a System Image
+  * system-images;android-33;android-wear;x86_64 | rev 4 | Wear OS 4 Intel x86_64 Atom System Image
+  * system-images;android-34;android-wear;arm64-v8a | rev 1 | Wear OS 5 ARM 64 v8a System Image
+  * system-images;android-34;android-wear;x86_64 | rev 1 | Wear OS 5 Intel x86_64 Atom System Image
+  * system-images;android-35-ext15;android-wear;arm64-v8a | rev 1 | Wear OS 5.1 ARM 64 v8a System Image
+  * system-images;android-35-ext15;android-wear;x86_64 | rev 1 | Wear OS 5.1 Intel x86_64 Atom System Image
+  * system-images;android-36.1;android-wear-signed;arm64-v8a | rev 1 | Wear OS 6.1 ARM 64 v8a System Image (signed)
+  * system-images;android-36.1;android-wear-signed;x86_64 | rev 1 | Wear OS 6.1 Intel x86_64 Atom System Image (signed)
+  * system-images;android-36;android-wear-signed;arm64-v8a | rev 1 | Wear OS 6.0 ARM 64 v8a System Image (signed)
+  * system-images;android-36;android-wear-signed;x86_64 | rev 1 | Wear OS 6.0 Intel x86_64 Atom System Image (signed)
+  * system-images;android-37.0;android-wear-signed;arm64-v8a | rev 1 | Wear OS 7.0 ARM 64 v8a System Image (signed)
+  * system-images;android-37.0;android-wear-signed;x86_64 | rev 1 | Wear OS 7.0 Intel x86_64 Atom System Image (signed)
+
+--- Estimated Candidates Reconciled Against Live Catalog (Candidate != Live Fact) ---
+  * system-images;android-36;android-wear-signed;x86_64 | WFF#4 | P0 (Primary WFF 4) | est=~3.0 GiB (est.) | installed=False | in_live_catalog=True | live_rev=1
+  * system-images;android-37.0;android-wear-signed;x86_64 | WFF#5 | P0 (Primary WFF 5) | est=~3.2 GiB (est.) | installed=False | in_live_catalog=True | live_rev=1
+  * system-images;android-36.1;android-wear-signed;x86_64 | WFF#4 | P2 (Optional WFF 4 minor) | est=~3.0 GiB (est.) | installed=False | in_live_catalog=True | live_rev=1
+  * system-images;android-35-ext15;android-wear;x86_64 | WFF#3 | P1 (Optional WFF 3 expansion) | est=~2.8 GiB (est.) | installed=False | in_live_catalog=True | live_rev=1
+  * system-images;android-34;android-wear;x86_64 | WFF#2 | P1 (Optional WFF 2 expansion) | est=~2.6 GiB (est.) | installed=False | in_live_catalog=True | live_rev=1
+
+--- Live Observed Wear OS AVD Device Profiles (avdmanager list device) ---
+  * wearos_large_round (numeric_id=59, Name=Wear OS Large Round, OEM=Google, Tag=android-wear)
+  * wearos_rect (numeric_id=60, Name=Wear OS Rectangular, OEM=Google, Tag=android-wear)
+  * wearos_small_round (numeric_id=61, Name=Wear OS Small Round, OEM=Google, Tag=android-wear)
+  * wearos_square (numeric_id=62, Name=Wear OS Square, OEM=Google, Tag=android-wear)
+
+--- Live Configured AVDs Separated by Type (avdmanager list avd) ---
+  * Wear OS AVDs (0): []
+  * Non-Wear Phone/Tablet AVDs (1): [('Medium_Phone_API_36.1', 'medium_phone (Generic)', 'google_apis_playstore/x86_64')]
+  * Unknown AVDs (0): []
+
+--- Live ADB Devices Separated by Type (adb devices -l) ---
+  * Running Verified Wear Emulators (0): []
+  * Running Non-Wear Emulators (0): []
+  * Physical Devices (EXCLUDED FROM AUTOMATION) (0): []
+
+--- Safe Setup Commands (ONLY AFTER EXPLICIT USER APPROVAL; NO --force) ---
+  sdkmanager "system-images;android-36;android-wear-signed;x86_64"
+  avdmanager create avd -n aura_wear36_round -k "system-images;android-36;android-wear-signed;x86_64" -d wearos_large_round
+  emulator -avd aura_wear36_round -no-snapshot -no-boot-anim
+  sdkmanager "system-images;android-37.0;android-wear-signed;x86_64"
+  avdmanager create avd -n aura_wear37_round -k "system-images;android-37.0;android-wear-signed;x86_64" -d wearos_large_round
+  emulator -avd aura_wear37_round -no-snapshot -no-boot-anim

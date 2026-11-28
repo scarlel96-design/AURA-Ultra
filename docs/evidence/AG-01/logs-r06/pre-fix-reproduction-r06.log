@@ -1,0 +1,35 @@
+================================================================================
+AG-01 R06 PRE-FIX DEFECT REPRODUCTION LOG (AG01-AUD-05 ~ AG01-AUD-09)
+Target file: tests/compatibility/ag-01/wear_emulator_runtime.py
+Target SHA-256 (pre-fix R05): 991a89ff262c5f679da6bb488bbefa85ed3274d020cb3eda2aab9972f5bab7a5
+================================================================================
+
+--- [AG01-AUD-05] Display ID mapping & duplicate observation miscount ---
+Case 5A (Display Id=0 has 2 duplicate ON lines, Display Id=1 has NO state):
+  Pre-fix result: status=ACTIVE is_active=True display_ids=['0', '1']
+  BUG REPRODUCED: YES (false ACTIVE from duplicate observations on single display)
+Case 5B (Only secondary Display Id=1 present, default Display Id=0 missing/unconfirmed):
+  Pre-fix result: status=ACTIVE is_active=True display_ids=['1']
+  BUG REPRODUCED: YES (false ACTIVE without confirming target default display)
+
+--- [AG01-AUD-06] PNG bounds, zlib trailing/EOF, unsupported interlace & chunk order ---
+Case 6A (Unsupported interlace=1 with 1-byte bogus payload): PASSED pre-fix -> {'width': 4, 'height': 4, 'bit_depth': 8, 'color_type': 6, 'chunk_count': 3, 'size_bytes': 66, 'sha256': '00f7b3489e133a777e29125460b6061bf17d310316dd5add0ef354a25ee7bd71'}
+  BUG REPRODUCED: YES (interlace=1 skipped scanline check and passed)
+Case 6B (Extra trailing bytes appended after zlib stream inside IDAT): PASSED pre-fix -> {'width': 4, 'height': 4, 'bit_depth': 8, 'color_type': 6, 'chunk_count': 3, 'size_bytes': 96, 'sha256': '0391737236893272d5515947ffe9b2e6da124c7d1ae7cef13d7f8b44c0429291'}
+  BUG REPRODUCED: YES (zlib.decompress ignored unused_data after stream end)
+Case 6C (Non-contiguous IDAT chunks separated by tEXt): PASSED pre-fix -> {'width': 4, 'height': 4, 'bit_depth': 8, 'color_type': 6, 'chunk_count': 5, 'size_bytes': 127, 'sha256': 'faa2fe42be359a8e0ce56015b49a267d881946bb06646a1e75806ab575424d03'}
+  BUG REPRODUCED: YES (non-contiguous IDAT accepted)
+Case 6D (6000x6000 144MB decompressed PNG bomb, compressed=140045 bytes): PASSED pre-fix -> {'width': 6000, 'height': 6000, 'bit_depth': 8, 'color_type': 6, 'chunk_count': 3, 'size_bytes': 140045, 'sha256': '371e78adddb9e7617aa06e81e52399d9fe69808efd36a43aa09404a7b66c13a8'}
+  BUG REPRODUCED: YES (no resolution / decompressed size upper limit enforced)
+
+--- [AG01-AUD-07] MP4 box/video-track/frame check & missing tool NOT RUN ---
+Case 7A (Zero-padded fake MP4 with only 12-byte ftyp header, NO moov/trak/vide/mdat/frames): PASSED pre-fix -> size=2060
+  BUG REPRODUCED: YES (fake MP4 without boxes, video track, or frames passed)
+
+--- [AG01-AUD-08 & AG01-AUD-09] Watchface drift, early recovery, spawn failure & evidence overwrite ---
+Case 8A (dumpsys wallpaper query count during entire Active+AOD+Restore flow): 1 (only once before captures!)
+  BUG REPRODUCED (AG01-AUD-08): YES (never re-verified active watch face before/after captures or at final restore)
+Case 9A (Pre-existing active_wff4.png overwritten silently): overwritten=True
+  BUG REPRODUCED (AG01-AUD-09 overwrite): YES (existing evidence file silently overwritten)
+Case 9B (spawn_recorder raised OSError: screenrecord spawn failed): ran_cleanup_or_recovery=False
+  BUG REPRODUCED (AG01-AUD-09 spawn fail outside try/finally): YES (no recovery executed when spawn_recorder failed)
