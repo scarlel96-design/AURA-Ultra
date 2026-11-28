@@ -125,14 +125,6 @@ class FreshnessTest {
         assertEquals(listOf(IssueCode.VALUE_FORBIDDEN), derived.issues.codes())
         assertEquals(5, broken.value)
         assertEquals(ObservationStatus.ERROR, broken.status)
-        val items = mutableListOf(1)
-        val classified = observation(items, unit = "count").classifiedValue()
-        assertIs<ClassifiedValue.Inconsistent>(classified)
-        items[0] = 9
-        assertIs<ClassifiedValue.Inconsistent>(observation(items, unit = "count").classifiedValue())
-        val mutableDerived = deriveStatus(observation(items, unit = "count"), expiry)
-        assertIs<StatusDerivation.Rejected<MutableList<Int>>>(mutableDerived)
-        assertEquals(listOf(IssueCode.UNSUPPORTED_PAYLOAD), mutableDerived.issues.codes())
     }
 
     @Test

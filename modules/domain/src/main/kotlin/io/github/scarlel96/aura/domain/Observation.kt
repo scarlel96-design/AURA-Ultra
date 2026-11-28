@@ -29,7 +29,11 @@ data class Observation<T>(
 )
 
 sealed class ClassifiedValue<out T> {
-    data class Reading<T>(val value: T, val status: ObservationStatus) : ClassifiedValue<T>()
+    data class Reading<T>(val value: T, val status: ObservationStatus) : ClassifiedValue<T>() {
+        init {
+            requireStablePayload(value)
+        }
+    }
     data object Unavailable : ClassifiedValue<Nothing>()
     data object Denied : ClassifiedValue<Nothing>()
     data object Failed : ClassifiedValue<Nothing>()
@@ -85,6 +89,12 @@ internal fun isStableScalar(value: Any?): Boolean {
         null -> true
         is Boolean, is Byte, is Short, is Int, is Long, is Float, is Double, is Char, is String -> true
         else -> false
+    }
+}
+
+internal fun requireStablePayload(value: Any?) {
+    if (!isStableScalar(value)) {
+        throw UnsupportedPayloadException()
     }
 }
 

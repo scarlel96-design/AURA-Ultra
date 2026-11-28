@@ -36,12 +36,20 @@ sealed class StatusDerivation<T> {
     data class Unchanged<T>(
         override val observation: Observation<T>,
         val freshness: Freshness,
-    ) : StatusDerivation<T>()
+    ) : StatusDerivation<T>() {
+        init {
+            requireStablePayload(observation.value)
+        }
+    }
 
     data class DegradedToStale<T>(
         override val observation: Observation<T>,
         val freshness: Freshness,
-    ) : StatusDerivation<T>()
+    ) : StatusDerivation<T>() {
+        init {
+            requireStablePayload(observation.value)
+        }
+    }
 
     data class Rejected<T>(
         override val observation: Observation<T>,

@@ -31,6 +31,6 @@
 | A25 | 정수 범위는 `Byte`, `Short`, `Int`, `Long`에만 적용한다. 표현 가능한 `Long`이 없으면 `RANGE_EMPTY`다. 배타 구간의 인접 정수 `(n, n+1)`과, 배타 하한 `Long.MAX_VALUE`, 배타 상한 `Long.MIN_VALUE`가 포함된다. 부동소수 범위는 `Float`, `Double`에만 적용한다. 다른 형식은 변환하지 않고 `CONSTRAINT_TYPE_MISMATCH`다. 두 범위를 동시에 주면 `CONSTRAINT_CONFLICT`다. | `LongBounds.parse` | 공통 숫자 형식 |
 | A26 | `-0.0`은 누락이 아니다. 범위의 `<`/`>`에서는 `0.0`과 같다. `Double.equals`는 부호 비트를 구분하므로 같은 revision에서는 `DUPLICATE_CONFLICT`다. `0.0`으로 바꾸지 않는다. | `samePayload` | 부호 비트를 정규화하는 결정 |
 | A27 | `NumericRange`는 인접한 두 `Double` 사이의 열린 구간을 빈 범위로 거절하지 않는다. 예: `(0.0, nextUp(0.0))`. 그 구간에 들어가는 유한 값은 비교에서 나오지 않는다. 정수 범위와 같은 빈 구간 거절로 바꾸지 않았다. | `NumericRange.parse` | 부동소수 빈 구간 정책 |
-| A28 | 승인 상태의 값은 null, `Boolean`, `Byte`, `Short`, `Int`, `Long`, `Float`, `Double`, `Char`, `String`만 둔다. 컬렉션, 배열, 사용자 정의 객체는 복사하지 않고 `UNSUPPORTED_PAYLOAD`로 거절한다. `RevisionCursor`는 그 값을 생성하지 못한다. 검증 전 입력 객체는 그대로 반환할 수 있다. | `isStableScalar` | 컬렉션 페이로드의 승인 |
+| A28 | 승인 상태의 값은 null, `Boolean`, `Byte`, `Short`, `Int`, `Long`, `Float`, `Double`, `Char`, `String`만 둔다. 컬렉션, 배열, 읽기 전용 컬렉션, 사용자 정의 객체는 복사하지 않고 거절한다. `RevisionCursor`, `ClassifiedValue.Reading`, `StatusDerivation.Unchanged`, `StatusDerivation.DegradedToStale`의 생성과 `copy`가 그 값을 만들지 못한다. `Observation`과 `StatusDerivation.Rejected`는 검증 전 입력이라 원본을 유지한다. | `requireStablePayload` | 컬렉션 페이로드의 승인 |
 
 테스트의 `"mm"`, `"percent"`, `"bpm"`, `"fixture"`는 픽스처 토큰이다. 승인된 단위가 아니다.

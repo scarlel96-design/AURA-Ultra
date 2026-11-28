@@ -20,9 +20,7 @@ data class RevisionCursor<T>(
     val observation: Observation<T>,
 ) {
     init {
-        if (!isStableScalar(observation.value)) {
-            throw UnsupportedPayloadException()
-        }
+        requireStablePayload(observation.value)
     }
 }
 
