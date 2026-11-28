@@ -34,3 +34,5 @@ GPT-06 독립 준비 종료/STOPPED. [종료 보고](../evidence/GPT-06/REPORT-F
 - AUD-R01-03~07 P2: JUnit 식별자·WFF 오류 분류·CI 경로 조건·Actions pin. R01-06 추가 재현 7/7 잘못된 입력 수용.
 - AUD-R02-01/03/04 P1: 오류 상태 TTL 소실, 이전 관측 반영 및 보호 의도 누락의 통합 위험. 제품 통합 전 해결.
 - AUD-R02-02/05~09/12 P2: 미래 입력·정책 단위·revision 상한·NaN 범위·가변 payload·CRLF. 10/11은 그래픽 히스테리시스 정책 재검토. [R02](../evidence/MID-AUDIT/REPORT-R02.md). GPT-07 금지, PR HOLD.
+
+- AUD-R03-01/04/05/06/07/09 P1 또는 통합 전 P1: 역순 보호 요청, wallpaper 섹션 오인, Manifest 정규식, 덮어쓰기 race, MP4 bytes/path 불일치, MP4 검사 전 할당. AUD-R03-02/03/10~13 P2 및 안전 경계: transition metadata, PNG 부가 구조, install 복구 범위/표시 대상/remote 파일/최종 재확인. R03-08은 기존 AUD-R01-04 재현. [R03 증거](../evidence/MID-AUDIT/REPORT-R03.md). AG-01 실제 runtime 실행 금지, HOLD 유지. 수정 및 독립 재검증은 전체 감사 후 소유권별 계획.

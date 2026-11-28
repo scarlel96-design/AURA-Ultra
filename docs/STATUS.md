@@ -12,7 +12,7 @@
 | 정식 WO GO | 0/38 |
 | GPT 묶음 GO | 3/12 (PARTIAL 독립 준비 종료는 GO에 포함하지 않음) |
 | 출시 | NO-GO |
-| 다음 행동 | 전체 중간 감사 R03: 그래픽·모션·AG-01 검증기. GPT-07 및 실기기 설치는 별도 승인 대기. |
+| 다음 행동 | 전체 중간 감사 R04: 보안·공급망·요구사항 추적 및 종합 판정. GPT-07 및 실기기 설치는 별도 승인 대기. |
 
 ## 근거 및 이관
 - [GPT-06 전체 종료 보고](evidence/GPT-06/REPORT-FINAL-CLOSURE.md). R01~R06 및 OPS-07 독립 준비 산출물 통합·자동 검증 완료. 결합 후보와 main 코드·시험·자산·CI 102개, 보호 경로 38개 blob 동일. 원본 아카이브 8개 SHA 동일. 활성 8개 문서 500021→24609 B(검증 코드 기준).
@@ -28,4 +28,6 @@
 ## 전체 중간 감사 (사용자 승인, 기능 개발 아님)
 - [R01](evidence/MID-AUDIT/REPORT-R01.md): 실제 main CI 46084484983 316 PASS 및 APK 4/4 재검사. P1/P2 발견 7개. 브랜치 보호 OFF, 검증기 결함.
 - [R02](evidence/MID-AUDIT/REPORT-R02.md): [격리 Kotlin CI](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46086659055) SUCCESS, domain 81/81, intelligence 72/72, 신규 감사 9개 정상 실행(결함 관찰 포함). [원시 XML](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46086659055/artifacts/15239207748) 17개 직접 검사. TTL 오류 사유 소실, 관측 순서·보호 정책 통합 위험, 검증기 및 Windows CRLF 결함 재현. 제품 소스 변경 없음. 감사 브랜치 병합 금지.
-- 감사 PARTIAL, 제품 NO-GO. R03 완료 및 종합 판정 전 결함 수정·외부 PR 병합·GPT-07 착수 금지. 상세 우선순위는 보고서 및 BLOCKERS 참조.
+- 감사 PARTIAL, 제품 NO-GO. 종합 판정 전 결함 수정·외부 PR 병합·GPT-07 착수 금지. 상세 우선순위는 보고서 및 BLOCKERS 참조.
+
+- [R03](evidence/MID-AUDIT/REPORT-R03.md): 격리 [CI](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46087379624) SUCCESS, main host 316/316, AG-01 38/38, AG 원본 23개 blob 일치. 소재 XML/PNG 재생성 동일. 16 관찰 중 정상 대조 3, 12 위험 관찰, 1 ffprobe NOT RUN(CI). [보충 CI](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46087610218) SUCCESS; 로컬 exact 58개 source blob, 실제 ffprobe 정상 12/12, 서로 다른 컨테이너/디코딩 입력을 VERIFIED로 승인하는 결함 재현. PNG/Manifest/선택/덮어쓰기/모션 순서/메모리/복구 범위 문제. 실제 기기 NOT RUN. 두 감사 브랜치 병합 금지. AG-01/GB-02 HOLD. 제품 소스 변경 없음.
