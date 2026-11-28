@@ -4,7 +4,7 @@
 | 담당 | ID | 상태 | 브랜치 | 소유 경로 |
 |---|---|---|---|---|
 | ChatGPT | GPT-04/05/06 | GPT-06 독립 준비 종료·중단 / PARTIAL; 중간 감사 종료; F01 R01 main 회귀 SUCCESS; F01 자동 범위 종료; F02 자동 범위 종료; F03 R17 자동 출처 수집 종료·신뢰 미승인 PARTIAL; GPT-07 미착수 | main 및 격리 후보 | 그래픽, 공통 도구/CI, 중앙 운영 문서 |
-| Grok Build | [GB-01 D01](GB-01-D01-CLOSEOUT.md) | PR #5 HOLD; JUnit 등록 GO, ef57005 88 PR PASS, 최종 인계 대기 | agent/grok/GB-01-D01 | modules/domain/**, docs/evidence/GB-01/** |
+| Grok Build | [GB-01 D01](GB-01-D01-CLOSEOUT.md) | PR #5 HOLD; JUnit GO, 88/108 XML 검수 완료; 최신 main 반영·CI 대기 | agent/grok/GB-01-D01 | modules/domain/**, docs/evidence/GB-01/** |
 | Grok Build | [GB-02](GB-02.md) | G01 R08-CLOSEOUT 108/81 XML·8 jobs 대조; 최종 XML 108/81·8 jobs/PR 대조, 독립 개발 종료, HOLD | agent/grok/GB-02 | modules/intelligence/**, docs/evidence/GB-02/** |
 | Antigravity | [AG-01](AG-01.md) | R07 격리 재시험 38 PASS, 감사 결함 OPEN, A01 후속 지시/사용량 회복 대기, runtime NOT RUN, HOLD | agent/antigravity/AG-01 | tests/compatibility/ag-01/**, docs/evidence/AG-01/** |
 | Codex | 미배정 | NOT STARTED | 추후 지정 | 고난도 통합·실기기 |
