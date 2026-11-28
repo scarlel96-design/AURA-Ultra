@@ -65,3 +65,5 @@
 - Host 재현성 후보 4cf403199dd1: CRLF 복구/정본 패키징 guard. 46113219202 Python3.14.7 4 PASS, PNG drift exact 재현·의도된 FAIL. [보고](../evidence/MID-AUDIT/HOST-REPRO/REPORT.md). 공통 CI PENDING; main 제품 미변경.
 
 - G01 최종 검수: e050937fd347 5 시험 파일/6 단언 추가, 삭제 0. 최종 XML/Bootstrap/PR 기록 대기. [D01 지시서](agent-orders/GB-01-D01.md) 준비(별도 승인).
+
+- Host 후보 4cf403199dd1: 374×3 PASS, 3 ZIP/8 APK 직접 확인, XML/PNG/RGBA 보존. 검증된 4개 경로 선택 통합. 3.14 진단 FAIL 유지, main CI PENDING.

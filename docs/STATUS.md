@@ -12,14 +12,14 @@
 | 정식 WO GO | 0/38 |
 | GPT 묶음 GO | 3/12 (PARTIAL 독립 준비 종료는 GO에 포함하지 않음) |
 | 출시 | NO-GO |
-| 다음 행동 | Host 재현성 후보 4cf403199dd1; 3.14.7 PNG drift 재현. [보고](evidence/MID-AUDIT/HOST-REPRO/REPORT.md). 공통 CI 확인 후 선택 통합. GPT-07/실기기 별도 승인. |
+| 다음 행동 | Host 후보 4cf403199dd1 374×3 PASS/8 APK 확인; 4개 코드·시험 선택 통합. [보고](evidence/MID-AUDIT/HOST-REPRO/REPORT.md). main CI 확인 대기. GPT-07/실기기 별도 승인. |
 
 ## 근거 및 이관
 - [GPT-06 전체 종료 보고](evidence/GPT-06/REPORT-FINAL-CLOSURE.md). R01~R06 및 OPS-07 독립 준비 산출물 통합·자동 검증 완료. 결합 후보와 main 코드·시험·자산·CI 102개, 보호 경로 38개 blob 동일. 원본 아카이브 8개 SHA 동일. 활성 8개 문서 500021→24609 B(검증 코드 기준).
 - [최종 개발용 APK](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46083911786/artifacts/15238910535): 114716 B, 직접 다운로드·SHA256·CRC·XML·PNG·RGBA 검증 PASS. WFF2~5 각 공식 평가기 2412312 B active/3181712 B AOD. 정적 Balanced 후보. 실제 RAM/전력 아님.
 - [R05](evidence/GPT-06/REPORT-05-INTEGRATED.md): 152 SVG, 36 PNG, 최소 호스트 대비 5.729308:1, PNG 1266831→139710 B. [R06](evidence/GPT-06/REPORT-FINAL-INTEGRATION.md).
 - [실기기 및 승격 게이트](operations/SIGNATURE_DEVICE_GATE.md): 실제 설치·렌더링·센서·동적 효과·발광 픽셀·전력 NOT RUN. Bootstrap 제품 리소스 유지. 실제 후보 프리뷰·육안 승인·사용자 승인 필요. 브랜치 보호 비활성화 확인(AUD-R01-01).
-- AG-01 PR #2 HOLD, HEAD fc98c3ad5993e131f733a9444b5849e737a49086. GB-02 PR #3 HOLD, HEAD e050937fd34709d143836e44bbf91ec5221bdc48; 기존 XML 108/81·8 jobs 확인, 상태 단언 6곳 보강 검토 완료. [최종 검토](evidence/MID-AUDIT/GB-02-R08-CLOSEOUT-REVIEW.md). 최종 XML/CI/PR 인계 대기. host 2건 수정 후보·검증 중. [배정](operations/agent-orders/README.md). B-002/003/004/005/006/007/008 유지; [차단점](operations/BLOCKERS.md).
+- AG-01 PR #2 HOLD, HEAD fc98c3ad5993e131f733a9444b5849e737a49086. GB-02 PR #3 HOLD, HEAD e050937fd34709d143836e44bbf91ec5221bdc48; 기존 XML 108/81·8 jobs 확인, 상태 단언 6곳 보강 검토 완료. [최종 검토](evidence/MID-AUDIT/GB-02-R08-CLOSEOUT-REVIEW.md). 최종 XML/CI/PR 인계 대기. host 4개 경로 통합; main 회귀 대기. [배정](operations/agent-orders/README.md). B-002/003/004/005/006/007/008 유지; [차단점](operations/BLOCKERS.md).
 - [GPT-06](operations/GPT-06.md), [계획](operations/GPT_EXECUTION_PLAN.md), [이력](operations/WORK_LOG.md). 종료 기록 커밋은 문서만 변경한다. 검증 코드 SHA와 종료 기록 SHA를 구분한다. 새 문서 커밋 CI는 별도 상태를 확인한다.
 
 ## 중단

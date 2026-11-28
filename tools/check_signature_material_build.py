@@ -11,6 +11,7 @@ from check_flavor_isolation import FILES,DIRECTORIES,run
 from committed_build_inputs import clean_commit,copy_committed_inputs
 from profile_contract import enabled_profiles,debug_apk
 from signature_material import generate,inspect_material_apk,digest,RESOURCE
+from check_material_baseline import require_canonical_material
 
 
 def main():
@@ -23,6 +24,7 @@ def main():
     source=clean_commit(ROOT)
     original=(ROOT/FACE).read_bytes()
     expected=generate(ROOT)
+    require_canonical_material(*expected)
     with tempfile.TemporaryDirectory(prefix="aura-material-") as folder:
         root=Path(folder)
         count=copy_committed_inputs(ROOT,root,source,FILES+("apps/watchface/build.gradle.kts",),DIRECTORIES)
