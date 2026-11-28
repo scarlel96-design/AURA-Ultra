@@ -35,3 +35,5 @@
 - F03 R01: c0a75d94dfc37e32a5fea1b52078dfaa215505c1, Actions 19 pin/checkout 5 false, 9 tests 추가. Red 46093822834 370 methods/9 policy errors; 중간 Bootstrap 치환 및 Windows exit 1 오류 수정. 최종 CI 46093989694/46093989703/46093989816/46093989668/46093989722 진행 중. [보고](../evidence/MID-AUDIT/F03/REPORT-R01.md). main 코드 미변경.
 
 - F03 R02: c0a75d94dfc37e32a5fea1b52078dfaa215505c1, Linux 46093989694, Windows 46093989703, Domain 46093989816, historical 46093989668, doc 46093989722 SUCCESS; 370×3+81 PASS, 4 ZIP 직접 검사. 8 exact blob main 통합; [보고](../evidence/MID-AUDIT/F03/REPORT-R02.md). 통합 회귀 PENDING. GB R06 제출/HOLD.
+
+- F03 R03: main 56db9192add22b7fef279dc6f4831516d7f00c32, 5 CI SUCCESS, 370×3+81 PASS/4 ZIP 직접 검증. pin/checkout 2개 scoped RESOLVED; Gradle 격리 audit 4cae0a70f3dfb6507846aad04336128229a85b6f, 46094868997 수집 중. [보고](../evidence/MID-AUDIT/F03/REPORT-R03.md). 제품 NO-GO.

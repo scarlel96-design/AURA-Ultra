@@ -4,15 +4,15 @@
 | 항목 | 현재 값 |
 |---|---|
 | 정본 | main |
-| 최종 검증 코드 | 59b808d0c542e09e0eaa95caaa781648d2c1377d |
-| main 회귀 | [46093358694](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46093358694) SUCCESS 361 PASS; [46093358711](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46093358711) Windows 양쪽 361 PASS; [46093358730](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46093358730) SUCCESS; Domain 이전 81 PASS |
+| 최종 검증 코드 | 56db9192add22b7fef279dc6f4831516d7f00c32 |
+| main 회귀 | [46094595911](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46094595911) SUCCESS 370 PASS; [46094595791](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46094595791) Windows 양쪽 370 PASS; [46094595812](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46094595812) 81 PASS; historical/doc SUCCESS |
 | GPT-06 | 독립 준비 종료·중단 / PARTIAL (실기기 및 동적 효과 미검증) |
 | GPT-04/05 | PARTIAL |
 | GPT-07 | NOT STARTED / 사용자 별도 승인 대기 |
 | 정식 WO GO | 0/38 |
 | GPT 묶음 GO | 3/12 (PARTIAL 독립 준비 종료는 GO에 포함하지 않음) |
 | 출시 | NO-GO |
-| 다음 행동 | F03 pin/checkout 통합 CI 확인 → Gradle 검증/잠금. GPT-07 및 실기기 설치는 별도 승인 대기. |
+| 다음 행동 | F03 R03 Gradle 격리 inventory 결과/원본 hash 검토 → strict 검증/잠금. GPT-07 및 실기기 설치는 별도 승인 대기. |
 
 ## 근거 및 이관
 - [GPT-06 전체 종료 보고](evidence/GPT-06/REPORT-FINAL-CLOSURE.md). R01~R06 및 OPS-07 독립 준비 산출물 통합·자동 검증 완료. 결합 후보와 main 코드·시험·자산·CI 102개, 보호 경로 38개 blob 동일. 원본 아카이브 8개 SHA 동일. 활성 8개 문서 500021→24609 B(검증 코드 기준).
@@ -50,6 +50,8 @@
 
 - [F02 R04 종료](evidence/MID-AUDIT/F02/REPORT-R04-FINAL.md): 통합 main Linux/Windows 361 PASS씩, doc SUCCESS, 3 ZIP/8 APK/47 layout 및 RGBA 직접 검사. 4개 F02 ID 자동 범위 해결; F01/F02 합계 11개. F03 R01 다음.
 
-- [F03 R01](evidence/MID-AUDIT/F03/REPORT-R01.md): c0a75d94dfc37e32a5fea1b52078dfaa215505c1, 19/19 Actions pin, checkout 5/5 false, 신규 9 methods. Red 370/9 policy errors; 중간 후보 Windows exit 처리 수정. 최종 후보 5 CI SUCCESS, 통합 회귀 대기. Gradle OPEN.
+- [F03 R01](evidence/MID-AUDIT/F03/REPORT-R01.md): c0a75d94dfc37e32a5fea1b52078dfaa215505c1, 19/19 Actions pin, checkout 5/5 false, 신규 9 methods. Red 370/9 policy errors; 중간 후보 Windows exit 처리 수정. 최종 후보 5 CI SUCCESS. Gradle OPEN.
 
-- [F03 R02](evidence/MID-AUDIT/F03/REPORT-R02.md): 후보 370 PASS×3+81 Domain, 4 ZIP/8 APK/47 layout 직접 검증. 8 exact blob main 통합; 통합 CI PENDING. Gradle 인벤토리/검증/잠금 OPEN.
+- [F03 R02](evidence/MID-AUDIT/F03/REPORT-R02.md): 후보 370 PASS×3+81 Domain, 4 ZIP/8 APK/47 layout 직접 검증. 8 exact blob main 통합; 통합 CI SUCCESS.
+
+- [F03 R03](evidence/MID-AUDIT/F03/REPORT-R03.md): pin/checkout 2개 scoped RESOLVED, main 370×3+81 PASS/4 ZIP 검증. Gradle audit 4cae0a70f3dfb6507846aad04336128229a85b6f, CI 46094868997 수집 중; trust/lock OPEN. F03 PARTIAL.
