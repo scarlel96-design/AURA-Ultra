@@ -32,6 +32,6 @@
 | A26 | `-0.0`은 누락이 아니다. 범위의 `<`/`>`에서는 `0.0`과 같다. `Double.equals`는 부호 비트를 구분하므로 같은 revision에서는 `DUPLICATE_CONFLICT`다. `0.0`으로 바꾸지 않는다. | `samePayload` | 부호 비트를 정규화하는 결정 |
 | A27 | `NumericRange`는 인접한 두 `Double` 사이의 열린 구간을 빈 범위로 거절하지 않는다. 예: `(0.0, nextUp(0.0))`. 그 구간에 들어가는 유한 값은 비교에서 나오지 않는다. 정수 범위와 같은 빈 구간 거절로 바꾸지 않았다. | `NumericRange.parse` | 부동소수 빈 구간 정책 |
 | A28 | 승인 상태의 값은 null, `Boolean`, `Byte`, `Short`, `Int`, `Long`, `Float`, `Double`, `Char`, `String`만 둔다. 컬렉션, 배열, 읽기 전용 컬렉션, 사용자 정의 객체는 복사하지 않고 거절한다. `RevisionCursor`, `ClassifiedValue.Reading`, `StatusDerivation.Unchanged`, `StatusDerivation.DegradedToStale`의 생성과 `copy`가 그 값을 만들지 못한다. `Observation`과 `StatusDerivation.Rejected`는 검증 전 입력이라 원본을 유지한다. | `requireStablePayload` | 컬렉션 페이로드의 승인 |
-| A29 | 권한 상태는 `UNKNOWN`, `GRANTED`, `DENIED`다. 관측 `DENIED`, `ERROR`, `UNAVAILABLE`은 권한을 바꾸지 않는다. ticket과 generation은 넘치면 잠그고 감싸지 않는다. 같은 프로세스의 리플렉션을 막지 않는다. 이 계약은 SDK 접근 허가가 아니다. | `AuthorityCoordinator` | 실제 제공자 매핑과 이력 정책 |
+| A29 | 권한 상태는 `UNKNOWN`, `GRANTED`, `DENIED`다. 관측 `DENIED`, `ERROR`, `UNAVAILABLE`은 권한을 바꾸지 않는다. ticket과 generation은 넘치면 잠그고 감싸지 않는다. capability 발급 표식은 generation마다 하나이고 목록으로 쌓지 않는다. `permits`는 기대 scope와 요청을 함께 대조한다. 같은 프로세스의 리플렉션을 막지 않는다. 이 계약은 SDK 접근 허가가 아니다. | `AuthorityCoordinator` | 실제 제공자 매핑과 이력 정책 |
 
 테스트의 `"mm"`, `"percent"`, `"bpm"`, `"fixture"`는 픽스처 토큰이다. 승인된 단위가 아니다.

@@ -93,11 +93,13 @@
 
 `AuthorityCoordinator`는 관측 revision과 분리된 순수 계약이다. `applyRevision`, `classifiedValue`, `deriveStatus`는 이 상태를 읽지 않는다. 관측 상태 `VALID`, `DENIED`, `ERROR`, `UNAVAILABLE`은 권한을 허가하거나 철회하지 않는다.
 
-scope는 `authority`, `principal`, `category` 불투명 토큰이다. `SourceId`만으로 scope를 만들지 않는다. session과 ticket은 발급한 coordinator 인스턴스에 묶인다. 같은 문자와 같은 번호라도 다른 인스턴스의 ticket은 거절한다. `CheckTicket`과 `AcquisitionCapability`는 data class가 아니고, 호출자가 만든 복제 seal은 허가로 받지 않는다. 공개 `verified = true` 경로는 없다.
+scope는 `authority`, `principal`, `category` 불투명 토큰이다. `SourceId`만으로 scope를 만들지 않는다. session과 ticket은 발급한 coordinator 인스턴스에 묶인다. 같은 문자와 같은 번호라도 다른 인스턴스의 ticket은 거절한다. `CheckTicket`과 `AcquisitionCapability`는 data class가 아니다. 공개 capability 타입은 생성자가 없는 인터페이스다. 발급 구현과 발급 표식 타입은 coordinator 안에 private이다. 같은 모듈에서 인터페이스를 직접 구현해도 그 값은 허가로 인정하지 않는다. 발급된 capability에서 표식을 읽을 수 없다. 표식은 scope의 generation마다 하나이며 capability 목록을 저장하지 않는다. generation이 돌거나 scope가 잠기면 그 표식을 버린다. 이전 표식은 그 세대의 capability와 함께 도달 불가가 된다. 공개 `verified = true` 경로는 없다.
 
 신뢰된 확인 결과는 `TrustedCheckResult.GRANTED`, `DENIED`, `FAILED`다. 미발급, 오래된, 다른 인스턴스 ticket은 상태를 바꾸지 않는다. 같은 완료의 반복은 그대로 두고, 같은 ticket의 모순된 반복은 `UNKNOWN`으로 닫는다. 신뢰된 무효화는 이미 `UNKNOWN`이어도 generation을 돌리고 미완료 확인을 취소한다. 검증되지 않은 입력은 어떤 scope도 바꾸지 않는다. 상태가 같고 무효화가 없으면 generation을 유지한다. ticket과 generation이 `Long.MAX_VALUE`를 넘기려 하면 그 scope를 잠그고, 새 coordinator와 새 확인으로만 다시 연다.
 
-획득 capability는 scope, session, generation, 요청 stream에 묶인다. 다른 stream으로 다시 붙이지 않는다. 이전 generation은 재허가 뒤에도 통과하지 않는다. 재허가 이전의 과거 측정값 공개는 이 함수에 없다.
+획득 capability는 scope, session, generation, 요청 stream에 묶인다. `permits`는 기대 scope와 기대 요청을 둘 다 받는다. scope가 없는 검사는 없다. 발급 scope와 기대 scope, 발급 요청과 기대 요청이 다르면 거절한다. 다른 stream으로 다시 붙이지 않는다. 이전 generation은 재허가 뒤에도 통과하지 않는다. 요청 stream과 acquisition 번호는 서로 다른 식별자다. 결과 값에 그 번호를 붙이는 일은 이 함수에 없다. 재허가 이전의 과거 측정값 공개도 이 함수에 없다.
+
+재시작은 새 coordinator다. 이전 coordinator는 호출자가 버리기 전까지 남아 있다. 세션 문자열을 재시작마다 새로 고르는 일은 어댑터의 책임이다.
 
 이 타입은 SDK 권한, 동시성, 저장, 소비자 화면 삭제를 증명하지 않는다. 같은 프로세스의 리플렉션을 막지 않는다. `openNearCeiling`은 모듈 내부에서 카운터만 옮기며 `GRANTED`를 만들지 않는다.
 

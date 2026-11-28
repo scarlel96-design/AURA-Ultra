@@ -223,8 +223,8 @@ class AuthorityCoordinator private constructor(
         } else {
             record.nextAcquisition = acquisitionId + 1
         }
-        val capability = AcquisitionCapability(
-            seal,
+        val capability = IssuedCapability(
+            record.issuance,
             scope,
             session.token,
             record.generation,
@@ -234,17 +234,22 @@ class AuthorityCoordinator private constructor(
         return decide(AuthorityOutcome.ACCEPTED, null, scope, record, capability)
     }
 
-    fun permits(capability: AcquisitionCapability, request: AuthorityRequest): Boolean {
-        if (capability.seal !== seal || capability.sessionToken != session.token) {
-            return false
-        }
-        if (capability.request != request) {
-            return false
-        }
-        val record = records[capability.scope] ?: return false
-        return !record.locked &&
-            record.state == AuthorityState.GRANTED &&
-            record.generation == capability.generation
+    fun permits(
+        capability: AcquisitionCapability,
+        scope: AuthorityScope,
+        request: AuthorityRequest,
+    ): Boolean {
+        val issued = capability as? IssuedCapability ?: return false
+        val record = records[scope]
+        return issued.matches(
+            scope,
+            request,
+            session.token,
+            record?.issuance,
+            record?.generation,
+            granted = record?.state == AuthorityState.GRANTED,
+            locked = record?.locked == true,
+        )
     }
 
     private fun apply(record: ScopeRecord, result: TrustedCheckResult): Boolean {
@@ -282,12 +287,14 @@ class AuthorityCoordinator private constructor(
             return false
         }
         record.generation += 1
+        record.issuance = Issuance()
         return true
     }
 
     private fun lock(record: ScopeRecord) {
         record.locked = true
         record.state = AuthorityState.UNKNOWN
+        record.issuance = Issuance()
         clearOutstanding(record)
     }
 
@@ -325,7 +332,10 @@ class AuthorityCoordinator private constructor(
         var consumedResult: TrustedCheckResult? = null
         var nextAcquisition: Long = 1
         var acquisitionsExhausted: Boolean = false
+        var issuance: Issuance = Issuance()
     }
+
+    private class Issuance
 
     class CheckTicket internal constructor(
         internal val seal: Any,
@@ -335,14 +345,39 @@ class AuthorityCoordinator private constructor(
         val number: Long,
     )
 
-    class AcquisitionCapability internal constructor(
-        internal val seal: Any,
-        val scope: AuthorityScope,
-        internal val sessionToken: String,
-        val generation: Long,
-        val request: AuthorityRequest,
-        val acquisitionId: Long,
-    )
+    interface AcquisitionCapability {
+        val scope: AuthorityScope
+        val generation: Long
+        val request: AuthorityRequest
+        val acquisitionId: Long
+    }
+
+    private class IssuedCapability(
+        private val issuance: Issuance,
+        override val scope: AuthorityScope,
+        private val sessionToken: String,
+        override val generation: Long,
+        override val request: AuthorityRequest,
+        override val acquisitionId: Long,
+    ) : AcquisitionCapability {
+        fun matches(
+            scope: AuthorityScope,
+            request: AuthorityRequest,
+            sessionToken: String,
+            issuance: Issuance?,
+            generation: Long?,
+            granted: Boolean,
+            locked: Boolean,
+        ): Boolean {
+            return !locked &&
+                granted &&
+                this.scope == scope &&
+                this.request == request &&
+                this.sessionToken == sessionToken &&
+                this.generation == generation &&
+                this.issuance === issuance
+        }
+    }
 
     companion object {
         fun open(session: AuthoritySession): AuthorityCoordinator = AuthorityCoordinator(session)
