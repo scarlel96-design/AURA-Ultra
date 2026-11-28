@@ -21,11 +21,17 @@
 
 | 결과 | 조건 |
 |---|---|
-| `Reading(value, VALID 또는 STALE)` | 값이 있고 유한하며 상태가 VALID 또는 STALE |
+| `Reading(value, VALID 또는 STALE)` | 지원하는 스칼라 값이 있고, 부동소수면 유한하며, 상태가 VALID 또는 STALE |
 | `Unavailable` | 상태 UNAVAILABLE, 값 null |
 | `Denied` | 상태 DENIED, 값 null |
 | `Failed` | 상태 ERROR, 값 null |
-| `Inconsistent` | 그 밖의 조합, 또는 유한하지 않은 부동소수 |
+| `Inconsistent` | 그 밖의 조합, 유한하지 않은 부동소수, 또는 지원하지 않는 페이로드 |
+
+지원하는 값은 null, `Boolean`, `Byte`, `Short`, `Int`, `Long`, `Float`, `Double`, `Char`, `String`이다. 컬렉션, 배열, 읽기 전용 컬렉션 인터페이스, 사용자 정의 객체는 지원하지 않는다.
+
+`Observation`과 `StatusDerivation.Rejected`는 검증 전 입력이다. 생성자는 값을 복사하거나 고치지 않는다. `RevisionCursor`, `ClassifiedValue.Reading`, `StatusDerivation.Unchanged`, `StatusDerivation.DegradedToStale`는 승인 상태다. 값이 지원 스칼라가 아니면 생성과 `copy`가 `UnsupportedPayloadException`을 던진다. `validateObservation`은 그 입력을 `UNSUPPORTED_PAYLOAD`로 거절하고, `applyRevision`은 기존 커서를 유지한다. `classifiedValue()`는 `Inconsistent`를 반환한다. `deriveStatus`는 `Rejected`로 입력 객체를 그대로 돌려준다.
+
+유한하지 않은 `Float`와 `Double`은 스칼라다. `validateObservation`은 `NON_FINITE`로 거절하고 `classifiedValue()`는 `Inconsistent`다. `applyRevision`은 그 값을 저장하지 않는다.
 
 ## 신선도
 
@@ -82,6 +88,20 @@
 3. 저장 전 `applyRevision`을 호출한다. 기준 시각은 어댑터의 시계에서 이 함수의 인자로만 들어온다.
 4. 표시 전 `deriveStatus`와 `classifiedValue`를 사용한다. WFF 패키지 안에는 이 코드를 넣지 않는다.
 5. 루트 `settings.gradle.kts`에 이 모듈을 넣는 변경은 중앙 소유자가 한다. 그 전에 빌드는 [BUILD.md](BUILD.md)의 독립 명령을 사용한다.
+
+## 권한 검증
+
+`AuthorityCoordinator`는 관측 revision과 분리된 순수 계약이다. `applyRevision`, `classifiedValue`, `deriveStatus`는 이 상태를 읽지 않는다. 관측 상태 `VALID`, `DENIED`, `ERROR`, `UNAVAILABLE`은 권한을 허가하거나 철회하지 않는다.
+
+scope는 `authority`, `principal`, `category` 불투명 토큰이다. `SourceId`만으로 scope를 만들지 않는다. session과 ticket은 발급한 coordinator 인스턴스에 묶인다. 같은 문자와 같은 번호라도 다른 인스턴스의 ticket은 거절한다. `CheckTicket`과 `AcquisitionCapability`는 data class가 아니다. 공개 capability 타입은 생성자가 없는 인터페이스다. 발급 구현과 발급 표식 타입은 coordinator 안에 private이다. 같은 모듈에서 인터페이스를 직접 구현해도 그 값은 허가로 인정하지 않는다. 발급된 capability에서 표식을 읽을 수 없다. 표식은 scope의 generation마다 하나이며 capability 목록을 저장하지 않는다. generation이 돌거나 scope가 잠기면 그 표식을 버린다. 이전 표식은 그 세대의 capability와 함께 도달 불가가 된다. 공개 `verified = true` 경로는 없다.
+
+신뢰된 확인 결과는 `TrustedCheckResult.GRANTED`, `DENIED`, `FAILED`다. 미발급, 오래된, 다른 인스턴스 ticket은 상태를 바꾸지 않는다. 같은 완료의 반복은 그대로 두고, 같은 ticket의 모순된 반복은 `UNKNOWN`으로 닫는다. 신뢰된 무효화는 이미 `UNKNOWN`이어도 generation을 돌리고 미완료 확인을 취소한다. 검증되지 않은 입력은 어떤 scope도 바꾸지 않는다. 상태가 같고 무효화가 없으면 generation을 유지한다. ticket과 generation이 `Long.MAX_VALUE`를 넘기려 하면 그 scope를 잠그고, 새 coordinator와 새 확인으로만 다시 연다.
+
+획득 capability는 scope, session, generation, 요청 stream에 묶인다. `permits`는 기대 scope와 기대 요청을 둘 다 받는다. scope가 없는 검사는 없다. 발급 scope와 기대 scope, 발급 요청과 기대 요청이 다르면 거절한다. 다른 stream으로 다시 붙이지 않는다. 이전 generation은 재허가 뒤에도 통과하지 않는다. 요청 stream과 acquisition 번호는 서로 다른 식별자다. 결과 값에 그 번호를 붙이는 일은 이 함수에 없다. 재허가 이전의 과거 측정값 공개도 이 함수에 없다.
+
+재시작은 새 coordinator다. 이전 coordinator는 호출자가 버리기 전까지 남아 있다. 세션 문자열을 재시작마다 새로 고르는 일은 어댑터의 책임이다.
+
+이 타입은 SDK 권한, 동시성, 저장, 소비자 화면 삭제를 증명하지 않는다. 같은 프로세스의 리플렉션을 막지 않는다. `openNearCeiling`은 모듈 내부에서 카운터만 옮기며 `GRANTED`를 만들지 않는다.
 
 ## 이 계약에 없는 것
 

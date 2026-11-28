@@ -29,7 +29,11 @@ data class Observation<T>(
 )
 
 sealed class ClassifiedValue<out T> {
-    data class Reading<T>(val value: T, val status: ObservationStatus) : ClassifiedValue<T>()
+    data class Reading<T>(val value: T, val status: ObservationStatus) : ClassifiedValue<T>() {
+        init {
+            requireStablePayload(value)
+        }
+    }
     data object Unavailable : ClassifiedValue<Nothing>()
     data object Denied : ClassifiedValue<Nothing>()
     data object Failed : ClassifiedValue<Nothing>()
@@ -42,6 +46,9 @@ sealed class ClassifiedValue<out T> {
  */
 fun <T> Observation<T>.classifiedValue(): ClassifiedValue<T> {
     val current = value
+    if (!isStableScalar(current)) {
+        return ClassifiedValue.Inconsistent(status, valuePresent = true)
+    }
     if ((current is Double && !current.isFinite()) || (current is Float && !current.isFinite())) {
         return ClassifiedValue.Inconsistent(status, valuePresent = true)
     }
@@ -70,6 +77,24 @@ fun <T> Observation<T>.classifiedValue(): ClassifiedValue<T> {
             } else {
                 ClassifiedValue.Inconsistent(status, valuePresent = true)
             }
+    }
+}
+
+/**
+ * 승인 상태에 남길 수 있는 값. null과 JVM 불변 스칼라만 해당한다.
+ * 읽기 전용 컬렉션 인터페이스도 포함하지 않는다.
+ */
+internal fun isStableScalar(value: Any?): Boolean {
+    return when (value) {
+        null -> true
+        is Boolean, is Byte, is Short, is Int, is Long, is Float, is Double, is Char, is String -> true
+        else -> false
+    }
+}
+
+internal fun requireStablePayload(value: Any?) {
+    if (!isStableScalar(value)) {
+        throw UnsupportedPayloadException()
     }
 }
 

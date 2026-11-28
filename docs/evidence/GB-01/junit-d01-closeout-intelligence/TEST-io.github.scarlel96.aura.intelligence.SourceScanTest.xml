@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="io.github.scarlel96.aura.intelligence.SourceScanTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-11-28T06:40:15.670Z" hostname="서브컴퓨터" time="0.067">
+  <properties/>
+  <testcase name="plantedClockAndNetworkTokensAreDetected()" classname="io.github.scarlel96.aura.intelligence.SourceScanTest" time="0.001"/>
+  <testcase name="mainSourcesStayFreeOfPlatformClockAndNetwork()" classname="io.github.scarlel96.aura.intelligence.SourceScanTest" time="0.064"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

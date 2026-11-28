@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="io.github.scarlel96.aura.domain.AuthorityContractTest" tests="14" skipped="0" failures="0" errors="0" timestamp="2026-11-28T10:20:06.243Z" hostname="서브컴퓨터" time="0.351">
+  <properties/>
+  <testcase name="currentIssuedCheckCanGrant()" classname="io.github.scarlel96.aura.domain.AuthorityContractTest" time="0.255"/>
+  <testcase name="trustedFailureAndUntrustedInputAreDistinct()" classname="io.github.scarlel96.aura.domain.AuthorityContractTest" time="0.002"/>
+  <testcase name="ordinaryDataStatusDoesNotGrantOrRevokeAuthority()" classname="io.github.scarlel96.aura.domain.AuthorityContractTest" time="0.007"/>
+  <testcase name="unissuedForeignAndStaleTicketsCannotGrant()" classname="io.github.scarlel96.aura.domain.AuthorityContractTest" time="0.001"/>
+  <testcase name="ticketAndGenerationCeilingsFailClosed()" classname="io.github.scarlel96.aura.domain.AuthorityContractTest" time="0.0"/>
+  <testcase name="capabilityConstructionAndCopyCannotForgeAcceptance()" classname="io.github.scarlel96.aura.domain.AuthorityContractTest" time="0.002"/>
+  <testcase name="genericRevisionAndScalarContractRemainIndependent()" classname="io.github.scarlel96.aura.domain.AuthorityContractTest" time="0.013"/>
+  <testcase name="foreignScopeSessionAndRequestAreRejected()" classname="io.github.scarlel96.aura.domain.AuthorityContractTest" time="0.0"/>
+  <testcase name="invalidateWhileUnknownFencesPendingCheck()" classname="io.github.scarlel96.aura.domain.AuthorityContractTest" time="0.0"/>
+  <testcase name="regrantRejectsPriorGeneration()" classname="io.github.scarlel96.aura.domain.AuthorityContractTest" time="0.0"/>
+  <testcase name="restartRequiresFreshAuthority()" classname="io.github.scarlel96.aura.domain.AuthorityContractTest" time="0.0"/>
+  <testcase name="duplicateAndConflictingCompletionAreHandled()" classname="io.github.scarlel96.aura.domain.AuthorityContractTest" time="0.001"/>
+  <testcase name="sameStateCheckDoesNotResurrectInvalidatedGrant()" classname="io.github.scarlel96.aura.domain.AuthorityContractTest" time="0.001"/>
+  <testcase name="unknownAndDeniedCannotAcquire()" classname="io.github.scarlel96.aura.domain.AuthorityContractTest" time="0.002"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
