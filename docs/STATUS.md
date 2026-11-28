@@ -12,7 +12,7 @@
 | 정식 WO GO | 0/38 |
 | GPT 묶음 GO | 3/12 (PARTIAL 독립 준비 종료는 GO에 포함하지 않음) |
 | 출시 | NO-GO |
-| 다음 행동 | F03 R06 exact graph/strict 재시험 → provenance 430개 미확보 및 적용 조건 검토. GPT-07 및 실기기 설치는 별도 승인 대기. |
+| 다음 행동 | F03 R08 strict pilot 검증 종료 → 독립 SBOM/CVE/license 조사 가능 범위 확인, provenance 적용 BLOCKED. GPT-07 및 실기기 설치는 별도 승인 대기. |
 
 ## 근거 및 이관
 - [GPT-06 전체 종료 보고](evidence/GPT-06/REPORT-FINAL-CLOSURE.md). R01~R06 및 OPS-07 독립 준비 산출물 통합·자동 검증 완료. 결합 후보와 main 코드·시험·자산·CI 102개, 보호 경로 38개 blob 동일. 원본 아카이브 8개 SHA 동일. 활성 8개 문서 500021→24609 B(검증 코드 기준).
@@ -45,3 +45,7 @@
 - [F03 R05](evidence/MID-AUDIT/F03/REPORT-R05.md): checksum 234/664 일치, 430 미확보(HTTP404), trust OPEN; audit host 378×3 PASS. strict/lock pilot fc3ffa3da8f06e911c5177be09843fa18db8c58f, CI 46095753190 진행 중. main 제품 코드 미변경.
 
 - [F03 R06](evidence/MID-AUDIT/F03/REPORT-R06.md): Domain strict 81 PASS, 합성 변조/잠금 누락 거부 PASS. Android 178/178 lock graph 정확, 기존 count gate 차단; 수정 3609f3890c69267653badcef03961d75934de35a, CI 46096211808 진행 중. trust OPEN.
+
+- [F03 R07](evidence/MID-AUDIT/F03/REPORT-R07.md): Domain strict/graph/negative PASS, audit host 383×3 PASS. Android HTTP429로 중단, 동일 SHA 단일 job 재시도 PENDING. [출처 검증 이관](evidence/MID-AUDIT/F03/PROVENANCE-HANDOFF.md). F03 PARTIAL.
+
+- [F03 R08](evidence/MID-AUDIT/F03/REPORT-R08.md): 46096211808 Android retry strict PASS, WFF2~5 Debug/Release 8종, Domain 81, 197 configs/6 locks exact, 2 ZIP 직접 검사. 430 미확보 및 독립 출처 신뢰 OPEN. F03 PARTIAL. GPT-09 종료 감사 추가 계획은 기능 개발 재개 시 적용.
