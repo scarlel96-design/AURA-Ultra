@@ -1,0 +1,21 @@
+PASS completeDryHorizon
+PASS emptyIsUnknown
+PASS missingBeforeWetIsUnknown
+PASS gapBeforeWetIsUnknown
+PASS trailingDryGapIsUnknown
+PASS wetRunEndsAtDryBucket
+PASS wetAtHorizonDoesNotClaimCessation
+PASS wetRunStopsAtGap
+PASS wetRunStopsAtMissing
+PASS trailingWetGap
+PASS onlyFirstWetRun
+PASS inchesAndTinyPositive
+PASS invalidHorizonAndLimit
+PASS invertedAndEmptyIntervals
+PASS noClipping
+PASS overlapDuplicateAndUnsortedRejected
+PASS wrongUnitEvenWhenMissing
+PASS invalidDepthAfterFirstWindow
+PASS instantExtremesWithoutArithmetic
+PASS seededBucketOracle
+TIMELINE_RESULT 20 PASS / 0 FAIL; seed=20261128 cases=10000
