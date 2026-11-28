@@ -150,3 +150,58 @@ push refspec은 `1ec894d54ff3b0aa93e590194e1ab1982e077690:refs/heads/agent/grok/
 | pull_request | AURA Bootstrap | 46129609199 | success |
 
 이 절을 담은 커밋은 문서다. 그 커밋의 CI는 이 표에 포함하지 않는다.
+
+## RV01-CLOSEOUT
+
+독립 검수 `docs/evidence/MID-AUDIT/RV01-REVIEW.md`의 RV01-C1, RV01-C2를 고쳤다. 기준은 PR #6 `8f53bff`이고, 작업 전 `origin/main`은 `f05e9b81f68232abc3ab109512cbb966f222e110`이다. 그 문서를 병합한 SHA는 `6cdb674c1e5cb020fc87ac19d630b58f582edf14`다. 수정 코드 SHA는 `558e18804d08ebd4d79be620962c256e0af07f96`다. 제품은 NO-GO다. PR #6은 OPEN, HOLD, 미병합이다. PR #3·#5는 변경하지 않았다.
+
+### 수정 전 재현
+
+수정 전 `Authority.kt`에서 기존 시험 두 개의 단언만 일시적으로 바꿔 실행했다. 새 시험 식별자는 만들지 않았다. 명령은 `.\gradlew.bat -p modules/domain test --offline --no-daemon --no-build-cache --tests io.github.scarlel96.aura.domain.AuthorityContractTest.capabilityConstructionAndCopyCannotForgeAcceptance --tests io.github.scarlel96.aura.domain.AuthorityContractTest.foreignScopeSessionAndRequestAreRejected`다. JVM은 Temurin 17이다. 결과: 2 tests, 2 failed, `RED_EXIT=1`. 원본 XML은 `closeout-red/TEST-io.github.scarlel96.aura.domain.AuthorityContractTest.xml`이다. 시각은 `2026-11-28T10:06:32.484Z`다.
+
+RV01-C1. 정상 capability의 seal로 같은 모듈에서 생성한 값이 `permits`를 통과했다. 실패 목록은 `same-seal-identical`, `same-seal-relabeled-request`, `same-seal-retagged-scope`, `old-seal-current-generation`이다. 앞의 세 검사는 재허가 전에 했고, 마지막은 DENIED 다음 GRANTED로 generation이 바뀐 뒤 이전 seal과 현재 generation으로 만든 값이다.
+
+RV01-C2. 한 coordinator에서 alpha는 GRANTED, beta는 DENIED, stream은 같다. 당시 `permits`는 scope 인자가 없었다. `permits(alphaCapability, stream)`이 true였다. 실패 문장은 `C2 unscoped permits accepted alpha while beta is DENIED`다. 수정 후 시그니처의 빨간 시험은 실행하지 않았다. 그 시그니처는 수정 전에 없었다.
+
+### 수정
+
+capability의 공개 타입은 생성자가 없는 인터페이스다. 발급 구현 클래스와 발급 표식 타입은 coordinator 안에서 private이다. 표식은 scope의 generation마다 하나이고 목록으로 쌓지 않는다. generation이 돌거나 scope가 잠기면 표식을 바꾼다. 같은 상태의 GRANTED 또는 DENIED는 generation과 표식을 유지한다. `permits(capability, scope, request)`만 있다. 기대 scope의 기록과 발급 표식, session, generation, 요청을 함께 본다. 다른 구현체는 거절한다.
+
+재시작은 새 coordinator다. 이전 coordinator는 호출자가 버릴 때까지 남는다. 세션 문자열을 새로 고르는 일은 어댑터의 책임이다. 결과 값 결합, 과거 측정 공개, SDK, 동시성, 소비자 삭제는 넣지 않았다. 리플렉션 격리는 주장하지 않는다.
+
+### 단언 변경
+
+식별자 14개는 유지했다. 기존 Domain 시험 88개의 blob은 `56675d84d1c95bee5554decc6564b3cc9faded60`와 같다. `AuthorityContractTest`만 시험 파일이 바뀌었다.
+
+`capabilityConstructionAndCopyCannotForgeAcceptance`는 seal을 복사하는 생성자 호출을 빼었다. 그 생성자는 더 이상 호출할 수 없고 표식도 읽을 수 없다. 대신 공개 타입이 인터페이스이고 생성자가 없는지, 실제 객체의 클래스가 private인지, 같은 scope·generation·request·acquisitionId로 인터페이스를 직접 구현한 값이 거절되는지를 본다. 올바른 scope와 요청의 허가는 유지한다. 다른 요청, 다른 scope, `AuthorityDecision`으로 감싼 값, 재허가 뒤의 이전 capability 거절, `copy` 없음도 유지한다.
+
+`foreignScopeSessionAndRequestAreRejected`의 두 coordinator 단언은 기대 scope를 명시하도록만 바꿨다. 같은 coordinator, 같은 stream, 서로 다른 scope를 추가했다. alpha가 허가되고 beta가 거부된 동안 beta 획득은 `NOT_GRANTED`이고 alpha capability는 beta에서 거절된다. beta를 나중에 허가해도 alpha capability는 beta로 바뀌지 않는다. 두 capability의 stream과 acquisition 번호가 같아도 scope가 다르면 서로 통과하지 않는다. 번호는 scope 안의 카운터다.
+
+나머지 `permits` 호출은 기대 scope 인자를 받도록 고쳤다. 기존 허가·거부 단언은 유지했다.
+
+### 수정 후 로컬 시험
+
+작업 트리: `C:\Users\scarl\AppData\Local\Temp\aura-d01-wt`
+명령: `.\gradlew.bat -p modules/domain clean test --offline --no-daemon --no-build-cache`
+`JAVA_HOME`: `C:\Users\scarl\.jdks\temurin-17`
+JVM: Temurin 17.0.20.1, `TEST_JVM path=C:\Users\scarl\.jdks\temurin-17`
+Gradle: 9.3.1
+코드 SHA: `558e18804d08ebd4d79be620962c256e0af07f96`
+결과: `BUILD SUCCESSFUL in 37s`
+XML: `closeout-green/junit-domain`, 9 files, `2026-11-28T10:20:06.243Z`–`2026-11-28T10:20:06.782Z`
+집계: 102 tests, 0 failures, 0 errors, 0 skipped
+
+같은 XML:
+
+```
+DOMAIN_INVENTORY rv01
+DOMAIN_RESULT 102 PASS / 0 FAIL / 0 ERROR / 0 SKIP
+```
+
+종료 코드 0. 원문 `closeout-green/checker-rv01.txt`. `python -m unittest discover -s tests/unit -p test_domain_results.py -v`는 `Ran 24 tests` OK다. 검사기 소스는 바꾸지 않았다.
+
+Intelligence는 제품 코드가 바뀌었으므로 다시 실행했다. 작업 트리 `C:\Users\scarl\AppData\Local\Temp\aura-d01-intel`는 detached `e050937fd34709d143836e44bbf91ec5221bdc48`이고 커밋하지 않았다. `modules/intelligence`는 그 HEAD와 차이가 없다. `modules/domain`은 `558e18804d08ebd4d79be620962c256e0af07f96`와 차이가 없다. 명령은 `.\gradlew.bat -p modules/intelligence clean test --offline --no-daemon --no-build-cache`다. `BUILD SUCCESSFUL in 51s`. XML은 `closeout-green/junit-intelligence`, 13 files, `2026-11-28T10:22:19.755Z`–`2026-11-28T10:22:24.983Z`다. 집계는 108 tests, 0 failures, 0 errors, 0 skipped다. `Round05Test.longRunKeepsInvariants()` PASSED. seed `20261128`, 반복 `100_000`. 컴파일 경고 1건은 기존 `Round08Test.kt:166`이다.
+
+Gradle 디스크 XML은 CRLF다. Git blob은 autocrlf clean 뒤 LF다.
+
+push refspec은 `558e18804d08ebd4d79be620962c256e0af07f96:refs/heads/agent/grok/GB-01-RV01`다. 이 절을 쓴 시점의 원격 CI는 아직 이 문서의 PASS가 아니다.
