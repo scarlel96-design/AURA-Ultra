@@ -12,7 +12,7 @@
 | 정식 WO GO | 0/38 |
 | GPT 묶음 GO | 3/12 (PARTIAL 독립 준비 종료는 GO에 포함하지 않음) |
 | 출시 | NO-GO |
-| 다음 행동 | F02 R02 후보 Linux/Windows 최종 검증 → 아티팩트 확인 → 통합 조건 확인. GPT-07 및 실기기 설치는 별도 승인 대기. |
+| 다음 행동 | F02 통합 main Linux/Windows/문서 CI 및 아티팩트 확인 → F02 종료 → F03 공급망 개선. GPT-07 및 실기기 설치는 별도 승인 대기. |
 
 ## 근거 및 이관
 - [GPT-06 전체 종료 보고](evidence/GPT-06/REPORT-FINAL-CLOSURE.md). R01~R06 및 OPS-07 독립 준비 산출물 통합·자동 검증 완료. 결합 후보와 main 코드·시험·자산·CI 102개, 보호 경로 38개 blob 동일. 원본 아카이브 8개 SHA 동일. 활성 8개 문서 500021→24609 B(검증 코드 기준).
@@ -44,4 +44,6 @@
 
 - [F02 R01](evidence/MID-AUDIT/F02/REPORT-R01.md): 4c49ec4d2a97eb64f60e97a8d9997bea6e7c0377, 4개 개선 후보·10 신규 methods. Red 46092069340 356 methods/10 실패 assertions; focused local green PASS. Green Linux 46092110757 SUCCESS 356 PASS, Windows 46092110752 양쪽 SUCCESS 356 PASS, doc 46092110747 SUCCESS. 3 ZIP 직접 검증 완료. main 코드 미변경; F02 PARTIAL, 제품 NO-GO.
 
-- [F02 R02](evidence/MID-AUDIT/F02/REPORT-R02.md): 후보 b867b097ec10fcd3f5569db089275536bed43bb6; 기본 Signature 번들/비번들 committed snapshot 통일, 신규 5 methods. Red 46092424885 361 tests/4 실패 assertions; Windows red 양쪽 FAIL. Green Linux 46092446205 host SUCCESS/Android 진행 중, Windows 46092446130 false 361 PASS/true 진행 중, doc 46092446153 SUCCESS. 후보 미통합, 전체 검증 전 F02 PARTIAL. 제품 NO-GO.
+- [F02 R02](evidence/MID-AUDIT/F02/REPORT-R02.md): 후보 b867b097ec10fcd3f5569db089275536bed43bb6; 기본 Signature 번들/비번들 committed snapshot 통일, 신규 5 methods. Red 46092424885 361 tests/4 실패 assertions; Windows red 양쪽 FAIL. Green Linux 46092446205 SUCCESS 361 PASS, Windows 46092446130 양쪽 SUCCESS 361 PASS, doc 46092446153 SUCCESS. 후보 검증 완료, F02 PARTIAL. 제품 NO-GO.
+
+- [F02 R03](evidence/MID-AUDIT/F02/REPORT-R03.md): 후보 전체 Linux/Windows 361 PASS씩, 3 ZIP/8 APK/47 layout 직접 검증. 10 exact blob main 통합; 통합 CI PENDING. F02 PARTIAL, F03 미착수, 제품 NO-GO.

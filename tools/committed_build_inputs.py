@@ -1,6 +1,7 @@
 """Materialize selected committed build inputs without copying the worktree."""
 import os
 import re
+import stat
 import subprocess
 from pathlib import Path, PurePosixPath
 
@@ -11,6 +12,13 @@ def git(root, *args):
 
 
 def clean_commit(root):
+    entries = git(root, "ls-files", "-v", "-z")
+    if entries and not entries.endswith(b"\0"):
+        raise ValueError("Invalid Git index listing")
+    # H is a normal tracked entry. Lowercase tags hide assume-unchanged.
+    # S/s identifies skip-worktree. Reject every unsupported tag.
+    if any(not item.startswith(b"H ") for item in entries.split(b"\0") if item):
+        raise ValueError("Unsupported Git index flags; use a clean full checkout")
     if git(root, "status", "--porcelain", "--untracked-files=no").strip():
         raise ValueError("Tracked worktree changes; commit before bundling")
     commit = git(root, "rev-parse", "HEAD").decode("ascii").strip()
@@ -20,9 +28,16 @@ def clean_commit(root):
 
 
 def copy_committed_inputs(source, destination, commit, files, directories):
-    """Copy regular Git blobs only; ignore every untracked worktree input."""
+    """Copy regular Git blobs into an exclusively owned, empty directory."""
     if not re.fullmatch(r"[0-9a-f]{40}", commit):
         raise ValueError("Invalid source commit")
+    destination = Path(destination)
+    info = destination.lstat()
+    reparse = getattr(info, "st_file_attributes", 0) & getattr(stat, "FILE_ATTRIBUTE_REPARSE_POINT", 0x400)
+    if not stat.S_ISDIR(info.st_mode) or reparse or any(destination.iterdir()):
+        raise ValueError("Destination must be a new empty private directory")
+    # The caller must exclusively control this directory throughout the copy.
+    # Do not accept preexisting child directories, links, or files.
     raw = git(source, "ls-tree", "-r", "-z", commit, "--", *files, *directories)
     if not raw or not raw.endswith(b"\0"):
         raise ValueError("Missing committed build inputs")

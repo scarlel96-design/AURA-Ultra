@@ -27,3 +27,5 @@
 - F02 R01: 4개 결함 exact-blob 재현, red 46092069340 356/10 실패 assertions. 4c49ec4d2a97eb64f60e97a8d9997bea6e7c0377 6 paths, local focused green PASS, Linux 46092110757 host step SUCCESS, Windows 46092110752 full host PENDING, doc 46092110747 SUCCESS. [보고](../evidence/MID-AUDIT/F02/REPORT-R01.md). 후보 미통합.
 
 - F02 R02: R01 Linux 46092110757 및 Windows 46092110752 양쪽 SUCCESS 356 PASS, 3 ZIP/47 layout/4+4 APK 자산 검증. b867b097ec10fcd3f5569db089275536bed43bb6 basic 비번들 입력 통일 및 신규 5 tests; red Linux 361/4 실패 assertions, Windows red 양쪽 FAIL. Green Linux host SUCCESS/Android PENDING, Windows false 361 PASS/true PENDING, doc SUCCESS. [보고](../evidence/MID-AUDIT/F02/REPORT-R02.md). main 코드 미변경.
+
+- F02 R03: b867b097ec10fcd3f5569db089275536bed43bb6, Linux 46092446205/Windows 46092446130 양쪽/문서 46092446153 SUCCESS. 361 PASS씩, 3 ZIP/8 APK/47 layout 직접 검사. 10 exact blob main 통합; 통합 회귀 PENDING. [보고](../evidence/MID-AUDIT/F02/REPORT-R03.md).
