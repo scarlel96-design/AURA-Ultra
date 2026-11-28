@@ -4,47 +4,43 @@ on:
     branches: [audit-f03-r03-gradle-inventory]
     paths:
       - '.github/workflows/f03-review.yml'
-      - 'tools/audit_upstream_candidate.py'
-      - 'tests/unit/test_f03_r11.py'
+      - 'tools/audit_provenance_priority.py'
+      - 'tests/unit/test_f03_r13.py'
 permissions:
   contents: read
   actions: read
 jobs:
   review:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           persist-credentials: false
-      - uses: actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3 # v4
-        with:
-          distribution: temurin
-          java-version: '17'
       - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: '3.12'
       - name: Check evidence tool and workflow policy
         run: |
-          python -m unittest discover -s tests/unit -p test_f03_r11.py -v
+          python -m unittest discover -s tests/unit -p test_f03_r13.py -v
           python -m unittest discover -s tests/unit -p test_f03_r01.py -v
-      - name: Install Android SDK
-        uses: android-actions/setup-android@138b5fb1cf087fdb4c5f3c621466fe304d0cf2e3 # v4.0.3
-        with:
-          packages: 'platform-tools platforms;android-37.0 build-tools;36.0.0'
-      - name: Retrieve exact baseline evidence
+      - name: Retrieve exact prior archives
         env:
           GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
           set -euo pipefail
-          curl --fail --silent --show-error --location --max-time 90 -H "Authorization: Bearer $GH_TOKEN" "https://api.github.com/repos/${{ github.repository }}/actions/artifacts/15244580797/zip" -o "$RUNNER_TEMP/android.zip"
-      - name: Evaluate upstream upgrade in scratch source
-        run: python tools/audit_upstream_candidate.py --baseline "$RUNNER_TEMP/android.zip" --output "$RUNNER_TEMP/f03-upgrade"
-      - name: Preserve candidate evidence
+          for pair in android:15243421432 domain:15243241825 review:15245995993 candidate:15248144979; do
+            name="${pair%%:*}"
+            id="${pair##*:}"
+            curl --fail --silent --show-error --location --max-time 90 -H "Authorization: Bearer $GH_TOKEN" "https://api.github.com/repos/${{ github.repository }}/actions/artifacts/$id/zip" -o "$RUNNER_TEMP/$name.zip"
+          done
+      - name: Collect exact artifact provenance and license evidence
+        run: python tools/audit_provenance_priority.py --android "$RUNNER_TEMP/android.zip" --domain "$RUNNER_TEMP/domain.zip" --review "$RUNNER_TEMP/review.zip" --candidate "$RUNNER_TEMP/candidate.zip" --output "$RUNNER_TEMP/f03-provenance"
+      - name: Preserve unreviewed evidence
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: f03-upstream-candidate
-          path: ${{ runner.temp }}/f03-upgrade/
+          name: f03-priority-provenance
+          path: ${{ runner.temp }}/f03-provenance/
           if-no-files-found: error
