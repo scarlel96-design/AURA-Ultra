@@ -23,6 +23,7 @@ WORKFLOWS = {
     "windows-repro.yml": ["actions/checkout", "actions/setup-python"],
     "f03-inventory.yml": ["actions/checkout", "actions/setup-java", "actions/setup-python",
                           "android-actions/setup-android", "actions/upload-artifact"],
+    "f03-review.yml": ["actions/checkout", "actions/setup-python", "actions/upload-artifact"],
 }
 
 
@@ -71,14 +72,19 @@ def check_credentials(content):
         raise ValueError("Unexpected credential setting")
 
 
-def check_permissions(content):
+def check_permissions(content, workflow=None):
     lines = content.splitlines()
     if [line for line in lines if re.search(r"\bpermissions\s*:", line)] != ["permissions:"]:
         raise ValueError("Unexpected permission override")
     index = lines.index("permissions:")
-    if lines[index + 1:index + 2] != ["  contents: read"]:
-        raise ValueError("Expected contents: read")
-    if index + 2 < len(lines) and lines[index + 2].startswith(" "):
+    expected = ["  contents: read"]
+    # Only the audit-only archive retrieval workflow needs Actions read access.
+    if workflow == "f03-review.yml":
+        expected.append("  actions: read")
+    end = index + 1 + len(expected)
+    if lines[index + 1:end] != expected:
+        raise ValueError("Unexpected permission block")
+    if end < len(lines) and lines[end].startswith(" "):
         raise ValueError("Unexpected additional permissions")
 
 
@@ -107,7 +113,7 @@ class ActionPolicyTests(unittest.TestCase):
     def test_read_only_permissions(self):
         for name in WORKFLOWS:
             with self.subTest(workflow=name):
-                check_permissions((ROOT / ".github/workflows" / name).read_text(encoding="utf-8"))
+                check_permissions((ROOT / ".github/workflows" / name).read_text(encoding="utf-8"), name)
 
     def test_historical_checkout_preserved(self):
         content = (ROOT / ".github/workflows/reproduce-packaging.yml").read_text(encoding="utf-8")
@@ -133,6 +139,19 @@ class ActionPolicyTests(unittest.TestCase):
             with self.subTest(replacement=replacement):
                 with self.assertRaises(ValueError):
                     check_credentials(content.replace("          persist-credentials: false\n", replacement))
+
+    def test_audit_archive_read_is_narrowly_scoped(self):
+        base = self.fixture()
+        audit = base.replace("contents: read", "contents: read\n  actions: read")
+        check_permissions(audit, "f03-review.yml")
+        with self.assertRaises(ValueError):
+            check_permissions(audit, "bootstrap.yml")
+        with self.assertRaises(ValueError):
+            check_permissions(base, "f03-review.yml")
+        for extra in ("  actions: write", "  actions: read\n  packages: read"):
+            with self.subTest(extra=extra), self.assertRaises(ValueError):
+                check_permissions(base.replace("contents: read", "contents: read\n" + extra),
+                                  "f03-review.yml")
 
     def test_write_permissions_rejected(self):
         for content in (self.fixture().replace("contents: read", "contents: write"),
