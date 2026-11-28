@@ -36,3 +36,5 @@ GPT-06 독립 준비 종료/STOPPED. [종료 보고](../evidence/GPT-06/REPORT-F
 - AUD-R02-02/05~09/12 P2: 미래 입력·정책 단위·revision 상한·NaN 범위·가변 payload·CRLF. 10/11은 그래픽 히스테리시스 정책 재검토. [R02](../evidence/MID-AUDIT/REPORT-R02.md). GPT-07 금지, PR HOLD.
 
 - AUD-R03-01/04/05/06/07/09 P1 또는 통합 전 P1: 역순 보호 요청, wallpaper 섹션 오인, Manifest 정규식, 덮어쓰기 race, MP4 bytes/path 불일치, MP4 검사 전 할당. AUD-R03-02/03/10~13 P2 및 안전 경계: transition metadata, PNG 부가 구조, install 복구 범위/표시 대상/remote 파일/최종 재확인. R03-08은 기존 AUD-R01-04 재현. [R03 증거](../evidence/MID-AUDIT/REPORT-R03.md). AG-01 실제 runtime 실행 금지, HOLD 유지. 수정 및 독립 재검증은 전체 감사 후 소유권별 계획.
+
+- AUD-R04-01~04 P2: source Manifest 검사 누락(최종 compiled 검사 정상), 기존 destination symlink, profile JSON 중복 키, assume-unchanged 출처 검증 한계. AUD-R04-05 P1: Gradle 의존성 verification/lock 미적용. AUD-R04-06~08 P2/P3: checkout credentials/격리 입력/문서 일치. SBOM/전체 CVE/license 미완료, B-007 유지. [R04](../evidence/MID-AUDIT/REPORT-R04.md). 다음 FINAL 종합. 

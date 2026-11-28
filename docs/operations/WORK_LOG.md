@@ -9,3 +9,5 @@
 - 중간 감사 R02: GB-02 제출 XML 전체 16개/153건 검토, 별도 CI https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46086659055 성공 81+72+9건, artifact 직접 검사 17 XML. JUnit 검증기 결함 7개 주입 및 CRLF 재현, Kotlin 11개 관찰. [보고서](../evidence/MID-AUDIT/REPORT-R02.md). 다음 R03. GPT-07 미착수.
 
 - 중간 감사 R03: https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46087379624 SUCCESS 316+38 PASS, AG 23 blob 일치, 16 관찰, 보충 https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46087610218 SUCCESS. 원시 artifact 및 로컬 ffprobe 재검증. [보고서](../evidence/MID-AUDIT/REPORT-R03.md). 다음 R04 보안/공급망/요구사항 추적·종합 판정. 제품 코드/외부 브랜치 불변.
+
+- 중간 감사 R04: https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46088472103 SUCCESS, 843 파일 출현 secret pattern 검사 hit 0, 외부 의존성 29/29 해시 일치, 7개 경계 관찰, [보고서](../evidence/MID-AUDIT/REPORT-R04.md) 및 [요구사항 추적](../evidence/MID-AUDIT/REQUIREMENTS-TRACE.md). 다음 FINAL. 제품 및 외부 브랜치 불변.
