@@ -1,0 +1,22 @@
+PASS policyRejectsZeroNegativeAndInverted
+PASS firstFailureUsesBaseDelay
+PASS exponentialGrowthCaps
+PASS lastRetryAndExhaustion
+PASS zeroBudgetDisablesRetries
+PASS invalidFailureCount
+PASS invalidTicks
+PASS negativeHintAndJitterRejected
+PASS disabledDoesNotRetry
+PASS nonTransientFailuresNeverRetry
+PASS rateLimitedWithoutHintUsesBackoff
+PASS serverHintIsFloor
+PASS serverHintAboveCapStops
+PASS boundedJitter
+PASS deadlineIsExclusive
+PASS serverHintCannotCrossDeadline
+PASS tickAdditionCannotWrap
+PASS hugeFailureCountIsBounded
+PASS doublingAndJitterNeverOverflow
+PASS deterministicAndNoStoredState
+PASS seededArithmeticAgainstBigInteger
+RETRY_RESULT 21 PASS / 0 FAIL; seed=20261128 arithmeticCases=50000
