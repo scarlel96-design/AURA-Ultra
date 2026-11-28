@@ -55,3 +55,5 @@
 - GPT-07 R05/R06 942b92b: 캐시 메타데이터 판정·공급원 오류 처리, 신규 22+기존 83=105 PASS, 캐시 300 조합·결함 주입 3/3. 원격 blob 일치, R04/main CI 각 3 SUCCESS. [마감](GPT-07.md) 대기. 실제 저장·정식 통합 NOT RUN.
 
 - GPT-07 R07 최종 후보 942b92b: clean Kotlin 105 PASS·12 source/test blob 및 6 log 원격 일치, 6 CI/8 jobs SUCCESS. [마감/인계](../evidence/GPT-07/R07/REPORT-FINAL.md). 독립 종료/PARTIAL; 다음 GPT-08 격리 준비, 실제 통합 차단 유지.
+
+- GPT-08 R01 96f936d: 공식 공급원 문서 대조, KMA 시각/격자 검사·Open-Meteo hourly decoded 입력/강수 구간. 105+15=120 PASS, 3/3 결함 검출, 기존 blob·로그 일치. [계획](GPT-08.md). 실제 API/JSON/KMA 코드표 및 통합 미검증.
