@@ -45,3 +45,5 @@
 - CODEX-F03 75533a9: 공식 release API JAR 2/2 해시 독립 대조, 3 CI/4 jobs SUCCESS, host 402×3. 로컬 DNS/JDK17·실바이트·신뢰 승인 0, [검수](../evidence/MID-AUDIT/F03/REPORT-CODEX-REVIEW.md) PARTIAL. 감사 14/16, 제한 작업 종료. 별도 사용자 결정 전 GPT-07/통합 금지.
 
 - 사용자 승인(2026-11-28): F03/F04/RV02와 독립 기능 개발 분리, 게이트 유지. GPT-07 R01 WO-23 RetryPlanner 후보 0253347: Kotlin 21 PASS·50,000 산술 대조·3 결함 검출, 원격 blob 일치, 정식 Gradle/JDK17 NOT RUN. [계획 및 증거](GPT-07.md). 제품/main 코드 변경 없음.
+
+- GPT-07 R02 24edfc5: RecoveryEpisode 구현, R01 21+R02 22=43 PASS, 10,000 복구 회차·3/3 결함 검출. R01/main 공통 CI 각 3 SUCCESS. 후보 blob 일치; [계획/증거](GPT-07.md). 정식 통합 NOT RUN; F03/F04/RV02 유지.

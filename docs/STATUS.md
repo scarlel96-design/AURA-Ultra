@@ -12,7 +12,7 @@
 | 정식 WO GO | 0/38 |
 | GPT 묶음 GO | 3/12 (PARTIAL 독립 준비 종료는 GO에 포함하지 않음) |
 | 출시 | NO-GO |
-| 다음 행동 | GPT-07 R01 재시도 후보 0253347·21 PASS, [검증 및 다음 작업](operations/GPT-07.md). F03/F04/RV02 통합 차단 유지. |
+| 다음 행동 | GPT-07 R02 복구 후보 24edfc5·43 PASS, [계획/증거](operations/GPT-07.md). F03/F04/RV02 통합 차단 유지. |
 
 ## 근거 및 이관
 - [GPT-06 전체 종료 보고](evidence/GPT-06/REPORT-FINAL-CLOSURE.md). R01~R06 및 OPS-07 독립 준비 산출물 통합·자동 검증 완료. 결합 후보와 main 코드·시험·자산·CI 102개, 보호 경로 38개 blob 동일. 원본 아카이브 8개 SHA 동일. 활성 8개 문서 500021→24609 B(검증 코드 기준).
