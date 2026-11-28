@@ -17,3 +17,13 @@
 - D01 JUnit main b7c854212390: Domain 81/검사기 15, host 383×3 PASS, 4 CI SUCCESS, 4 ZIP/8 APK/47 layout 직접 검증. 검사기 GO. D01 ef57005 시험 복원/PR 88 PASS 직접 XML 확인; push 구 검사기 FAIL, 최신 composite 증거 대기. [보고](../evidence/MID-AUDIT/D01-JUNIT/REPORT.md).
 
 - D01 최종 검수: ef57005 → c7cef1d, 원본 XML 21개/88+108 PASS, red 1 FAIL, 9/10 CI jobs SUCCESS; push 구 검사기 FAIL. [검수](../evidence/MID-AUDIT/D01-CLOSEOUT-REVIEW.md). 최신 main 반영·push/PR CI 재검증 대기, HOLD.
+
+- D01 bfb115a main 병합, Domain 소스 변경 없음, 신규 CI PENDING. [권한 철회 계약 후보·14 시험](../evidence/MID-AUDIT/REVOCATION-CONTRACT-REVIEW.md) 사전 검토, 미승인/PARTIAL. 소스 변경 없음.
+
+- D01 FINAL-CI: bfb115a 8 runs/10 jobs SUCCESS, push/PR 88 exact, 검사기 15 each, Domain 17 source/test blobs 동일, 최종 d847028 기록만 변경. [검수](../evidence/MID-AUDIT/D01-CLOSEOUT-REVIEW.md). 불변성 범위 GO·독립 종료, HOLD; 권한 계약 합의 대기.
+
+- 권한 계약 ADR-008 PROPOSED, 격리 oracle 16/16·부정 변형 5/5 검출; 실제 제품 시험 NOT RUN. [소유자 검토](agent-orders/GB-REVOCATION-REVIEW.md) 준비; D01/G01 종료 유지.
+
+- ADR-008 GB 양 역할 검토 수령·총괄 대조; 권한 ticket 발급·무효화·provenance·출력 경계 보완. [RV01](agent-orders/GB-01-RV01.md) Domain 격리 후보 지시 준비, 사용자 전달 전 미착수. 기존 88/108 유지.
+
+- RV01 로컬 보고 56675d8: 102/108, 100000 PASS(미독립 확인). [검사기](../evidence/MID-AUDIT/RV01-JUNIT/REPORT.md) 정확한 81/88/102 등록·24 자체 시험 PASS, main CI 대기. 사용자 승인: GPT-09 종료 전면 감사 대신 변경 영향 통합 검증, 최종 감사 유지.

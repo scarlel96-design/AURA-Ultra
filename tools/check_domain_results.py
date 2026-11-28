@@ -119,30 +119,55 @@ D01_METHODS = {
     )),
 }
 
+RV01_BRANCH = "agent/grok/GB-01-RV01"
+RV01_METHODS = {
+    "AuthorityContractTest": frozenset((
+        "capabilityConstructionAndCopyCannotForgeAcceptance()",
+        "currentIssuedCheckCanGrant()",
+        "duplicateAndConflictingCompletionAreHandled()",
+        "foreignScopeSessionAndRequestAreRejected()",
+        "genericRevisionAndScalarContractRemainIndependent()",
+        "invalidateWhileUnknownFencesPendingCheck()",
+        "ordinaryDataStatusDoesNotGrantOrRevokeAuthority()",
+        "regrantRejectsPriorGeneration()",
+        "restartRequiresFreshAuthority()",
+        "sameStateCheckDoesNotResurrectInvalidatedGrant()",
+        "ticketAndGenerationCeilingsFailClosed()",
+        "trustedFailureAndUntrustedInputAreDistinct()",
+        "unissuedForeignAndStaleTicketsCannotGrant()",
+        "unknownAndDeniedCannotAcquire()",
+    )),
+}
+BRANCH_PROFILES = {D01_BRANCH: "d01", RV01_BRANCH: "rv01"}
+
 
 def expected_methods(profile):
-    if profile not in ("baseline", "d01"):
+    if profile not in ("baseline", "d01", "rv01"):
         raise ValueError("Unknown test inventory: " + str(profile))
     expected = dict(BASELINE_METHODS)
-    if profile == "d01":
+    if profile in ("d01", "rv01"):
         if set(expected) & set(D01_METHODS):
             raise ValueError("D01 inventory overlaps the baseline")
         expected.update(D01_METHODS)
+    if profile == "rv01":
+        if set(expected) & set(RV01_METHODS):
+            raise ValueError("RV01 inventory overlaps earlier inventories")
+        expected.update(RV01_METHODS)
     return {PREFIX + name: methods for name, methods in expected.items()}
 
 
 def ci_profile(event, ref, head_ref, head_repo, repository):
-    """Select the registered D01 branch, never infer from test output."""
+    """Select an exact registered branch, never infer from test output."""
     if event == "pull_request":
         if not repository or not head_repo or not head_ref:
             raise ValueError("Missing pull request context")
-        if head_ref == D01_BRANCH and head_repo == repository:
-            return "d01"
+        if head_repo == repository:
+            return BRANCH_PROFILES.get(head_ref, "baseline")
         return "baseline"
     if event in ("push", "workflow_dispatch"):
         if not ref.startswith("refs/heads/"):
             return "baseline"
-        return "d01" if ref == "refs/heads/" + D01_BRANCH else "baseline"
+        return BRANCH_PROFILES.get(ref[len("refs/heads/"):], "baseline")
     raise ValueError("Unsupported CI event: " + str(event))
 
 
@@ -205,7 +230,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("directory", type=Path)
     mode = parser.add_mutually_exclusive_group()
-    mode.add_argument("--profile", choices=("baseline", "d01"), default="baseline")
+    mode.add_argument("--profile", choices=("baseline", "d01", "rv01"), default="baseline")
     mode.add_argument("--ci", action="store_true")
     args = parser.parse_args()
     profile = args.profile
