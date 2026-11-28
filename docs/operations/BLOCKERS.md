@@ -48,3 +48,5 @@ R13: [보고](../evidence/MID-AUDIT/F03/REPORT-R13.md). 우선 48 exact bytes/.a
 R14: [보고](../evidence/MID-AUDIT/F03/REPORT-R14.md). 48 바이트 일치, 18 강한 서명 검증(12 공식 키 대조/6 발견 전용), 28 SHA-1/2 공개키 미확보 차단. 신뢰 승격 0; 독립 강한 출처, 서명자 승인, 전체 라이선스/392 바이트 범위 OPEN.
 
 R15: [보고](../evidence/MID-AUDIT/F03/REPORT-R15.md). Apache JAR 강한 배포 checksum 일치, JDOM JAR 및 jose4j 태그 POM exact; Guava 소비자 키 대조. SHA512 sidecar 28/28 HTTP404, jose4j 키 미확보, 신뢰 승인 0. 동일 조회 반복 금지. 392 미확보 바이트 범위 및 라이선스 OPEN.
+
+R16: [보고](../evidence/MID-AUDIT/F03/REPORT-R16.md). 392 검사/389 일치/1 POM 불일치/2 Kotlin compiler JAR 미확보. 누적 427/430, 전체 661/664에 sidecar 또는 byte 일치 근거, 신뢰 승인 0. 425 baseline 서명 존재/12 강한 서명 검증. R17 잔여 3개 원인·출처 확인 및 제한된 인계. 동일 수집 반복 금지.

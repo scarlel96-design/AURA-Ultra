@@ -55,3 +55,5 @@
 - F03 R14: be0bd7b2be4c, 46109868360 정책상 FAIL, 6+10 시험 PASS; 48 bytes/18 VALID/30 차단, 12 공식 키 대조. [보고](../evidence/MID-AUDIT/F03/REPORT-R14.md). 증거 ZIP 검증, 제품 변경 없음.
 
 - F03 R15: d9a05594825f, 46110391691 SUCCESS(증거 수집), 7+10 PASS, 28 SHA512 404, 3 공식 출처 exact/Guava 키 대조. R14 공통 CI SUCCESS. [보고](../evidence/MID-AUDIT/F03/REPORT-R15.md). 승격 없음.
+
+- F03 R16: 5c1df1f4ccf9, 46111088119 수집 392/389 일치, 3 차단, 7+10 PASS, ZIP 검증. R15 공통/main CI SUCCESS. [보고](../evidence/MID-AUDIT/F03/REPORT-R16.md). 427/430 누적, 신뢰 0.
