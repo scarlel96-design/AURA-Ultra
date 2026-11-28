@@ -98,7 +98,7 @@ PRE-FLIGHT PASS. 기준 main `163860a95581f55c543c84c5fd67dff294797726`. PR #5 h
 
 이전 push `46117711549`는 브랜치에 있던 등록 전 검사기가 `PayloadIntegrityTest`를 unknown suite로 거절한 실패다. 시험 단계는 success였다. 이번 병합은 main의 검사기와 `domain-kotlin.yml`의 `--ci`를 그대로 가져온다. 저장된 closeout XML에 `--profile d01`을 적용하면 `DOMAIN_RESULT 88 PASS / 0 FAIL / 0 ERROR / 0 SKIP`이다.
 
-최종 증거 커밋은 기록 커밋이 가리킨다. Historical WFF는 시작하지 않았다. FAIL, ERROR, SKIP은 0이다.
+최종 증거 커밋은 `e4c99e53761560d82166d7d9b26fd7fda79e73da`다. Historical WFF는 시작하지 않았다. FAIL, ERROR, SKIP은 0이다.
 
 | 워크플로 | 이벤트 | run | job | 결과 |
 |---|---|---|---|---|
