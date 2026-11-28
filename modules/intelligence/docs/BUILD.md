@@ -10,7 +10,7 @@
 .\gradlew -p modules/intelligence test
 .\gradlew -p modules/intelligence dependencies --configuration testRuntimeClasspath
 .\gradlew -p modules/domain test
-python modules/intelligence/tools/check_junit_xml.py --dir modules/intelligence/build/test-results/test --files 10 --tests 82 --not-before <start> --not-after <end>
+python modules/intelligence/tools/check_junit_xml.py --dir modules/intelligence/build/test-results/test --files 11 --tests 93 --not-before <start> --not-after <end>
 python modules/intelligence/tools/check_junit_xml.py --dir modules/domain/build/test-results/test --files 7 --tests 81 --not-before <start> --not-after <end>
 ```
 

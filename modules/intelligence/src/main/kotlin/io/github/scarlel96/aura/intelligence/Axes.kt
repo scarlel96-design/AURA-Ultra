@@ -86,6 +86,11 @@ enum class ReasonCode {
     MOTION_REDUCTION,
     AOD,
     OFFLINE,
+    FUTURE_OBSERVATION,
+    SUPERSEDED_OBSERVATION,
+    DUPLICATE_OBSERVATION,
+    OBSERVATION_CONFLICT,
+    FORECAST_SEPARATE,
 }
 
 enum class UnusableReason {
@@ -99,6 +104,7 @@ enum class UnusableReason {
     UNIT_UNCHECKED,
     OUTSIDE_CANDIDATE_SCALE,
     TOKEN_UNCHECKED,
+    FUTURE_OBSERVATION,
 }
 
 fun UnusableReason.toReasonCode(): ReasonCode {
@@ -113,5 +119,6 @@ fun UnusableReason.toReasonCode(): ReasonCode {
         UnusableReason.UNIT_UNCHECKED -> ReasonCode.UNIT_UNCHECKED
         UnusableReason.OUTSIDE_CANDIDATE_SCALE -> ReasonCode.OUTSIDE_CANDIDATE_SCALE
         UnusableReason.TOKEN_UNCHECKED -> ReasonCode.TOKEN_UNCHECKED
+        UnusableReason.FUTURE_OBSERVATION -> ReasonCode.FUTURE_OBSERVATION
     }
 }

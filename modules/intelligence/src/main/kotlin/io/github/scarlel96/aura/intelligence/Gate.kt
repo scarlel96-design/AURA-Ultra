@@ -5,6 +5,7 @@ import io.github.scarlel96.aura.domain.Freshness
 import io.github.scarlel96.aura.domain.IssueCode
 import io.github.scarlel96.aura.domain.Observation
 import io.github.scarlel96.aura.domain.ObservationConstraints
+import io.github.scarlel96.aura.domain.ObservationKind
 import io.github.scarlel96.aura.domain.ObservationStatus
 import io.github.scarlel96.aura.domain.StatusDerivation
 import io.github.scarlel96.aura.domain.classifiedValue
@@ -100,6 +101,10 @@ private fun <T, R> gateReading(
     }
     if (reading.status != ObservationStatus.VALID) {
         return Channel.Unusable(UnusableReason.STALE, freshness)
+    }
+    val observedAt = current.observedAt
+    if (current.kind != ObservationKind.FORECAST && observedAt != null && observedAt > referenceTime) {
+        return Channel.Unusable(UnusableReason.FUTURE_OBSERVATION)
     }
     val constrained = validateObservation(
         current,

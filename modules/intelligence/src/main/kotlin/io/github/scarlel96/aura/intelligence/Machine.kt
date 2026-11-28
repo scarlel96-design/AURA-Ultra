@@ -2,6 +2,7 @@ package io.github.scarlel96.aura.intelligence
 
 import io.github.scarlel96.aura.domain.Freshness
 import io.github.scarlel96.aura.domain.Observation
+import io.github.scarlel96.aura.domain.ObservationKind
 import io.github.scarlel96.aura.domain.draft.PresentationIntentDraft
 import java.time.DateTimeException
 import java.time.Duration
@@ -19,6 +20,24 @@ data class IntelligenceSample(
     val userMode: Observation<String>? = null,
     val motionReduction: Boolean = false,
     val ambientDisplay: Boolean = false,
+    val batteryRevision: Long? = null,
+    val precipitationRevision: Long? = null,
+    val resync: Boolean = false,
+)
+
+/** 호출자가 준 revision만 저장한다. 없는 revision은 만들지 않는다. */
+data class StreamCursor(
+    val source: String,
+    val observedAt: Instant?,
+    val revision: Long?,
+)
+
+/** 관측 순서와 보관 TTL이다. 처리 시각과 표시 revision이 아니다. */
+data class ObservationMemory(
+    val battery: StreamCursor? = null,
+    val precipitation: StreamCursor? = null,
+    val batteryExpiresAt: Instant? = null,
+    val precipitationExpiresAt: Instant? = null,
 )
 
 data class PendingSensors(
@@ -73,6 +92,7 @@ data class MachineState(
     val pending: PendingSensors?,
     val emission: Emission,
     val settings: CallerSettings,
+    val observationMemory: ObservationMemory = ObservationMemory(),
 )
 
 data class IntelligenceIntent(
@@ -117,16 +137,25 @@ fun IntelligenceIntent.emission(): Emission {
 }
 
 sealed class StepResult {
-    data class PolicyRejected(val issues: List<String>) : StepResult()
+    abstract val deliverySequence: Long
+
+    data class PolicyRejected(
+        val issues: List<String>,
+        val failSafe: IntelligenceIntent?,
+        val state: MachineState?,
+        override val deliverySequence: Long,
+    ) : StepResult()
 
     data class LimitReached(
         val reason: ReasonCode,
         val state: MachineState,
+        override val deliverySequence: Long,
     ) : StepResult()
 
     data class Advanced(
         val state: MachineState,
         val intent: IntelligenceIntent,
+        override val deliverySequence: Long,
     ) : StepResult()
 }
 
@@ -142,10 +171,18 @@ fun step(
     previous: MachineState?,
     sample: IntelligenceSample,
     policy: PolicyCandidates,
+    lastDeliverySequence: Long = 0L,
 ): StepResult {
+    val sequence = nextDeliverySequence(lastDeliverySequence)
     val policyIssues = policy.issues()
     if (policyIssues.isNotEmpty()) {
-        return StepResult.PolicyRejected(policyIssues)
+        val retained = retainedAfterRejectedPolicy(previous, sample)
+        return StepResult.PolicyRejected(
+            issues = policyIssues,
+            failSafe = failSafeIntent(retained),
+            state = retained,
+            deliverySequence = sequence,
+        )
     }
     if (previous != null && sample.referenceTime < previous.processedAt) {
         val raised = previous.settings.raisedBy(sample.motionReduction, sample.ambientDisplay)
@@ -172,13 +209,33 @@ fun step(
                 graphicsLow = false,
             ),
             gateReasons = inversionReasons,
+            sample = sample,
+            deliverySequence = sequence,
         )
     }
     val gated = gateSample(sample, policy)
+    val batteryDecision = decideNumber(
+        channel = gated.battery,
+        observation = sample.batteryPercent,
+        revision = sample.batteryRevision,
+        previousCursor = previous?.observationMemory?.battery,
+        previousPublished = previous?.emission?.publishedBatteryPercent,
+        previousExpiresAt = previous?.observationMemory?.batteryExpiresAt,
+    )
+    val precipitationDecision = decideNumber(
+        channel = gated.precipitation,
+        observation = sample.precipitationProbability,
+        revision = sample.precipitationRevision,
+        previousCursor = previous?.observationMemory?.precipitation,
+        previousPublished = previous?.emission?.publishedPrecipitation,
+        previousExpiresAt = previous?.observationMemory?.precipitationExpiresAt,
+    )
     val reasons = mutableListOf<ReasonCode>()
     reasons += gated.reasons
-    val desiredPower = desiredPower(gated.charging, gated.battery, previous?.power, policy)
-    val desiredWeather = desiredWeather(gated.alert, gated.precipitation, previous?.weather, policy)
+    batteryDecision.reason?.let { reasons += it }
+    precipitationDecision.reason?.let { reasons += it }
+    val desiredPower = desiredPower(gated.charging, batteryDecision.control, previous?.power, policy)
+    val desiredWeather = desiredWeather(gated.alert, precipitationDecision.control, previous?.weather, policy)
     val desiredActivity = when (val activity = gated.activity) {
         Channel.Absent -> previous?.activity ?: ActivityAxis.UNKNOWN
         is Channel.Fresh -> activity.value
@@ -199,13 +256,35 @@ fun step(
         is Channel.Fresh -> channel.value
         is Channel.Unusable -> previous?.userMode ?: UserModeAxis.DEFAULT
     }
-    val publishedBattery = (gated.battery as? Channel.Fresh)?.value
-    val publishedPrecipitation = (gated.precipitation as? Channel.Fresh)?.value
-    val graphicsLow = freshBatteryIsLow(gated.battery, previous?.power, policy)
+    val publishedBattery = batteryDecision.published
+    val publishedPrecipitation = precipitationDecision.published
+    val graphicsLow = if (batteryDecision.keepGraphics) {
+        previous?.emission?.graphicsPowerLimited == true
+    } else {
+        freshBatteryIsLow(
+            batteryDecision.control,
+            previous?.emission?.graphicsPowerLimited == true,
+            policy,
+        )
+    }
+    val quality = if (
+        gated.quality == DataQuality.FRESH &&
+        (batteryDecision.reason in orderDowngrade || precipitationDecision.reason in orderDowngrade)
+    ) {
+        DataQuality.DEGRADED
+    } else {
+        gated.quality
+    }
+    val memory = ObservationMemory(
+        battery = batteryDecision.cursor,
+        precipitation = precipitationDecision.cursor,
+        batteryExpiresAt = if (publishedBattery == null) null else batteryDecision.expiresAt,
+        precipitationExpiresAt = if (publishedPrecipitation == null) null else precipitationDecision.expiresAt,
+    )
     val publication = Publication(
         battery = publishedBattery,
         precipitation = publishedPrecipitation,
-        dataQuality = gated.quality,
+        dataQuality = quality,
         batteryUnusable = gated.battery is Channel.Unusable,
         precipitationUnusable = gated.precipitation is Channel.Unusable,
         graphicsLow = graphicsLow,
@@ -228,6 +307,7 @@ fun step(
             pending = null,
             settings = settings,
             graphicsLow = graphicsLow,
+            observationMemory = memory,
         )
         return finish(
             skeleton = created,
@@ -237,12 +317,14 @@ fun step(
                 extraReasons = reasons,
                 publishedBattery = publishedBattery,
                 publishedPrecipitation = publishedPrecipitation,
-                dataQuality = gated.quality,
+                dataQuality = quality,
                 graphicsLow = graphicsLow,
             ),
             previous = null,
             publication = publication,
             gateReasons = reasons,
+            sample = sample,
+            deliverySequence = sequence,
         )
     }
     val powerChanged = desiredPower != previous.power
@@ -321,6 +403,7 @@ fun step(
         pending = nextPending,
         settings = settings,
         graphicsLow = graphicsLow,
+        observationMemory = memory,
     )
     return finish(
         skeleton = next,
@@ -330,12 +413,14 @@ fun step(
             extraReasons = reasons,
             publishedBattery = publishedBattery,
             publishedPrecipitation = publishedPrecipitation,
-            dataQuality = gated.quality,
+            dataQuality = quality,
             graphicsLow = graphicsLow,
         ),
         previous = previous,
         publication = publication,
         gateReasons = reasons,
+        sample = sample,
+        deliverySequence = sequence,
     )
 }
 
@@ -354,6 +439,8 @@ private fun finish(
     previous: MachineState?,
     publication: Publication,
     gateReasons: List<ReasonCode>,
+    sample: IntelligenceSample,
+    deliverySequence: Long,
 ): StepResult {
     val emission = intent.emission()
     val axesChanged = previous != null && (
@@ -367,7 +454,7 @@ private fun finish(
         )
     val emissionChanged = previous != null && emission != previous.emission
     if (previous != null && previous.revision == Long.MAX_VALUE && (axesChanged || emissionChanged)) {
-        return deliverAtCeiling(skeleton, previous, publication, gateReasons)
+        return deliverAtCeiling(skeleton, previous, publication, gateReasons, sample, deliverySequence)
     }
     val revision = when {
         previous == null -> 1L
@@ -377,6 +464,7 @@ private fun finish(
     return StepResult.Advanced(
         state = skeleton.copy(revision = revision, emission = emission),
         intent = intent.copy(revision = revision),
+        deliverySequence = deliverySequence,
     )
 }
 
@@ -385,19 +473,38 @@ private fun deliverAtCeiling(
     previous: MachineState,
     publication: Publication,
     gateReasons: List<ReasonCode>,
+    sample: IntelligenceSample,
+    deliverySequence: Long,
 ): StepResult {
     val raised = previous.settings.raisedBy(
         skeleton.settings.motionReduction,
         skeleton.settings.ambientDisplay,
     )
     val graphics = previous.emission.graphicsPowerLimited || publication.graphicsLow
-    val withdrawBattery = publication.batteryUnusable && previous.emission.publishedBatteryPercent != null
-    val withdrawPrecipitation = publication.precipitationUnusable && previous.emission.publishedPrecipitation != null
+    val clockInverted = gateReasons.contains(ReasonCode.CLOCK_INVERSION)
+    val memory = previous.observationMemory
+    val now = skeleton.processedAt
+    val batteryExpired = storedTtlExpired(memory.batteryExpiresAt, now, previous.emission.publishedBatteryPercent)
+    val precipitationExpired = storedTtlExpired(
+        memory.precipitationExpiresAt,
+        now,
+        previous.emission.publishedPrecipitation,
+    )
+    val adoptBattery = !clockInverted && sample.resync && publication.battery != null && !publication.batteryUnusable
+    val adoptPrecipitation = !clockInverted &&
+        sample.resync &&
+        publication.precipitation != null &&
+        !publication.precipitationUnusable
+    val withdrawBattery = !adoptBattery && previous.emission.publishedBatteryPercent != null &&
+        (publication.batteryUnusable || (!clockInverted && batteryExpired))
+    val withdrawPrecipitation = !adoptPrecipitation && previous.emission.publishedPrecipitation != null &&
+        (publication.precipitationUnusable || (!clockInverted && precipitationExpired))
     val settingsRose = raised != previous.settings
     val graphicsRose = graphics && !previous.emission.graphicsPowerLimited
     val withdrew = withdrawBattery || withdrawPrecipitation
-    if (!settingsRose && !graphicsRose && !withdrew) {
-        return StepResult.LimitReached(ReasonCode.REVISION_EXHAUSTED, previous)
+    val adopted = adoptBattery || adoptPrecipitation
+    if (!settingsRose && !graphicsRose && !withdrew && !adopted) {
+        return StepResult.LimitReached(ReasonCode.REVISION_EXHAUSTED, previous, deliverySequence)
     }
     val sensorDropped = skeleton.power != previous.power ||
         skeleton.weather != previous.weather ||
@@ -428,23 +535,202 @@ private fun deliverAtCeiling(
     )
     val extra = buildList {
         addAll(gateReasons.filter { it != ReasonCode.REVISION_EXHAUSTED })
-        if (sensorDropped || freshNumberDropped || withdrew) {
+        if (sensorDropped || freshNumberDropped || withdrew || adopted) {
             add(ReasonCode.REVISION_EXHAUSTED)
         }
     }
+    val publishedBattery = ceilingNumber(
+        adopt = adoptBattery,
+        withdraw = withdrawBattery,
+        incoming = publication.battery,
+        previous = previous.emission.publishedBatteryPercent,
+    )
+    val publishedPrecipitation = ceilingNumber(
+        adopt = adoptPrecipitation,
+        withdraw = withdrawPrecipitation,
+        incoming = publication.precipitation,
+        previous = previous.emission.publishedPrecipitation,
+    )
+    val nextMemory = memory.copy(
+        batteryExpiresAt = when {
+            withdrawBattery -> null
+            adoptBattery -> sample.batteryPercent?.expiresAt
+            else -> memory.batteryExpiresAt
+        },
+        precipitationExpiresAt = when {
+            withdrawPrecipitation -> null
+            adoptPrecipitation -> sample.precipitationProbability?.expiresAt
+            else -> memory.precipitationExpiresAt
+        },
+        battery = if (adoptBattery) skeleton.observationMemory.battery else memory.battery,
+        precipitation = if (adoptPrecipitation) skeleton.observationMemory.precipitation else memory.precipitation,
+    )
     val delivered = intentFor(
         state = stateBase,
         settings = raised,
         extraReasons = extra,
-        publishedBattery = if (withdrawBattery) null else previous.emission.publishedBatteryPercent,
-        publishedPrecipitation = if (withdrawPrecipitation) null else previous.emission.publishedPrecipitation,
-        dataQuality = if (withdrew) DataQuality.DEGRADED else previous.emission.dataQuality,
+        publishedBattery = publishedBattery,
+        publishedPrecipitation = publishedPrecipitation,
+        dataQuality = if (withdrew || adopted) DataQuality.DEGRADED else previous.emission.dataQuality,
         graphicsLow = graphics,
     ).copy(revision = Long.MAX_VALUE)
     return StepResult.Advanced(
-        state = stateBase.copy(emission = delivered.emission()),
+        state = stateBase.copy(emission = delivered.emission(), observationMemory = nextMemory),
         intent = delivered,
+        deliverySequence = deliverySequence,
     )
+}
+
+private val orderDowngrade = setOf(
+    ReasonCode.SUPERSEDED_OBSERVATION,
+    ReasonCode.OBSERVATION_CONFLICT,
+    ReasonCode.FORECAST_SEPARATE,
+)
+
+private data class NumberDecision(
+    val control: Channel<Double>,
+    val published: Double?,
+    val cursor: StreamCursor?,
+    val expiresAt: Instant?,
+    val reason: ReasonCode?,
+    val keepGraphics: Boolean,
+)
+
+private fun nextDeliverySequence(last: Long): Long {
+    if (last == Long.MAX_VALUE) {
+        return Long.MAX_VALUE
+    }
+    return last + 1L
+}
+
+private fun storedTtlExpired(expiresAt: Instant?, now: Instant, published: Double?): Boolean {
+    return published != null && expiresAt != null && !now.isBefore(expiresAt)
+}
+
+private fun ceilingNumber(adopt: Boolean, withdraw: Boolean, incoming: Double?, previous: Double?): Double? {
+    return when {
+        adopt -> incoming
+        withdraw -> null
+        else -> previous
+    }
+}
+
+private fun retainedAfterRejectedPolicy(previous: MachineState?, sample: IntelligenceSample): MachineState {
+    val raised = if (previous == null) {
+        CallerSettings(sample.motionReduction, sample.ambientDisplay)
+    } else {
+        previous.settings.raisedBy(sample.motionReduction, sample.ambientDisplay)
+    }
+    if (previous != null) {
+        return previous.copy(settings = raised)
+    }
+    return assemble(
+        power = PowerAxis.NORMAL,
+        weather = WeatherAxis.NORMAL,
+        activity = ActivityAxis.UNKNOWN,
+        light = LightAxis.DAY,
+        connectivity = ConnectivityAxis.ONLINE,
+        userMode = UserModeAxis.DEFAULT,
+        committedAt = sample.referenceTime,
+        powerCommittedAt = sample.referenceTime,
+        weatherCommittedAt = sample.referenceTime,
+        activityCommittedAt = sample.referenceTime,
+        processedAt = sample.referenceTime,
+        revision = 0L,
+        pending = null,
+        settings = raised,
+        graphicsLow = false,
+        observationMemory = ObservationMemory(),
+    )
+}
+
+private fun failSafeIntent(state: MachineState): IntelligenceIntent {
+    val graphics = state.emission.graphicsPowerLimited
+    return intentFor(
+        state = state,
+        settings = state.settings,
+        extraReasons = listOf(ReasonCode.POLICY_REJECTED),
+        publishedBattery = state.emission.publishedBatteryPercent,
+        publishedPrecipitation = state.emission.publishedPrecipitation,
+        dataQuality = DataQuality.DEGRADED,
+        graphicsLow = graphics,
+    ).copy(revision = state.revision)
+}
+
+private fun decideNumber(
+    channel: Channel<Double>,
+    observation: Observation<Double>?,
+    revision: Long?,
+    previousCursor: StreamCursor?,
+    previousPublished: Double?,
+    previousExpiresAt: Instant?,
+): NumberDecision {
+    if (observation == null || channel is Channel.Absent) {
+        return NumberDecision(Channel.Absent, null, previousCursor, previousExpiresAt, null, keepGraphics = false)
+    }
+    if (channel is Channel.Unusable) {
+        if (channel.reason == UnusableReason.FUTURE_OBSERVATION) {
+            return NumberDecision(
+                Channel.Absent,
+                previousPublished,
+                previousCursor,
+                previousExpiresAt,
+                null,
+                keepGraphics = true,
+            )
+        }
+        return NumberDecision(channel, null, previousCursor, null, null, keepGraphics = false)
+    }
+    val value = (channel as Channel.Fresh).value
+    if (observation.kind == ObservationKind.FORECAST) {
+        if (previousCursor != null) {
+            return NumberDecision(
+                Channel.Absent,
+                previousPublished,
+                previousCursor,
+                previousExpiresAt,
+                ReasonCode.FORECAST_SEPARATE,
+                keepGraphics = true,
+            )
+        }
+        return NumberDecision(channel, value, null, observation.expiresAt, ReasonCode.FORECAST_SEPARATE, false)
+    }
+    val observedAt = observation.observedAt
+    val source = observation.source.value
+    if (revision != null && previousCursor?.revision != null && source == previousCursor.source) {
+        if (revision < previousCursor.revision) {
+            return keptNumber(previousPublished, previousCursor, previousExpiresAt, ReasonCode.SUPERSEDED_OBSERVATION)
+        }
+        if (revision == previousCursor.revision) {
+            val same = value == previousPublished
+            return keptNumber(
+                previousPublished,
+                previousCursor,
+                previousExpiresAt,
+                if (same) ReasonCode.DUPLICATE_OBSERVATION else ReasonCode.OBSERVATION_CONFLICT,
+            )
+        }
+    } else if (previousCursor?.observedAt != null && (observedAt == null || observedAt < previousCursor.observedAt)) {
+        return keptNumber(previousPublished, previousCursor, previousExpiresAt, ReasonCode.SUPERSEDED_OBSERVATION)
+    }
+    val keptRevision = revision ?: if (source == previousCursor?.source) previousCursor.revision else null
+    return NumberDecision(
+        control = channel,
+        published = value,
+        cursor = StreamCursor(source, observedAt, keptRevision),
+        expiresAt = observation.expiresAt,
+        reason = null,
+        keepGraphics = false,
+    )
+}
+
+private fun keptNumber(
+    published: Double?,
+    cursor: StreamCursor,
+    expiresAt: Instant?,
+    reason: ReasonCode,
+): NumberDecision {
+    return NumberDecision(Channel.Absent, published, cursor, expiresAt, reason, keepGraphics = true)
 }
 
 private fun keptSince(
@@ -471,11 +757,11 @@ private fun holdElapsed(committedAt: Instant, now: Instant, policy: PolicyCandid
 
 private fun freshBatteryIsLow(
     battery: Channel<Double>,
-    previousPower: PowerAxis?,
+    previousGraphics: Boolean,
     policy: PolicyCandidates,
 ): Boolean {
     val fresh = battery as? Channel.Fresh ?: return false
-    return lowPower(fresh.value, previousPower == PowerAxis.LOW, policy)
+    return lowPower(fresh.value, previousGraphics, policy)
 }
 
 private fun plusOrNull(start: Instant, amount: Duration): Instant? {
@@ -639,6 +925,7 @@ private fun assemble(
     pending: PendingSensors?,
     settings: CallerSettings,
     graphicsLow: Boolean,
+    observationMemory: ObservationMemory,
 ): MachineState {
     return MachineState(
         power = power,
@@ -668,6 +955,7 @@ private fun assemble(
             reasonCodes = emptyList(),
         ),
         settings = settings,
+        observationMemory = observationMemory,
     )
 }
 

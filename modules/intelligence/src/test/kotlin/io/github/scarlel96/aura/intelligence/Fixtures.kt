@@ -56,6 +56,9 @@ internal fun sample(
     userMode: Observation<String>? = null,
     motionReduction: Boolean = false,
     ambientDisplay: Boolean = false,
+    batteryRevision: Long? = null,
+    precipitationRevision: Long? = null,
+    resync: Boolean = false,
 ): IntelligenceSample {
     return IntelligenceSample(
         referenceTime = moment,
@@ -69,5 +72,8 @@ internal fun sample(
         userMode = userMode,
         motionReduction = motionReduction,
         ambientDisplay = ambientDisplay,
+        batteryRevision = batteryRevision,
+        precipitationRevision = precipitationRevision,
+        resync = resync,
     )
 }
