@@ -292,24 +292,69 @@ class Round07Test {
 
 internal class ProtectionConsumer {
     private var appliedSequence = 0L
+    private var appliedEpoch = 0L
     var motionReduction = false
+    var ambientDisplay = false
+    var graphicsPowerLimited = false
 
     fun push(result: StepResult) {
         val sequence = result.deliverySequence
-        if (sequence <= appliedSequence) {
+        val epoch = result.deliveryEpoch
+        if (sequence < 0L || epoch < 0L || epoch < appliedEpoch) {
+            return
+        }
+        if (epoch > appliedEpoch) {
+            if (!result.deliverySessionOpened) {
+                return
+            }
+            appliedEpoch = epoch
+            appliedSequence = sequence
+            apply(intentOf(result), strengthenOnly = false)
+            return
+        }
+        if (sequence < appliedSequence) {
+            return
+        }
+        if (sequence == appliedSequence) {
+            if (sequence == Long.MAX_VALUE) {
+                apply(intentOf(result), strengthenOnly = true)
+            }
             return
         }
         appliedSequence = sequence
-        val intent = result.deliveredIntent() ?: (result as? StepResult.PolicyRejected)?.failSafe ?: return
-        if (intent.reasonCodes.contains(ReasonCode.MOTION_REDUCTION) && !intent.motionAllowed) {
-            motionReduction = true
-        } else if (intent.motionAllowed) {
-            motionReduction = false
+        apply(intentOf(result), strengthenOnly = false)
+    }
+
+    private fun intentOf(result: StepResult): IntelligenceIntent? {
+        return result.deliveredIntent() ?: (result as? StepResult.PolicyRejected)?.failSafe
+    }
+
+    private fun apply(intent: IntelligenceIntent?, strengthenOnly: Boolean) {
+        if (intent == null) {
+            return
         }
+        val aod = intent.quality == QualityCandidate.AOD
+        val motion = intent.reasonCodes.contains(ReasonCode.MOTION_REDUCTION) && !intent.motionAllowed
+        val graphics = intent.graphicsPowerLimited
+        if (strengthenOnly) {
+            if (aod) {
+                ambientDisplay = true
+            }
+            if (motion) {
+                motionReduction = true
+            }
+            if (graphics) {
+                graphicsPowerLimited = true
+            }
+            return
+        }
+        ambientDisplay = aod
+        motionReduction = motion
+        graphicsPowerLimited = graphics
     }
 }
 
-private val otherSource: SourceId = when (val parsed = SourceId.parse("gb02.other")) {
+internal val otherSource: SourceId = when (val parsed = SourceId.parse("gb02.other")) {
     is DomainParse.Accepted -> parsed.value
     is DomainParse.Rejected -> error(parsed.code)
 }

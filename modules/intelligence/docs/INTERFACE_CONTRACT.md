@@ -4,11 +4,11 @@
 
 ## 입력
 
-`step(previous, sample, policy, lastDeliverySequence = 0)`만 전이를 만든다. 네 번째 인자를 생략하면 결과의 `deliverySequence`는 1이다. 그 값만으로는 순서가 아니다. 순서를 쓰려면 호출자가 직전 결과의 `deliverySequence`를 다시 넣는다.
+`step(previous, sample, policy, lastDeliverySequence = 0, lastDeliveryEpoch = 0, openDeliverySession = false)`만 전이를 만든다. 네 번째 인자를 생략하면 결과의 `deliverySequence`는 1이고 `deliveryEpoch`는 0이다. 그 값만으로는 순서가 아니다. 순서를 쓰려면 호출자가 직전 결과의 순서와 epoch를 다시 넣는다. `openDeliverySession`이 참일 때만 epoch가 1 증가하고 순서는 1에서 다시 시작한다. epoch가 `Long.MAX_VALUE`이면 더 열지 않고 감싸지 않는다.
 
-`previous`가 null이면 첫 스텝이다. `sample.referenceTime`은 호출자가 넣는다. 관측 필드는 도메인 `Observation`이거나 null이다. null은 생략이다. 생략은 실패한 관측이 아니다.
+`previous`가 null이면 첫 스텝이다. `sample.referenceTime`은 호출자가 넣는다. 관측 필드는 도메인 `Observation`이거나 null이다. null은 생략이다. 생략은 실패한 관측이 아니다. 상한 아래에서 배터리나 강수를 생략하면 그 공개 숫자는 null이다. null은 0이 아니다.
 
-`PolicyCandidates.documented()`는 문서 후보 15/20, 70/50, 유지 60초, 디바운스 0, 단위 토큰 `percent`/`percent`/`token`/`flag`, 스케일 0 이상 100 이하를 반환한다. `issues()`가 비어 있지 않으면 `StepResult.PolicyRejected`다. `deliveredIntent()`는 null이다. 잘못된 정책을 정상 `Advanced`로 만들지 않고 `issues`를 그대로 둔다. `state`는 이전 상태에 이번 샘플의 모션 감소와 항상 표시만 올리며, 숫자와 처리 시각과 revision은 바꾸지 않는다. 첫 입력이면 revision 0이다. `failSafe`는 그 상태의 별도 의도로 데이터 품질 `DEGRADED`, 이유 `POLICY_REJECTED`다. 신뢰할 수 없는 배터리로 새 그래픽 제한을 켜지 않는다. 이미 켜진 제한과 올라간 설정은 유지한다. 다음 스텝에 그 유지를 남기려면 호출자가 `state`를 넘긴다.
+`PolicyCandidates.documented()`는 문서 후보 15/20, 70/50, 유지 60초, 디바운스 0, 단위 토큰 `percent`/`percent`/`token`/`flag`, 스케일 0 이상 100 이하를 반환한다. `issues()`가 비어 있지 않으면 `StepResult.PolicyRejected`다. `deliveredIntent()`는 null이다. 잘못된 정책을 정상 `Advanced`로 만들지 않고 `issues`를 그대로 둔다. `state`는 이전 상태에 이번 샘플의 모션 감소와 항상 표시만 올린다. 처리 시각과 revision은 바꾸지 않는다. 새 관측 숫자는 받지 않는다. 시계가 역전되지 않았고 보관 TTL이 지났거나 샘플이 `DENIED`/`ERROR`/`UNAVAILABLE`이면 그 공개 숫자를 null로 거두고 철회 커서를 남긴다. 시계 역전은 TTL과 철회를 적용하지 않는다. 첫 입력이면 revision 0이다. `failSafe`는 그 상태의 별도 의도로 데이터 품질 `DEGRADED`, 이유 `POLICY_REJECTED`다. 신뢰할 수 없는 배터리로 새 그래픽 제한을 켜지 않는다. 이미 켜진 제한과 올라간 설정은 유지한다. 다음 스텝에 그 유지를 남기려면 호출자가 `state`를 넘긴다.
 
 `issues()`는 유한하지 않은 임계값, 뒤집힌 구간, 음수 시간, 사용할 수 없는 스케일, 빈 단위를 거절한다. 유한한 전원 임계값이 퍼센트 스케일 밖이거나, 유한한 강수 임계값이 확률 스케일 밖이면 거절한다. 비교는 양 끝 포함이다. 문서 후보 15/20과 70/50은 그 스케일에서 유효하다.
 
@@ -18,7 +18,7 @@
 
 `Fresh`가 되려면 `deriveStatus`가 거절·만료 강등이 아니고, 신선도가 `FRESH`이며, 분류가 상태 `VALID`인 읽기이고, 기대 단위 검사가 통과해야 한다. 숫자는 정책 스케일 안이어야 한다. 토큰은 아래 표의 정확한 문자열이어야 한다.
 
-사용할 수 없는 이유는 `STALE`, `UNDECLARED`, `UNAVAILABLE`, `DENIED`, `ERROR`, `REJECTED`, `UNIT_UNCHECKED`, `OUTSIDE_CANDIDATE_SCALE`, `TOKEN_UNCHECKED`, `FUTURE_OBSERVATION`으로 공개 이유에 연결한다. 그 값은 공개하지 않는다. `DENIED`/`ERROR`/`UNAVAILABLE`은 null TTL이면 `UNDECLARED_IGNORED`를, 만료 TTL이면 `STALE_IGNORED`를 같은 결과에 함께 남긴다. 유효 TTL은 그 상태 사유만 남긴다. 공백·NUL·제어문자 단위와 유한하지 않거나 뒤집힌 `gateDouble` 경계는 값을 공개하지 않는다. `FORECAST`가 아닌 관측의 `observedAt`이 `referenceTime`보다 늦으면 `FUTURE_OBSERVATION`이다. 같은 시각은 허용한다. 허용 오차 상수는 두지 않는다. 이전 공개 숫자가 있으면 그 숫자를 유지하고, 미래 값은 공개하지 않는다. `FORECAST`는 이 검사에서 빼며 관측 커서를 만들거나 바꾸지 않는다.
+사용할 수 없는 이유는 `STALE`, `UNDECLARED`, `UNAVAILABLE`, `DENIED`, `ERROR`, `REJECTED`, `UNIT_UNCHECKED`, `OUTSIDE_CANDIDATE_SCALE`, `TOKEN_UNCHECKED`, `FUTURE_OBSERVATION`으로 공개 이유에 연결한다. 그 값은 공개하지 않는다. `DENIED`/`ERROR`/`UNAVAILABLE`은 null TTL이면 `UNDECLARED_IGNORED`를, 만료 TTL이면 `STALE_IGNORED`를 같은 결과에 함께 남긴다. 유효 TTL은 그 상태 사유만 남긴다. 공백·NUL·제어문자 단위와 유한하지 않거나 뒤집힌 `gateDouble` 경계는 값을 공개하지 않는다. `FORECAST`가 아닌 관측의 `observedAt`이 `referenceTime`보다 늦으면 `FUTURE_OBSERVATION`이다. 같은 시각은 허용한다. 허용 오차 상수는 두지 않는다. 이전 공개 숫자가 있으면 그 숫자를 유지하고, 미래 값은 공개하지 않는다. `FORECAST`는 이 검사에서 빼며 관측 커서를 만들거나 바꾸지 않는다. 배터리 예보는 숫자를 공개하지 않고 전원 축과 그래픽 제한을 바꾸지 않는다. 강수 예보는 커서가 없을 때만 숫자를 공개할 수 있고 날씨 축은 바꾸지 않는다. 충전·경보·활동·조도·연결·사용자 모드의 예보와, 그 축 커서보다 이른 관측은 축을 바꾸지 않는다. `DENIED`/`ERROR`/`UNAVAILABLE`은 그 스트림의 철회 커서를 남겨, 그 시각보다 이른 관측이 숫자를 다시 공개하지 못하게 한다. 같은 시각은 호출 순서를 유지한다. 더 높은 호출자 revision은 이른 `observedAt`도 받는다.
 
 ## 축
 
@@ -47,9 +47,9 @@
 
 소비자는 `StepResult.deliveredIntent()`가 null이 아니면 그 의도를 적용한다. revision이 이전과 같아도 적용한다. `LimitReached`와 `PolicyRejected`는 적용할 의도가 없다. revision이 증가할 때만 초안을 읽는 소비자는 상한의 보호를 놓친다. 그 누락은 시험 전용 소비자 둘을 같은 입력에 넣어 확인한다. Wear Services와 WFF 연결 코드는 없다.
 
-상한의 `Advanced`는 센서 축을 바꾸지 않는다. `resync`가 아니면 새 신선한 숫자로 이전 공개 숫자를 바꾸지 않는다. 생략된 채널은 보관된 `expiresAt`보다 이르면 이전 숫자를 유지한다. `referenceTime`이 그 시각과 같거나 늦고 `resync`가 아니면 그 숫자를 null로 거둔다. `resync`가 참이고 들어온 숫자가 유한하면 revision을 넘기지 않고 그 숫자와 만료 시각을 받는다. 시계 역전은 이 거두기를 하지 않는다. 배터리나 강수 채널이 `Unusable`이고 이전 숫자가 있으면 그 숫자만 null로 거두고 데이터 품질은 `DEGRADED`다. null은 0이 아니다. 축 변경, 새 신선한 숫자 교체, 숫자 거두기가 버려지면 이유에 `REVISION_EXHAUSTED`를 더한다. 모션 감소나 항상 표시만 켜지고 버린 변경이 없으면 그 이유를 더하지 않는다. 이미 켜진 보호와 이미 켜진 그래픽 전력 제한은 상한에서 끄지 않는다. 상한의 역전은 보호가 늘지 않고 숫자를 거둘 근거가 없으면 이전 상태 객체의 `LimitReached`다.
+상한의 `Advanced`는 센서 축을 바꾸지 않는다. `resync`가 아니면 새 신선한 숫자로 이전 공개 숫자를 바꾸지 않는다. 생략된 채널은 보관된 `expiresAt`보다 이르면 이전 숫자를 유지한다. `referenceTime`이 그 시각과 같거나 늦고 `resync`가 아니면 그 숫자를 null로 거둔다. `resync`가 참이어도 검증을 통과해 새로 받은 관측만 반영한다. 예보, 철회, 미래 시각, 더 이른 관측, 같은 revision 충돌은 받지 않고 보관 TTL을 늘리지 않는다. 시계 역전은 이 거두기와 재동기화를 하지 않는다. 미래 관측은 상한에서도 이전 숫자를 지우지 않는다. 그 밖의 `Unusable`이고 이전 숫자가 있으면 그 숫자만 null로 거두고 데이터 품질은 `DEGRADED`다. null은 0이 아니다. 축 변경, 새 신선한 숫자 교체, 숫자 거두기가 버려지면 이유에 `REVISION_EXHAUSTED`를 더한다. 모션 감소나 항상 표시만 켜지고 버린 변경이 없으면 그 이유를 더하지 않는다. 이미 켜진 보호와 이미 켜진 그래픽 전력 제한은 상한에서 끄지 않는다. 상한의 역전은 보호가 늘지 않고 숫자를 거둘 근거가 없으면 이전 상태 객체의 `LimitReached`다.
 
-표시 revision과 `deliverySequence`는 다르다. 순서는 `lastDeliverySequence + 1`이고 `Long.MAX_VALUE`에서 멈추며 감싸지 않는다. 후보 소비자는 마지막으로 적용한 순서보다 큰 값만 적용한다. `LimitReached`는 의도가 null이어도 순서를 올린다. 순서가 상한이면 새 요청과 오래된 요청을 구분하지 못하므로 적용하지 않는다. 재시작은 소비자 워터마크와 `lastDeliverySequence`를 함께 되돌리는 호출이다. 이 필드를 무시하는 소비자는 회차 05의 호출 순서 계약을 유지한다. 합의 전 후보는 [PROTECTION_DELIVERY_CONTRACT.md](PROTECTION_DELIVERY_CONTRACT.md)다.
+표시 revision과 `deliverySequence`는 다르다. 같은 epoch에서 순서는 `lastDeliverySequence + 1`이고 `Long.MAX_VALUE`에서 멈추며 감싸지 않는다. 음수 순서는 1로 바꾸되 epoch를 열지 않는다. 그 1은 이미 더 큰 순서를 적용한 소비자를 지나지 못한다. 후보 소비자는 같은 epoch에서 마지막으로 적용한 순서보다 큰 값만 전체를 적용한다. 순서와 epoch가 모두 상한이면 보호를 강화하는 요청만 적용하고 해제는 적용하지 않는다. 더 이전 epoch는 버린다. `openDeliverySession`으로 연 더 큰 epoch만 새 워터마크이며, 그때는 해제도 적용한다. 세션을 열지 않은 더 큰 epoch는 적용하지 않는다. 양쪽 순서를 0으로 되돌리는 것만으로는 재시작이 아니다. 이 필드를 무시하는 소비자는 회차 05의 호출 순서 계약을 유지한다. 합의 전 후보는 [PROTECTION_DELIVERY_CONTRACT.md](PROTECTION_DELIVERY_CONTRACT.md)다.
 
 유지·디바운스 기한은 그 축의 확정 시각 또는 그 축의 보류 시작 시각에 정책을 더한 값이다. 그 덧셈이 시각 범위를 벗어나면 기한은 경과하지 않은 것으로 보고, 예외는 `step` 밖으로 나가지 않는다. `Duration.ofSeconds(Long.MAX_VALUE)`는 음수가 아니므로 받을 수 있다. 경보 진입은 날씨와 그 샘플의 목표 전원을 그 기한 없이 확정한다. 충전 예외는 전원만 그 기한 없이 확정한다. 활동은 그 예외들로 기한을 건너뛰지 않는다. 날씨는 충전 예외로 기한을 건너뛰지 않는다.
 
@@ -83,7 +83,7 @@ Wear Services, WFF 렌더링, 실제 공급원 연결, 실기기, 배터리 측�
 
 ## 총괄 CI
 
-공통 `bootstrap.yml`은 수정하지 않는다. 총괄이 [CI_PROPOSAL.md](CI_PROPOSAL.md)의 워크플로를 별도로 추가한다. 검증 도구는 `modules/intelligence/tools/check_junit_xml.py`다. 기대 수량은 intelligence `TEST-*.xml` 11개·시험 93개, domain 7개·시험 81개다. 93은 회차 06의 82개에 `Round07Test` 11개를 더한 수량이다. 수량을 낮추지 않는다. 검사기는 직접 자식 `testcase`, suite와 같은 classname, 비어 있지 않은 메서드, `TEST-{suite}.xml` 파일명, 네 카운터의 존재, `--not-before`/`--not-after` 창을 본다. 공통 JUnit 워크플로는 수정하지 않는다.
+공통 `bootstrap.yml`은 수정하지 않는다. 총괄이 [CI_PROPOSAL.md](CI_PROPOSAL.md)의 워크플로를 별도로 추가한다. 검증 도구는 `modules/intelligence/tools/check_junit_xml.py`다. 기대 수량은 intelligence `TEST-*.xml` 12개·시험 99개, domain 7개·시험 81개다. 99는 회차 07의 93개에 `Round08Test` 6개를 더한 수량이다. 93은 회차 06의 82개에 `Round07Test` 11개를 더한 수량이다. 수량을 낮추지 않는다. 검사기는 직접 자식 `testcase`, suite와 같은 classname, 비어 있지 않은 메서드, `TEST-{suite}.xml` 파일명, 네 카운터의 존재, `--not-before`/`--not-after` 창을 본다. 공통 JUnit 워크플로는 수정하지 않는다.
 
 ## 하지 않는 일
 

@@ -1,8 +1,8 @@
 # 보호 전달 계약 후보
 
-상태: 후보. 총괄 검토와 합의 전이다. 제품 계약이 아니다. AUD-R03-01과 GPT F04가 쓸 입력과 거절 기준만 적는다. Wear Services와 WFF 연결은 구현하지 않는다. 검증 소비자는 `Round07Test.ProtectionConsumer`뿐이다.
+상태: 후보. 총괄 검토와 합의 전이다. 제품 계약이 아니다. AUD-R03-01과 GPT F04가 쓸 입력과 거절 기준만 적는다. Wear Services와 WFF 연결은 구현하지 않는다. 검증 소비자는 `Round07Test.ProtectionConsumer`뿐이다. 그 소비자는 AOD, 모션 감소, 그래픽 전력 제한을 각각 기록한다.
 
-표시 revision과 전달 순서는 다르다. `step`의 네 번째 인자를 생략하면 결과는 항상 1이다. 그 값은 워터마크가 아니다. 순서를 쓰는 호출자는 직전 `deliverySequence`를 다시 넣는다.
+표시 revision과 전달 순서는 다르다. `step`의 순서 인자를 생략하면 결과는 항상 순서 1, epoch 0이다. 그 값은 워터마크가 아니다. 순서를 쓰는 호출자는 직전 `deliverySequence`와 `deliveryEpoch`를 다시 넣는다. 음수 순서는 순서가 아니며 결과는 1이다. 그 1은 더 큰 워터마크를 지나지 못한다.
 
 ## 공통 규칙
 
@@ -12,8 +12,9 @@
 | 역순 | 순서는 호출 인자로만 증가한다. 기계가 결과를 재정렬하지 않는다. | 더 큰 순서를 적용한다. | 더 작은 순서는 이미 적용한 보호를 해제하지 못한다. |
 | 중복 | 같은 입력이어도 호출자가 순서를 올리면 새 순서를 준다. | 더 큰 순서의 반복 보호는 유지한다. | 이미 적용한 같은 순서는 다시 적용하지 않는다. |
 | revision 상한 | 표시 revision은 `Long.MAX_VALUE`에서 멈추고 감싸지 않는다. 전할 보호가 없으면 `LimitReached`이고 `deliveredIntent()`는 null이다. | null 의도여도 더 큰 순서면 워터마크만 올린다. 보호 상태는 유지한다. | `LimitReached`로 보호를 해제하지 않는다. |
-| 전달 순서 상한 | `deliverySequence`도 `Long.MAX_VALUE`에서 멈추고 감싸지 않는다. | 상한에 닿기 전의 더 큰 순서는 적용한다. | 같은 상한은 새 요청과 오래된 요청을 구분하지 못하므로 적용하지 않는다. 재시작은 소비자 워터마크와 `lastDeliverySequence`를 함께 되돌린다. |
-| 잘못된 정책 | `PolicyRejected`다. `issues`를 유지하고 `deliveredIntent()`는 null이다. `failSafe`는 정상 `Advanced`가 아니다. | `failSafe`만 후보 보호로 읽을 수 있다. 품질은 `DEGRADED`이고 이유는 `POLICY_REJECTED`다. | 잘못된 정책을 유효 정책으로 바꾸지 않는다. 신뢰할 수 없는 배터리로 새 그래픽 제한을 켜지 않는다. |
+| 전달 순서 상한 | `deliverySequence`도 `Long.MAX_VALUE`에서 멈추고 감싸지 않는다. 같은 상한에서 새 보호는 생산자가 구분하지 못한다. | 같은 epoch의 상한에서는 AOD·모션 감소·그래픽 제한을 켜는 변경만 적용한다. | 같은 상한의 해제, 더 작은 순서, 음수 순서, 세션을 열지 않은 더 큰 epoch는 적용하지 않는다. |
+| 신뢰된 세션 | `openDeliverySession`이 참이고 epoch가 상한이 아니면 epoch를 1 올리고 순서를 1로 둔다. `deliverySessionOpened`가 참이다. epoch 상한은 열지 않고 감싸지 않는다. | 더 큰 epoch이고 세션이 열린 결과만 새 워터마크다. 그 결과의 해제도 적용한다. | 이전 epoch의 지연 해제는 새 세션의 보호를 끄지 못한다. 양쪽 순서를 0으로 되돌리는 것만은 세션이 아니다. |
+| 잘못된 정책 | `PolicyRejected`다. `issues`를 유지하고 `deliveredIntent()`는 null이다. `failSafe`는 정상 `Advanced`가 아니다. 만료·철회 숫자는 null이다. | `failSafe`만 후보 보호로 읽을 수 있다. 품질은 `DEGRADED`이고 이유는 `POLICY_REJECTED`다. 이미 켜진 보호는 유지하고 새 보호 요청은 올릴 수 있다. | 잘못된 정책을 유효 정책으로 바꾸지 않는다. 새 관측 숫자를 받지 않는다. 신뢰할 수 없는 배터리로 새 그래픽 제한을 켜지 않는다. |
 | 명시적 해제 | 더 큰 순서의 샘플이 모션 감소를 끄면 `motionAllowed`가 참인 의도를 낸다. | 그 순서가 마지막 적용 값보다 크면 해제를 적용한다. | 더 작은 순서의 해제는 최신 보호를 끄지 못한다. |
 
 회차 05 소비자는 이 필드를 보지 않는다. 그 소비자는 호출 순서대로 null이 아닌 `deliveredIntent()`를 적용하고, `processedAt`이 더 이르면 버린다. 같은 `processedAt`은 호출 순서를 유지한다. 두 계약은 함께 있다. 순서 필드를 넘기지 않는 호출은 회차 05 계약만 따른다.
@@ -30,6 +31,6 @@
 
 ## 시험 전용 소비자
 
-`ProtectionConsumer`는 순서 이하의 결과를 무시한다. 이유에 `MOTION_REDUCTION`이 있고 `motionAllowed`가 거짓이면 모션 감소를 켠다. `motionAllowed`가 참이면 해제한다. `deliveredIntent()`가 null이면 워터마크만 올리고 보호는 유지한다. `PolicyRejected.failSafe`는 순서가 더 클 때만 본다.
+`ProtectionConsumer`는 음수 순서·epoch와 더 이전 epoch를 무시한다. 같은 epoch에서 더 작은 순서는 무시한다. 같은 상한 순서는 세 보호를 켜기만 하고 끄지 않는다. 더 큰 epoch는 `deliverySessionOpened`가 참일 때만 새 워터마크로 전체를 적용한다. 품질이 `AOD`이면 항상 표시를 켠다. 이유에 `MOTION_REDUCTION`이 있고 `motionAllowed`가 거짓이면 모션 감소를 켠다. `graphicsPowerLimited`가 참이면 그래픽 제한을 켠다. 전체를 적용할 때는 그 셋이 거짓이면 각각 끈다. `deliveredIntent()`가 null이면 워터마크만 올리고 보호는 유지한다. `PolicyRejected.failSafe`는 그 순서 규칙으로만 본다.
 
 이 소비자는 배터리를 측정하지 않고 화면을 그리지 않는다. F04가 같은 수용·거부 표를 실기기 없이 다시 검증할 때 이 표를 쓴다. 합의 전에는 제품 경로에 연결하지 않는다.
