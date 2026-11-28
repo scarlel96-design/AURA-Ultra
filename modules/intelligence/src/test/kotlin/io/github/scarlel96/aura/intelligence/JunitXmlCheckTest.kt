@@ -140,6 +140,113 @@ class JunitXmlCheckTest {
     }
 
     @Test
+    fun rejectsMissingClassname() {
+        val dir = fixtureDir()
+        File(dir, "TEST-Alpha.xml").writeText(
+            """
+            <testsuite name="Alpha" tests="1" failures="0" errors="0" skipped="0" timestamp="2026-11-28T00:10:00Z">
+              <testcase name="case0"/>
+            </testsuite>
+            """.trimIndent(),
+        )
+        val result = runCheck(dir, files = 1, tests = 1, notBefore = null)
+        assertNotEquals(0, result.exitCode)
+        assertTrue(result.output.contains("missing classname"), result.output)
+    }
+
+    @Test
+    fun rejectsEmptyMethod() {
+        val dir = fixtureDir()
+        File(dir, "TEST-Alpha.xml").writeText(
+            """
+            <testsuite name="Alpha" tests="1" failures="0" errors="0" skipped="0" timestamp="2026-11-28T00:10:00Z">
+              <testcase classname="Alpha" name=""/>
+            </testsuite>
+            """.trimIndent(),
+        )
+        val result = runCheck(dir, files = 1, tests = 1, notBefore = null)
+        assertNotEquals(0, result.exitCode)
+        assertTrue(result.output.contains("missing method"), result.output)
+    }
+
+    @Test
+    fun rejectsUnrelatedClassname() {
+        val dir = fixtureDir()
+        File(dir, "TEST-Alpha.xml").writeText(
+            """
+            <testsuite name="Alpha" tests="1" failures="0" errors="0" skipped="0" timestamp="2026-11-28T00:10:00Z">
+              <testcase classname="Other" name="case0"/>
+            </testsuite>
+            """.trimIndent(),
+        )
+        val result = runCheck(dir, files = 1, tests = 1, notBefore = null)
+        assertNotEquals(0, result.exitCode)
+        assertTrue(result.output.contains("classname does not match suite"), result.output)
+    }
+
+    @Test
+    fun rejectsMissingCounters() {
+        val dir = fixtureDir()
+        File(dir, "TEST-Alpha.xml").writeText(
+            """
+            <testsuite name="Alpha" tests="1" timestamp="2026-11-28T00:10:00Z">
+              <testcase classname="Alpha" name="case0"/>
+            </testsuite>
+            """.trimIndent(),
+        )
+        val result = runCheck(dir, files = 1, tests = 1, notBefore = null)
+        assertNotEquals(0, result.exitCode)
+        assertTrue(result.output.contains("missing count"), result.output)
+    }
+
+    @Test
+    fun rejectsSuiteFilenameMismatch() {
+        val dir = fixtureDir()
+        File(dir, "TEST-Wrong.xml").writeText(
+            """
+            <testsuite name="Alpha" tests="1" failures="0" errors="0" skipped="0" timestamp="2026-11-28T00:10:00Z">
+              <testcase classname="Alpha" name="case0"/>
+            </testsuite>
+            """.trimIndent(),
+        )
+        val result = runCheck(dir, files = 1, tests = 1, notBefore = null)
+        assertNotEquals(0, result.exitCode)
+        assertTrue(result.output.contains("suite filename"), result.output)
+    }
+
+    @Test
+    fun rejectsNestedTestcase() {
+        val dir = fixtureDir()
+        File(dir, "TEST-Alpha.xml").writeText(
+            """
+            <testsuite name="Alpha" tests="2" failures="0" errors="0" skipped="0" timestamp="2026-11-28T00:10:00Z">
+              <testcase classname="Alpha" name="case0">
+                <testcase classname="Alpha" name="hidden"/>
+              </testcase>
+            </testsuite>
+            """.trimIndent(),
+        )
+        val result = runCheck(dir, files = 1, tests = 2, notBefore = null)
+        assertNotEquals(0, result.exitCode)
+        assertTrue(result.output.contains("nested testcase"), result.output)
+    }
+
+    @Test
+    fun rejectsFutureTimestamp() {
+        val dir = fixtureDir()
+        writeSuite(dir, "Alpha", 1, Instant.parse("2999-01-01T00:00:00Z"))
+        val result = runCheck(
+            dir,
+            files = 1,
+            tests = 1,
+            notBefore = "2026-11-28T00:00:00Z",
+            notAfter = "2026-11-28T00:20:00Z",
+        )
+        assertNotEquals(0, result.exitCode)
+        assertTrue(result.output.contains("future XML"), result.output)
+    }
+
+    @Test
     fun rejectsHeaderCaseMismatch() {
         val dir = fixtureDir()
         File(dir, "TEST-header.xml").writeText(
@@ -171,12 +278,21 @@ class JunitXmlCheckTest {
         return dir
     }
 
-    private fun runCheck(dir: File, files: Int, tests: Int, notBefore: String?): CheckResult {
+    private fun runCheck(
+        dir: File,
+        files: Int,
+        tests: Int,
+        notBefore: String?,
+        notAfter: String? = null,
+    ): CheckResult {
         val script = File(System.getProperty("aura.intelligence.junitTool") ?: error("junit tool path is missing"))
         assertTrue(script.isFile, script.path)
         val command = mutableListOf("python", script.absolutePath, "--dir", dir.absolutePath, "--files", files.toString(), "--tests", tests.toString())
         if (notBefore != null) {
             command += listOf("--not-before", notBefore)
+        }
+        if (notAfter != null) {
+            command += listOf("--not-after", notAfter)
         }
         val process = ProcessBuilder(command).redirectErrorStream(true).start()
         val output = process.inputStream.bufferedReader().readText()

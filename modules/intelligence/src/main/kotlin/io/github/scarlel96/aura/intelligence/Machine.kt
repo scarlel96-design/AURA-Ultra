@@ -1,5 +1,6 @@
 package io.github.scarlel96.aura.intelligence
 
+import io.github.scarlel96.aura.domain.Freshness
 import io.github.scarlel96.aura.domain.Observation
 import io.github.scarlel96.aura.domain.draft.PresentationIntentDraft
 import java.time.DateTimeException
@@ -522,8 +523,15 @@ private fun gateSample(sample: IntelligenceSample, policy: PolicyCandidates): Ga
     val connectivity = gateToken(sample.connectivity, sample.referenceTime, policy.tokenUnit, ::parseConnectivity)
     val userMode = gateToken(sample.userMode, sample.referenceTime, policy.tokenUnit, ::parseUserMode)
     val channels = listOf(battery, charging, precipitation, alert, activity, light, connectivity, userMode)
-    val reasons = channels.mapNotNull { channel ->
-        (channel as? Channel.Unusable)?.reason?.toReasonCode()
+    val reasons = channels.flatMap { channel ->
+        val unusable = channel as? Channel.Unusable ?: return@flatMap emptyList()
+        val codes = mutableListOf(unusable.reason.toReasonCode())
+        when (unusable.freshness) {
+            Freshness.UNDECLARED -> codes += ReasonCode.UNDECLARED_IGNORED
+            Freshness.EXPIRED -> codes += ReasonCode.STALE_IGNORED
+            Freshness.FRESH, null -> Unit
+        }
+        codes
     }.distinct()
     val supplied = channels.filter { it !is Channel.Absent }
     val quality = when {

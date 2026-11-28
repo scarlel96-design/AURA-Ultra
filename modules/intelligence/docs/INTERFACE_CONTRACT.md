@@ -18,7 +18,7 @@
 
 `Fresh`가 되려면 `deriveStatus`가 거절·만료 강등이 아니고, 신선도가 `FRESH`이며, 분류가 상태 `VALID`인 읽기이고, 기대 단위 검사가 통과해야 한다. 숫자는 정책 스케일 안이어야 한다. 토큰은 아래 표의 정확한 문자열이어야 한다.
 
-사용할 수 없는 이유는 `STALE`, `UNDECLARED`, `UNAVAILABLE`, `DENIED`, `ERROR`, `REJECTED`, `UNIT_UNCHECKED`, `OUTSIDE_CANDIDATE_SCALE`, `TOKEN_UNCHECKED`로 공개 이유에 연결한다. 값은 공개하지 않는다.
+사용할 수 없는 이유는 `STALE`, `UNDECLARED`, `UNAVAILABLE`, `DENIED`, `ERROR`, `REJECTED`, `UNIT_UNCHECKED`, `OUTSIDE_CANDIDATE_SCALE`, `TOKEN_UNCHECKED`로 공개 이유에 연결한다. 값은 공개하지 않는다. `DENIED`/`ERROR`/`UNAVAILABLE`은 null TTL이면 `UNDECLARED_IGNORED`를, 만료 TTL이면 `STALE_IGNORED`를 같은 결과에 함께 남긴다. 유효 TTL은 그 상태 사유만 남긴다. 공백·NUL·제어문자 단위와 유한하지 않거나 뒤집힌 `gateDouble` 경계는 값을 공개하지 않는다.
 
 ## 축
 
@@ -79,7 +79,7 @@ Wear Services, WFF 렌더링, 실제 공급원 연결, 실기기, 배터리 측�
 
 ## 총괄 CI
 
-공통 `bootstrap.yml`은 수정하지 않는다. 총괄이 [CI_PROPOSAL.md](CI_PROPOSAL.md)의 워크플로를 별도로 추가한다. 검증 도구는 `modules/intelligence/tools/check_junit_xml.py`다. 기대 수량은 intelligence `TEST-*.xml` 9개·시험 72개, domain 7개·시험 81개다. 수량을 낮추지 않는다.
+공통 `bootstrap.yml`은 수정하지 않는다. 총괄이 [CI_PROPOSAL.md](CI_PROPOSAL.md)의 워크플로를 별도로 추가한다. 검증 도구는 `modules/intelligence/tools/check_junit_xml.py`다. 기대 수량은 intelligence `TEST-*.xml` 10개·시험 82개, domain 7개·시험 81개다. 수량을 낮추지 않는다. 검사기는 직접 자식 `testcase`, suite와 같은 classname, 비어 있지 않은 메서드, `TEST-{suite}.xml` 파일명, 네 카운터의 존재, `--not-before`/`--not-after` 창을 본다. 공통 JUnit 워크플로는 수정하지 않는다.
 
 ## 하지 않는 일
 

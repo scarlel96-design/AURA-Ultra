@@ -15,7 +15,10 @@ import java.time.Instant
 sealed class Channel<out T> {
     data object Absent : Channel<Nothing>()
 
-    data class Unusable(val reason: UnusableReason) : Channel<Nothing>()
+    data class Unusable(
+        val reason: UnusableReason,
+        val freshness: Freshness? = null,
+    ) : Channel<Nothing>()
 
     data class Fresh<T>(val value: T) : Channel<T>()
 }
@@ -27,14 +30,16 @@ fun gateDouble(
     minimum: Double,
     maximum: Double,
 ): Channel<Double> {
-    val gated = gateReading(observation, referenceTime, expectedUnit) { value ->
+    if (!minimum.isFinite() || !maximum.isFinite() || minimum > maximum) {
+        return Channel.Unusable(UnusableReason.REJECTED)
+    }
+    return gateReading(observation, referenceTime, expectedUnit) { value ->
         if (value < minimum || value > maximum) {
             Channel.Unusable(UnusableReason.OUTSIDE_CANDIDATE_SCALE)
         } else {
             Channel.Fresh(value)
         }
     }
-    return gated
 }
 
 fun gateFlag(
@@ -70,29 +75,31 @@ private fun <T, R> gateReading(
     if (observation == null) {
         return Channel.Absent
     }
+    if (expectedUnit.isAbnormalUnitToken()) {
+        return Channel.Unusable(UnusableReason.UNIT_UNCHECKED)
+    }
     val derived = deriveStatus(observation, referenceTime)
-    when (derived) {
+    val freshness = when (derived) {
         is StatusDerivation.Rejected -> return Channel.Unusable(UnusableReason.REJECTED)
-        is StatusDerivation.DegradedToStale -> return Channel.Unusable(UnusableReason.STALE)
-        is StatusDerivation.Unchanged -> {
-            when (derived.freshness) {
-                Freshness.UNDECLARED -> return Channel.Unusable(UnusableReason.UNDECLARED)
-                Freshness.EXPIRED -> return Channel.Unusable(UnusableReason.STALE)
-                Freshness.FRESH -> Unit
-            }
-        }
+        is StatusDerivation.DegradedToStale ->
+            return Channel.Unusable(UnusableReason.STALE, derived.freshness)
+        is StatusDerivation.Unchanged -> derived.freshness
     }
     val current = derived.observation
-    val classified = current.classifiedValue()
-    val reading = when (classified) {
+    val reading = when (val classified = current.classifiedValue()) {
         is ClassifiedValue.Reading<T> -> classified
-        ClassifiedValue.Unavailable -> return Channel.Unusable(UnusableReason.UNAVAILABLE)
-        ClassifiedValue.Denied -> return Channel.Unusable(UnusableReason.DENIED)
-        ClassifiedValue.Failed -> return Channel.Unusable(UnusableReason.ERROR)
+        ClassifiedValue.Unavailable -> return statusUnusable(UnusableReason.UNAVAILABLE, freshness)
+        ClassifiedValue.Denied -> return statusUnusable(UnusableReason.DENIED, freshness)
+        ClassifiedValue.Failed -> return statusUnusable(UnusableReason.ERROR, freshness)
         is ClassifiedValue.Inconsistent -> return Channel.Unusable(UnusableReason.INCONSISTENT)
     }
+    when (freshness) {
+        Freshness.UNDECLARED -> return Channel.Unusable(UnusableReason.UNDECLARED, freshness)
+        Freshness.EXPIRED -> return Channel.Unusable(UnusableReason.STALE, freshness)
+        Freshness.FRESH -> Unit
+    }
     if (reading.status != ObservationStatus.VALID) {
-        return Channel.Unusable(UnusableReason.STALE)
+        return Channel.Unusable(UnusableReason.STALE, freshness)
     }
     val constrained = validateObservation(
         current,
@@ -105,4 +112,9 @@ private fun <T, R> gateReading(
         )
     }
     return accept(reading.value)
+}
+
+/** 권한·오류 사유는 TTL freshness와 따로 둔다. 신선한 TTL은 추가 사유가 아니다. */
+private fun statusUnusable(reason: UnusableReason, freshness: Freshness): Channel<Nothing> {
+    return Channel.Unusable(reason, freshness)
 }

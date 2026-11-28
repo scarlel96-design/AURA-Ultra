@@ -8,7 +8,7 @@
 | GB02-A2 | 기준 시각은 `IntelligenceSample.referenceTime`뿐이다. `Instant.now`, Android, 네트워크를 호출하지 않는다. | `step` | 어댑터 WO |
 | GB02-A3 | 입력 관측은 도메인의 `deriveStatus`와 `validateObservation`을 통과한 신선 `VALID` 읽기만 값으로 쓴다. 단위는 정책 토큰과 정확히 같을 때만 받는다. 환산하지 않는다. | `gateReading` | 공급원별 단위 표 |
 | GB02-A4 | 정책의 퍼센트·확률 스케일을 벗어난 유한 값은 축 숫자로 올리지 않는다. 스케일 자체도 후보이다. | `OUTSIDE_CANDIDATE_SCALE` | 공급원별 범위 |
-| GB02-A5 | `STALE`, 만료된 `VALID`, `UNDECLARED`, `UNAVAILABLE`, `DENIED`, `ERROR`, 구조 거절, 비유한 수는 신선한 관측으로 올리지 않는다. 누락을 0으로 만들지 않는다. | `UnusableReason` | 오류 값을 부분 표시하는 계약 |
+| GB02-A5 | `STALE`, 만료된 `VALID`, `UNDECLARED`, `UNAVAILABLE`, `DENIED`, `ERROR`, 구조 거절, 비유한 수는 신선한 관측으로 올리지 않는다. 누락을 0으로 만들지 않는다. `DENIED`/`ERROR`/`UNAVAILABLE`은 TTL이 없거나 만료여도 그 사유를 유지하고, freshness는 `UNDECLARED_IGNORED` 또는 `STALE_IGNORED`로 따로 낸다. 숫자는 공개하지 않는다. | `statusUnusable` | 오류 값을 부분 표시하는 계약 |
 | GB02-A6 | 전원 축은 `NORMAL`/`LOW`/`CHARGING`만 있다. 명세에 `UNKNOWN`이 없으므로 추가하지 않았다. 사용할 수 없는 배터리는 직전 축을 유지하고, 첫 스텝이면 `NORMAL`이다. 그 숫자는 공개하지 않는다. | `desiredPower` | 전원 미상을 별도 축으로 승인할 때 |
 | GB02-A7 | 신선한 충전 참은 퍼센트가 낮아도 축은 `CHARGING`이다. 그 축만으로 Eco로 내리지 않는다. 확정된 `CHARGING`은 충전 신호가 빠지거나 사용할 수 없으면 신선한 배터리 퍼센트가 있어도 유지한다. 이탈은 신선한 충전 거짓뿐이며, 그때 퍼센트가 없으면 `NORMAL`이고 그 전환은 숫자 0이 아니다. 신선한 거짓과 신선한 퍼센트는 저전력 히스테리시스를 쓴다. 직전 축이 `CHARGING`이면 직전 `LOW`가 아니다. 신선한 낮은 퍼센트의 장식 제한은 A28이다. | `desiredPower` | 충전 중에도 Eco로 내리는 결정 |
 | GB02-A8 | 저전력은 `<= powerEnter`에서 들어가고 `>= powerExit`에서 나온다. 그 사이는 직전이 `LOW`일 때만 `LOW`다. | `lowPower` | 실측으로 확정된 임계값 |
@@ -34,5 +34,7 @@
 | GB02-A28 | 충전 신호가 없거나 사용할 수 없어도 전원 축은 `CHARGING`으로 남는다. `LOW`가 아닌 새 축 값은 만들지 않는다. 회차 03은 이 유지를 이유로 장식 제한까지 기각했다. 회차 04는 `DATA_INTELLIGENCE.md`의 낮은 배터리 입자 제거를 우선한다. 신선한 낮은 배터리는 축을 바꾸지 않은 채 포커스를 `POWER`로 하고 입자를 끈다. 품질은 `BALANCED`로 남고 모션은 축이 `LOW`로 확정되기 전까지 허용한다. 이유에는 `POWER_LOW`와, 축이 `CHARGING`이면 `POWER_CHARGING`이 함께 있다. 상한 아래의 그래픽 전력 제한은 이번 샘플의 신선한 낮은 배터리이거나 확정 축 `LOW`일 때만 켜진다. 배터리 생략은 보류 중인 저전력 희망을 취소하고 확정 축은 유지한다. 생략이 이전 그래픽 제한을 다음 스텝에 붙잡아 두지 않는다. 상한에서 이미 켜진 그래픽 제한은 끄지 않는다. | `graphicsPowerLimited` | 신선한 낮은 배터리의 장식 제한을 다시 거두거나, 생략된 배터리에 이전 그래픽 제한을 붙잡는 결정 |
 | GB02-A29 | `deliveredIntent()`는 한 결과 안에서 적용할 의도만 고른다. 결과가 호출 밖에서 재정렬되면 이전 의도가 최신 보호를 덮어쓸 수 있다. 지원되는 소비자는 호출 순서대로 결과를 받고, null이 아닌 `deliveredIntent()`를 revision이 같아도 적용한다. `Advanced.state.processedAt`이 마지막으로 적용한 시각보다 이르면 그 결과는 버린다. 같은 시각은 호출 순서를 유지한다. 의도 객체에는 `processedAt`이 없다. 순서 필드와 Wear Services·WFF 연결은 넣지 않는다. 이 규칙 없이 재정렬하는 통합은 차단점 GB02-R05-ASYNC다. | `deliveredIntent` | 재정렬을 기계가 거부하도록 순서 필드를 추가하는 결정 |
 | GB02-A30 | 공개 `reasonCodes`는 수정할 수 없는 복사본이다. 호출자가 그 목록을 고치면 상태의 `emission`까지 바뀌므로 허용하지 않는다. | `intentFor` | 이유 목록을 호출자가 수정하게 두는 결정 |
+| GB02-A31 | 정책 단위 토큰은 비어 있거나 공백·NUL·제어문자를 포함하면 정책을 거절한다. `percent`/`token`/`flag`와 유한한 0·100 경계는 유지한다. `gateDouble`의 최소·최대가 유한하지 않거나 최소가 최대보다 크면 값을 신선으로 분류하지 않고 `REJECTED`다. | `isAbnormalUnitToken`, `gateDouble` | 공백 단위를 합의 토큰으로 승인하는 결정 |
+| GB02-A32 | 자체 JUnit 검사기는 직접 자식 `testcase`만 세고, suite 이름·classname·메서드 이름이 비어 있지 않으며 classname은 suite 이름과 같아야 한다. 파일명은 `TEST-{suite}.xml`이다. `tests`/`failures`/`errors`/`skipped`가 없으면 0으로 보지 않는다. `--not-before`보다 이르거나 `--not-after`보다 늦으면 거절한다. 기대 수량은 intelligence 10파일 82시험, domain 7파일 81시험이다. 공통 검사기는 수정하지 않는다. | `check_junit_xml.py` | 총괄이 공통 검사기와 이 창을 맞추는 결정 |
 
 도메인 가정 A17의 "FSM은 없다"는 도메인 모듈 안의 문장이다. 이 모듈이 상태 머신을 가진다고 그 문장을 고치지 않는다.

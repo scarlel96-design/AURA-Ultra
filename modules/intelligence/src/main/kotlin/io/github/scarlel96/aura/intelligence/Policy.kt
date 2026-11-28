@@ -2,6 +2,11 @@ package io.github.scarlel96.aura.intelligence
 
 import java.time.Duration
 
+/** 공백, NUL, 제어문자가 섞인 단위 토큰은 합의된 단위가 아니다. */
+internal fun String.isAbnormalUnitToken(): Boolean {
+    return isEmpty() || any { it.isWhitespace() || it.isISOControl() }
+}
+
 /**
  * 문서에 적힌 후보 값이다. 제품이 승인한 상수가 아니다.
  * 호출자가 다른 값을 넣어 같은 규칙을 시험할 수 있다.
@@ -59,8 +64,13 @@ data class PolicyCandidates(
         if (!probabilityMinimum.isFinite() || !probabilityMaximum.isFinite() || probabilityMinimum > probabilityMaximum) {
             issues += "probability scale is not usable"
         }
-        if (percentUnit.isBlank() || probabilityUnit.isBlank() || tokenUnit.isBlank() || flagUnit.isBlank()) {
-            issues += "unit tokens must not be blank"
+        if (
+            percentUnit.isAbnormalUnitToken() ||
+            probabilityUnit.isAbnormalUnitToken() ||
+            tokenUnit.isAbnormalUnitToken() ||
+            flagUnit.isAbnormalUnitToken()
+        ) {
+            issues += "unit tokens must not contain whitespace or control characters"
         }
         return issues
     }
