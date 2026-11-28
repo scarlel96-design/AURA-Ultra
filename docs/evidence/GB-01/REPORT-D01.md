@@ -73,7 +73,7 @@ GPT가 등록할 정확한 추가 메서드 이름은 다음 7개다.
 
 ## CI
 
-코드 SHA `ef57005a2177bf87db3193c454ca6888be819df0`. Historical WFF는 시작하지 않았다. 마감 증거 커밋은 기록 커밋이 가리킨다.
+코드 SHA `ef57005a2177bf87db3193c454ca6888be819df0`. Historical WFF는 시작하지 않았다. 마감 증거 커밋은 `3f35eb7d2d6b9da4235d79cc6c722568add7e539`다.
 
 브랜치 push의 Domain Kotlin은 등록 전 검사기다. `Clean Kotlin domain tests`는 success이고 `Validate JUnit evidence`만 실패했다. 원인은 `Unknown or duplicate suite: io.github.scarlel96.aura.domain.PayloadIntegrityTest`다. 이 결과를 PASS로 적지 않는다.
 
