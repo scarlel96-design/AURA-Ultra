@@ -148,6 +148,6 @@ CI head는 `e050937fd34709d143836e44bbf91ec5221bdc48`다. 적용 대상은 Boots
 | Windows host reproducibility | push | [46113199651](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46113199651) | 140881103783 `host (true)`, 140881103922 `host (false)` | 12, 12 |
 | Windows host reproducibility | pull_request | [46113203947](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46113203947) | 140881117471 `host (true)`, 140881117609 `host (false)` | 12, 12 |
 
-이 최종 증거의 커밋 SHA는 기록 커밋이 가리킨다. 기록 커밋은 `[skip ci]`이고 `modules/intelligence`를 바꾸지 않는다.
+이 최종 증거의 커밋은 `aa0eb8388ee21bc7cfa50473432515ce1bc29fa3`다. 그 커밋과 이 문장을 더한 기록 커밋은 `[skip ci]`이고 `modules/intelligence`를 바꾸지 않는다.
 
 인계로 남긴다. D01은 별도 승인이 나기 전에는 GB-02에서 구현하지 않는다. 더 높은 호출자 revision과 철회 시각의 우선순위는 총괄 합의 전이다. F04와 C01의 실제 소비자 재전송은 구현하지 않는다. intelligence 모듈 CI, 실기기, 공급원, WFF는 NOT RUN이다. 후보 15/20, 70/50, 60초는 승격하지 않는다. FINDINGS는 OPEN이다. PR #3 HOLD. 제품 출시 NO-GO. R09, GB-03, GPT-07은 시작하지 않는다.
