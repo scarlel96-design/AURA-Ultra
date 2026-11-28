@@ -25,4 +25,4 @@
 
 GB/AG는 가용 시 배정(소진 시 약 1주 불가 가능). 인수는 사용자 승인·기존 담당 정지·정확한 상태 인계 후만 허용. 최종 감사 Codex 주력/GPT 독립 검수, GB/AG 선택 전문 검수. 필수 기술 게이트 유지.
 
-[GB-02 RV02](GB-02-RV02.md): PR #7 75c9ab4 HOLD, 102/124 및 CI 검수 완료; [마감](GB-02-RV02-CLOSEOUT.md) 3 경계 수정 대기. F04/C01 및 실제 step 연동 금지.
+[GB-02 RV02](GB-02-RV02.md): PR #7 7501dcf HOLD; 재현 5건 수정 검수 완료, 독립 개발 중지/PARTIAL. [잔여 계약 검증](../../evidence/MID-AUDIT/RV02-REVIEW.md) 승인 후 인계. F04/C01 및 실제 step 연동 금지.

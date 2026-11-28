@@ -35,3 +35,5 @@
 - RV02 로컬 보고 dbacc75→a611bda, 124/102·100000 PASS(미독립 확인). [CI 등록](../evidence/MID-AUDIT/RV02-CI/REPORT.md) 고정 108/124, RV01 26 blob overlay, 신규 자체 시험 10 PASS·YAML 구조 확인. main CI 대기; 원격 제출 전 확인.
 
 - RV02 75c9ab4 검수: 23 XML 102/124, 29 Intelligence blob 동일, 16 CI SUCCESS, 실제 composite 로그 3건. [검수](../evidence/MID-AUDIT/RV02-REVIEW.md) 3 경계 보완, PARTIAL. [마감](agent-orders/GB-02-RV02-CLOSEOUT.md) 사용자 전달 대기.
+
+- RV02-CLOSEOUT 8dd1c7c→7501dcf: red 5 FAIL, green 23 XML 102/124, 8 CI SUCCESS, 2 실제 복합 로그 대조. 재현 수정 검수 완료, 독립 개발 중지/PARTIAL. [잔여 계약 및 통합 인계](../evidence/MID-AUDIT/RV02-REVIEW.md); 승인 전 인수·병합 금지.
