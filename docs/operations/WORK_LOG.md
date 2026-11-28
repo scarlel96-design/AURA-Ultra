@@ -49,3 +49,5 @@
 - GPT-07 R02 24edfc5: RecoveryEpisode 구현, R01 21+R02 22=43 PASS, 10,000 복구 회차·3/3 결함 검출. R01/main 공통 CI 각 3 SUCCESS. 후보 blob 일치; [계획/증거](GPT-07.md). 정식 통합 NOT RUN; F03/F04/RV02 유지.
 
 - GPT-07 R03 7f2a197: 기상 7개 metric·10개 unit 정규화, 21+22+20=63 PASS, 60,000 환산 비교·3/3 결함 검출. R02/main CI 각 3 SUCCESS. 신규 blob 및 기존 로그 일치. [계획/증거](GPT-07.md). 실제 provider/통합 NOT RUN.
+
+- GPT-07 R04 200ea2f: RainTimeline, 누락/공백/양수 구간·종료 근거 분리. 누적 83 PASS, 10,000 합성 예보·3/3 결함 검출. R03/main 공통 CI 각 3 SUCCESS. 원격 blob 일치; [계획/증거](GPT-07.md). 정식 통합 NOT RUN; 차단 유지.
