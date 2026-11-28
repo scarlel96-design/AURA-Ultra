@@ -1,18 +1,6 @@
 # 최근 작업 이력
 이전 누적 이력: [archive](../archive/README.md). 종료 직전 이력은 [검증 코드 시점](https://github.com/scarlel96-design/AURA-Ultra/blob/53d43d918c3e3c1002b70473f5de843c0f946d8e/docs/operations/WORK_LOG.md)에서 보존한다. 최신 상태는 [STATUS](../STATUS.md).
-- 2026-11-28 R01~R04 소재 기반/링/유리/광학 호스트 생성 및 통합: 293 PASS. [R02](../evidence/GPT-06/REPORT-02-VERIFIED.md).
-- R05 301 PASS, [통합 증거](../evidence/GPT-06/REPORT-05-INTEGRATED.md).
-- R06 309 PASS/4개 소재 APK. OPS-07 7개 검사기 시험, 12개 활성 문서 예산, 원본 8개 blob 아카이브. [결합 증거](../evidence/GPT-06/REPORT-FINAL-INTEGRATION.md).
-- 최종 main 53d43d918c3e3c1002b70473f5de843c0f946d8e: 46083911786 SUCCESS 316 PASS, 46083911794 SUCCESS 7 PASS. 다운로드 무결성 PASS. [전체 종료 보고](../evidence/GPT-06/REPORT-FINAL-CLOSURE.md). GPT-06 독립 준비 종료·중단, 공식 PARTIAL, 출시 NO-GO. GPT-07 미착수. 사용자 별도 승인 대기.
-
-- 중간 감사 R01: 최신 main 316 PASS 및 소재 APK 재검사, 7개 개선점. [보고서](../evidence/MID-AUDIT/REPORT-R01.md).
-- 중간 감사 R02: GB-02 제출 XML 전체 16개/153건 검토, 별도 CI https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46086659055 성공 81+72+9건, artifact 직접 검사 17 XML. JUnit 검증기 결함 7개 주입 및 CRLF 재현, Kotlin 11개 관찰. [보고서](../evidence/MID-AUDIT/REPORT-R02.md). 다음 R03. GPT-07 미착수.
-
-- 중간 감사 R03: https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46087379624 SUCCESS 316+38 PASS, AG 23 blob 일치, 16 관찰, 보충 https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46087610218 SUCCESS. 원시 artifact 및 로컬 ffprobe 재검증. [보고서](../evidence/MID-AUDIT/REPORT-R03.md). 다음 R04 보안/공급망/요구사항 추적·종합 판정. 제품 코드/외부 브랜치 불변.
-
-- 중간 감사 R04: https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46088472103 SUCCESS, 843 파일 출현 secret pattern 검사 hit 0, 외부 의존성 29/29 해시 일치, 7개 경계 관찰, [보고서](../evidence/MID-AUDIT/REPORT-R04.md) 및 [요구사항 추적](../evidence/MID-AUDIT/REQUIREMENTS-TRACE.md). 다음 FINAL. 제품 및 외부 브랜치 불변.
-
-- 전체 중간 감사 FINAL: [최종 보고](../evidence/MID-AUDIT/REPORT-FINAL.md), [39개 통합 등록부](../evidence/MID-AUDIT/FINDINGS.md), [개선 계획](../evidence/MID-AUDIT/REMEDIATION-PLAN.md). 비문서 114 blob/mode 동일 및 5 ZIP 직접 재검사. 감사 조사 종료; 수정 미착수. F01 후속 승인 대기. 제품 NO-GO, GPT-07 NOT STARTED.
+- GPT-06 및 중간 감사 R01~FINAL 상세 이력: [R13 이전 원본 보관](../archive/2026-11-28-r13/WORK_LOG.md) (기준 45113b8fc335af8b71c795e1de2a5b78f0cf19e3, 원본 blob c70a8e3ed7ca75202d04500dee0ee69f18c03172).
 
 - F01 사용자 착수 승인. R01 4개 개선 대상 후보 994b5011e1cc338b482e22ca6ac942304bf8643b; [red](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46089721067) 330 tests/22 실패 assertions, [green](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46089767751) host SUCCESS/Android 단계 PENDING, doc SUCCESS. [체크포인트](../evidence/MID-AUDIT/F01/REPORT-R01.md). 제품/외부 브랜치 변경 없음. 전체 CI 후 통합 및 R02.
 
@@ -58,6 +46,12 @@
 
 - F03 R11: 6a651984c3e3377b5cf15baf8d175cf5e26a38d8 AGP9.5.1/Gradle9.6.1 scratch 후보, 46103946447 focused PASS/8 builds PASS, 197 OSV/9 IDs, ZIP 검증; [결과](../evidence/MID-AUDIT/F03/REPORT-R11-RESULT.md). [보고](../evidence/MID-AUDIT/F03/REPORT-R11.md). R10 전체 CI SUCCESS. 제품 미변경.
 
-- F03 R12: R11 ZIP/원시 CI 재검증, 9 권고 패치 기준, AGP9.5.3 audit a1158e8b430c 및 lint/UTP coverage gate. CI 미확인. [착수](../evidence/MID-AUDIT/F03/REPORT-R12-START.md).
+- F03 R12: a1158e8b430c, 46108927818 16 tasks PASS, 9 IDs 잔여·gate FAIL; 4 공통 jobs SUCCESS. ZIP 대조. [결과](../evidence/MID-AUDIT/F03/REPORT-R12-RESULT.md).
 
 - GB R08 총괄 검토: 19 XML 99/81, 6 CI/8 jobs SUCCESS, 구현~최종 Intelligence diff 없음. [검토](../evidence/MID-AUDIT/GB-02-R08-REVIEW.md), [제한 보완](agent-orders/GB-02-G01-R08-CLOSEOUT.md); 3 가설 미실행, HOLD. R09 없음.
+
+- F03 R13: 466fc5f00064, 46109603011 SUCCESS, 664 ledger/48 exact bytes/48 .asc, ZIP 검증. [보고](../evidence/MID-AUDIT/F03/REPORT-R13.md). 서명/배포자 미승인; 공통 CI SUCCESS (R14 확인).
+
+- F03 R14: be0bd7b2be4c, 46109868360 정책상 FAIL, 6+10 시험 PASS; 48 bytes/18 VALID/30 차단, 12 공식 키 대조. [보고](../evidence/MID-AUDIT/F03/REPORT-R14.md). 증거 ZIP 검증, 제품 변경 없음.
+
+- F03 R15: d9a05594825f, 46110391691 SUCCESS(증거 수집), 7+10 PASS, 28 SHA512 404, 3 공식 출처 exact/Guava 키 대조. R14 공통 CI SUCCESS. [보고](../evidence/MID-AUDIT/F03/REPORT-R15.md). 승격 없음.
