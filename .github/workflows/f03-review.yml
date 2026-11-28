@@ -4,8 +4,8 @@ on:
     branches: [audit-f03-r03-gradle-inventory]
     paths:
       - '.github/workflows/f03-review.yml'
-      - 'tools/audit_remaining_provenance.py'
-      - 'tests/unit/test_f03_r16.py'
+      - 'tools/audit_provenance_exceptions.py'
+      - 'tests/unit/test_f03_r17.py'
 permissions:
   contents: read
   actions: read
@@ -22,21 +22,25 @@ jobs:
           python-version: '3.12'
       - name: Check evidence tool and workflow policy
         run: |
-          python -m unittest discover -s tests/unit -p test_f03_r16.py -v
+          python -m unittest discover -s tests/unit -p test_f03_r17.py -v
           python -m unittest discover -s tests/unit -p test_f03_r01.py -v
-      - name: Retrieve exact prior archive
+      - name: Retrieve exact prior archives
         env:
           GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
           set -euo pipefail
-          curl --fail --silent --show-error --location --max-time 90 -H "Authorization: Bearer $GH_TOKEN" "https://api.github.com/repos/${{ github.repository }}/actions/artifacts/15249136206/zip" -o "$RUNNER_TEMP/r13.zip"
-      - name: Collect remaining baseline artifact evidence
-        run: python tools/audit_remaining_provenance.py --input "$RUNNER_TEMP/r13.zip" --output "$RUNNER_TEMP/f03-remaining"
+          for pair in r16:15249672985 r10:15246206597; do
+            name="${pair%%:*}"
+            id="${pair##*:}"
+            curl --fail --silent --show-error --location --max-time 90 -H "Authorization: Bearer $GH_TOKEN" "https://api.github.com/repos/${{ github.repository }}/actions/artifacts/$id/zip" -o "$RUNNER_TEMP/$name.zip"
+          done
+      - name: Diagnose exact remaining artifact exceptions
+        run: python tools/audit_provenance_exceptions.py --r16 "$RUNNER_TEMP/r16.zip" --r10 "$RUNNER_TEMP/r10.zip" --output "$RUNNER_TEMP/f03-exceptions"
       - name: Preserve unreviewed evidence
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: f03-remaining-provenance
-          path: ${{ runner.temp }}/f03-remaining/
+          name: f03-provenance-exceptions
+          path: ${{ runner.temp }}/f03-exceptions/
           if-no-files-found: error
