@@ -1,0 +1,21 @@
+PASS missingIsNotZero
+PASS missingWithWrongUnitRejected
+PASS nonFiniteRejected
+PASS celsiusIdentity
+PASS fahrenheitFreezingBoilingAndNegative
+PASS kelvinConversion
+PASS temperaturePhysicalFloor
+PASS feelsLikeIdentityPreserved
+PASS percentBoundary
+PASS fractionBoundary
+PASS fractionAndPercentExplicit
+PASS rainDepthUnitsAndFieldIdentity
+PASS negativeRainRejected
+PASS windConversions
+PASS negativeWindRejected
+PASS overflowRejected
+PASS underflowDoesNotBecomeZero
+PASS negativeZeroCanonicalized
+PASS crossUnitMatrix
+PASS seededConversionInvariants
+QUANTITY_RESULT 20 PASS / 0 FAIL; seed=20261128 cases=20000 conversions=60000
