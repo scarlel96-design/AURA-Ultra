@@ -12,7 +12,7 @@
 | 정식 WO GO | 0/38 |
 | GPT 묶음 GO | 3/12 (PARTIAL 독립 준비 종료는 GO에 포함하지 않음) |
 | 출시 | NO-GO |
-| 다음 행동 | F03 R16 427/430 바이트 일치; R17 잔여 3개 원인/출처 검증 및 인계. 승격 BLOCKED. GPT-07 및 실기기 설치는 별도 승인 대기. |
+| 다음 행동 | F03 자동 출처 수집 종료/PARTIAL. R17 428/430 근거; 통합 차단 인계. 다음 실행 코드 우선 범위 승인 확인. GPT-07 및 실기기 설치는 별도 승인 대기. |
 
 ## 근거 및 이관
 - [GPT-06 전체 종료 보고](evidence/GPT-06/REPORT-FINAL-CLOSURE.md). R01~R06 및 OPS-07 독립 준비 산출물 통합·자동 검증 완료. 결합 후보와 main 코드·시험·자산·CI 102개, 보호 경로 38개 blob 동일. 원본 아카이브 8개 SHA 동일. 활성 8개 문서 500021→24609 B(검증 코드 기준).
@@ -58,4 +58,4 @@
 
 - [F03 R11](evidence/MID-AUDIT/F03/REPORT-R11.md): 공식 호환 후보 AGP9.5.1/Gradle9.6.1, scratch audit 6a651984c3e3377b5cf15baf8d175cf5e26a38d8, CI 46103946447 8 builds PASS, OSV 8 MATCH/9 IDs로 fail-closed, ZIP 직접 검사. 43 IDs 관측상 감소, 새 UTP coverage OPEN. [결과](evidence/MID-AUDIT/F03/REPORT-R11-RESULT.md). 제품 미변경.
 
-- [R12](evidence/MID-AUDIT/F03/REPORT-R12-RESULT.md) 9 IDs 잔여; [R13](evidence/MID-AUDIT/F03/REPORT-R13.md)~[R15](evidence/MID-AUDIT/F03/REPORT-R15.md) 출처 검토; [R16](evidence/MID-AUDIT/F03/REPORT-R16.md) 392 검사/389 일치, 누적 427/430. trust OPEN.
+- [R12](evidence/MID-AUDIT/F03/REPORT-R12-RESULT.md) 9 IDs 잔여; [R13](evidence/MID-AUDIT/F03/REPORT-R13.md)~[R15](evidence/MID-AUDIT/F03/REPORT-R15.md) 출처 검토; [R16](evidence/MID-AUDIT/F03/REPORT-R16.md) 427/430; [R17](evidence/MID-AUDIT/F03/REPORT-R17.md) Portal 일치, JAR 2 redirect 차단. trust OPEN.

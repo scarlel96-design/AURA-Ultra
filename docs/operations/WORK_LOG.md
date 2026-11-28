@@ -57,3 +57,5 @@
 - F03 R15: d9a05594825f, 46110391691 SUCCESS(증거 수집), 7+10 PASS, 28 SHA512 404, 3 공식 출처 exact/Guava 키 대조. R14 공통 CI SUCCESS. [보고](../evidence/MID-AUDIT/F03/REPORT-R15.md). 승격 없음.
 
 - F03 R16: 5c1df1f4ccf9, 46111088119 수집 392/389 일치, 3 차단, 7+10 PASS, ZIP 검증. R15 공통/main CI SUCCESS. [보고](../evidence/MID-AUDIT/F03/REPORT-R16.md). 427/430 누적, 신뢰 0.
+
+- F03 R17: c2b15e0eb373, 46112122206 9+10 PASS/출처 게이트 FAIL; POM 2 경로 exact, JAR 2 redirect 차단. [보고](../evidence/MID-AUDIT/F03/REPORT-R17.md). 반복 수집 종료. 제품 코드 우선 원칙 반영.
