@@ -14,3 +14,5 @@
 중간 감사 후속 배정 제안: [통합 등록부](../../evidence/MID-AUDIT/FINDINGS.md), [실행 계획](../../evidence/MID-AUDIT/REMEDIATION-PLAN.md). 기존 소유권 유지. D01 domain 작업은 별도 사용자 승인 및 배정 필요. 감사 branch 병합 금지. 제안은 agent 작업 시작 또는 병합 승인이 아니다.
 
 [GB-02 G01 R06](GB-02-G01-R06.md): 사용자 전달용 후속 개선 지시. 기존 R05 및 소유권 유지, PR #3 HOLD.
+
+[GB-02 G01 R07](GB-02-G01-R07.md): 사용자 전달용. 잔여 G01 및 F04 보호 계약 후보. 실행 여부 미확인, PR #3 HOLD.

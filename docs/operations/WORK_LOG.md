@@ -43,3 +43,5 @@
 - F03 R05: 46095415032 고유 234 MATCH/430 UNAVAILABLE/0 MISMATCH, 2 ZIP 직접 검사. Audit 378×3 PASS. strict/lock pilot fc3ffa3da8f06e911c5177be09843fa18db8c58f, CI 46095753190 진행 중. [보고](../evidence/MID-AUDIT/F03/REPORT-R05.md). GB R06 기록 HEAD 60d5b47517e09591793901731a43e57ddf3d60a1 HOLD.
 
 - F03 R06: 46095753190 Domain strict 81 PASS 및 변조/잠금 누락 거부, Android writeLocks PASS/strict 미실행(count gate), 6 lock/197 configs 정확 대조. 수정 3609f3890c69267653badcef03961d75934de35a, 46096211808 진행 중. [보고](../evidence/MID-AUDIT/F03/REPORT-R06.md). main 문서만 갱신.
+
+- GB-02 G01 R07 지시서 작성: 기준 18c61ee6442b7bd05f1126ac1f1c2e3f3f1c3e44, GB 60d5b47517e09591793901731a43e57ddf3d60a1. 잔여 G01/ASYNC/F04 계약 후보, 실행 여부 미확인. [지시서](agent-orders/GB-02-G01-R07.md). 소유권/HOLD 유지, F03 다음 행동 유지.
