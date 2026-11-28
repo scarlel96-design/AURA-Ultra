@@ -8,11 +8,11 @@
 | main 회귀 | [46117540962](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46117540962) Linux 383 PASS; [46117540990](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46117540990) Windows 383×2 PASS; [Domain](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46117540979) 81 PASS·검사기 15 PASS; doc SUCCESS. |
 | GPT-06 | 독립 준비 종료·중단 / PARTIAL (실기기 및 동적 효과 미검증) |
 | GPT-04/05 | PARTIAL |
-| GPT-07 | NOT STARTED / 사용자 별도 승인 대기 |
+| GPT-07 | IN_PROGRESS / PARTIAL ([계획](operations/GPT-07.md)) |
 | 정식 WO GO | 0/38 |
 | GPT 묶음 GO | 3/12 (PARTIAL 독립 준비 종료는 GO에 포함하지 않음) |
 | 출시 | NO-GO |
-| 다음 행동 | [CODEX-F03 검수](evidence/MID-AUDIT/F03/REPORT-CODEX-REVIEW.md) 종료/PARTIAL, 공식 JAR 해시 2/2. 감사 14/16; F03/F04 차단, GPT-07 별도 승인 대기. |
+| 다음 행동 | GPT-07 R01 재시도 후보 0253347·21 PASS, [검증 및 다음 작업](operations/GPT-07.md). F03/F04/RV02 통합 차단 유지. |
 
 ## 근거 및 이관
 - [GPT-06 전체 종료 보고](evidence/GPT-06/REPORT-FINAL-CLOSURE.md). R01~R06 및 OPS-07 독립 준비 산출물 통합·자동 검증 완료. 결합 후보와 main 코드·시험·자산·CI 102개, 보호 경로 38개 blob 동일. 원본 아카이브 8개 SHA 동일. 활성 8개 문서 500021→24609 B(검증 코드 기준).
@@ -23,13 +23,13 @@
 - [GPT-06](operations/GPT-06.md), [계획](operations/GPT_EXECUTION_PLAN.md), [이력](operations/WORK_LOG.md). 종료 기록 커밋은 문서만 변경한다. 검증 코드 SHA와 종료 기록 SHA를 구분한다. 새 문서 커밋 CI는 별도 상태를 확인한다.
 
 ## 중단
-사용자 요청에 따라 GPT-06 전체 독립 준비 종료 후 중단한다. GPT-07 착수 금지. PARTIAL 및 제품 NO-GO 유지.
+GPT-06 독립 준비 종료/PARTIAL. 2026-11-28 사용자 승인으로 GPT-07 격리 개발 재개. 제품 NO-GO.
 
 ## 전체 중간 감사 — F01/F02 종료 / F03 진입
 [최종 보고](evidence/MID-AUDIT/REPORT-FINAL.md) · [통합 결함 등록부](evidence/MID-AUDIT/FINDINGS.md) · [후속 개선 계획](evidence/MID-AUDIT/REMEDIATION-PLAN.md) · [26개 요구사항 추적](evidence/MID-AUDIT/REQUIREMENTS-TRACE.md).
 - R01~R04 감사 보고와 증거를 유지한다. FINAL: GPT-06 대비 비문서 114/114 blob/mode 동일, 보존 ZIP 5/5 hash/CRC, Kotlin XML 17/162 cases, 외부 dependency 29/29 재검사.
 - 40개 ID→39개(중복 1), P1 12/P2 24/P3 1/정책 2. 해결 판정 전 전부 OPEN. 전체 감사 접근 가능 조사 종료, 실기기/보안 전체 검증 PARTIAL, 출시 NO-GO.
-- F01 검증기 → F02 재현성 → F03 공급망 → F04 보호 계약. G01/AG A01은 별도 사용자 지시 및 소유권, D01 별도 배정. F00 관리자 보호 설정, C01 실제 통합/실기기 별도 승인. 외부 PR HOLD, 감사 브랜치 병합 금지. GPT-07 미착수. 기존 B-002~008 유지.
+- F01 검증기 → F02 재현성 → F03 공급망 → F04 보호 계약. G01/AG A01은 별도 사용자 지시 및 소유권, D01 별도 배정. F00 관리자 보호 설정, C01 실제 통합/실기기 별도 승인. 외부 PR HOLD, 감사 브랜치 병합 금지. GPT-07 독립 허용. B-002~008 유지.
 - 최신 확인 main CI 46087742551 SUCCESS, doc 46088719146 SUCCESS; 46088719175 PENDING at report drafting. 기록 커밋 후 CI 별도 확인.
 
 - F01/F02 완료 세부 이력: [F01 종료](evidence/MID-AUDIT/F01/REPORT-R04-FINAL.md), [F02 종료](evidence/MID-AUDIT/F02/REPORT-R04-FINAL.md), [이전 STATUS 원본](archive/2026-11-28-f03-r03-status/STATUS.md) (기준 f0a5b3c6e3b789607c6d0e4f1640f7a9d9eb1397). 11개 scoped RESOLVED.
