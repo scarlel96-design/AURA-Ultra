@@ -12,7 +12,7 @@
 | 정식 WO GO | 0/38 |
 | GPT 묶음 GO | 3/12 (PARTIAL 독립 준비 종료는 GO에 포함하지 않음) |
 | 출시 | NO-GO |
-| 다음 행동 | F03 R10 권고 상세/marker POM 원본 수집 CI 확인 및 분석. GPT-07 및 실기기 설치는 별도 승인 대기. |
+| 다음 행동 | F03 R10 권고 상세/marker 비교 완료 → R11 업스트림 개선 후보/호환성 및 차단점 검토. GPT-07 및 실기기 설치는 별도 승인 대기. |
 
 ## 근거 및 이관
 - [GPT-06 전체 종료 보고](evidence/GPT-06/REPORT-FINAL-CLOSURE.md). R01~R06 및 OPS-07 독립 준비 산출물 통합·자동 검증 완료. 결합 후보와 main 코드·시험·자산·CI 102개, 보호 경로 38개 blob 동일. 원본 아카이브 8개 SHA 동일. 활성 8개 문서 500021→24609 B(검증 코드 기준).
@@ -53,3 +53,5 @@
 - [F03 R09](evidence/MID-AUDIT/F03/REPORT-R09.md): 373 components/664 artifacts provisional SBOM; OSV 21 MATCH/352 NO_KNOWN_MATCH/52 IDs, POM 237 declared/74 no direct/61 no pinned/1 hash mismatch. [CI](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46101636971) 증거 직접 검증, audit 정책 수정 CI PENDING. trust/출시 BLOCKED.
 
 - [R10/GB R07 검토](evidence/MID-AUDIT/F03/REPORT-R10-START.md): R09 정책 수정 CI SUCCESS; audit 7bb1331b024f80d47ab349dc51c37ff0defa0ae8 상세 수집 시작. GB R08 지시서 등록, HOLD.
+
+- [F03 R10](evidence/MID-AUDIT/F03/REPORT-R10.md): 52/52 권고 원문, CRITICAL 3/HIGH 21/MODERATE 26/LOW 2; 92 버전 일치, 관측상 buildscript/UTP. Portal 원본 해시 일치, Central 별도 metadata; trust OPEN. R11 개선 후보 검토.

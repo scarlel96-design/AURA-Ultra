@@ -53,3 +53,5 @@
 - F03 R09: 373/664 SBOM, OSV 21/52 IDs, POM 1 hash mismatch; 46101636971 증거 ZIP 직접 검사. audit 정책 red 389/1 fail, 수정 c1a7c3d66da5454234cdfd4ae6930d57496318e0 CI PENDING. [보고](../evidence/MID-AUDIT/F03/REPORT-R09.md). GB R07 제출/독립 검토 대기, HOLD.
 
 - F03 R10 시작: R09 정책 CI SUCCESS, 7bb1331b024f80d47ab349dc51c37ff0defa0ae8 권고/marker 수집. GB R07 18 XML 93/81, 25 blobs 및 6 CI/8 jobs 대조; R08 지시서 작성. [기록](../evidence/MID-AUDIT/F03/REPORT-R10-START.md).
+
+- F03 R10: 46102297170 SUCCESS, 52/52 권고 원문 및 POM 2개 direct ZIP 검증; 3 critical/21 high, 92 exact version associations, buildscript/UTP; Portal hash match. [보고](../evidence/MID-AUDIT/F03/REPORT-R10.md). 제품/신뢰 미변경.
