@@ -72,6 +72,8 @@ jobs:
         run: |
           python tools/check_basic_face_build.py --development-bundle "$RUNNER_TEMP/aura-signature-development.zip"
           test -s "$RUNNER_TEMP/aura-signature-development.zip"
+      - name: Isolated Signature basic display without bundle
+        run: python tools/check_basic_face_build.py
       - name: Upload layout development evidence
         uses: actions/upload-artifact@v4
         with:

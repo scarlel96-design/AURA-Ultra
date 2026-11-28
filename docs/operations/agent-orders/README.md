@@ -3,7 +3,7 @@
 
 | 담당 | ID | 상태 | 브랜치 | 소유 경로 |
 |---|---|---|---|---|
-| ChatGPT | GPT-04/05/06 | GPT-06 독립 준비 종료·중단 / PARTIAL; 중간 감사 종료; F01 R01 main 회귀 SUCCESS; F01 자동 범위 종료; F02 R02 후보 검증; GPT-07 미착수 | main 및 격리 후보 | 그래픽, 공통 도구/CI, 중앙 운영 문서 |
+| ChatGPT | GPT-04/05/06 | GPT-06 독립 준비 종료·중단 / PARTIAL; 중간 감사 종료; F01 R01 main 회귀 SUCCESS; F01 자동 범위 종료; F02 R03 통합 회귀 대기; GPT-07 미착수 | main 및 격리 후보 | 그래픽, 공통 도구/CI, 중앙 운영 문서 |
 | Grok Build | [GB-01](GB-01.md) | 독립 모듈 통합 GO | agent/grok/GB-01 | modules/domain/**, docs/evidence/GB-01/** |
 | Grok Build | [GB-02](GB-02.md) | R05 제출, 감사 CI 72/81 PASS, 계약 위험 OPEN, G01 R06 지시서 작성·실행 미확인, HOLD | agent/grok/GB-02 | modules/intelligence/**, docs/evidence/GB-02/** |
 | Antigravity | [AG-01](AG-01.md) | R07 격리 재시험 38 PASS, 감사 결함 OPEN, A01 후속 지시/사용량 회복 대기, runtime NOT RUN, HOLD | agent/antigravity/AG-01 | tests/compatibility/ag-01/**, docs/evidence/AG-01/** |
