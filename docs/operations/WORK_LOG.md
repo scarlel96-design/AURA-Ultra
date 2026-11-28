@@ -31,3 +31,5 @@
 - RV01 8f53bff 독립 검수: 22 XML 102/108, 26 Domain blob 동일, 15 CI SUCCESS; capability seal 재사용 및 대상 scope 미대조 정적 결함 2건. [마감](agent-orders/GB-01-RV01-CLOSEOUT.md), HOLD. 사용자 승인: 최종 감사 Codex 주력/GPT 검수, GB/AG 가용성 기반 배정.
 
 - RV01-CLOSEOUT 558e188→68f52eb: red 2 FAIL, green 22 XML 102/108, 15 CI SUCCESS, 3 Domain 원본 로그 대조; C1/C2 범위 GO·독립 종료. [RV02](agent-orders/GB-02-RV02.md) 격리 데이터 경계 후보 준비, 사용자 전달 대기. HOLD 유지.
+
+- RV02 로컬 보고 dbacc75→a611bda, 124/102·100000 PASS(미독립 확인). [CI 등록](../evidence/MID-AUDIT/RV02-CI/REPORT.md) 고정 108/124, RV01 26 blob overlay, 신규 자체 시험 10 PASS·YAML 구조 확인. main CI 대기; 원격 제출 전 확인.
