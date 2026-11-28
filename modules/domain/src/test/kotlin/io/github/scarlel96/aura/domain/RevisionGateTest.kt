@@ -3,6 +3,7 @@ package io.github.scarlel96.aura.domain
 import java.time.Instant
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
 import kotlin.test.assertSame
 import kotlin.test.assertTrue
@@ -31,6 +32,7 @@ class RevisionGateTest {
         assertEquals(RevisionOutcome.ACCEPTED, second.outcome)
         assertEquals(7, second.cursor?.revision)
         assertEquals(2, second.cursor?.observation?.value)
+        higherRevisionStillReplacesAnEarlierDenial()
     }
 
     @Test
@@ -124,6 +126,162 @@ class RevisionGateTest {
         assertEquals(RevisionOutcome.INVALID_OBSERVATION, rejected.outcome)
         assertSame(current, rejected.cursor)
         assertEquals(4, rejected.cursor?.observation?.value)
+        mutablePayloadsStayOutOfTheCursor()
+    }
+
+    private fun mutablePayloadsStayOutOfTheCursor() {
+        val items = mutableListOf("kept")
+        val decision = applyRevision(
+            null,
+            key,
+            1,
+            observation(items, unit = "token", source = key.source),
+        )
+        assertEquals(RevisionOutcome.INVALID_OBSERVATION, decision.outcome)
+        assertEquals(listOf(IssueCode.UNSUPPORTED_PAYLOAD), decision.issues.codes())
+        assertEquals(null, decision.cursor)
+        items[0] = "changed"
+        items += "more"
+        val stored = applyRevision(null, key, 1, sample(10))
+        val replay = applyRevision(stored.cursor, key, 1, sample(10, baseReceived.plusSeconds(3)))
+        assertEquals(RevisionOutcome.DUPLICATE, replay.outcome)
+        assertEquals(10, replay.cursor?.observation?.value)
+
+        val nested = mutableListOf(mutableListOf(1))
+        val payloads: List<Any> = listOf(
+            mutableMapOf("k" to 1),
+            mutableSetOf("a"),
+            nested,
+            arrayOf("a"),
+            intArrayOf(1),
+            Box(1),
+            listOf("fixed"),
+        )
+        payloads.forEach { payload ->
+            val rejected = applyRevision<Any>(
+                null,
+                key,
+                1,
+                observation(payload, unit = "token", source = key.source),
+            )
+            assertEquals(RevisionOutcome.INVALID_OBSERVATION, rejected.outcome, payload.javaClass.name)
+            assertEquals(listOf(IssueCode.UNSUPPORTED_PAYLOAD), rejected.issues.codes())
+            assertEquals(null, rejected.cursor)
+        }
+        nested[0][0] = 9
+        assertEquals(10, stored.cursor?.observation?.value)
+        val node = Node()
+        node.next = node
+        val cyclic = applyRevision(null, key, 1, observation(node, unit = "token", source = key.source))
+        assertEquals(RevisionOutcome.INVALID_OBSERVATION, cyclic.outcome)
+        assertEquals(null, cyclic.cursor)
+        val failure = assertFailsWith<UnsupportedPayloadException> {
+            RevisionCursor(key, 1, observation(mutableListOf(1), unit = "count", source = key.source))
+        }
+        assertEquals(IssueCode.UNSUPPORTED_PAYLOAD.name, failure.message)
+    }
+
+    private fun higherRevisionStillReplacesAnEarlierDenial() {
+        val origin = Instant.parse("2026-11-28T00:00:00Z")
+        fun at(seconds: Long): Instant = origin.plusSeconds(seconds)
+        val opened = applyRevision(
+            null,
+            key,
+            1,
+            observation(10.0, source = key.source, observedAt = at(10), receivedAt = at(10), expiresAt = at(400)),
+        )
+        val denied = applyRevision(
+            opened.cursor,
+            key,
+            2,
+            observation(
+                null,
+                source = key.source,
+                status = ObservationStatus.DENIED,
+                observedAt = at(20),
+                receivedAt = at(20),
+                expiresAt = at(400),
+            ),
+        )
+        assertEquals(RevisionOutcome.ACCEPTED, denied.outcome)
+        val late = applyRevision(
+            denied.cursor,
+            key,
+            3,
+            observation(33.0, source = key.source, observedAt = at(12), receivedAt = at(25), expiresAt = at(400)),
+        )
+        assertEquals(RevisionOutcome.ACCEPTED, late.outcome)
+        assertFalse(late.receiveTimeInversion)
+        assertEquals(33.0, late.cursor?.observation?.value)
+        val other = acceptedKey(source = acceptedSource("other.source"), subject = "other.subject")
+        val switched = applyRevision(
+            late.cursor,
+            other,
+            9,
+            observation(1.0, source = other.source, receivedAt = at(26), expiresAt = at(400)),
+        )
+        assertEquals(RevisionOutcome.KEY_MISMATCH, switched.outcome)
+        assertEquals(33.0, switched.cursor?.observation?.value)
+        val duplicate = applyRevision(
+            late.cursor,
+            key,
+            3,
+            observation(33.0, source = key.source, observedAt = at(12), receivedAt = at(40), expiresAt = at(400)),
+        )
+        assertEquals(RevisionOutcome.DUPLICATE, duplicate.outcome)
+        val missingTime = applyRevision(
+            late.cursor,
+            key,
+            4,
+            observation(40.0, source = key.source, observedAt = null, receivedAt = at(40), expiresAt = at(400)),
+        )
+        assertEquals(RevisionOutcome.ACCEPTED, missingTime.outcome)
+        assertEquals(null, missingTime.cursor?.observation?.observedAt)
+        val future = applyRevision(
+            missingTime.cursor,
+            key,
+            5,
+            observation(50.0, source = key.source, observedAt = at(100), receivedAt = at(40), expiresAt = at(400)),
+            ObservationConstraints(
+                futureTimestamp = FutureTimestampPolicy.REJECT_AFTER_REFERENCE,
+                referenceTime = at(40),
+            ),
+        )
+        assertEquals(RevisionOutcome.INVALID_OBSERVATION, future.outcome)
+        assertEquals(IssueCode.FUTURE_OBSERVED_AT, future.issues.first().code)
+        val restarted = applyRevision(
+            null,
+            key,
+            1,
+            observation(7.0, source = key.source, observedAt = at(10), receivedAt = at(10), expiresAt = at(400)),
+        )
+        val deniedAgain = applyRevision(
+            restarted.cursor,
+            key,
+            2,
+            observation(
+                null,
+                source = key.source,
+                status = ObservationStatus.DENIED,
+                observedAt = at(20),
+                receivedAt = at(20),
+                expiresAt = at(400),
+            ),
+        )
+        val recovered = applyRevision(
+            deniedAgain.cursor,
+            key,
+            3,
+            observation(80.0, source = key.source, observedAt = at(40), receivedAt = at(40), expiresAt = at(400)),
+        )
+        assertEquals(RevisionOutcome.ACCEPTED, recovered.outcome)
+        assertEquals(80.0, recovered.cursor?.observation?.value)
+    }
+
+    private class Box(var value: Int)
+
+    private class Node {
+        var next: Node? = null
     }
 
     @Test
