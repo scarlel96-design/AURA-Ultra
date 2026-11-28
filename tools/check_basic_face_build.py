@@ -19,11 +19,9 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--development-bundle", type=Path)
     args = parser.parse_args()
-    source_sha = None
-    if args.development_bundle is not None:
-        if args.development_bundle.exists():
-            raise FileExistsError(args.development_bundle)
-        source_sha = clean_commit(ROOT)
+    if args.development_bundle is not None and args.development_bundle.exists():
+        raise FileExistsError(args.development_bundle)
+    source_sha = clean_commit(ROOT)
     original = (ROOT / FACE).read_bytes()
     outputs = generate()
     check_outputs(ROOT, outputs)
@@ -32,20 +30,13 @@ def main():
         raise ValueError("Candidate is not distinct")
     with tempfile.TemporaryDirectory(prefix="aura-basic-face-") as directory:
         root = Path(directory)
-        if source_sha is not None:
-            count = copy_committed_inputs(ROOT, root, source_sha,
-                                          FILES + ("apps/watchface/build.gradle.kts",), DIRECTORIES)
-            print(f"COMMITTED_INPUTS_RESULT {source_sha} {count}", flush=True)
-            run(root, "generate_basic_face.py", "--write")
-            run(root, "generate_basic_face.py", "--check")
-            if (root / OUTPUT).read_bytes() != face or (root / FACE).read_bytes() != original:
-                raise ValueError("Committed input reproduction mismatch")
-        else:
-            for name in FILES:
-                shutil.copy2(ROOT / name, root / name)
-            for name in DIRECTORIES:
-                shutil.copytree(ROOT / name, root / name, ignore=shutil.ignore_patterns("__pycache__"))
-            shutil.copy2(ROOT / "apps/watchface/build.gradle.kts", root / "apps/watchface/build.gradle.kts")
+        count = copy_committed_inputs(ROOT, root, source_sha,
+                                      FILES + ("apps/watchface/build.gradle.kts",), DIRECTORIES)
+        print(f"COMMITTED_INPUTS_RESULT {source_sha} {count}", flush=True)
+        run(root, "generate_basic_face.py", "--write")
+        run(root, "generate_basic_face.py", "--check")
+        if (root / OUTPUT).read_bytes() != face or (root / FACE).read_bytes() != original:
+            raise ValueError("Committed input reproduction mismatch")
         # Copy only pinned tool JARs. The existing validators verify their digests.
         (root / ".aura-tools").mkdir()
         for name in ("wff-validator.jar", "memory-footprint.jar"):
@@ -71,11 +62,9 @@ def main():
             print("BASIC_APK_RESULT " + json.dumps({"profile": p["name"],
                 "xml_sha256": hashlib.sha256(face).hexdigest(),
                 "apk_sha256": hashlib.sha256(apk.read_bytes()).hexdigest()}, sort_keys=True))
-    if (ROOT / FACE).read_bytes() != original:
-        raise ValueError("Product face changed")
+    if clean_commit(ROOT) != source_sha or (ROOT / FACE).read_bytes() != original:
+        raise ValueError("Source changed during build")
     if args.development_bundle is not None:
-        if clean_commit(ROOT) != source_sha:
-            raise ValueError("Source changed during build")
         data, metadata = build_bundle(apks, face, source_sha)
         stored = write_new(args.development_bundle, data)
         if verify_bundle(stored, face, source_sha) != metadata:
