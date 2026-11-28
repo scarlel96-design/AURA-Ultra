@@ -51,3 +51,5 @@
 - F03 R08: audit 3609f3890c69267653badcef03961d75934de35a, Android retry 140833754657 strict PASS, 8 build tasks, Domain strict 81 PASS, 197 configs/6 locks exact. 출처 승인 BLOCKED, security API 접근 제한; 반복 pilot 종료. [보고](../evidence/MID-AUDIT/F03/REPORT-R08.md). BLOCKERS 원본 blob 보관. 사용자 GPT-09 추가 감사 계획(재개 시 적용) 기록.
 
 - F03 R09: 373/664 SBOM, OSV 21/52 IDs, POM 1 hash mismatch; 46101636971 증거 ZIP 직접 검사. audit 정책 red 389/1 fail, 수정 c1a7c3d66da5454234cdfd4ae6930d57496318e0 CI PENDING. [보고](../evidence/MID-AUDIT/F03/REPORT-R09.md). GB R07 제출/독립 검토 대기, HOLD.
+
+- F03 R10 시작: R09 정책 CI SUCCESS, 7bb1331b024f80d47ab349dc51c37ff0defa0ae8 권고/marker 수집. GB R07 18 XML 93/81, 25 blobs 및 6 CI/8 jobs 대조; R08 지시서 작성. [기록](../evidence/MID-AUDIT/F03/REPORT-R10-START.md).
