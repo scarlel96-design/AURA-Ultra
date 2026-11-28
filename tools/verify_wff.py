@@ -27,6 +27,28 @@ def require_pass(returncode, output, face, version):
     if Path(path).resolve() != Path(face).resolve() or int(actual_version) != version:
         raise ValueError("WFF verdict does not match requested file or version")
 
+# The pinned validator exits 0 after schema rejection without stop-on-fail.
+REJECTION = re.compile(
+    r"^INFO:\s*(?:❌\s*)?FAILED\s*:\s*(.+?) is NOT valid against watch face format version #(\d+)\s*$"
+)
+HEADER = re.compile(r"^INFO: WFF Validation Application Version 1\.7\.0\. Maximum Supported Format Version #5$")
+SCHEMA_REJECTION = "SEVERE: [Line 1:Column 13]: cvc-complex-type.4: Attribute 'width' must appear on element 'WatchFace'."
+
+
+def require_rejection(returncode, output, face, version):
+    """Require the pinned validator's exact negative-control verdict."""
+    lines = [line.strip() for line in output.splitlines() if line.strip()]
+    verdicts = [match for line in lines if (match := REJECTION.fullmatch(line))]
+    if (returncode != 0 or len(verdicts) != 1 or lines.count(SCHEMA_REJECTION) != 1
+            or sum(bool(HEADER.fullmatch(line)) for line in lines) > 1
+            or any(not (REJECTION.fullmatch(line) or HEADER.fullmatch(line)
+                        or line == SCHEMA_REJECTION) for line in lines)):
+        raise ValueError("Missing, ambiguous, or abnormal WFF rejection")
+    path, actual_version = verdicts[0].groups()
+    if Path(path).resolve() != Path(face).resolve() or int(actual_version) != version:
+        raise ValueError("WFF rejection does not match requested file or version")
+
+
 def run_validator(jar, face, version):
     return subprocess.run(
         ["java", "-jar", str(jar), str(version), str(face)],
@@ -64,10 +86,10 @@ def main():
         for p in profiles:
             result = run_validator(jar, invalid, p["version"])
             print(result.stdout, end="")
-            if any(PASS.fullmatch(line) for line in result.stdout.splitlines()):
-                raise SystemExit("Invalid WFF fixture unexpectedly passed: " + p["name"])
-            if result.returncode == 0 and not FAILURE.search(result.stdout):
-                raise SystemExit("Inconclusive negative validator test: " + p["name"])
+            try:
+                require_rejection(result.returncode, result.stdout, invalid, p["version"])
+            except ValueError as exc:
+                raise SystemExit(f"WFF negative {p['name']}: {exc}") from exc
             print("PASS: real validator rejected invalid XML for " + p["name"])
     print("PASS: explicit WFF verdict and negative probe for every declared profile (disabled profiles: schema only)")
 

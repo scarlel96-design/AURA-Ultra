@@ -5,12 +5,20 @@ on:
       - 'modules/domain/**'
       - 'gradle/wrapper/**'
       - 'gradlew'
+      - 'gradlew.bat'
+      - 'tools/check_domain_results.py'
+      - 'tests/unit/test_domain_results.py'
+      - 'tests/unit/test_f01_r02.py'
       - '.github/workflows/domain-kotlin.yml'
   pull_request:
     paths:
       - 'modules/domain/**'
       - 'gradle/wrapper/**'
       - 'gradlew'
+      - 'gradlew.bat'
+      - 'tools/check_domain_results.py'
+      - 'tests/unit/test_domain_results.py'
+      - 'tests/unit/test_f01_r02.py'
       - '.github/workflows/domain-kotlin.yml'
   workflow_dispatch:
 permissions:
