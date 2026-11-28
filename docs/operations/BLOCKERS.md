@@ -53,3 +53,5 @@ F02 R04: 4개 F02 ID 자동 범위 RESOLVED. main 361 PASS씩 3환경, doc 및 �
 F03 R01: AUD-R01-07/R04-06 후보 구현, red 확인. 최종 Linux/Windows/Domain/historical/doc 및 artifact 미완료, 통합 전 OPEN. setup-java v4 deprecated; major migration 별도. AUD-R04-05 Gradle 전체 검증/잠금 및 CVE/license/SBOM 미완료. [보고](../evidence/MID-AUDIT/F03/REPORT-R01.md).
 
 F03 R02: pin/checkout 후보 5 CI 및 4 ZIP PASS, 8 경로 main 통합. 통합 CI·아티팩트 전 두 ID OPEN. Gradle root/domain 인벤토리, 신뢰 원본·strict/lock 및 소유권 확인 필요. [보고](../evidence/MID-AUDIT/F03/REPORT-R02.md).
+
+F03 R03: AUD-R01-07/R04-06 scoped RESOLVED, main 5 CI 및 4 ZIP PASS. AUD-R04-05 OPEN: audit 46094868997 결과/신뢰 원본/strict/lock/변조 거부/도메인 소유권 확인. [보고](../evidence/MID-AUDIT/F03/REPORT-R03.md).
