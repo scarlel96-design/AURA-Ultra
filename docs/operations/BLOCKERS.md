@@ -39,3 +39,5 @@ F01 R01 4개 ID 후보 자동 검증 PASS, main 통합 회귀 PENDING. G01 R06 �
 F01 R01 main CI SUCCESS 330 PASS 및 소재 원본 hash 일치. F01 R02 AUD-R01-03/04/05 후보 구현, Red 20 실패 재현; 전체 Green 검증 및 main 통합 회귀 전 OPEN 유지. [보고](../evidence/MID-AUDIT/F01/REPORT-R02.md). GPT-07 금지.
 
 F01 R03: R02 후보 전체 CI 및 직접 artifact 검사 PASS, 6 경로 통합. main 회귀 전 3개 ID OPEN 유지. 이전 main 46091179097 Gradle Maven Central HTTP 429 FAIL; 새 통합 CI로 확인, 재발 시 제한 재실행. [보고](../evidence/MID-AUDIT/F01/REPORT-R03.md).
+
+F01 R04: 7개 F01 ID scoped RESOLVED. main Bootstrap 46091554292, Domain 46091554286, doc 46091554290 SUCCESS; 이전 HTTP 429 실패 이력 유지. F02 4개 재현 완료, Windows NOT RUN, 후보 검증 대기. [종료 보고](../evidence/MID-AUDIT/F01/REPORT-R04-FINAL.md). 제품/실기기 차단 유지.
