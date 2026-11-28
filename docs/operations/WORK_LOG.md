@@ -69,3 +69,5 @@
 - Host 후보 4cf403199dd1: 374×3 PASS, 3 ZIP/8 APK 직접 확인, XML/PNG/RGBA 보존. 검증된 4개 경로 선택 통합. 3.14 진단 FAIL 유지, main CI PENDING.
 
 - Host main 27c2f6f89173 374×3 PASS, 3 ZIP/8 APK 및 layout 47 exact, 범위 GO. G01 최종 0c4890ea7f69 XML 108/81·8 jobs/PR 대조, 독립 종료. D01 별도 승인; 제품 NO-GO.
+
+- D01 PR #5 df843d75bff5: 81 PASS direct XML; 88 test CI checker FAIL. [마감 지시](agent-orders/GB-01-D01-CLOSEOUT.md). HOLD.

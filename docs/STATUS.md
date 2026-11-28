@@ -12,7 +12,7 @@
 | 정식 WO GO | 0/38 |
 | GPT 묶음 GO | 3/12 (PARTIAL 독립 준비 종료는 GO에 포함하지 않음) |
 | 출시 | NO-GO |
-| 다음 행동 | Host 통합 검증 종료. G01 독립 개발 인계 완료. D01 별도 승인·F03/F04 차단 유지; GPT-07/실기기 별도 승인. |
+| 다음 행동 | D01 PR #5 HOLD, 신규 시험 복원·GPT exact JUnit 등록 필요. [검토/지시](operations/agent-orders/GB-01-D01-CLOSEOUT.md). F03/F04 차단; GPT-07/실기기 별도 승인. |
 
 ## 근거 및 이관
 - [GPT-06 전체 종료 보고](evidence/GPT-06/REPORT-FINAL-CLOSURE.md). R01~R06 및 OPS-07 독립 준비 산출물 통합·자동 검증 완료. 결합 후보와 main 코드·시험·자산·CI 102개, 보호 경로 38개 blob 동일. 원본 아카이브 8개 SHA 동일. 활성 8개 문서 500021→24609 B(검증 코드 기준).
