@@ -12,14 +12,14 @@
 | 정식 WO GO | 0/38 |
 | GPT 묶음 GO | 3/12 (PARTIAL 독립 준비 종료는 GO에 포함하지 않음) |
 | 출시 | NO-GO |
-| 다음 행동 | F03 R12 후보 잔여 9 권고 및 새 UTP/lint/detached 범위 검토. GPT-07 및 실기기 설치는 별도 승인 대기. |
+| 다음 행동 | F03 R12 audit 후보 CI 조회·원본 증거 확인. AGP9.5.3/Gradle9.6.1, assemble/lint 16 tasks 요청; UTP detached 미검증. GPT-07 및 실기기 설치는 별도 승인 대기. |
 
 ## 근거 및 이관
 - [GPT-06 전체 종료 보고](evidence/GPT-06/REPORT-FINAL-CLOSURE.md). R01~R06 및 OPS-07 독립 준비 산출물 통합·자동 검증 완료. 결합 후보와 main 코드·시험·자산·CI 102개, 보호 경로 38개 blob 동일. 원본 아카이브 8개 SHA 동일. 활성 8개 문서 500021→24609 B(검증 코드 기준).
 - [최종 개발용 APK](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46083911786/artifacts/15238910535): 114716 B, 직접 다운로드·SHA256·CRC·XML·PNG·RGBA 검증 PASS. WFF2~5 각 공식 평가기 2412312 B active/3181712 B AOD. 정적 Balanced 후보. 실제 RAM/전력 아님.
 - [R05](evidence/GPT-06/REPORT-05-INTEGRATED.md): 152 SVG, 36 PNG, 최소 호스트 대비 5.729308:1, PNG 1266831→139710 B. [R06](evidence/GPT-06/REPORT-FINAL-INTEGRATION.md).
 - [실기기 및 승격 게이트](operations/SIGNATURE_DEVICE_GATE.md): 실제 설치·렌더링·센서·동적 효과·발광 픽셀·전력 NOT RUN. Bootstrap 제품 리소스 유지. 실제 후보 프리뷰·육안 승인·사용자 승인 필요. 브랜치 보호 비활성화 확인(AUD-R01-01).
-- AG-01 PR #2 HOLD, HEAD fc98c3ad5993e131f733a9444b5849e737a49086. GB-02 PR #3 HOLD, HEAD 2389ea1a3e857515cf312938cafc9c45def35e9f (R07 제출); 독립 XML 93/81 및 6 CI/8 jobs SUCCESS 대조, R08 보호 계약 보완 지시. R06 82/81 확인 이력 및 로컬 host 2건 유지. [배정](operations/agent-orders/README.md). B-002/003/004/005/006/007/008 유지; [차단점](operations/BLOCKERS.md).
+- AG-01 PR #2 HOLD, HEAD fc98c3ad5993e131f733a9444b5849e737a49086. GB-02 PR #3 HOLD, HEAD f8dc433dd93b2c5febd0b6496e1fd729a5e09a26 (R08 제출); XML 99/81 및 6 CI/8 jobs SUCCESS 대조, R08-CLOSEOUT 3 가설 재현 지시. [검토](evidence/MID-AUDIT/GB-02-R08-REVIEW.md). R06 82/81 확인 이력 및 로컬 host 2건 유지. [배정](operations/agent-orders/README.md). B-002/003/004/005/006/007/008 유지; [차단점](operations/BLOCKERS.md).
 - [GPT-06](operations/GPT-06.md), [계획](operations/GPT_EXECUTION_PLAN.md), [이력](operations/WORK_LOG.md). 종료 기록 커밋은 문서만 변경한다. 검증 코드 SHA와 종료 기록 SHA를 구분한다. 새 문서 커밋 CI는 별도 상태를 확인한다.
 
 ## 중단
@@ -57,3 +57,5 @@
 - [F03 R10](evidence/MID-AUDIT/F03/REPORT-R10.md): 52/52 권고 원문, CRITICAL 3/HIGH 21/MODERATE 26/LOW 2; 92 버전 일치, 관측상 buildscript/UTP. Portal 원본 해시 일치, Central 별도 metadata; trust OPEN. R11 개선 후보 검토.
 
 - [F03 R11](evidence/MID-AUDIT/F03/REPORT-R11.md): 공식 호환 후보 AGP9.5.1/Gradle9.6.1, scratch audit 6a651984c3e3377b5cf15baf8d175cf5e26a38d8, CI 46103946447 8 builds PASS, OSV 8 MATCH/9 IDs로 fail-closed, ZIP 직접 검사. 43 IDs 관측상 감소, 새 UTP coverage OPEN. [결과](evidence/MID-AUDIT/F03/REPORT-R11-RESULT.md). 제품 미변경.
+
+- [F03 R12 착수](evidence/MID-AUDIT/F03/REPORT-R12-START.md): AGP9.5.3 격리 후보 a1158e8b430c5c7aa7eee437b1d70477e4649662, 9 권고 패치 기준 확인, R11 ZIP 재검증, named lint/UTP gate 및 2 focused tests 추가. CI 미확인; 제품 미변경.

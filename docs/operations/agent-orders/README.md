@@ -5,7 +5,7 @@
 |---|---|---|---|---|
 | ChatGPT | GPT-04/05/06 | GPT-06 독립 준비 종료·중단 / PARTIAL; 중간 감사 종료; F01 R01 main 회귀 SUCCESS; F01 자동 범위 종료; F02 자동 범위 종료; F03 R09 SBOM/OSV/POM review PARTIAL; GPT-07 미착수 | main 및 격리 후보 | 그래픽, 공통 도구/CI, 중앙 운영 문서 |
 | Grok Build | [GB-01](GB-01.md) | 독립 모듈 통합 GO | agent/grok/GB-01 | modules/domain/**, docs/evidence/GB-01/** |
-| Grok Build | [GB-02](GB-02.md) | G01 R07 93/81 XML 및 6 CI 대조, R08 계약 보완 지시; 로컬 host 2건 및 G01 잔여 OPEN, HOLD | agent/grok/GB-02 | modules/intelligence/**, docs/evidence/GB-02/** |
+| Grok Build | [GB-02](GB-02.md) | G01 R08 99/81 XML 및 6 CI 대조; R08-CLOSEOUT 3 가설, 로컬 host 2건 및 외부 게이트 OPEN, HOLD | agent/grok/GB-02 | modules/intelligence/**, docs/evidence/GB-02/** |
 | Antigravity | [AG-01](AG-01.md) | R07 격리 재시험 38 PASS, 감사 결함 OPEN, A01 후속 지시/사용량 회복 대기, runtime NOT RUN, HOLD | agent/antigravity/AG-01 | tests/compatibility/ag-01/**, docs/evidence/AG-01/** |
 | Codex | 미배정 | NOT STARTED | 추후 지정 | 고난도 통합·실기기 |
 
@@ -17,4 +17,4 @@
 
 [GB-02 G01 R07](GB-02-G01-R07.md): 사용자 전달용. 잔여 G01 및 F04 보호 계약 후보. R07 제출, XML/CI 대조 완료, PR #3 HOLD.
 
-[GB-02 G01 R08](GB-02-G01-R08.md): 보호 계약 보완 및 독립 후보 인계 지시, 실행 미확인.
+[GB-02 G01 R08](GB-02-G01-R08.md): 보호 계약 보완 제출 및 증거 대조 완료. [R08-CLOSEOUT](GB-02-G01-R08-CLOSEOUT.md): 제한된 최종 경계 확인, R09 없음.

@@ -1,0 +1,6783 @@
+From: https://chatgpt.com/c/6b096d5a-1414-83e8-8563-beada7e325c3
+
+
+
+you asked
+
+message time: 2026-11-27 20:47:08
+
+내가 갤럭시 워치7을 가지고 있는 데 솔직히 스토어를 포함해서 만족할 만한 워치 페이스를 발견하지 못했어 시간,날짜,걸음수,날씨,심박수,강수량등 다양한 걸 넣을 수 있는 건 당연하고 전체적으로 스마트하면서도 지능적이고 디자인은 수려하면서 마치 맥OS나 IOS 혹은 애플 워치 울트라를 보는 것 같은 아주 고급스럽고 화려한 애니메이션이 탑재된 그런 페이스 워치를 만들 수 있을까?
+
+
+chatgpt response
+
+갤럭시 워치7의 워치 페이스 개발 규격을 기준으로 디자인, 애니메이션, 실시간 데이터 연동의 구현 범위를 확인하겠습니다.
+
+충분히 만들 수 있습니다. 갤럭시 워치7의 성능과 Wear OS의 공식 워치 페이스 개발 규격을 활용하면, 단순히 정보를 표시하는 수준을 넘어 상황에 따라 디자인과 애니메이션이 변화하는 고급 워치 페이스를 개발할 수 있습니다.
+
+다만 삼성의 Watch Face Studio만 사용하는 것보다는 Android Studio 기반의 직접 개발과 별도의 데이터 처리 앱을 결합하는 방식을 추천합니다. 그래야 디자인 자유도와 지능형 기능을 최대한 확보할 수 있습니다.
+
+애플 워치 울트라의 정보 전달력, iOS의 세련된 애니메이션, macOS의 유리 질감과 입체적인 디자인을 결합하되, 갤럭시 워치의 원형 디스플레이에 최적화하는 방향이 좋겠습니다.
+
+1. 디자인 콘셉트
+
+Apple Watch Ultra
+
+높은 정보 밀도와 정교한 계기판 디자인
+
+iOS Liquid Glass
+
+반투명 소재와 입체적인 빛 반사
+
+watchOS
+
+유려한 색상 변화와 숫자 애니메이션
+
+프리미엄 원형 인터페이스
+
+갤럭시 워치에 최적화된 독자적인 디자인
+
+위 디자인 요소를 단순히 모방하는 것이 아니라 하나의 통일된 디자인 시스템으로 구성하는 것입니다.
+
+2. 워치 페이스 디자인 시안
+
+임시 프로젝트명은 AURA Ultra로 정하겠습니다. 아래는 실제 구현을 고려한 인터페이스 구상입니다. 표시 수치는 예시입니다.
+
+AURA Ultra — Graphite Titanium 콘셉트
+
+검은색 OLED 배경을 기반으로 티타늄 계열의 테두리, 반투명 글래스 패널, 그라데이션 게이지를 적용합니다. 정보가 많아도 복잡하거나 저렴해 보이지 않는 디자인이 목표입니다.
+
+3. 탑재 가능한 기능
+
+기능 구현 가능 여부 구현 방식
+시간·날짜·요일 가능 기본 시스템 데이터
+걸음수·목표 달성률 가능 시스템 활동 데이터
+심박수 가능 건강 데이터 연동
+현재 기온·최고·최저 기온 가능 Wear OS 날씨
+강수확률 가능 Wear OS 날씨
+시간당·누적 강수량(mm) 가능 별도 기상 API 연동
+시간대별 날씨 예보 가능 Wear OS 날씨
+자외선 지수 가능 Wear OS 날씨
+습도·풍속·미세먼지 가능 별도 데이터 공급원
+배터리 잔량 가능 시스템 데이터
+배터리 잔여 시간 예측 가능 별도 예측 알고리즘
+수면·스트레스·혈중 산소 조건부 가능 건강 데이터 접근 권한 필요
+일정·다음 알람 가능 시스템 또는 연동 앱
+스마트폰 배터리 가능 스마트폰 연동 앱
+사용자 지정 색상·테마 가능 WFF 사용자 설정
+상황별 디자인 변화 가능 조건부 렌더링
+자이로 기반 입체 효과 가능 센서 데이터 및 그래픽 변환
+
+Wear OS는 WFF 2부터 기본 날씨와 예보 데이터를 지원합니다. 다만 강수확률과 실제 강수량은 서로 다른 데이터이므로 별도로 처리해야 합니다.  Android Developers Android Developers Samsung Developer Android Developers
+
+4. 고급 애니메이션 시스템
+
+이 프로젝트에서 가장 공을 들여야 할 부분입니다. 단순한 반복 애니메이션이 아니라 실제 데이터와 사용자 행동에 반응하도록 설계합니다.
+
+애니메이션 세부 연출
+화면 활성화 시간과 정보 패널의 순차적인 페이드인
+숫자 전환 시간 변경 시 부드러운 롤링 효과
+Liquid Glass 유리 패널의 빛 반사 및 굴절 모사
+Parallax 손목의 기울기에 따라 움직이는 그래픽 레이어
+Spring Motion 지원되는 변환 효과를 이용한 탄성 움직임
+Dynamic Gradient 시간과 날씨에 따른 그라데이션 변화
+Activity Flow 걸음수 증가에 따른 게이지 변화
+Heart Pulse 심박수에 연동된 맥동 효과
+Weather Particle 비, 눈, 구름 등 날씨 애니메이션
+Charging Flow 충전 상태에 따른 에너지 흐름 효과
+Ambient Transition 활성 화면과 AOD 사이의 시각적 전환
+
+WFF는 그래픽 변환, 조건부 렌더링, 이미지 시퀀스 및 애니메이션 이미지 등을 지원합니다. 이를 조합하면 상당히 높은 수준의 시각적 효과를 구현할 수 있습니다.  Android Developers Android Developers Android Developers
+
+다만 실제 iOS Liquid Glass 렌더링 엔진이나 임의의 GPU 셰이더를 그대로 사용하는 것은 불가능합니다. 그래픽 레이어와 애니메이션을 조합해 유사한 시각적 효과를 구현해야 합니다.
+
+5. 지능형 적응 시스템
+
+단순한 워치 페이스와 차별화할 수 있는 핵심 기능입니다.
+
+Daylight Mode — 주간 모드
+
+밝은 환경에서 가독성을 확보할 수 있도록 대비가 높은 디자인을 사용합니다. 실제 주변 밝기 제어는 시스템 지원 범위를 따릅니다.
+
+
+Night Mode — 야간 모드
+
+야간에는 검은색과 적색 계열의 디자인을 적용합니다. 불필요한 시각적 효과를 줄입니다.
+
+
+Weather Intelligence — 기상 대응
+
+비나 눈이 예상되면 기상 정보를 강조합니다. 강수량과 강수확률을 구분해서 표시합니다.
+
+
+Power Guardian — 절전 모드
+
+배터리 잔량이 낮아지면 불필요한 애니메이션을 제한합니다. 필수 정보 중심의 디자인으로 전환합니다.
+
+
+Activity Intelligence — 활동 모드
+
+활동 상태에 따라 걸음수, 활동량, 심박수 등 관련 정보를 강조합니다.
+
+이러한 기능에는 반드시 LLM이나 생성형 AI가 필요한 것은 아닙니다. 경량 규칙 기반 엔진과 통계 기반 예측 알고리즘을 사용하면 배터리 소모를 줄이면서 지능형 동작을 구현할 수 있습니다.
+
+6. 하나의 워치 페이스에 여러 디자인 탑재
+
+워치 페이스를 매번 새로 설치하지 않아도 사용자 설정에서 디자인을 변경할 수 있도록 구성하는 것입니다.
+
+Titanium
+
+고급 금속 소재
+
+Crystal
+
+반투명 글래스
+
+Ultra
+
+고밀도 정보 표시
+
+Obsidian
+
+OLED 순수 검정
+
+Chronograph
+
+아날로그·디지털 결합
+
+Aurora
+
+오로라 색상 효과
+
+7. 권장 개발 아키텍처
+
+갤럭시 워치7은 일반적인 Android 앱처럼 워치 페이스를 자유롭게 렌더링할 수 없습니다. 공식 규격인 WFF(Watch Face Format)를 사용해야 합니다.
+
+따라서 워치 페이스와 데이터 처리 앱을 분리하는 구조가 가장 적합합니다.  Android Developers Android Developers
+
+AURA Ultra
+
+통합 워치 페이스 시스템
+
+Watch Face APK
+
+WFF / XML
+
+
+그래픽 렌더링
+
+애니메이션
+
+레이아웃 및 테마
+
+AOD 및 조건부 표시
+
+Intelligence APK
+
+Kotlin / Wear OS
+
+
+데이터 처리
+
+상황 판단 엔진
+
+컴플리케이션 공급
+
+외부 API 연동
+
+데이터 공급 계층
+
+Wear OS · Health Services · 기상 API · 스마트폰
+
+스마트폰 Companion App
+
+선택적 설치 · 상세 설정 · 테마 관리 · 데이터 동기화
+
+개발 영역 권장 기술
+워치 페이스 Watch Face Format, XML
+워치 연동 앱 Kotlin
+스마트폰 앱 Jetpack Compose
+디자인 설계 Figma
+벡터 그래픽 SVG 기반 원본 및 WFF 호환 리소스
+고급 애니메이션 WFF Transform, WebP, 이미지 시퀀스
+건강 데이터 Health Services, Health Connect
+기상 데이터 Wear OS Weather, 기상 API
+데이터 전달 Complication Data Source, Wear OS Data Layer
+아키텍처 Clean Architecture, 모듈화, DI
+개발 환경 Android Studio
+검증 WFF Validator, Memory Validator, 실기기 테스트
+
+공식 WFF 규격이 발전하고 있기 때문에 실제 워치에 설치된 Wear OS 버전에 맞춰 지원 기능을 결정해야 합니다.
+
+8. 배터리 및 성능 최적화
+
+아무리 디자인이 훌륭해도 워치 페이스 때문에 배터리 사용 시간이 크게 감소한다면 완성도가 낮은 제품입니다.
+
+Google 공식 워치 페이스 메모리 제한
+
+일반 활성 화면
+
+100 MB
+
+AOD 화면
+
+10 MB
+
+Wear OS Watch Face Format 공식 메모리 예산. APK 파일 크기 제한과는 다른 기준입니다.  Android Developers
+
+최적화는 다음과 같은 방식으로 적용하는 것이 좋습니다.
+
+화면 활성화 및 데이터 변경 시 필요한 애니메이션만 실행.
+정적인 그래픽 리소스 최대한 재사용.
+AOD 전용 초경량 레이아웃 적용.
+날씨 및 외부 데이터 캐싱.
+불필요한 센서 측정과 네트워크 요청 억제.
+저전력 상태에서 애니메이션 자동 제한.
+OLED 번인 방지를 고려한 AOD 설계.
+화면 크기에 맞춘 그래픽 리소스 최적화.
+
+목표는 화려한 애니메이션과 배터리 효율을 동시에 확보하는 것입니다. 실제 배터리 소모율과 프레임 성능은 실기기 테스트를 통해 검증해야 합니다.
+
+9. 단계별 개발 계획
+
+단계 작업 내용
+WO-01 요구사항 확정, WFF 호환성 검증, 디자인 시스템 설계
+WO-02 기본 워치 페이스 및 정보 표시 시스템
+WO-03 고급 글래스 효과 및 애니메이션 구현
+WO-04 건강·날씨·외부 데이터 연동
+WO-05 지능형 상황 대응 및 예측 엔진
+WO-06 다중 테마 및 사용자 설정 시스템
+WO-07 스마트폰 Companion App
+WO-08 배터리·메모리·렌더링 성능 최적화
+WO-09 실기기 통합 시험 및 정식 APK 패키징
+
+개발한 APK는 무선 ADB를 통해 갤럭시 워치7에 직접 설치할 수 있습니다. 개인 사용 목적이라면 반드시 스토어에 등록할 필요도 없습니다.
+
+10. 종합 평가
+
+평가 항목 구현 가능성
+고급스러운 Apple 수준의 시각적 디자인 매우 높음
+다양한 정보 표시 매우 높음
+화려하고 유려한 애니메이션 높음
+사용자 커스터마이징 높음
+지능형 상황 대응 높음
+실제 iOS 그래픽 엔진 재현 제한적
+배터리 효율 최적화 및 검증 필요
+
+기존에 진행했던 소프트웨어 프로젝트들과 마찬가지로 Codex를 메인 개발 도구로 사용하고, Grok Build와 Antigravity CLI를 보조 개발 및 독립 검증에 활용해도 좋겠습니다.
+
+개인적으로는 단순한 워치 페이스 하나를 만드는 것보다 다중 테마, 고급 애니메이션 엔진, 지능형 데이터 처리 시스템, 스마트폰 연동 기능을 갖춘 독립적인 프리미엄 워치 페이스 플랫폼으로 개발하는 것을 추천합니다.
+
+현재 제시한 명칭과 디자인은 초기 제안입니다. 아직 워치7의 정확한 화면 크기와 설치된 Wear OS 버전을 확인하지 않았으며, 실제 구현이나 성능 시험을 완료한 상태는 아닙니다. 이러한 제약을 먼저 확인하면 본격적인 프로젝트 설계에 들어갈 수 있습니다.
+
+Commencer à utiliser l’Apple Watch Ultra – Assistance Apple (CA)
+
+iOS 27 Will Increase iPhone Battery Life and Performance - Breezy.ge
+
+Apple Watch Flux Watch Face + Complications by Hubert Tereszkiewicz on Dribbble
+
+Lihtnes Watch Faces - Home
+
+- YouTube
+
+Como se activa el modo noche en el Watch ultra. Pa... - Samsung Members
+
+Browse thousands of Weather Watch images for design inspiration | Dribbble
+
+Smartwatch Buying Guide 2025 – How to Choose the Right Smartwatch for Your Lifestyle - Tech Den | Smartwatch & Gadget Shop in Bangladesh
+
+Soultech Soulfit SW003S Amoled Ekran IP68 Siyah Akıllı Saat Fiyatı ve Özelliklerı - Badem
+
+B# | Tactics 10 - Watch Face by B Sharp Watches for Wear OS, Galaxy Watch, Pixel Watch, and more | Facer
+
+DigitX - DigitX | Glass Plasma - watch face for Apple Watch, WearOS, Galaxy Watch, Pixel Watch, Huawei Watch, and more - Facer
+
+WFProduction
+
+Jean-Francois Villemure - Super minimal, low consum. aod - watch face for Apple Watch, WearOS, Galaxy Watch, Pixel Watch, Huawei Watch, and more - Facer
+
+mizonashop.de | Smart watch, Smart watches men, Custom watch faces
+
+COSMIC GRADIENT Watch Face - WatchMaker Watch Faces | Digital watch face, Watch faces, Apple watch clock faces
+
+
+you asked
+
+message time: 2026-11-27 20:49:05
+
+저기에 애플 특유의 디테일과 사용성을 고려한 여러 그래픽들 대표적인 예시로 아이폰 듀오에 보면 펼치면 외부 화면에서 자연스럽게 연결되는 그래픽이 연출되잖아? 그런 느낌
+
+
+chatgpt response
+
+말씀하신 것은 단순히 화려한 애니메이션을 추가하는 것이 아니라, 화면과 상태가 변화해도 시각적 연속성이 유지되는 디자인입니다.
+
+대표적인 기술 개념으로 Shared Element Transition(공유 요소 전환), Continuous Motion(연속 모션), Morphing Animation(형태 변환 애니메이션)이 있습니다.
+
+AURA Ultra에도 이러한 개념을 핵심 디자인 철학으로 적용하면 좋겠습니다. 모든 그래픽 요소가 독립적으로 움직이는 것이 아니라, 하나의 유기적인 인터페이스처럼 움직이도록 설계하는 것입니다.
+
+1. 시각적 연속성을 갖춘 애니메이션
+
+상황 그래픽 연출
+AOD → 화면 활성화 기존 시간 표시의 위치를 유지하면서 주변 정보 패널이 자연스럽게 펼쳐짐
+화면 활성화 → AOD 정보 패널이 수축하고 색상이 사라지면서 시간 표시만 남음
+시간 변경 변경되는 숫자만 부드럽게 형태를 변환
+날씨 변화 맑은 하늘에서 구름이 형성되고 자연스럽게 빗방울이 나타남
+주간 → 야간 배경과 조명, 색온도가 점진적으로 변화
+걸음수 목표 달성 활동 게이지가 완성되면서 빛이 테두리를 따라 흐름
+충전 시작 배터리 표시에서 시작된 에너지 효과가 화면 테두리로 확장
+절전 모드 그래픽 레이어가 단계적으로 단순화되면서 최소 정보 화면으로 전환
+상세 정보 열기 선택한 정보 패널이 동일한 위치와 형태를 기반으로 상세 화면으로 확장하는 연출
+
+핵심은 애니메이션의 시작점과 종료점이 논리적으로 연결되어야 한다는 것입니다. 사용자가 화면의 변화 과정을 직관적으로 이해할 수 있어야 합니다.
+
+2. 연속형 그래픽 전환 시뮬레이션
+
+아래는 이러한 디자인 철학을 적용한 인터랙티브 콘셉트입니다. 하단 버튼을 눌러 화면 전환을 확인할 수 있습니다.
+
+AURA Ultra — Continuous Motion
+
+앱 소스 코드(HTML 및 JavaScript)
+
+
+<div id="aura-demo">
+<style>
+#aura-demo{font-family:system-ui,sans-serif;background:#080a0e;border-radius:24px;padding:20px 12px;color:#fff;text-align:center}
+#aura-demo *{box-sizing:border-box}
+#watch{position:relative;width:min(290px,90%);aspect-ratio:1;margin:6px auto 20px;border:5px solid #51565e;border-radius:50%;background:radial-gradient(circle at 50% 20%,#152c3d,#050a10 70%);box-shadow:0 0 0 2px #91979c,inset 0 0 22px #000;overflow:hidden;transition:background .65s}
+#dial{position:absolute;inset:8px;width:calc(100% - 16px);height:calc(100% - 16px);transition:opacity .65s,transform .7s}
+#clock{position:absolute;top:27%;left:0;width:100%;font-size:clamp(38px,12vw,57px);font-weight:650;letter-spacing:-3px;line-height:1;color:#f1f8ff;transition:transform .65s cubic-bezier(.22,1,.36,1),color .5s}
+#date{position:absolute;top:18%;width:100%;font-size:11px;letter-spacing:1.4px;color:#aabed0;transition:transform .65s,opacity .5s}
+#brand{position:absolute;top:49%;width:100%;font-size:8px;letter-spacing:4px;color:#809eb3;transition:opacity .4s}
+#modules{position:absolute;top:57%;left:11%;width:78%;display:grid;grid-template-columns:1fr 1fr;gap:7px;transition:transform .65s cubic-bezier(.22,1,.36,1),opacity .45s}
+.module{background:linear-gradient(145deg,#324b60b0,#15212c80);border:1px solid #7699b24a;border-radius:15px;padding:8px 5px;box-shadow:inset 0 1px 0 #ffffff18;transition:transform .6s,background .6s}
+.module small{font-size:10px;color:#b6c7d5;display:block}
+.module strong{font-size:23px;display:block;letter-spacing:-.7px;font-weight:600}
+#steps{grid-column:span 2;padding:7px 10px}
+#stepsline{display:flex;justify-content:space-between;font-size:10px;color:#c1dbd0}
+#progress{height:4px;border-radius:4px;background:#233b35;margin-top:6px;overflow:hidden}
+#progress i{display:block;width:81%;height:100%;background:linear-gradient(90deg,#42cfad,#c0ed91);border-radius:4px}
+#battery{position:absolute;top:8%;width:100%;font-size:10px;color:#a9e3bf;transition:opacity .5s}
+#detail{position:absolute;inset:48% 12% 12%;background:linear-gradient(145deg,#325778,#102032);border:1px solid #8fc4ec60;border-radius:28px;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;transform:translate(-25%,-4%) scale(.38);transition:all .65s cubic-bezier(.22,1,.36,1);pointer-events:none}
+#detail strong{font-size:32px}
+#detail span{font-size:10px;color:#c0d8ec;margin:4px}
+#rain{position:absolute;inset:0;opacity:0;transition:opacity .5s;pointer-events:none;overflow:hidden}
+.drop{position:absolute;top:-20%;width:1px;height:17px;background:linear-gradient(transparent,#84bfee80);animation:fall 1.9s linear infinite;transform:rotate(15deg)}
+@keyframes fall{to{top:110%}}
+#watch.ambient{background:#000}
+.ambient #dial{opacity:0;transform:scale(.88)}
+.ambient #clock{transform:translateY(38px) scale(1.08);color:#c1c6ce}
+.ambient #date{transform:translateY(35px);opacity:.65}
+.ambient #modules{transform:translateY(-30px) scale(.55);opacity:0}
+.ambient #brand,.ambient #battery{opacity:0}
+.weather #rain{opacity:1}
+.weather #clock{transform:translateY(-15px) scale(.88)}
+.weather #date{transform:translateY(-10px)}
+.weather #brand{opacity:0}
+.weather #modules{opacity:0;transform:translate(18px,8px) scale(.8)}
+.weather #detail{opacity:1;transform:translate(0,0) scale(1)}
+#watch.charging{background:radial-gradient(circle at center,#153f30,#050c09 80%)}
+.charging #dial{transform:rotate(20deg)}
+.charging #battery{color:#9bffb5}
+.charging #clock{color:#d1ffdf}
+.charging #modules .module{background:linear-gradient(145deg,#244739,#0c221a)}
+#controls{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
+#controls button{border:1px solid #ffffff25;background:#1b222c;color:#bfcbd9;padding:9px 11px;font-size:12px;border-radius:20px;cursor:pointer}
+#controls button.selected{background:#e5edf7;color:#111927}
+#modecaption{font-size:11px;color:#9aaaba;margin:12px 0 0;min-height:30px}
+@media(prefers-reduced-motion:reduce){#aura-demo *{transition:none!important;animation:none!important}}
+</style>
+<div id="watch" class="ambient">
+<svg id="dial" viewBox="0 0 280 280"><circle cx="140" cy="140" r="132" fill="none" stroke="#324557" stroke-width="1" stroke-dasharray="1 12.82"/><path d="M18 140 A122 122 0 0 1 85 31" stroke="#64c5f4" stroke-width="3.5" stroke-linecap="round" fill="none"/><path d="M195 31 A122 122 0 0 1 262 140" stroke="#8bd7a0" stroke-width="3.5" stroke-linecap="round" fill="none"/><path d="M42 213 A122 122 0 0 0 238 213" stroke="#263744" stroke-width="2" fill="none"/></svg>
+<div id="rain"></div>
+<div id="battery">▰ 78%</div><div id="date">11.27 · FRIDAY</div><div id="clock">20:47</div><div id="brand">AURA ULTRA</div>
+<div id="modules"><div class="module"><small>날씨 · 강수</small><strong>8°</strong><small>강수확률 70%</small></div><div class="module"><small style="color:#f5a2ae">♥ 심박수</small><strong>78</strong><small>BPM</small></div><div class="module" id="steps"><div id="stepsline"><span>걸음수</span><span>6,482 / 8,000</span></div><div id="progress"><i></i></div></div></div>
+<div id="detail"><strong>8°</strong><span>약한 비 · 강수확률 70%</span><span>강수량 1.2 mm/h</span><div style="display:flex;gap:12px;margin-top:7px;font-size:10px;color:#c1e4ff"><div>21시<br>8° ☂</div><div>22시<br>7° ☂</div><div>23시<br>6° ☁</div></div></div>
+</div>
+<div id="controls"><button data-state="ambient" class="selected">AOD</button><button data-state="active">활성화</button><button data-state="weather">날씨 상세</button><button data-state="charging">충전</button></div>
+<p id="modecaption">AOD · 시간 중심의 저전력 화면</p>
+<script>
+const watch=document.getElementById('watch');
+const captions={ambient:'AOD · 시간 중심의 저전력 화면',active:'활성화 · 시간은 유지되고 정보 패널이 펼쳐집니다.',weather:'날씨 상세 · 기존 정보에서 확장되는 그래픽 연출',charging:'충전 · 인터페이스 전체에 에너지 테마가 적용됩니다.'};
+for(let i=0;i<24;i++){let d=document.createElement('i');d.className='drop';d.style.left=((i*37)%100)+'%';d.style.animationDelay=(-(i%9)*.23)+'s';document.getElementById('rain').appendChild(d)}
+document.querySelectorAll('#controls button').forEach(b=>b.addEventListener('click',()=>{const s=b.dataset.state;watch.className=s;document.querySelectorAll('#controls button').forEach(x=>x.classList.toggle('selected',x===b));document.getElementById('battery').textContent=s==='charging'?'⚡ 78% · 충전 중':'▰ 78%';document.getElementById('modecaption').textContent=captions[s]}));
+</script>
+</div>
+
+
+디자인 및 모션 시뮬레이션입니다. 실제 Wear OS 렌더링 결과는 아니며, 데이터는 예시입니다.
+
+3. 애플 특유의 디테일을 구현하기 위한 기술
+
+기술 적용 효과
+Shared Element Transition 화면 전환 시 동일한 그래픽 요소 유지
+Morphing 그래픽의 자연스러운 형태 변화
+Spring Animation 물리적인 관성과 탄성 표현
+Staggered Animation 각 요소의 미세한 시간차를 이용한 순차 전환
+Parallax 손목 움직임에 따른 입체감
+Dynamic Lighting 움직임에 반응하는 빛과 반사 효과
+Specular Highlight 유리와 금속 표면의 정교한 광택
+Adaptive Typography 정보량에 따른 글자 크기 자동 조절
+Semantic Animation 데이터의 의미에 맞는 애니메이션
+Microinteraction 작은 상태 변화에도 정교한 시각적 피드백
+Optical Alignment 사람의 시각적 특성을 고려한 배치 보정
+Motion Choreography 여러 그래픽 요소의 움직임을 통합 제어
+Progressive Disclosure 필요한 정보만 단계적으로 노출
+
+Apple의 공식 Human Interface Guidelines에서도 시각적 연속성, 일관된 배치, 목적이 명확한 애니메이션을 중요하게 다룹니다.  Apple Developer Documentation Apple Developer Documentation Apple Developer
+
+4. 그래픽 소재 자체에도 물리적 특성 부여
+
+Liquid Glass
+
+빛의 굴절과 투과 효과를 모사합니다.
+
+Dynamic Titanium
+
+손목의 각도에 반응하는 금속 광택을 연출합니다.
+
+Atmospheric Layer
+
+시간과 날씨에 따라 색상과 분위기가 변화합니다.
+
+Spatial Depth
+
+그래픽 레이어마다 서로 다른 깊이와 움직임을 부여합니다.
+
+모든 그래픽 소재에 공통된 광원 방향과 입체감 표현 규칙을 적용합니다. 그래야 각 그래픽이 서로 다른 이미지의 조합처럼 보이지 않습니다.
+
+5. 사용성을 고려한 애플 수준의 세부 설계
+
+화려함만큼 중요한 부분입니다.
+
+즉각적인 정보 전달: 화면이 활성화되면 시간을 먼저 읽을 수 있도록 설계합니다.
+정보 우선순위: 비가 예상되면 강수 정보를 강조하고, 배터리가 부족하면 배터리 정보를 강조합니다.
+시각적 안정성: 데이터가 변경되어도 숫자의 너비와 정보 패널의 위치가 불필요하게 변하지 않도록 합니다.
+자연스러운 피드백: 모든 상태 변화에 의미가 명확한 그래픽 효과를 적용합니다.
+일관된 디자인: 색상, 모서리 곡률, 그림자, 광원, 애니메이션 속도에 공통 규칙을 적용합니다.
+결측 데이터 대응: 측정 실패나 통신 오류 발생 시 오래된 데이터를 최신 데이터처럼 표시하지 않습니다.
+운전 중 가독성: 운전 업무를 고려해 빠르게 읽을 수 있는 고대비 테마도 제공합니다.
+접근성: 애니메이션 감소, 고대비, 글자 크기 설정을 제공합니다.
+
+6. 갤럭시 워치7에서 실제 구현 가능한 범위
+
+공식 개발 문서를 확인한 결과, Wear OS 6 이상에서 지원하는 Watch Face Format 4는 AOD와 활성 화면 사이의 애니메이션 전환을 공식 지원합니다. 위치, 투명도, 보간 효과 등을 이용해 말씀하신 연속적인 그래픽 전환을 구현할 수 있습니다.  Android Developers Android Developers Blog
+
+그래픽 기술 구현 범위
+AOD 연속 전환 공식 지원
+탄성 보간 효과 공식 지원
+손목 기울기에 따른 그래픽 변화 공식 지원
+데이터 기반 그래픽 변화 공식 지원
+요소 간 색상 동기화 공식 지원
+유리 굴절 및 반사 시각적 모사
+복잡한 실시간 3D 물리 효과 제한적
+워치 페이스와 앱 사이의 공유 요소 전환 시스템 제약 존재
+자체 GPU 셰이더 엔진 WFF 내부에서 불가
+
+특히 워치 페이스 자체에는 Kotlin이나 Java 렌더링 코드를 포함할 수 없습니다. 따라서 WFF의 기능을 최대한 활용하고, 상세 정보 앱에서 더 자유로운 애니메이션을 구현하는 구조가 적합합니다.  Android Developers Android Developers Android Developers
+
+7. 프로젝트 핵심 디자인 시스템
+
+기존 AURA Ultra 설계에 다음 7개 시스템을 정식 개발 범위로 추가하는 것을 추천합니다.
+
+시스템 역할
+AURA Continuity 화면 및 상태 간 시각적 연속성
+AURA Motion 통합 애니메이션 설계 및 제어
+AURA Material 유리·금속·빛·그림자 표현
+AURA Intelligence 상황 인식 및 정보 우선순위 판단
+AURA Typography 정교한 숫자 및 문자 표현
+AURA Interaction 사용자 인터랙션 및 피드백
+AURA Efficiency 배터리·메모리·렌더링 최적화
+
+이러한 시스템을 모든 테마에 공통으로 적용하는 것입니다.
+
+최종적으로는 애플 워치 울트라의 정보 전달력 + iOS의 시각적 연속성 + macOS의 소재 표현력 + 갤럭시 워치의 원형 디스플레이에 특화된 독자적인 사용성을 갖춘 제품을 목표로 하면 좋겠습니다.
+
+단순히 애플처럼 생긴 워치 페이스가 아니라, 실제로 사용할 때도 애플 제품 특유의 정교함과 완성도를 느낄 수 있는 워치 페이스를 만드는 것이 핵심입니다.
+
+About Conduit | Global Money Network on Stablecoins
+
+MING Goes with Grade 2 Titanium for Its Monochromatic 37.02 Ghost Watch | HiConsumption
+
+Changelog - ScreenSnap Pro
+
+SyncUp vs Watch2Gether: Complete Feature Comparison | SyncUp
+
+
+you asked
+
+message time: 2026-11-27 20:50:35
+
+이제 심층 리서치를 요구하기 전에 어떤식으로 요구해야 정확하고 구체적이며 디테일하게 알아올 지 프롬프트 구상해줘
+
+
+chatgpt response
+
+심층 리서치에 단순히 "애플 수준의 고급 워치 페이스를 만드는 방법을 조사해 줘"라고 요구하면, 일반적인 개발 방법과 디자인 가이드 위주의 결과가 나올 가능성이 높습니다.
+
+이번에는 실제 개발에 착수할 수 있는 수준의 기술 조사, 디자인 설계, 구현 방법, 오픈소스 활용, 플랫폼 제약 분석, 성능 최적화 및 검증 계획까지 요구하는 것이 좋습니다.
+
+특히 애플 특유의 디테일과 시각적 연속성을 별도의 핵심 연구 분야로 지정해야 합니다.
+
+심층 리서치용 최종 프롬프트
+
+Document
+
+AURA Ultra — 차세대 지능형 프리미엄 워치 페이스 개발을 위한 종합 심층 기술 연구
+
+1. 연구 목적
+
+삼성 갤럭시 워치7에서 사용할 독자적인 프리미엄 워치 페이스를 개발하고자 한다.
+
+기존 상용 워치 페이스의 기능, 디자인, 사용성 및 애니메이션 수준을 넘어서는 것을 목표로 한다.
+
+Apple Watch Ultra, iOS, macOS, watchOS의 디자인 철학과 기술적 장점을 분석하라. 이를 갤럭시 워치의 원형 디스플레이와 Wear OS 환경에 최적화하는 방법을 조사하라.
+
+단순한 외형 모방이 아닌 시각적 완성도, 그래픽 디테일, 지능형 상황 대응, 인터랙션, 애니메이션, 정보 전달력 및 전력 효율을 종합적으로 확보하는 것이 목적이다.
+
+연구 결과는 실제 소프트웨어 개발에 직접 활용할 수 있는 수준으로 작성하라.
+
+2. 대상 기기 및 플랫폼 기술 분석
+
+다음 항목을 최신 공식 기술 문서를 기준으로 조사하라.
+
+갤럭시 워치7 40mm 및 44mm의 하드웨어 사양
+Exynos W1000의 CPU 및 GPU 성능과 전력 효율
+RAM, 저장 공간, 디스플레이 해상도 및 주사율
+OLED 디스플레이와 AOD의 기술적 특성
+Wear OS 및 One UI Watch의 최신 지원 현황
+Watch Face Format(WFF)의 버전별 기능과 기술적 차이
+Watch Face Studio의 기능 및 제약 사항
+Android Studio를 이용한 직접 개발 방법
+Kotlin, Java, Jetpack Compose 및 관련 API의 활용 범위
+WFF 기반 워치 페이스와 별도 애플리케이션 간의 데이터 연동 방식
+그래픽 렌더링, 애니메이션, 센서 및 데이터 접근 제약
+메모리, 이미지 리소스 및 배터리 관련 공식 제한
+개인 사용 목적의 APK 빌드, 서명, 설치 및 업데이트 방법
+Google Play Store 배포 시 적용되는 기술 및 정책 요건
+
+공식적으로 지원되는 기능과 기술적으로 불가능한 기능을 명확히 구분하라.
+
+플랫폼 버전에 따라 지원 범위가 달라지는 경우 최소 요구 버전과 호환 조건을 명시하라.
+
+3. Apple 디자인 철학 및 그래픽 기술 심층 분석
+
+Apple Watch Ultra, iOS, macOS 및 watchOS에 적용된 디자인 원칙과 그래픽 기술을 분석하라.
+
+Apple Human Interface Guidelines를 기본 참고 자료로 활용하라.
+
+다음 분야를 집중적으로 조사하라.
+
+Liquid Glass
+Dynamic Island의 시각적 상태 전환
+Shared Element Transition
+Continuous Motion
+Connected Animation
+Morphing Animation
+Spring Animation
+Spatial UI
+Motion Choreography
+Microinteraction
+Progressive Disclosure
+Optical Alignment
+Adaptive Typography
+Material Design 및 Material Rendering
+Dynamic Lighting
+Specular Highlight
+Parallax
+유리의 반사, 굴절 및 투과 효과
+금속 소재의 광택 및 입체감 표현
+그래픽 레이어 간 깊이와 공간감
+색상, 그림자, 광원 및 곡률의 일관성
+시각적 계층 구조와 정보 우선순위
+사용자의 인지 부담을 줄이는 인터랙션 설계
+
+특히 폴더블 기기의 외부 화면에서 내부 화면으로 전환되는 그래픽처럼, 기존 그래픽 요소가 새로운 화면으로 자연스럽게 이어지는 시각적 연속성을 집중적으로 연구하라.
+
+화면이 단순히 교체되는 것이 아닌 하나의 그래픽 객체가 이동, 확장, 수축 및 변형되는 것처럼 느껴지는 구현 방법을 조사하라.
+
+Apple의 공개 기술 문서와 실제 제품에서 관찰할 수 있는 동작을 구분하라. 공개되지 않은 내부 구현 기술을 사실로 단정하지 마라.
+
+각 기술을 Wear OS 및 WFF 환경에서 구현할 수 있는지 분석하라.
+
+직접 구현할 수 없는 기술은 가장 유사한 시각적 결과를 제공하는 대체 구현 방법을 제시하라.
+
+4. 차세대 워치 페이스 애니메이션 시스템
+
+단순 반복 애니메이션이 아닌 상태, 데이터, 센서 및 사용자 행동에 반응하는 통합 애니메이션 시스템을 설계하라.
+
+다음 상황별 연출을 구체적으로 연구하라.
+
+화면 상태 전환
+
+AOD에서 활성 화면으로 전환
+활성 화면에서 AOD로 전환
+화면 활성화 시 그래픽의 자연스러운 확장
+화면 비활성화 시 그래픽의 자연스러운 수축
+일반 모드와 절전 모드 사이의 연속적인 전환
+워치 페이스와 상세 정보 화면 사이의 시각적 연속성
+
+시간 및 데이터 변화
+
+시간과 날짜 변경 시 숫자의 형태 변환
+숫자의 개별 롤링 애니메이션
+걸음수 변화에 따른 게이지 애니메이션
+활동 목표 달성 시 시각적 피드백
+심박수에 따른 맥동 효과
+배터리 잔량 변화에 따른 그래픽 변화
+충전 시작 및 완료 애니메이션
+
+환경 및 센서 반응
+
+손목 기울기에 따른 입체적인 시차 효과
+기울기에 반응하는 유리 및 금속 광택
+시간에 따른 배경과 색온도 변화
+일출 및 일몰에 따른 자연스러운 조명 변화
+비, 눈, 구름, 안개 및 천둥 등의 기상 애니메이션
+날씨 상태 간 자연스러운 그래픽 형태 변환
+사용자 활동 상태에 따른 인터페이스 변화
+
+애니메이션 품질
+
+물리 기반 움직임
+가속 및 감속 곡선
+관성 및 탄성 효과
+프레임 간 보간
+복수 그래픽 요소의 동기화
+애니메이션 중단 및 재개 처리
+빠른 상태 변경에 대한 대응
+프레임 저하 및 끊김 방지
+애니메이션 감소 접근성 옵션
+
+각 애니메이션에 다음 내용을 포함하라.
+
+구현 목적
+시작 상태 및 종료 상태
+그래픽 요소별 동작
+권장 재생 시간
+권장 보간 함수
+구현 가능한 WFF 요소 또는 API
+플랫폼 제약 사항
+대체 구현 방법
+예상 성능 및 배터리 영향
+검증 방법
+
+5. 그래픽 렌더링 및 소재 표현 기술
+
+고급스러운 시각적 완성도를 확보하기 위한 그래픽 기술을 연구하라.
+
+실시간 렌더링과 사전 렌더링의 비교
+벡터 및 래스터 그래픽의 최적 활용
+SVG, PNG, WebP 및 이미지 시퀀스 활용
+그라데이션 및 다중 그래픽 레이어
+알파 블렌딩과 반투명 소재
+마스크 및 클리핑
+안티앨리어싱
+빛의 반사 및 굴절 모사
+동적 그림자
+금속 및 유리 질감
+2.5D 그래픽
+셰이더 기반 그래픽의 적용 가능성
+GPU 가속 활용 가능성
+고해상도 그래픽의 메모리 최적화
+색상 밴딩 방지
+원형 디스플레이의 가장자리 처리
+
+실제 광학 효과와 시각적 모사 효과를 구분하라.
+
+정적 그래픽, 동적 그래픽 및 사전 렌더링 그래픽을 조합하는 최적의 방법을 제시하라.
+
+복잡한 그래픽 엔진을 직접 개발하지 않고도 높은 시각적 완성도를 확보하는 방법을 우선 조사하라.
+
+6. 정보 표시 및 데이터 연동 시스템
+
+다음 데이터를 워치 페이스에 표시하는 방법을 연구하라.
+
+시간, 날짜 및 요일
+걸음수 및 걸음수 목표
+활동량
+이동 거리
+소비 칼로리
+심박수
+혈중 산소 포화도
+스트레스
+수면 시간 및 수면 품질
+현재 기온 및 체감 온도
+최고 및 최저 기온
+강수확률
+시간당 강수량
+일일 누적 강수량
+예상 강수 시작 및 종료 시각
+시간대별 날씨 예보
+습도
+풍속 및 풍향
+자외선 지수
+미세먼지 및 초미세먼지
+일출 및 일몰 시각
+워치 배터리 잔량
+예상 배터리 잔여 사용 시간
+스마트폰 배터리 잔량
+일정 및 다음 알람
+
+Wear OS Health Services, Health Connect, Samsung Health, Samsung Health 관련 SDK, Complication API 및 Wear OS Data Layer API를 조사하라.
+
+각 데이터에 대해 다음 사항을 분석하라.
+
+공식 데이터 공급원
+접근 권한
+별도 앱 또는 SDK 필요 여부
+실시간 데이터 접근 가능 여부
+데이터 갱신 주기
+측정 정확도와 제약 사항
+배터리 및 네트워크 영향
+API 사용 비용 및 라이선스
+오프라인 처리 방법
+데이터 캐싱 방법
+데이터 누락 및 오류 처리
+마지막 갱신 시각 표시 방법
+
+한국 기상 환경에 적합한 무료 또는 저비용 기상 API를 비교하라.
+
+기상청, Open-Meteo 등 활용 가능한 데이터 공급원을 조사하라.
+
+강수확률, 관측 강수량 및 예측 강수량을 명확하게 구분하라.
+
+7. 지능형 상황 인식 및 적응형 인터페이스
+
+사용자의 현재 상황을 판단하여 정보의 우선순위, 그래픽 및 애니메이션을 자동 조정하는 시스템을 설계하라.
+
+다음 상태를 고려하라.
+
+주간 및 야간
+실내 및 실외
+맑음, 비, 눈 및 악천후
+휴식 및 활동
+운동
+업무
+수면 준비
+배터리 부족
+충전
+통신 연결 해제
+센서 데이터 수신 실패
+
+다음 기술을 비교하라.
+
+규칙 기반 엔진
+유한 상태 머신
+이벤트 기반 시스템
+통계 기반 예측 알고리즘
+경량 머신러닝
+온디바이스 AI
+사용자 행동 패턴 학습
+
+LLM과 생성형 AI는 필수 요소로 간주하지 마라.
+
+낮은 연산 비용으로 실질적인 지능형 기능을 제공할 수 있는 기술을 우선 검토하라.
+
+불필요한 상태 전환을 방지하는 히스테리시스, 디바운싱 및 우선순위 정책을 설계하라.
+
+정보 배치가 지나치게 자주 변경되어 사용성이 저하되는 문제도 고려하라.
+
+8. 사용자 경험 및 디자인 시스템
+
+애플 수준의 사용성과 시각적 완성도를 확보하기 위한 독자적인 디자인 시스템을 설계하라.
+
+다음 항목을 포함하라.
+
+원형 디스플레이 전용 레이아웃
+그래픽 및 정보 표시의 안전 영역
+글자 크기 및 가독성
+타이포그래피
+색상 체계
+의미 기반 색상 사용
+아이콘 규격
+간격 체계
+모서리 곡률
+그림자 및 광원 규칙
+소재 표현 규칙
+터치 영역
+시각적 피드백
+애니메이션 규격
+접근성
+고대비 모드
+야간 모드
+AOD 전용 디자인
+정보 표시 밀도 조절
+사용자 지정 컴플리케이션
+다중 테마 및 색상 설정
+
+40mm 및 44mm 모델에서 모두 높은 완성도를 유지하는 반응형 디자인 방법을 제시하라.
+
+다음 디자인 유형을 검토하라.
+
+Titanium: 고급 금속 소재 기반
+Crystal: Liquid Glass 기반
+Ultra: 고밀도 정보 표시
+Obsidian: OLED 순수 검정 기반
+Chronograph: 아날로그와 디지털의 결합
+Aurora: 동적 조명 및 그라데이션
+
+공통 디자인 시스템을 재사용하면서 각 테마의 독자적인 개성을 유지하는 방법을 설계하라.
+
+9. 오픈소스 및 개발 자산 조사
+
+개발 난이도, 개발 기간 및 유지보수 비용을 줄이기 위해 검증된 오픈소스를 적극적으로 활용하라.
+
+다음 분야에서 활용 가능한 프로젝트를 조사하라.
+
+Wear OS 워치 페이스
+WFF 개발 및 검증
+그래픽 렌더링
+벡터 그래픽
+애니메이션
+물리 기반 애니메이션
+기상 데이터 연동
+건강 데이터 연동
+배터리 사용량 예측
+센서 데이터 처리
+상황 인식
+규칙 기반 엔진
+데이터 캐싱
+테스트 자동화
+성능 프로파일링
+디자인 시스템
+아이콘 및 글꼴
+Android 및 Wear OS 빌드 자동화
+
+Google, Samsung, Android 공식 샘플 프로젝트와 GitHub의 검증된 오픈소스를 우선 조사하라.
+
+각 프로젝트에 다음 정보를 포함하라.
+
+프로젝트 이름
+공식 저장소 URL
+주요 기능
+구현 언어 및 기술 스택
+라이선스
+최신 릴리스 및 유지보수 상태
+갤럭시 워치7 호환성
+WFF 또는 Wear OS 호환성
+의존성 및 보안 위험
+성능 및 리소스 요구량
+재사용 가능한 기능
+통합 난이도
+수정 필요 범위
+도입 권장 여부
+
+GitHub Star 수만으로 프로젝트의 품질을 판단하지 마라.
+
+실제 활용 가능성과 유지보수 상태를 함께 평가하라.
+
+직접 재사용이 불가능한 경우 개발 참고 자료 또는 알고리즘 참고 자료로 활용할 수 있는지 분석하라.
+
+10. 소프트웨어 아키텍처 설계
+
+다음 설계 원칙을 적용한 최적의 소프트웨어 아키텍처를 제시하라.
+
+Clean Architecture
+Separation of Concerns
+Dependency Injection
+모듈화
+낮은 결합도
+높은 응집도
+이벤트 기반 처리
+확장성
+테스트 가능성
+장애 격리
+유지보수성
+
+다음 구성 요소의 역할과 책임을 설계하라.
+
+Watch Face 모듈
+AURA Continuity
+AURA Motion
+AURA Material
+AURA Intelligence
+AURA Typography
+AURA Interaction
+AURA Efficiency
+Health Data 모듈
+Weather Data 모듈
+Sensor Data 모듈
+Complication Data Source
+Configuration 모듈
+Theme 모듈
+Cache 모듈
+Diagnostics 모듈
+Smartphone Companion App
+
+워치 페이스 APK, Wear OS 데이터 처리 앱 및 스마트폰 Companion App의 분리 여부를 비교하라.
+
+각 모듈이 실제로 어느 실행 환경에서 동작할 수 있는지 명확히 정의하라.
+
+WFF에서 임의의 프로그램 코드를 실행할 수 없는 제약을 반드시 고려하라.
+
+모듈 간 데이터 흐름, 인터페이스, 의존성, 오류 처리 및 데이터 갱신 정책을 구체적으로 설계하라.
+
+11. 성능 및 배터리 최적화
+
+화려한 그래픽과 애니메이션을 유지하면서 배터리 소모를 최소화하는 방법을 집중적으로 연구하라.
+
+CPU 사용량 최적화
+GPU 사용량 최적화
+RAM 사용량 최적화
+렌더링 비용 절감
+불필요한 프레임 갱신 방지
+이미지 리소스 압축
+그래픽 리소스 재사용
+애니메이션 실행 조건 최적화
+센서 샘플링 주기 조절
+네트워크 통신 최소화
+데이터 캐싱
+백그라운드 작업 최소화
+화면 상태 기반 전력 관리
+배터리 잔량 기반 적응형 품질 조절
+AOD 메모리 및 전력 최적화
+OLED 번인 위험 완화
+발열 및 성능 저하 대응
+
+고품질 모드, 균형 모드, 절전 모드 및 AOD 모드의 차이를 구체적으로 설계하라.
+
+공식 제한과 프로젝트 자체 성능 목표를 구분하라.
+
+실기기 측정 전에는 배터리 사용 시간, 프레임 속도 및 성능 개선 수치를 검증된 결과로 단정하지 마라.
+
+12. 보안, 개인정보 및 안정성
+
+건강 데이터와 위치 정보를 다루는 만큼 개인정보 보호를 기본 설계에 포함하라.
+
+최소 권한 원칙
+건강 데이터 접근 권한 관리
+개인정보의 로컬 처리
+안전한 데이터 저장
+API Key 보호
+HTTPS 통신
+외부 데이터 검증
+통신 장애 대응
+센서 오류 대응
+비정상 데이터 처리
+데이터 갱신 실패 대응
+권한 철회 대응
+업데이트 무결성
+의존성 보안 검사
+앱 충돌 및 메모리 부족 대응
+정상 기능으로의 복구
+
+특정 모듈에 장애가 발생해도 기본 시간과 날짜는 정상적으로 표시할 수 있도록 설계하라.
+
+13. 개발 및 검증 전략
+
+전체 프로젝트를 단계별 작업지시서(WO)로 분할하라.
+
+Codex를 주 개발 도구로 사용한다.
+
+Grok Build 및 Antigravity CLI는 독립 조사, 병렬 개발, 코드 검토 및 품질 검증에 활용할 수 있도록 고려하라.
+
+각 WO에 다음 내용을 포함하라.
+
+작업 목적
+선행 조건
+구현 범위
+제외 범위
+세부 구현 항목
+권장 기술
+활용 가능한 오픈소스
+예상 난이도
+산출물
+테스트 항목
+완료 기준
+다음 단계 진입 조건
+GO, PARTIAL, NO-GO 판정 기준
+
+다음 검증 방법을 포함하라.
+
+단위 테스트
+통합 테스트
+UI 테스트
+WFF 규격 검증
+메모리 검증
+그래픽 시각적 회귀 테스트
+애니메이션 프레임 분석
+배터리 소모 측정
+발열 측정
+장시간 안정성 테스트
+AOD 전환 테스트
+오프라인 테스트
+센서 및 네트워크 장애 테스트
+갤럭시 워치7 실기기 테스트
+기존 상용 워치 페이스와의 비교 시험
+
+특히 개발 초기 단계에서 핵심 그래픽 및 애니메이션 기술의 실현 가능성을 검증할 수 있는 PoC를 설계하라.
+
+기술적으로 불가능한 기능을 후반 개발 단계에서 발견하지 않도록 하라.
+
+14. 경쟁 제품 및 기술 비교
+
+Galaxy Watch 기본 워치 페이스, Apple Watch Ultra 워치 페이스 및 고품질 상용 Wear OS 워치 페이스를 조사하라.
+
+다음 항목을 기준으로 비교하라.
+
+디자인 완성도
+정보 전달력
+정보 표시 밀도
+그래픽 디테일
+애니메이션 품질
+시각적 연속성
+사용성
+지능형 기능
+사용자 설정 범위
+배터리 효율
+접근성
+기술적 제약
+
+경쟁 제품의 장점과 단점을 분석하라.
+
+AURA Ultra가 차별화할 수 있는 기능과 현실적으로 달성할 수 있는 경쟁 우위를 제시하라.
+
+실측 자료가 없는 비교는 정성적 평가 또는 가설로 표시하라.
+
+15. 연구 결과 작성 기준
+
+모든 기술적 주장은 가능한 한 공식 문서, 학술 자료, 실제 소스코드, 공식 저장소 및 검증된 기술 자료를 근거로 작성하라.
+
+다음 자료를 우선 활용하라.
+
+Google Android Developers
+Wear OS 공식 개발 문서
+Samsung Developers
+Apple Developer
+Apple Human Interface Guidelines
+공식 GitHub 저장소
+관련 학술 논문 및 기술 발표 자료
+
+최신 자료와 구형 자료를 구분하라.
+
+폐기 예정 API, 지원 종료 API 및 비공식 우회 방법을 명확하게 표시하라.
+
+모든 주요 기능과 기술을 다음과 같이 분류하라.
+
+A. 공식 규격에서 직접 구현 가능
+
+B. 별도 앱 또는 데이터 공급원을 통해 구현 가능
+
+C. 사전 렌더링 및 그래픽 기법으로 유사 효과 구현 가능
+
+D. 추가적인 기술 검증이 필요
+
+E. 현재 플랫폼에서 구현 불가능
+
+단순한 기술 소개나 추상적인 권장 사항으로 끝내지 마라.
+
+가능한 경우 실제 XML, Kotlin 및 관련 설정 코드 예시를 포함하라.
+
+코드 예시는 사용 가능한 API 및 공식 규격과 일치하는지 검토하라.
+
+16. 최종 산출물
+
+최종 연구 보고서에 다음 내용을 포함하라.
+
+핵심 연구 결과 요약
+갤럭시 워치7 기술 및 플랫폼 제약 분석
+Apple 디자인 및 그래픽 기술 분석
+구현 가능성 매트릭스
+프리미엄 워치 페이스 디자인 시스템
+상황별 애니메이션 명세
+고급 그래픽 및 소재 표현 설계
+지능형 상황 인식 시스템 설계
+건강 및 기상 데이터 연동 설계
+활용 가능한 오픈소스 목록과 도입 전략
+전체 소프트웨어 아키텍처
+모듈별 인터페이스와 데이터 흐름
+권장 기술 스택
+권장 프로젝트 디렉터리 구조
+성능 및 배터리 최적화 전략
+보안 및 안정성 설계
+경쟁 제품 비교 분석
+핵심 기술 PoC 검증 계획
+단계별 개발 로드맵 및 작업지시서
+테스트 및 품질 검증 계획
+기술 위험과 대응 방안
+최종 구현 권장안
+출처 및 참고 자료
+
+설계 대안이 여러 개 존재하는 경우 각각의 장점, 단점, 구현 난이도, 유지보수성 및 전력 효율을 비교하라.
+
+최종적으로 갤럭시 워치7의 플랫폼 제약 안에서 달성할 수 있는 가장 높은 수준의 디자인, 그래픽, 애니메이션, 사용성 및 지능형 기능을 제공하는 개발 방안을 선정하라.
+
+기술적 정확성, 구체성, 실현 가능성 및 연구의 완성도를 우선하라. 보고서 분량을 줄이기 위해 필수적인 기술 설명을 생략하지 마라.
+
+
+
+이 프롬프트에서 특히 중요한 부분
+
+연구 분야 중요도 목적
+플랫폼 제약 및 호환성 최우선 구현 불가능한 기술을 사전에 배제
+시각적 연속성 최우선 애플 특유의 자연스러운 화면 전환 구현
+그래픽 및 소재 표현 최우선 상용 워치 페이스를 넘어서는 시각적 완성도
+UX 및 마이크로인터랙션 최우선 작은 화면에서도 뛰어난 사용성 확보
+배터리 및 성능 최우선 화려함과 실용성의 양립
+지능형 적응 시스템 높음 기존 워치 페이스와의 기능적 차별화
+오픈소스 활용 높음 개발 기간과 구현 난이도 단축
+소프트웨어 아키텍처 높음 확장성과 유지보수성 확보
+경쟁 제품 분석 높음 객관적인 품질 목표 설정
+
+연구 결과를 받은 이후의 진행 방향
+
+이번 프로젝트에서는 특히 본격적인 개발 이전에 핵심 애니메이션의 PoC(개념 증명)를 진행하는 것이 중요합니다. 시각적 연속성, 동적 소재 표현 및 AOD 전환이 실제 워치에서 어느 수준까지 가능한지 먼저 확인해야 합니다.
+
+개발 초기부터 이 부분을 검증하면 구현 불가능한 기능을 전제로 전체 아키텍처를 설계하는 문제를 예방할 수 있습니다.
+
+갤럭시 워치7의 크기와 현재 Wear OS 버전이 확인되지 않았으므로 연구 범위에는 두 가지 크기와 버전별 호환성을 모두 포함했습니다.
+
+현재는 심층 리서치를 실행하지 않았으며, 연구용 프롬프트만 작성한 상태입니다.
+
+
+you asked
+
+message time: 2026-11-27 20:51:59
+
+$app&#x20;
+
+AURA Ultra — 차세대 지능형 프리미엄 워치 페이스 개발을 위한 종합 심층 기술 연구
+
+1. 연구 목적
+
+삼성 갤럭시 워치7에서 사용할 독자적인 프리미엄 워치 페이스를 개발하고자 한다.
+
+기존 상용 워치 페이스의 기능, 디자인, 사용성 및 애니메이션 수준을 넘어서는 것을 목표로 한다.
+
+Apple Watch Ultra, iOS, macOS, watchOS의 디자인 철학과 기술적 장점을 분석하라. 이를 갤럭시 워치의 원형 디스플레이와 Wear OS 환경에 최적화하는 방법을 조사하라.
+
+단순한 외형 모방이 아닌 시각적 완성도, 그래픽 디테일, 지능형 상황 대응, 인터랙션, 애니메이션, 정보 전달력 및 전력 효율을 종합적으로 확보하는 것이 목적이다.
+
+연구 결과는 실제 소프트웨어 개발에 직접 활용할 수 있는 수준으로 작성하라.
+
+2. 대상 기기 및 플랫폼 기술 분석
+
+다음 항목을 최신 공식 기술 문서를 기준으로 조사하라.
+
+갤럭시 워치7 40mm 및 44mm의 하드웨어 사양
+Exynos W1000의 CPU 및 GPU 성능과 전력 효율
+RAM, 저장 공간, 디스플레이 해상도 및 주사율
+OLED 디스플레이와 AOD의 기술적 특성
+Wear OS 및 One UI Watch의 최신 지원 현황
+Watch Face Format(WFF)의 버전별 기능과 기술적 차이
+Watch Face Studio의 기능 및 제약 사항
+Android Studio를 이용한 직접 개발 방법
+Kotlin, Java, Jetpack Compose 및 관련 API의 활용 범위
+WFF 기반 워치 페이스와 별도 애플리케이션 간의 데이터 연동 방식
+그래픽 렌더링, 애니메이션, 센서 및 데이터 접근 제약
+메모리, 이미지 리소스 및 배터리 관련 공식 제한
+개인 사용 목적의 APK 빌드, 서명, 설치 및 업데이트 방법
+Google Play Store 배포 시 적용되는 기술 및 정책 요건
+
+공식적으로 지원되는 기능과 기술적으로 불가능한 기능을 명확히 구분하라.
+
+플랫폼 버전에 따라 지원 범위가 달라지는 경우 최소 요구 버전과 호환 조건을 명시하라.
+
+3. Apple 디자인 철학 및 그래픽 기술 심층 분석
+
+Apple Watch Ultra, iOS, macOS 및 watchOS에 적용된 디자인 원칙과 그래픽 기술을 분석하라.
+
+Apple Human Interface Guidelines를 기본 참고 자료로 활용하라.
+
+다음 분야를 집중적으로 조사하라.
+
+Liquid Glass
+Dynamic Island의 시각적 상태 전환
+Shared Element Transition
+Continuous Motion
+Connected Animation
+Morphing Animation
+Spring Animation
+Spatial UI
+Motion Choreography
+Microinteraction
+Progressive Disclosure
+Optical Alignment
+Adaptive Typography
+Material Design 및 Material Rendering
+Dynamic Lighting
+Specular Highlight
+Parallax
+유리의 반사, 굴절 및 투과 효과
+금속 소재의 광택 및 입체감 표현
+그래픽 레이어 간 깊이와 공간감
+색상, 그림자, 광원 및 곡률의 일관성
+시각적 계층 구조와 정보 우선순위
+사용자의 인지 부담을 줄이는 인터랙션 설계
+
+특히 폴더블 기기의 외부 화면에서 내부 화면으로 전환되는 그래픽처럼, 기존 그래픽 요소가 새로운 화면으로 자연스럽게 이어지는 시각적 연속성을 집중적으로 연구하라.
+
+화면이 단순히 교체되는 것이 아닌 하나의 그래픽 객체가 이동, 확장, 수축 및 변형되는 것처럼 느껴지는 구현 방법을 조사하라.
+
+Apple의 공개 기술 문서와 실제 제품에서 관찰할 수 있는 동작을 구분하라. 공개되지 않은 내부 구현 기술을 사실로 단정하지 마라.
+
+각 기술을 Wear OS 및 WFF 환경에서 구현할 수 있는지 분석하라.
+
+직접 구현할 수 없는 기술은 가장 유사한 시각적 결과를 제공하는 대체 구현 방법을 제시하라.
+
+4. 차세대 워치 페이스 애니메이션 시스템
+
+단순 반복 애니메이션이 아닌 상태, 데이터, 센서 및 사용자 행동에 반응하는 통합 애니메이션 시스템을 설계하라.
+
+다음 상황별 연출을 구체적으로 연구하라.
+
+화면 상태 전환
+
+AOD에서 활성 화면으로 전환
+활성 화면에서 AOD로 전환
+화면 활성화 시 그래픽의 자연스러운 확장
+화면 비활성화 시 그래픽의 자연스러운 수축
+일반 모드와 절전 모드 사이의 연속적인 전환
+워치 페이스와 상세 정보 화면 사이의 시각적 연속성
+
+시간 및 데이터 변화
+
+시간과 날짜 변경 시 숫자의 형태 변환
+숫자의 개별 롤링 애니메이션
+걸음수 변화에 따른 게이지 애니메이션
+활동 목표 달성 시 시각적 피드백
+심박수에 따른 맥동 효과
+배터리 잔량 변화에 따른 그래픽 변화
+충전 시작 및 완료 애니메이션
+
+환경 및 센서 반응
+
+손목 기울기에 따른 입체적인 시차 효과
+기울기에 반응하는 유리 및 금속 광택
+시간에 따른 배경과 색온도 변화
+일출 및 일몰에 따른 자연스러운 조명 변화
+비, 눈, 구름, 안개 및 천둥 등의 기상 애니메이션
+날씨 상태 간 자연스러운 그래픽 형태 변환
+사용자 활동 상태에 따른 인터페이스 변화
+
+애니메이션 품질
+
+물리 기반 움직임
+가속 및 감속 곡선
+관성 및 탄성 효과
+프레임 간 보간
+복수 그래픽 요소의 동기화
+애니메이션 중단 및 재개 처리
+빠른 상태 변경에 대한 대응
+프레임 저하 및 끊김 방지
+애니메이션 감소 접근성 옵션
+
+각 애니메이션에 다음 내용을 포함하라.
+
+구현 목적
+시작 상태 및 종료 상태
+그래픽 요소별 동작
+권장 재생 시간
+권장 보간 함수
+구현 가능한 WFF 요소 또는 API
+플랫폼 제약 사항
+대체 구현 방법
+예상 성능 및 배터리 영향
+검증 방법
+
+5. 그래픽 렌더링 및 소재 표현 기술
+
+고급스러운 시각적 완성도를 확보하기 위한 그래픽 기술을 연구하라.
+
+실시간 렌더링과 사전 렌더링의 비교
+벡터 및 래스터 그래픽의 최적 활용
+SVG, PNG, WebP 및 이미지 시퀀스 활용
+그라데이션 및 다중 그래픽 레이어
+알파 블렌딩과 반투명 소재
+마스크 및 클리핑
+안티앨리어싱
+빛의 반사 및 굴절 모사
+동적 그림자
+금속 및 유리 질감
+2.5D 그래픽
+셰이더 기반 그래픽의 적용 가능성
+GPU 가속 활용 가능성
+고해상도 그래픽의 메모리 최적화
+색상 밴딩 방지
+원형 디스플레이의 가장자리 처리
+
+실제 광학 효과와 시각적 모사 효과를 구분하라.
+
+정적 그래픽, 동적 그래픽 및 사전 렌더링 그래픽을 조합하는 최적의 방법을 제시하라.
+
+복잡한 그래픽 엔진을 직접 개발하지 않고도 높은 시각적 완성도를 확보하는 방법을 우선 조사하라.
+
+6. 정보 표시 및 데이터 연동 시스템
+
+다음 데이터를 워치 페이스에 표시하는 방법을 연구하라.
+
+시간, 날짜 및 요일
+걸음수 및 걸음수 목표
+활동량
+이동 거리
+소비 칼로리
+심박수
+혈중 산소 포화도
+스트레스
+수면 시간 및 수면 품질
+현재 기온 및 체감 온도
+최고 및 최저 기온
+강수확률
+시간당 강수량
+일일 누적 강수량
+예상 강수 시작 및 종료 시각
+시간대별 날씨 예보
+습도
+풍속 및 풍향
+자외선 지수
+미세먼지 및 초미세먼지
+일출 및 일몰 시각
+워치 배터리 잔량
+예상 배터리 잔여 사용 시간
+스마트폰 배터리 잔량
+일정 및 다음 알람
+
+Wear OS Health Services, Health Connect, Samsung Health, Samsung Health 관련 SDK, Complication API 및 Wear OS Data Layer API를 조사하라.
+
+각 데이터에 대해 다음 사항을 분석하라.
+
+공식 데이터 공급원
+접근 권한
+별도 앱 또는 SDK 필요 여부
+실시간 데이터 접근 가능 여부
+데이터 갱신 주기
+측정 정확도와 제약 사항
+배터리 및 네트워크 영향
+API 사용 비용 및 라이선스
+오프라인 처리 방법
+데이터 캐싱 방법
+데이터 누락 및 오류 처리
+마지막 갱신 시각 표시 방법
+
+한국 기상 환경에 적합한 무료 또는 저비용 기상 API를 비교하라.
+
+기상청, Open-Meteo 등 활용 가능한 데이터 공급원을 조사하라.
+
+강수확률, 관측 강수량 및 예측 강수량을 명확하게 구분하라.
+
+7. 지능형 상황 인식 및 적응형 인터페이스
+
+사용자의 현재 상황을 판단하여 정보의 우선순위, 그래픽 및 애니메이션을 자동 조정하는 시스템을 설계하라.
+
+다음 상태를 고려하라.
+
+주간 및 야간
+실내 및 실외
+맑음, 비, 눈 및 악천후
+휴식 및 활동
+운동
+업무
+수면 준비
+배터리 부족
+충전
+통신 연결 해제
+센서 데이터 수신 실패
+
+다음 기술을 비교하라.
+
+규칙 기반 엔진
+유한 상태 머신
+이벤트 기반 시스템
+통계 기반 예측 알고리즘
+경량 머신러닝
+온디바이스 AI
+사용자 행동 패턴 학습
+
+LLM과 생성형 AI는 필수 요소로 간주하지 마라.
+
+낮은 연산 비용으로 실질적인 지능형 기능을 제공할 수 있는 기술을 우선 검토하라.
+
+불필요한 상태 전환을 방지하는 히스테리시스, 디바운싱 및 우선순위 정책을 설계하라.
+
+정보 배치가 지나치게 자주 변경되어 사용성이 저하되는 문제도 고려하라.
+
+8. 사용자 경험 및 디자인 시스템
+
+애플 수준의 사용성과 시각적 완성도를 확보하기 위한 독자적인 디자인 시스템을 설계하라.
+
+다음 항목을 포함하라.
+
+원형 디스플레이 전용 레이아웃
+그래픽 및 정보 표시의 안전 영역
+글자 크기 및 가독성
+타이포그래피
+색상 체계
+의미 기반 색상 사용
+아이콘 규격
+간격 체계
+모서리 곡률
+그림자 및 광원 규칙
+소재 표현 규칙
+터치 영역
+시각적 피드백
+애니메이션 규격
+접근성
+고대비 모드
+야간 모드
+AOD 전용 디자인
+정보 표시 밀도 조절
+사용자 지정 컴플리케이션
+다중 테마 및 색상 설정
+
+40mm 및 44mm 모델에서 모두 높은 완성도를 유지하는 반응형 디자인 방법을 제시하라.
+
+다음 디자인 유형을 검토하라.
+
+Titanium: 고급 금속 소재 기반
+Crystal: Liquid Glass 기반
+Ultra: 고밀도 정보 표시
+Obsidian: OLED 순수 검정 기반
+Chronograph: 아날로그와 디지털의 결합
+Aurora: 동적 조명 및 그라데이션
+
+공통 디자인 시스템을 재사용하면서 각 테마의 독자적인 개성을 유지하는 방법을 설계하라.
+
+9. 오픈소스 및 개발 자산 조사
+
+개발 난이도, 개발 기간 및 유지보수 비용을 줄이기 위해 검증된 오픈소스를 적극적으로 활용하라.
+
+다음 분야에서 활용 가능한 프로젝트를 조사하라.
+
+Wear OS 워치 페이스
+WFF 개발 및 검증
+그래픽 렌더링
+벡터 그래픽
+애니메이션
+물리 기반 애니메이션
+기상 데이터 연동
+건강 데이터 연동
+배터리 사용량 예측
+센서 데이터 처리
+상황 인식
+규칙 기반 엔진
+데이터 캐싱
+테스트 자동화
+성능 프로파일링
+디자인 시스템
+아이콘 및 글꼴
+Android 및 Wear OS 빌드 자동화
+
+Google, Samsung, Android 공식 샘플 프로젝트와 GitHub의 검증된 오픈소스를 우선 조사하라.
+
+각 프로젝트에 다음 정보를 포함하라.
+
+프로젝트 이름
+공식 저장소 URL
+주요 기능
+구현 언어 및 기술 스택
+라이선스
+최신 릴리스 및 유지보수 상태
+갤럭시 워치7 호환성
+WFF 또는 Wear OS 호환성
+의존성 및 보안 위험
+성능 및 리소스 요구량
+재사용 가능한 기능
+통합 난이도
+수정 필요 범위
+도입 권장 여부
+
+GitHub Star 수만으로 프로젝트의 품질을 판단하지 마라.
+
+실제 활용 가능성과 유지보수 상태를 함께 평가하라.
+
+직접 재사용이 불가능한 경우 개발 참고 자료 또는 알고리즘 참고 자료로 활용할 수 있는지 분석하라.
+
+10. 소프트웨어 아키텍처 설계
+
+다음 설계 원칙을 적용한 최적의 소프트웨어 아키텍처를 제시하라.
+
+Clean Architecture
+Separation of Concerns
+Dependency Injection
+모듈화
+낮은 결합도
+높은 응집도
+이벤트 기반 처리
+확장성
+테스트 가능성
+장애 격리
+유지보수성
+
+다음 구성 요소의 역할과 책임을 설계하라.
+
+Watch Face 모듈
+AURA Continuity
+AURA Motion
+AURA Material
+AURA Intelligence
+AURA Typography
+AURA Interaction
+AURA Efficiency
+Health Data 모듈
+Weather Data 모듈
+Sensor Data 모듈
+Complication Data Source
+Configuration 모듈
+Theme 모듈
+Cache 모듈
+Diagnostics 모듈
+Smartphone Companion App
+
+워치 페이스 APK, Wear OS 데이터 처리 앱 및 스마트폰 Companion App의 분리 여부를 비교하라.
+
+각 모듈이 실제로 어느 실행 환경에서 동작할 수 있는지 명확히 정의하라.
+
+WFF에서 임의의 프로그램 코드를 실행할 수 없는 제약을 반드시 고려하라.
+
+모듈 간 데이터 흐름, 인터페이스, 의존성, 오류 처리 및 데이터 갱신 정책을 구체적으로 설계하라.
+
+11. 성능 및 배터리 최적화
+
+화려한 그래픽과 애니메이션을 유지하면서 배터리 소모를 최소화하는 방법을 집중적으로 연구하라.
+
+CPU 사용량 최적화
+GPU 사용량 최적화
+RAM 사용량 최적화
+렌더링 비용 절감
+불필요한 프레임 갱신 방지
+이미지 리소스 압축
+그래픽 리소스 재사용
+애니메이션 실행 조건 최적화
+센서 샘플링 주기 조절
+네트워크 통신 최소화
+데이터 캐싱
+백그라운드 작업 최소화
+화면 상태 기반 전력 관리
+배터리 잔량 기반 적응형 품질 조절
+AOD 메모리 및 전력 최적화
+OLED 번인 위험 완화
+발열 및 성능 저하 대응
+
+고품질 모드, 균형 모드, 절전 모드 및 AOD 모드의 차이를 구체적으로 설계하라.
+
+공식 제한과 프로젝트 자체 성능 목표를 구분하라.
+
+실기기 측정 전에는 배터리 사용 시간, 프레임 속도 및 성능 개선 수치를 검증된 결과로 단정하지 마라.
+
+12. 보안, 개인정보 및 안정성
+
+건강 데이터와 위치 정보를 다루는 만큼 개인정보 보호를 기본 설계에 포함하라.
+
+최소 권한 원칙
+건강 데이터 접근 권한 관리
+개인정보의 로컬 처리
+안전한 데이터 저장
+API Key 보호
+HTTPS 통신
+외부 데이터 검증
+통신 장애 대응
+센서 오류 대응
+비정상 데이터 처리
+데이터 갱신 실패 대응
+권한 철회 대응
+업데이트 무결성
+의존성 보안 검사
+앱 충돌 및 메모리 부족 대응
+정상 기능으로의 복구
+
+특정 모듈에 장애가 발생해도 기본 시간과 날짜는 정상적으로 표시할 수 있도록 설계하라.
+
+13. 개발 및 검증 전략
+
+전체 프로젝트를 단계별 작업지시서(WO)로 분할하라.
+
+Codex를 주 개발 도구로 사용한다.
+
+Grok Build 및 Antigravity CLI는 독립 조사, 병렬 개발, 코드 검토 및 품질 검증에 활용할 수 있도록 고려하라.
+
+각 WO에 다음 내용을 포함하라.
+
+작업 목적
+선행 조건
+구현 범위
+제외 범위
+세부 구현 항목
+권장 기술
+활용 가능한 오픈소스
+예상 난이도
+산출물
+테스트 항목
+완료 기준
+다음 단계 진입 조건
+GO, PARTIAL, NO-GO 판정 기준
+
+다음 검증 방법을 포함하라.
+
+단위 테스트
+통합 테스트
+UI 테스트
+WFF 규격 검증
+메모리 검증
+그래픽 시각적 회귀 테스트
+애니메이션 프레임 분석
+배터리 소모 측정
+발열 측정
+장시간 안정성 테스트
+AOD 전환 테스트
+오프라인 테스트
+센서 및 네트워크 장애 테스트
+갤럭시 워치7 실기기 테스트
+기존 상용 워치 페이스와의 비교 시험
+
+특히 개발 초기 단계에서 핵심 그래픽 및 애니메이션 기술의 실현 가능성을 검증할 수 있는 PoC를 설계하라.
+
+기술적으로 불가능한 기능을 후반 개발 단계에서 발견하지 않도록 하라.
+
+14. 경쟁 제품 및 기술 비교
+
+Galaxy Watch 기본 워치 페이스, Apple Watch Ultra 워치 페이스 및 고품질 상용 Wear OS 워치 페이스를 조사하라.
+
+다음 항목을 기준으로 비교하라.
+
+디자인 완성도
+정보 전달력
+정보 표시 밀도
+그래픽 디테일
+애니메이션 품질
+시각적 연속성
+사용성
+지능형 기능
+사용자 설정 범위
+배터리 효율
+접근성
+기술적 제약
+
+경쟁 제품의 장점과 단점을 분석하라.
+
+AURA Ultra가 차별화할 수 있는 기능과 현실적으로 달성할 수 있는 경쟁 우위를 제시하라.
+
+실측 자료가 없는 비교는 정성적 평가 또는 가설로 표시하라.
+
+15. 연구 결과 작성 기준
+
+모든 기술적 주장은 가능한 한 공식 문서, 학술 자료, 실제 소스코드, 공식 저장소 및 검증된 기술 자료를 근거로 작성하라.
+
+다음 자료를 우선 활용하라.
+
+Google Android Developers
+Wear OS 공식 개발 문서
+Samsung Developers
+Apple Developer
+Apple Human Interface Guidelines
+공식 GitHub 저장소
+관련 학술 논문 및 기술 발표 자료
+
+최신 자료와 구형 자료를 구분하라.
+
+폐기 예정 API, 지원 종료 API 및 비공식 우회 방법을 명확하게 표시하라.
+
+모든 주요 기능과 기술을 다음과 같이 분류하라.
+
+A. 공식 규격에서 직접 구현 가능
+
+B. 별도 앱 또는 데이터 공급원을 통해 구현 가능
+
+C. 사전 렌더링 및 그래픽 기법으로 유사 효과 구현 가능
+
+D. 추가적인 기술 검증이 필요
+
+E. 현재 플랫폼에서 구현 불가능
+
+단순한 기술 소개나 추상적인 권장 사항으로 끝내지 마라.
+
+가능한 경우 실제 XML, Kotlin 및 관련 설정 코드 예시를 포함하라.
+
+코드 예시는 사용 가능한 API 및 공식 규격과 일치하는지 검토하라.
+
+16. 최종 산출물
+
+최종 연구 보고서에 다음 내용을 포함하라.
+
+핵심 연구 결과 요약
+갤럭시 워치7 기술 및 플랫폼 제약 분석
+Apple 디자인 및 그래픽 기술 분석
+구현 가능성 매트릭스
+프리미엄 워치 페이스 디자인 시스템
+상황별 애니메이션 명세
+고급 그래픽 및 소재 표현 설계
+지능형 상황 인식 시스템 설계
+건강 및 기상 데이터 연동 설계
+활용 가능한 오픈소스 목록과 도입 전략
+전체 소프트웨어 아키텍처
+모듈별 인터페이스와 데이터 흐름
+권장 기술 스택
+권장 프로젝트 디렉터리 구조
+성능 및 배터리 최적화 전략
+보안 및 안정성 설계
+경쟁 제품 비교 분석
+핵심 기술 PoC 검증 계획
+단계별 개발 로드맵 및 작업지시서
+테스트 및 품질 검증 계획
+기술 위험과 대응 방안
+최종 구현 권장안
+출처 및 참고 자료
+
+설계 대안이 여러 개 존재하는 경우 각각의 장점, 단점, 구현 난이도, 유지보수성 및 전력 효율을 비교하라.
+
+최종적으로 갤럭시 워치7의 플랫폼 제약 안에서 달성할 수 있는 가장 높은 수준의 디자인, 그래픽, 애니메이션, 사용성 및 지능형 기능을 제공하는 개발 방안을 선정하라.
+
+기술적 정확성, 구체성, 실현 가능성 및 연구의 완성도를 우선하라. 보고서 분량을 줄이기 위해 필수적인 기술 설명을 생략하지 마라.
+
+
+chatgpt response
+
+AURA Ultra 종합 심층 리서치를 시작했습니다. 요청하신 16개 연구 분야와 23개 최종 산출물을 연구 범위에 반영했습니다.
+
+심층 리서치에서 연구 계획, 진행 상황 및 최종 보고서를 제공할 예정입니다.
+
+
+you asked
+
+message time: 2026-11-27 20:57:55
+
+이제 너도 자체적으로 조사를 진행해
+
+
+chatgpt response
+
+심층 리서치를 추가 실행하지 않고 일반 인터넷 검색으로 독립 조사하겠습니다. 공식 WFF 규격과 실제 개발 사례를 교차 검증하고, 기존 보고서에서 부족한 구현 방법과 기술적 제약을 집중적으로 보완하겠습니다.
+
+중요한 추가 기술을 발견했습니다. Google의 공식 샘플은 WFF 4의 Reference를 이용해 별도 앱에서 제공한 색상과 수치 데이터를 워치 페이스의 다른 그래픽 요소에도 전달합니다. 이 방식은 지능형 인터페이스의 구현 범위를 넓혀 줍니다.
+
+AURA Ultra — 독립 기술 조사 및 보완 분석
+
+조사 기준일: 2026년 11월 27일
+
+심층 리서치 보고서와 별개로 Google의 Watch Face Format(WFF) 공식 API 명세를 조사했습니다. 기존 보고서의 기술적 타당성을 확인하고, 실제 개발 과정에서 발생할 수 있는 문제와 추가적인 품질 향상 방법을 중점적으로 분석합니다.
+
+현재까지 확인한 결과, AURA Ultra의 전체적인 개발 방향은 타당합니다. 다만 워치 페이스의 표현력을 극대화하려면 WFF의 기능을 일반적인 애플리케이션 개발 방식과 명확하게 구분해야 합니다.
+
+1. 핵심 기술 구현 가능성 재검증
+
+기술 독립 조사 결과
+AOD와 활성 화면 사이의 연속 모션 WFF 4부터 공식 지원
+데이터에 반응하는 애니메이션 공식 지원
+가속도 센서 기반 입체 효과 공식 지원
+애니메이션 WebP 및 GIF 공식 지원
+이미지 시퀀스 애니메이션 공식 지원
+걸음수 및 목표 달성률 WFF 기본 지원
+심박수 표시 WFF 기본 지원
+기온 및 강수확률 WFF 2부터 지원
+시간당 실제 강수량 외부 데이터 공급원 필요
+날씨에 반응하는 그래픽 구현 가능
+시간 및 환경에 따른 색상 변경 구현 가능
+Liquid Glass와 유사한 소재 그래픽 모사 방식으로 가능
+실제 심장 박동과 동기화된 맥동 WFF 기본 데이터만으로 불가
+임의의 실시간 GPU 셰이더 WFF 내부에서 불가
+워치 페이스와 앱 사이의 완전한 공유 요소 전환 시스템 제약 존재
+
+Google의 공식 문서에는 그래픽 변환, 센서 데이터, 애니메이션 리소스 및 AOD 전환 기능이 명시되어 있습니다.  developer.android.com developer.android.com developer.android.com developer.android.com developer.android.com developer.android.com
+
+특히 기본 날씨 데이터에는 주야간 구분, 자외선 지수, 최저·최고 기온, 시간별 예보, 데이터 갱신 시각 및 수신 오류 상태도 포함됩니다. 이러한 기능은 별도의 날씨 앱 없이 활용할 수 있습니다.  developer.android.com developer.android.com
+
+2. 기존 심층 리서치에서 보완해야 할 핵심 기술
+
+2.1 외부 데이터에 반응하는 전체 그래픽 제어
+
+이번 독립 조사에서 가장 중요한 발견입니다.
+
+Google은 2025년 8월 개발자 블로그를 통해 Complication Data Source와 WFF 4의 Reference를 결합하는 방식을 공개했습니다.
+
+이 방식을 사용하면 별도 애플리케이션에서 전달한 색상과 수치 데이터를 컴플리케이션 영역 외부에서도 사용할 수 있습니다.
+
+예를 들어 스마트폰 앱에서 사진의 대표 색상을 추출하고, 해당 색상을 워치 페이스 전체의 색상에 반영할 수 있습니다. Google 개발자 블로그에서 실제 구현 사례와 소스코드를 제공합니다.  android-developers.googleblog.com android-developers.googleblog.com
+
+AURA Intelligence Engine
+
+날씨 · 활동 · 배터리 · 사용자 설정 분석
+
+Complication Data Source
+
+색상 · 수치 · 제한된 상태 정보 전달
+
+WFF Reference
+
+공통 그래픽 속성 참조
+
+이 기술을 AURA Ultra에 적용하면 다음 기능을 검토할 수 있습니다.
+
+강수 예보에 따른 전체 인터페이스 색상 변경
+활동 상태에 따른 정보 강조
+스마트폰에서 설정한 색상을 워치 페이스 전체에 반영
+배터리 상태에 따른 그래픽 품질 조절
+외부 데이터에 따른 그래픽 속성 변경
+하나의 상태값을 여러 그래픽 요소에서 공유
+
+물론 이것은 임의의 렌더링 코드를 실행하는 방식은 아닙니다. 미리 정의한 WFF 그래픽 속성과 조건식을 데이터로 제어하는 방식입니다. 갱신 지연과 표현식 지원 범위도 검증해야 합니다.
+
+관련 소스코드: wfp-use-cases
+
+Google 개발자 블로그에서 직접 소개한 예제 저장소입니다. Apache 2.0 라이선스이며, 저장소 자체는 Google 공식 샘플이 아니라고 명시합니다.  garanj/wfp-use-cases · GitHub
+
+2.2 AOD 전환 애니메이션의 정확한 제어 방식
+
+기존 심층 리서치에서는 AOD 전환 시간을 350~550ms로 제안했습니다.
+
+그러나 실제 WFF 4의 Variant는 전환 시간을 초 단위로 지정하는 방식이 아닙니다. 기기가 허용하는 전체 전환 시간을 기준으로 0.0~1.0 사이의 비율을 지정합니다.
+
+속성 기능
+duration 전체 전환 시간 중 애니메이션이 차지하는 비율
+startOffset 애니메이션 시작 지연 비율
+interpolation 보간 방식
+controls Cubic Bézier 제어점
+angleDirection 회전 방향
+
+지원하는 보간 방식에는 LINEAR, EASE_IN, EASE_OUT, EASE_IN_OUT, OVERSHOOT, CUBIC_BEZIER가 포함됩니다.  developer.android.com
+
+따라서 워치 페이스의 여러 요소가 미세한 시간차를 두고 등장하는 애플 특유의 애니메이션을 구현할 수 있습니다.
+
+다만 기기에서 허용하는 전체 전환 시간은 시스템이 결정합니다. WFF의 OVERSHOOT도 실제 물리 기반 스프링 시뮬레이션과는 다릅니다.
+
+
+3. AURA Continuity — 시각적 연속성 설계
+
+단순한 페이드 인·아웃보다 각 그래픽 요소가 서로 연결되는 방향으로 설계하는 것이 좋습니다.
+
+화면 활성화 시 모션 구성
+
+
+권장 모션 타임라인 — 전체 전환 시간에 대한 상대 비율
+
+0% 50% 100%
+
+시간 숫자는 전환 과정에서도 계속 읽을 수 있어야 합니다. 외곽 링은 AOD에서 표시하던 일부 그래픽을 기반으로 확장합니다. 정보 패널은 뒤이어 나타나고, 유리 소재의 하이라이트가 마지막으로 안정됩니다.
+
+적용할 추가 모션
+
+모션 시스템 연출
+Continuity Wake AOD에서 활성 화면으로 유기적인 확장
+Continuity Sleep 활성 그래픽이 최소 정보 화면으로 수축
+Fluid Digits 숫자 롤링 및 형태 변화
+Orbital Flow 원형 테두리를 따라 흐르는 데이터
+Glass Reveal 빛의 이동을 통해 유리 패널의 형태가 드러남
+Weather Morph 날씨 아이콘과 배경 소재가 함께 변화
+Energy Flow 충전 상태에 반응하는 광원 이동
+Activity Bloom 활동 목표 달성 시 시각적 피드백
+Depth Motion 손목 기울기에 따른 레이어 시차
+Focus Transition 중요 정보 강조와 나머지 요소의 명암 조정
+
+이 중 Fluid Digits, Weather Morph, Activity Bloom은 데이터 변경 감지와 애니메이션 재생 시점에 대한 별도의 PoC가 필요합니다.
+
+4. 그래픽 표현력을 극대화하는 방법
+
+추가 조사 결과, WFF 자체의 그래픽 기능이 단순한 이미지 배치 수준에 머물지는 않습니다.
+
+WFF 1부터 클리핑 마스크를 지원합니다. WFF 3부터 그래픽 혼합 모드(Blend Mode)를 지원합니다. WFF 4에서는 색상 변환과 그룹 색조 기능이 확장됐습니다. WFF 5에서는 그룹 및 컴플리케이션에도 혼합 모드를 적용할 수 있습니다.  developer.android.com developer.android.com developer.android.com
+
+이러한 기능을 조합하면 상당히 정교한 그래픽 소재를 만들 수 있습니다.
+
+AURA Material — 다중 레이어 소재 시스템
+
+소재를 여러 그래픽 레이어로 분리한 구조입니다. 각 레이어의 위치, 색상 및 투명도를 독립적으로 변경합니다.
+
+이 구조에서는 유리 이미지 전체를 매번 새로 렌더링할 필요가 없습니다. 반사 효과와 광원만 이동해도 소재가 실제로 움직이는 것처럼 표현할 수 있습니다.
+
+소재 기술 구현 방법
+Glass Refraction 사전 계산한 굴절 이미지와 마스크
+Fresnel Effect 가장자리 중심의 반사광 변화 모사
+Specular Reflection 손목 움직임에 따른 반사광 이동
+Ambient Lighting 시간과 날씨에 따른 색온도 변경
+Depth Layering 그래픽 레이어별 시차 효과
+Metallic Surface 브러시드 메탈 텍스처와 이동하는 광택
+Dynamic Gradient 선형·방사형·원형 그라데이션
+Optical Masking 패널 외부로 그래픽이 노출되는 현상 방지
+Adaptive Contrast 소재보다 정보 가독성을 우선하는 명암 조정
+
+WFF는 선형 및 방사형 그라데이션, 원형 그라데이션과 마스크를 지원합니다. 따라서 일부 소재는 이미지 대신 WFF 그래픽 요소로 직접 구성할 수 있습니다.  developer.android.com developer.android.com developer.android.com
+
+별도 앱에서는 더 높은 그래픽 품질 확보
+
+Android 13 이상에서는 AGSL(Android Graphics Shading Language)과 RuntimeShader를 사용할 수 있습니다. Jetpack Compose에서도 이러한 셰이더를 활용할 수 있습니다.  developer.android.com developer.android.com
+
+따라서 AURA Ultra의 그래픽 시스템을 두 가지로 구분하는 것이 좋습니다.
+
+기술 워치 페이스 상세 정보 앱
+렌더링 WFF XML Jetpack Compose
+광학 굴절 사전 렌더링 기반 모사 AGSL 구현 검토
+동적 반사 레이어 변환 실시간 셰이더
+물리 기반 스프링 보간 방식으로 근사 Compose Spring
+공유 요소 전환 WFF 내부 요소 변환 Compose Shared Element
+사용자 제스처 제한적 앱 내부에서 구현
+복잡한 그래프 제한적 자유로운 구성
+
+Compose는 sharedElement(), sharedBounds()와 물리 기반 spring 애니메이션을 지원합니다.  developer.android.com developer.android.com
+
+워치 페이스 자체에는 저전력 그래픽을 적용하고, 날씨나 건강 상세 화면에는 더 정교한 그래픽을 적용하는 전략입니다. 단, 두 실행 환경 사이의 완전한 공유 요소 전환은 보장할 수 없습니다.
+
+
+5. AURA Intelligence — 지능형 인터페이스 고도화
+
+단순히 날씨에 따라 배경색이 변경되는 정도를 넘어, 상황에 따라 정보의 중요도를 판단하는 시스템을 추천합니다.
+
+상황 인식에 따른 디자인 콘셉트입니다. 실제 센서 데이터 및 워치 실행 결과는 아닙니다.
+
+지능형 기능 설계
+
+기능 동작 방식
+Smart Focus 중요도가 높은 정보를 강조
+Weather Awareness 예상 강수 및 악천후 정보 우선 표시
+Activity Awareness 활동량과 운동 상태에 맞춘 정보 구성
+Power Intelligence 배터리 상태에 따라 장식 효과 조절
+Adaptive Materials 환경에 따른 소재 색상 및 광택 조절
+Data Confidence 오래된 데이터와 최신 데이터 구분
+Motion Budget 불필요한 애니메이션 실행 억제
+Stable Layout 정보의 위치를 유지해 시각적 혼란 방지
+User Preference 사용자가 선택한 정보 우선순위 반영
+
+초기 버전에는 머신러닝보다 규칙 기반 엔진을 적용하는 것이 적합합니다. 연산 비용이 낮으며 판단 과정의 검증도 쉽습니다.
+
+중요한 제약도 발견했습니다. 일반적인 컴플리케이션 공급원의 정기 갱신 간격은 최소 300초입니다. 이벤트 기반 갱신 요청은 가능하지만, 밀리초 단위의 즉각적인 갱신에는 특권 권한이 필요합니다.  developer.android.com developer.android.com
+
+따라서 외부 앱에서 모든 프레임을 제어하는 방식은 배제합니다. 빠른 그래픽 반응은 WFF 내부에서 처리하고, 외부 앱은 상대적으로 느리게 변경되는 상황 정보를 제공합니다.
+
+
+6. 건강 및 기상 데이터 연동 보완
+
+건강 데이터
+
+Samsung Health Data SDK에는 기존 보고서에서 충분히 다루지 않은 배포 제약이 있습니다.
+
+일반 사용자에게 배포하는 앱은 Samsung의 파트너 등록 절차를 거쳐야 합니다. 개발 단계에서는 Developer Mode로 시험할 수 있습니다.  Samsung Developer Samsung Developer
+
+따라서 다음 순서로 데이터 공급원을 선택하는 것이 좋습니다.
+
+데이터 우선 공급원 보조 공급원
+걸음수 WFF Health Services
+심박수 WFF Health Services
+이동 거리 Health Services Health Connect
+소비 칼로리 Health Services Health Connect
+수면 Health Connect Samsung Health Data SDK
+혈중 산소 Health Connect Samsung Health Data SDK
+스트레스 Samsung Health 연동 가능성 검증 미확정
+수면 점수 Samsung Health 연동 가능성 검증 미확정
+
+Samsung은 Health Connect를 통한 걸음수, 운동, 심박수, 수면 및 혈중 산소 데이터 연동 방법을 공식적으로 안내합니다. 실제 데이터는 Samsung Health의 동기화 상태와 사용자 권한에 따라 달라집니다.  Samsung Developer Samsung Developer Samsung Developer
+
+기상 데이터
+
+항목 권장 공급원
+현재 기온 WFF
+현재 날씨 WFF
+강수확률 WFF 또는 기상청
+시간별 강수량 기상청
+관측 강수량 기상청 초단기실황
+예상 강수 시작·종료 시간별 예보 기반 추정
+습도 및 풍속 기상청
+자외선 지수 WFF
+일출 및 일몰 외부 기상 API
+미세먼지 별도 대기질 API
+예비 기상 데이터 Open-Meteo
+
+기상청 단기예보 조회서비스는 국내 지역의 관측값과 예보 데이터를 제공합니다.  공공데이터포털
+
+Open-Meteo는 비상업적 용도로 하루 최대 10,000회의 무료 API 호출을 제공합니다. 무료 서비스는 가동률을 보장하지 않으며, 상업적 이용에는 별도 서비스 이용 조건을 확인해야 합니다.  Open-Meteo.com Open-Meteo.com
+
+예상 강수 시작 시각은 확정 시각처럼 표시하지 않습니다. 예보 모델의 시간 해상도와 정확도에 따라 추정값으로 표시합니다.
+
+
+7. 그래픽 성능 및 메모리 최적화
+
+Google의 공식 WFF 메모리 제한을 독립적으로 확인했습니다.
+
+활성 화면 메모리 제한
+
+100 MB
+
+
+AURA 권장 목표
+
+70 MB 이하
+
+AOD 메모리 제한
+
+10 MB
+
+
+AURA 권장 목표
+
+7 MB 이하
+
+공식 제한은 이미지, 글꼴 및 XML 기반 레이어의 메모리 사용량을 대상으로 합니다.  developer.android.com
+
+애니메이션 리소스의 실제 비용
+
+480×480 해상도의 RGBA8888 이미지가 압축 해제되는 경우를 가정했습니다.
+
+이미지 애니메이션 메모리 단순 추정치
+
+프레임별 픽셀 데이터의 합계입니다. 실제 WFF 메모리 검사 결과는 크기 조절, 투명 영역 제거 및 픽셀 형식 최적화에 따라 달라집니다.
+
+따라서 화면 전체를 사용하는 애니메이션보다 움직이는 그래픽 요소만 별도로 제작하는 것이 효율적입니다.
+
+Google도 대부분의 이미지 애니메이션에 15fps를 권장합니다. AOD에서는 발광 픽셀 비율을 15% 이하로 유지할 것을 안내합니다.  developer.android.com
+
+15fps는 모든 애니메이션에 적용되는 강제 프레임 제한은 아닙니다. AOD 전환 및 그래픽 변환의 실제 프레임 속도는 별도로 측정해야 합니다.
+
+권장 품질 프로필
+
+항목 Ultra Balanced Eco AOD
+연속 전환 모션 전체 주요 효과 단순화 최소
+유리 및 금속 소재 고품질 경량 정적 제거
+센서 기반 반사광 사용 선택 미사용 미사용
+날씨 애니메이션 사용 제한 정적 미사용
+활동 피드백 전체 간소화 최소 미사용
+정보 표시 전체 전체 필수 중심 최소
+
+각 품질 프로필을 WFF 설정과 조건식으로 구현할 수 있는 범위는 초기 PoC에서 확인합니다.
+
+
+8. 개발에 적극적으로 활용할 오픈소스 및 도구
+
+기존 보고서의 목록에 실제 디자인 제작과 자동화에 필요한 도구를 추가하는 것이 좋습니다.
+
+프로젝트 적용 분야 도입 권장
+Google Watchface WFF 검증 및 최적화 필수
+Wear OS Samples 공식 구현 예제 필수
+Android Health Samples 건강 데이터 연동 필수
+WFP Use Cases 외부 데이터 및 색상 연동 핵심 참고
+Horologist Wear OS 앱 유틸리티 선택 도입
+Clockwork WFF CLI 및 패키지 관리 검증 후 도입
+Inter 프리미엄 숫자 및 타이포그래피 권장
+Material Symbols 아이콘 제작 기반 권장
+Blender 금속·유리·광학 소재 제작 권장
+Inkscape 벡터 그래픽 제작 권장
+Watch Face Designer Figma 디자인의 WFF 변환 적극 활용
+Watch Face Studio 워치 페이스 시안 및 기기 확인 보조 도구
+
+특히 Google Watchface 저장소에는 세 가지 중요한 도구가 있습니다. WFF Validator, Memory Footprint Evaluator, WFF Optimizer입니다. 이 도구를 CI 파이프라인에 포함할 수 있습니다.  google/watchface · GitHub
+
+Watch Face Designer는 Figma에서 제작한 디자인을 AndroidManifest.xml과 리소스가 포함된 미컴파일 Android 패키지로 내보낼 수 있습니다.  developer.android.com
+
+Inter 글꼴은 SIL Open Font License 1.1을 사용합니다. Apple의 독점 글꼴을 직접 가져오는 대신, 사용 권한이 명확한 글꼴을 기반으로 독자적인 타이포그래피를 구성하는 것이 좋습니다.  GitHub
+
+그래픽 제작 자동화 파이프라인
+
+Codex가 모든 이미지를 일일이 수정하는 방식보다 공통 디자인 토큰과 그래픽 리소스 생성 도구를 구축하는 것이 효율적입니다. 그래야 여섯 가지 테마에도 동일한 디자인 품질을 유지할 수 있습니다.
+
+
+9. 추가로 구현할 가치가 있는 프리미엄 기능
+
+기존 심층 리서치에서 다룬 기능 외에도 다음 기능을 정식 개발 범위 후보로 추천합니다.
+
+기능명 주요 기능
+AURA Ambient Continuity AOD와 활성 화면의 시각적 연결
+AURA Chromatic Engine 전체 그래픽의 색상 동기화
+AURA Optical Engine 유리 및 금속 소재의 반사 효과
+AURA Depth Engine 레이어 기반 입체 효과
+AURA Context Focus 상황별 정보 중요도 조정
+AURA Smart Complications 사용자 정의 데이터 공급
+AURA Weather Timeline 시간대별 강수 및 기온 시각화
+AURA Solar Cycle 주간과 야간의 자연스러운 변화
+AURA Numeric Motion 정교한 숫자 변화
+AURA Night Vision 야간용 저휘도 적색 테마
+AURA Accessibility 고대비·모션 감소
+AURA Asset Compiler 그래픽 리소스 자동 생성 및 최적화
+AURA Quality Guard 규격·메모리·시각적 회귀 자동 검사
+AURA Personalization 사용자별 색상 및 정보 구성
+
+Apple HIG에서도 단시간에 정보를 읽을 수 있는 화면, 목적이 명확한 모션, AOD의 움직임 최소화 및 접근성을 강조합니다.  Apple Developer Documentation Apple Developer Documentation Apple Developer Documentation Apple Developer Documentation
+
+이러한 원칙을 공통 품질 기준으로 적용합니다.
+
+10. 최종 권장 소프트웨어 구조
+
+AURA Ultra Watch Face
+
+WFF 4 · 원형 화면 렌더링
+
+Complication · Reference
+
+AURA Wear Services
+
+Kotlin · Wear OS 데이터 및 상세 화면
+
+Wear OS Data Layer
+
+AURA Mobile Studio
+
+스마트폰 설정 및 커스터마이징 앱
+
+여기에 Watch Face Push API를 추가로 검토할 가치가 있습니다.
+
+이 API는 앱을 통해 워치 페이스를 설치, 업데이트 및 제거할 수 있게 합니다. 사용자 권한을 확보하면 배포한 워치 페이스를 활성화하는 기능도 제공합니다.  developer.android.com developer.android.com
+
+이를 활용하면 스마트폰의 AURA Mobile Studio에서 테마를 편집하고 워치로 적용하는 통합적인 사용자 경험을 구축할 수 있습니다.
+
+다만 Watch Face Push를 실시간 애니메이션이나 빈번한 화면 전환에 사용하지 않습니다. 워치 페이스 설치와 구성 업데이트에 활용합니다.
+
+
+11. 개발 로드맵 및 초기 기술 검증
+
+기존 개발 계획에 추가 조사 결과를 반영하면 다음 순서가 적합합니다.
+
+작업 핵심 개발 범위
+WO-01 기기 호환성 및 개발 환경 확정
+WO-02 WFF 4 기반 기본 워치 페이스
+WO-03 Continuity 및 AOD 전환 PoC
+WO-04 고급 소재 및 센서 반응 PoC
+WO-05 Reference 기반 외부 데이터 연동 PoC
+WO-06 공통 디자인 시스템 및 그래픽 제작 자동화
+WO-07 건강 데이터 연동
+WO-08 기상 데이터 및 강수 타임라인
+WO-09 AURA Intelligence Engine
+WO-10 프리미엄 애니메이션 시스템
+WO-11 여섯 가지 테마 구현
+WO-12 Wear OS 상세 정보 앱
+WO-13 스마트폰 Companion App
+WO-14 Watch Face Push 통합 검토
+WO-15 성능·배터리·메모리 최적화
+WO-16 접근성·보안·장애 복구
+WO-17 통합 회귀 시험 및 실기기 검증
+WO-18 정식 APK 및 배포 패키지 제작
+
+WO-03~05는 이후 개발 범위를 결정하는 핵심 기술 검증 단계입니다. 이 단계에서 원하는 수준의 그래픽과 데이터 연동을 구현하지 못하면 설계를 보완한 후 다음 단계로 진입합니다.
+
+12. 독립 조사 최종 판정
+
+연구 항목 판정
+전체 프로젝트 개발 타당성 (GO)
+WFF 기반 프리미엄 디자인 (GO)
+AOD 연속 모션 (조건부 GO)
+외부 데이터 기반 그래픽 제어 (조건부 GO)
+고급 유리 및 금속 소재 모사 (GO)
+지능형 정보 표시 (조건부 GO)
+숫자 형태 변환 및 복합 모션 (PoC 필요)
+Samsung Health 독점 데이터 (추가 검증)
+워치 페이스 내부의 임의 셰이더 (NO-GO)
+Apple 수준의 실시간 광학 렌더러 복제 (NO-GO)
+상용 제품 대비 실제 성능 우위 (미검증)
+
+여기서 GO는 문서에 근거한 개발 타당성 판정입니다. 구현 완료나 테스트 통과를 의미하지 않습니다.
+
+2026년 11월 20일 기준 갤럭시 워치7의 One UI 9 Watch 베타 업데이트가 확인됩니다. 그러나 조사한 자료만으로 워치7의 정식 Wear OS 7 업데이트 적용 여부를 확정할 수 없습니다. 따라서 WFF 4를 우선 개발 기준으로 삼고, WFF 5는 실기기 호환성을 확인한 후 활용하는 것이 적합합니다.  sammyguru.com SamMobile
+
+조사 제한 사항: 현재 사용 중인 워치의 크기와 OS 버전은 확인하지 못했습니다. 일부 공식 문서의 원문 접근에 실패했으며, 다른 공식 문서와 검색 결과로 보완했습니다. 오픈소스의 전체 소스코드 감사, 빌드, 라이선스 전수 검사 및 실기기 시험은 수행하지 않았습니다. 제안한 모션 시간, 성능 목표, 기능 명칭 및 작업 분할은 프로젝트 설계 권장안입니다.
+
+이번 독립 조사에서 가장 큰 성과는 WFF 4의 Reference와 Complication Data Source를 결합하면 기존에 예상했던 것보다 훨씬 유연한 상황 반응형 그래픽을 설계할 수 있다는 점입니다.
+
+이를 기존 심층 리서치의 결과와 결합하면 단순히 디자인이 아름다운 워치 페이스를 넘어, 그래픽 소재와 모션, 정보 및 상황 인식이 유기적으로 연결되는 독자적인 프리미엄 워치 페이스를 개발할 수 있습니다.
+
+추가 심층 리서치는 실행하지 않았으며, 이번 조사는 일반 인터넷 검색을 통해 진행했습니다.
+
+
+you asked
+
+message time: 2026-11-27 21:01:13
+
+이제 보고서와 추가 확인한 자료들을 정리하는 데 최대한 화려하면서도 고급스러워야하는 거 잊지마 또한 워치7뿐 아니라 그 이후에 나온 최신 갤럭시 워치들도 호환되도록 고려해줘
+
+
+chatgpt response
+
+보고서와 독립 조사 결과를 통합하겠습니다. 최신 갤럭시 워치의 호환성을 다시 확인하고, 화려한 그래픽과 고급 소재, 연속 모션을 핵심 개발 요구사항으로 반영하겠습니다.
+
+AURA Ultra — 통합 마스터 개발 계획 v1.0
+
+Premium Intelligent Watch Face System · 2026.11.27
+
+심층 리서치 보고서와 독립 기술 조사 결과를 통합했습니다. 여기에 최신 갤럭시 워치의 호환성과 고급 그래픽 구현 요구사항을 추가했습니다.
+
+기존 계획에서 가장 중요한 변경 사항은 갤럭시 워치7 전용 워치 페이스가 아닌, 지속적으로 발전하는 차세대 갤럭시 워치용 프리미엄 워치 페이스 플랫폼으로 개발 범위를 확대하는 것입니다.
+
+1. 최종 개발 목표
+
+AURA Ultra는 단순한 시계 화면이나 정보 표시 도구가 아닌, 고급 그래픽과 지능형 기능이 결합된 통합 워치 페이스 시스템을 목표로 합니다.
+
+AURA Ultra — Signature Concept
+
+Ultra + Crystal + Titanium을 결합한 대표 디자인 방향. 실제 워치에서 렌더링한 결과가 아닌 설계 콘셉트입니다.
+
+핵심 개발 목표는 다음과 같습니다.
+
+분야 목표 수준
+그래픽 최고급 스마트워치와 경쟁할 수 있는 시각적 완성도
+소재 유리, 티타늄, 금속, 빛, 반사, 입체감
+애니메이션 객체의 연속성과 형태 변화를 강조한 유기적 모션
+지능형 기능 날씨, 건강, 활동 및 배터리에 반응하는 UI
+사용성 높은 정보 밀도와 즉각적인 가독성
+커스터마이징 테마, 색상, 정보 배치, 모션 및 소재 설정
+호환성 갤럭시 워치7부터 최신 세대 및 향후 출시 기기까지
+성능 고급 그래픽 품질을 유지하면서 불필요한 전력 소모 억제
+안정성 외부 데이터 및 앱 장애에도 기본 시계 기능 유지
+
+화려함은 선택적 부가 기능이 아니라 핵심 품질 요구사항으로 지정합니다. 다만 무분별한 발광 효과나 반복 애니메이션 대신, 정교한 소재와 광원, 그래픽 깊이, 자연스러운 모션으로 고급스러움을 확보합니다.
+
+이는 심층 리서치에서 제안한 시각적 연속성, 소재 일관성, 정보 계층 및 목적이 명확한 모션 원칙을 확장한 것입니다. fileciteturn0file4
+
+2. 최신 갤럭시 워치 호환성
+
+추가 확인 결과, 2026년 11월 현재 삼성의 최신 모델은 갤럭시 워치9와 갤럭시 워치 울트라2입니다.
+
+두 제품은 2026년 7월에 공개됐으며 Wear OS 7과 One UI 9 Watch를 탑재합니다. 따라서 워치7만 고려한 WFF 4 중심 설계로는 최신 기기의 기능을 충분히 활용하지 못합니다.  삼성전자 뉴스룸 Samsung Global Newsroom Samsung Global Newsroom
+
+2.1 공식 지원 대상 기기
+
+지원 기기 화면 해상도 출시 당시 Wear OS 지원 목표
+Galaxy Watch7 40mm 432×432 5 필수
+Galaxy Watch7 44mm 480×480 5 필수
+Galaxy Watch Ultra 2024 480×480 5 필수
+Galaxy Watch8 40mm 438×438 6 필수
+Galaxy Watch8 44mm 480×480 6 필수
+Galaxy Watch8 Classic 46mm 438×438 6 필수
+Galaxy Watch Ultra 2025 480×480 6 필수
+Galaxy Watch9 40mm 438×438 7 필수
+Galaxy Watch9 44mm 480×480 7 필수
+Galaxy Watch Ultra2 47mm 498×498 7 필수
+향후 출시 모델 가변 차세대 OS 확장 지원
+
+워치9와 울트라2에는 Qualcomm SDW6100 프로세서가 탑재됩니다. 특히 울트라2는 5,000nit 디스플레이와 800mAh 배터리를 갖추고 있어 고급 워치 페이스를 활용하기 좋은 환경입니다.  Samsung Newsroom Korea Samsung Global Newsroom images.samsung.com
+
+2.2 WFF 기반 다중 호환성 아키텍처
+
+하위 기기에 맞춰 전체 그래픽 수준을 낮추지 않습니다. 공통 디자인을 유지하면서 기기의 OS와 WFF 지원 범위에 따라 기능을 확장합니다.
+
+WFF 2
+
+Wear OS 5
+
+AURA Compatibility
+
+고급 소재, 기본 그래픽 애니메이션, 날씨 및 건강 정보, 센서 반응, 공통 디자인 시스템.
+
+Wear OS 5 상태의 워치7 및 Ultra 지원
+
+
+WFF 4
+
+Wear OS 6
+
+AURA Continuity
+
+AOD 연속 전환, 색상 변환, 그룹 색조, 외부 데이터 기반 그래픽 제어 및 고급 모션.
+
+업데이트된 워치7 및 워치8 계열 지원
+
+
+WFF 5
+
+Wear OS 7
+
+AURA Next
+
+고급 그룹 혼합 모드, 향상된 텍스트 처리, 그래픽 레이어 합성 및 계층형 사용자 설정.
+
+워치9·울트라2 및 호환 OS로 업데이트된 기기 지원
+
+WFF 3의 그래픽 혼합 모드와 자동 글자 크기 조절 기능도 중간 호환 프로필로 활용합니다. Google의 WFF 버전별 공식 기능을 기준으로 빌드를 분리합니다.  developer.android.com developer.android.com developer.android.com
+
+중요한 것은 워치의 모델명이 아닌 실제 설치된 OS와 지원 기능을 기준으로 호환성을 판단하는 것입니다.
+
+하나의 공통 소스에서 버전별 XML과 APK를 생성하도록 설계합니다. WFF 5 전용 APK가 WFF 2 기기에서 자동으로 하위 호환된다고 가정하지 않습니다.
+
+
+3. AURA Ultra 디자인 시스템
+
+Apple의 iOS, macOS, watchOS에서 참고할 요소를 AURA의 독자적인 디자인 언어로 재구성합니다.
+
+3.1 핵심 그래픽 스타일
+
+AURA Liquid Crystal
+
+반투명 유리, 광학적 굴절 모사, 얇은 유리 테두리, 내부 반사광 및 깊이감 표현. 손목의 기울기에 따라 반사광이 이동합니다.
+
+
+AURA Titanium Material
+
+브러시드 티타늄, 미세한 금속 결, 동심원 가공 질감 및 광택 표현. 고급 기계식 시계의 정밀한 소재를 재현합니다.
+
+
+AURA Atmospheric Light
+
+오로라, 자연광, 대기 산란 및 날씨에 반응하는 배경. 시간과 환경에 따라 색온도와 광원이 변화합니다.
+
+
+AURA Spatial Depth
+
+다중 그래픽 레이어, 깊이별 시차, 정밀한 눈금, 데이터 링 및 입체적인 정보 패널을 구성합니다.
+
+위 이미지는 소재 및 그래픽 방향을 설명하기 위한 참고 이미지입니다.
+
+3.2 그래픽 레이어 구성
+
+워치 페이스를 평면적인 배경 이미지 위에 숫자를 표시하는 방식으로 개발하지 않습니다.
+
+레이어 역할
+L00 · OLED Base 순수 검정 또는 저휘도 기본 배경
+L01 · Atmosphere 오로라, 날씨, 환경광
+L02 · Material 유리, 금속 및 정밀 소재
+L03 · Depth 그림자, 입체감 및 깊이
+L04 · Precision Ring 정밀 눈금 및 외곽 정보 링
+L05 · Data Visualization 활동, 강수 및 배터리 게이지
+L06 · Glass Panel 정보 패널 및 컴플리케이션
+L07 · Typography 시간, 날짜 및 주요 데이터
+L08 · Optical Highlight 소재 반사 및 이동하는 광택
+L09 · Motion Effect 이벤트 기반 애니메이션
+L10 · Feedback 사용자 조작 및 상태 변화 피드백
+
+그래픽 레이어마다 위치, 투명도, 색상 및 움직임을 가능한 범위에서 독립적으로 제어합니다.
+
+모든 소재는 공통 광원 규칙을 사용합니다. 유리의 반사 방향과 금속의 광택 방향이 서로 다르게 움직이는 현상을 방지합니다.
+
+3.3 정식 테마 구성
+
+기존 보고서의 6가지 테마에 대표 디자인인 Signature와 야간 전용 Night Vision을 추가합니다.
+
+8가지 테마는 색상만 바꾼 동일한 디자인이 아닙니다. 소재, 그래픽 구조, 모션, 타이포그래피 및 정보 배치에서 각각의 개성을 확보합니다.
+
+
+4. 프리미엄 애니메이션 및 연속 모션 시스템
+
+이번 프로젝트에서 가장 높은 개발 우선순위를 부여할 분야입니다.
+
+4.1 AURA Continuity Engine
+
+사용자가 언급한 폴더블 기기의 화면 전환처럼 기존 그래픽이 새로운 상태로 자연스럽게 연결되는 효과입니다.
+
+AURA Continuity 인터랙티브 콘셉트
+
+앱 소스 코드(HTML 및 JavaScript)
+
+
+<style>
+*{box-sizing:border-box}
+.aura-demo{font-family:system-ui,sans-serif;padding:12px 0 5px;text-align:center}
+.aura-watch{width:min(290px,83vw);aspect-ratio:1;position:relative;margin:8px auto 20px;border-radius:50%;padding:6px;background:linear-gradient(135deg,#c3cbd5,#424b57 40%,#8d98a7 66%,#333a45);box-shadow:0 12px 24px #0003}
+.aura-screen{position:relative;width:100%;height:100%;border-radius:50%;overflow:hidden;background:#030507;color:#eef5ff;container-type:inline-size}
+.aura-atmosphere{position:absolute;inset:0;background:radial-gradient(ellipse at 22% 4%,#376a95aa,transparent 58%),radial-gradient(ellipse at 100% 100%,#534e8c66,transparent 60%);transition:opacity .8s}
+.aura-ring{position:absolute;inset:5%;border-radius:50%;background:conic-gradient(from -65deg,#7ed5ed 0deg,#4792bd 85deg,transparent 85deg 190deg,#73d3ac 190deg 275deg,transparent 275deg);mask:radial-gradient(transparent 68%,black 69% 71%,transparent 72%);transition:transform .9s cubic-bezier(.2,.8,.2,1),opacity .7s}
+.aura-date{position:absolute;top:18%;left:0;width:100%;font-size:4cqw;letter-spacing:.08em;color:#9fb4ca;transition:transform .7s,opacity .7s}
+.aura-time{position:absolute;top:28%;width:100%;font-size:23cqw;line-height:1.1;font-weight:600;letter-spacing:-.07em;font-variant-numeric:tabular-nums;transition:transform .85s cubic-bezier(.2,.8,.2,1),opacity .7s}
+.aura-panel{position:absolute;top:57%;width:36%;height:19%;border:1px solid #9cd6ff55;border-radius:20px;background:linear-gradient(155deg,#b2dcff25,#72a4d009 55%,#7eaed51c);box-shadow:inset 0 1px 1px #c6ecff40,0 6px 18px #0004;transition:transform .8s cubic-bezier(.18,.9,.24,1),opacity .6s}
+.aura-panel:before{content:"";position:absolute;height:1px;top:0;left:20%;right:20%;background:linear-gradient(90deg,transparent,#e0f4ff,transparent)}
+.aura-weather{left:12%}.aura-heart{right:12%}
+.aura-val{font-size:8cqw;margin-top:4%;font-weight:500}
+.aura-sub{font-size:3cqw;color:#a1c8e3}
+.aura-steps{position:absolute;top:81%;left:27%;width:46%;font-size:3.6cqw;color:#8cdbb7;transition:opacity .6s,transform .8s}
+.aura-progress{height:4px;border-radius:4px;background:#283f43;margin-bottom:6px}
+.aura-progress:after{content:"";display:block;width:81%;height:100%;border-radius:4px;background:linear-gradient(90deg,#367866,#95e9be)}
+.aura-aod .aura-atmosphere{opacity:0}.aura-aod .aura-ring{transform:scale(.51);opacity:.09}.aura-aod .aura-time{transform:translateY(32%) scale(.9);opacity:.8}.aura-aod .aura-date{transform:translateY(55%);opacity:.5}
+.aura-aod .aura-panel{opacity:0;transform:translateY(-70%) scale(.12)}.aura-aod .aura-steps{opacity:0;transform:translateY(-40%) scale(.65)}
+.aura-charge .aura-ring{background:conic-gradient(#6de9a7,#d5ffdf,#187d57,#6de9a7);animation:aura-spin 3s linear infinite}
+.aura-charge .aura-atmosphere{background:radial-gradient(ellipse at 50% 10%,#45ba7666,transparent 75%)}
+@keyframes aura-spin{to{transform:rotate(360deg)}}
+.aura-detail .aura-weather{transform:translate(36%,-34%) scale(1.85);z-index:4;background:linear-gradient(135deg,#203e57,#112237)}
+.aura-detail .aura-heart{opacity:0;transform:scale(.5)}
+.aura-detail .aura-time{transform:translateY(-38%) scale(.67);opacity:.8}.aura-detail .aura-steps{opacity:.15}
+.aura-controls{display:flex;justify-content:center;gap:5px;flex-wrap:wrap}
+.aura-controls button{border:1px solid #8885;background:transparent;color:inherit;border-radius:18px;padding:7px 11px;font:inherit;font-size:12px;cursor:pointer}
+.aura-controls button.active{background:#57799a;color:white;border-color:#57799a}
+.aura-note{font-size:12px;color:inherit;opacity:.65;margin:12px 0}
+</style>
+<div class="aura-demo">
+<div class="aura-watch"><div class="aura-screen aura-aod" id="auraMasterScreen">
+<div class="aura-atmosphere"></div><div class="aura-ring"></div>
+<div class="aura-date">NOV 27 · FRIDAY</div><div class="aura-time">20:48</div>
+<div class="aura-panel aura-weather"><div class="aura-val">8°</div><div class="aura-sub">강수 70%</div></div>
+<div class="aura-panel aura-heart"><div class="aura-val" style="color:#f7b1bf">78</div><div class="aura-sub">HEART RATE</div></div>
+<div class="aura-steps"><div class="aura-progress"></div>6,482 STEPS</div>
+</div></div>
+<div class="aura-controls" id="auraMasterControls">
+<button data-mode="aod" class="active">AOD</button><button data-mode="active">활성 화면</button><button data-mode="detail">날씨 상세</button><button data-mode="charge">충전</button>
+</div>
+<div class="aura-note">버튼을 눌러 그래픽의 연속적인 상태 전환을 확인하세요.</div>
+</div>
+<script>
+const screen=document.getElementById('auraMasterScreen');
+document.querySelectorAll('#auraMasterControls button').forEach(b=>b.onclick=()=>{
+screen.className='aura-screen aura-'+b.dataset.mode;
+document.querySelectorAll('#auraMasterControls button').forEach(x=>x.classList.toggle('active',x===b));
+});
+</script>
+
+
+위 데모는 브라우저 기반 모션 콘셉트입니다. 실제 WFF의 전환 속도와 상세 앱 전환은 플랫폼 제약에 따라 달라집니다.
+
+4.2 정식 애니메이션 개발 목록
+
+시스템 애니메이션
+Continuity Wake AOD의 그래픽이 활성 화면으로 확장
+Continuity Sleep 주변 그래픽이 시간 중심으로 수축
+Fluid Digits 변경된 시간 숫자만 자연스럽게 전환
+Glass Formation 유리 패널의 테두리와 반사광이 형성
+Liquid Morph 그래픽 크기와 형태의 유기적 변화
+Orbital Flow 원형 데이터 링의 연속적인 움직임
+Precision Sweep 눈금과 게이지를 따라 흐르는 광원
+Optical Reflection 손목 기울기에 반응하는 반사광
+Spatial Parallax 깊이에 따른 그래픽 레이어 이동
+Weather Morph 날씨 아이콘과 배경의 연속 전환
+Atmospheric Motion 비, 눈, 구름 및 대기 효과
+Solar Transition 일출·일몰에 따른 조명 변화
+Heart Pulse 측정 BPM을 기반으로 한 시각적 맥동
+Activity Bloom 활동 목표 달성 시 짧은 축하 효과
+Energy Flow 충전 시작 및 완료 효과
+Focus Motion 중요 정보의 시각적 강조
+Theme Transition 지원 범위 내 테마 전환 효과
+
+4.3 모션 품질 규칙
+
+일반적인 모션의 목표 재생 시간은 180~700ms로 설정합니다. 이벤트 강조 효과는 최대 1,200ms를 초기 목표로 설정합니다.
+
+단, WFF 4의 AOD 전환은 시스템이 결정한 전체 전환 시간의 상대 비율로 구성합니다. 임의의 밀리초 단위 시간을 강제하지 않습니다.
+
+다음 사항을 품질 검증에 포함합니다.
+
+변경되지 않은 그래픽은 불필요하게 다시 움직이지 않습니다.
+시간은 모든 전환 과정에서 읽을 수 있도록 유지합니다.
+여러 그래픽이 하나의 움직임처럼 동기화되도록 설계합니다.
+상태가 빠르게 변경돼도 중복 모션이나 그래픽 잔상이 발생하지 않도록 검증합니다.
+프레임 손실, 갑작스러운 위치 변경 및 투명도 변화를 검사합니다.
+모션 감소 설정을 제공합니다.
+
+
+5. AURA Intelligence — 지능형 워치 페이스
+
+실질적인 사용자 편의성을 제공하는 경량 상황 인식 시스템입니다.
+
+LLM을 실행해 배터리를 소모하는 구조보다 규칙 기반 엔진과 이벤트 기반 상태 머신을 우선 활용합니다.
+
+상황 자동 대응
+맑은 날 밝고 선명한 소재 및 자연광
+비 예보 강수확률 및 예상 강수량 강조
+실제 강수 관측 강수량과 날씨 정보 강조
+눈 저강도 눈 결정 그래픽
+악천후 경고 정보 및 중요 데이터 우선 표시
+일출 따뜻한 조명과 색온도
+일몰 부드러운 야간 색상으로 변화
+운동 심박수 및 활동량 강조
+활동 목표 임박 진행률과 남은 걸음수 강조
+활동 목표 달성 짧은 시각적 피드백
+업무 안정적인 배치와 높은 가독성
+수면 준비 저휘도 및 낮은 모션 강도
+배터리 부족 장식 그래픽 및 센서 효과 감소
+충전 충전 상태 및 에너지 그래픽
+통신 끊김 캐시 활용 및 오프라인 표시
+건강 데이터 오류 잘못된 수치를 표시하지 않고 대체 상태 제공
+
+특히 Reference를 활용해 동일한 외부 데이터가 여러 그래픽 요소에 반영되는 구조를 핵심 PoC에 포함합니다.
+
+외부 앱은 상황을 판단하고 제한된 데이터값을 제공합니다. WFF는 사전에 정의한 그래픽 규칙으로 이를 표현합니다. 외부 앱이 WFF 렌더러를 임의로 제어하지 않습니다.
+
+
+6. 전체 데이터 및 기능 개발 범위
+
+분류 지원 항목 주요 데이터 공급원
+시간 시간, 초, 날짜, 요일, 시간대 WFF
+활동 걸음수, 목표, 활동량, 이동 거리, 칼로리 WFF, Health Services
+심박 최근 심박수, 측정 시각, 심박 기록 WFF, Health Services
+건강 혈중 산소, 스트레스, 수면 시간, 수면 품질 Health Connect, Samsung Health
+고급 건강 에너지 점수 및 세대별 신규 건강 지표 공식 API 지원 확인 후
+기온 현재, 체감, 최고·최저 기온 WFF, 기상청
+강수 확률, 관측량, 예측량, 일일 누적량 기상청, Open-Meteo
+강수 예측 예상 시작·종료 시각, 시간별 예보 기상 API 기반 추정
+환경 습도, 풍속, 풍향, UV, 미세먼지 기상 및 대기질 API
+태양 일출, 일몰, 주야간 변화 기상 데이터 및 시간
+배터리 워치 잔량, 충전, 예상 잔여 시간 WFF, Wear 앱
+스마트폰 배터리, 연결 상태 Data Layer
+일정 다음 일정, 알람 시스템 컴플리케이션
+사용자 설정 테마, 색상, 정보 배치, 모션 수준 WFF 설정, Companion App
+
+신형 워치의 센서와 건강 기능은 확장 모듈로 관리합니다. 삼성 기본 앱에서 제공하는 기능이라고 해서 서드파티 API에서도 제공한다고 가정하지 않습니다.
+
+기상청을 국내 기상 정보의 주 공급원으로 사용합니다. Open-Meteo는 대체 공급원으로 활용합니다. 건강 데이터는 Health Services와 Health Connect를 우선 사용합니다. Samsung Health 독점 데이터는 접근 및 배포 조건을 확인한 후 연동합니다. fileciteturn0file0
+
+
+7. 스마트폰 Companion App
+
+워치 자체의 커스터마이징 기능에 더해 스마트폰에서 고급 설정을 할 수 있는 전용 앱을 개발합니다.
+
+AURA Mobile Studio
+
+스마트폰 Companion App의 UI 설계 콘셉트
+
+기능 설명
+Theme Studio 테마 선택 및 조합
+Material Editor 유리 및 금속 소재 설정
+Color Studio 전체 그래픽 색상과 강조색 설정
+Motion Editor 지원 모션의 강도와 사용 여부 설정
+Live Preview 워치 페이스 구성 미리보기
+Layout Editor 허용된 정보 배치 조합 선택
+Complication Editor 표시 데이터 및 공급원 설정
+Intelligence Settings 상황 인식 규칙 설정
+Weather Settings 기상 데이터 공급원 및 지역 설정
+Health Settings 건강 데이터 연동 및 권한 관리
+Power Management 품질 프로필 및 절전 설정
+Device Manager 연결된 워치와 호환성 확인
+Diagnostics 데이터 갱신 상태 및 장애 확인
+Update Manager 호환 빌드 설치 및 업데이트
+Preset Manager 사용자 설정 저장 및 복원
+
+Watch Face Push API를 통한 워치 페이스 설치 및 업데이트도 검토합니다. 해당 API의 권한과 지원 버전을 확인하고, 일반적인 설정 변경과 패키지 교체를 분리합니다.  developer.android.com
+
+
+8. 최종 소프트웨어 아키텍처
+
+AURA Mobile Studio
+
+Android · Jetpack Compose
+
+Wear OS Data Layer
+
+AURA Wear Services
+
+Kotlin · Clean Architecture
+
+Complication Data · Reference
+
+AURA Watch Face
+
+WFF 선언형 그래픽 및 모션
+
+Galaxy Watch7 · Watch8 · Watch9 · Ultra Series
+
+향후 세대를 포함한 확장형 지원 구조
+
+권장 개발 원칙
+
+Clean Architecture, 관심사 분리(SoC), 의존성 주입(DI), 모듈화, 낮은 결합도 및 높은 응집도를 적용합니다.
+
+AURA Motion이나 AURA Material은 WFF 내부에서 실행되는 별도의 Kotlin 엔진이 아닙니다. XML 구성, 그래픽 리소스, 디자인 토큰 및 개발 도구를 관리하는 논리적 모듈입니다.
+
+프로젝트 디렉터리 구조
+
+AURA-Ultra/
+├── apps/
+│   ├── watchface/
+│   ├── wear-services/
+│   └── mobile-studio/
+├── modules/
+│   ├── intelligence/
+│   ├── weather/
+│   ├── health/
+│   ├── sensors/
+│   ├── complications/
+│   ├── configuration/
+│   ├── cache/
+│   ├── efficiency/
+│   └── diagnostics/
+├── design-system/
+│   ├── tokens/
+│   ├── typography/
+│   ├── materials/
+│   ├── optical-effects/
+│   ├── continuity/
+│   ├── motion/
+│   ├── layouts/
+│   └── themes/
+├── assets/
+│   ├── source/
+│   ├── textures/
+│   ├── vector/
+│   ├── animations/
+│   └── generated/
+├── compatibility/
+│   ├── wff2/
+│   ├── wff3/
+│   ├── wff4/
+│   ├── wff5/
+│   └── device-profiles/
+├── tools/
+│   ├── asset-compiler/
+│   ├── wff-generator/
+│   ├── wff-validator/
+│   ├── memory-evaluator/
+│   └── visual-regression/
+├── tests/
+│   ├── unit/
+│   ├── integration/
+│   ├── visual/
+│   ├── compatibility/
+│   ├── performance/
+│   └── device/
+├── docs/
+└── .github/workflows/
+
+
+9. 오픈소스 적극 활용 전략
+
+개발 기간을 단축하되, 프로젝트의 핵심 디자인과 품질에 대한 통제권을 유지합니다.
+
+프로젝트 활용 목적 도입 방침
+Google Watchface WFF 검증 및 최적화 필수
+Wear OS Samples 공식 구현 예제 필수
+Android Health Samples 건강 데이터 연동 필수
+WFP Use Cases Reference 기반 외부 데이터 연동 핵심 참고
+Horologist Wear OS 공통 기능 선택
+Inter 고품질 타이포그래피 권장
+Material Symbols 아이콘 개발 기반 권장
+Blender 금속, 유리 및 광학 소재 사전 렌더링 권장
+Inkscape 벡터 그래픽 제작 권장
+Clockwork WFF 개발 자동화 검증 후 도입
+Watch Face Designer Figma 디자인의 WFF 변환 보조 도구
+Watch Face Studio 시안 제작 및 기기 시험 보조 도구
+
+별도로 Asset Compiler를 구축합니다. Blender와 Inkscape에서 만든 고품질 그래픽을 자동으로 크기 조정하고 압축합니다. 필요하면 애니메이션 프레임도 추출합니다.
+
+기기별 해상도에 적합한 리소스를 생성하며, WFF 버전별 XML 생성과 검증을 자동화합니다.
+
+오픈소스 도입 전에는 라이선스, 의존성, 유지보수 상태, 보안 취약점 및 실제 호환성을 검사합니다.
+
+
+10. 그래픽 품질과 배터리 효율의 양립
+
+워치 페이스를 화려하게 개발한다는 목표 때문에 처음부터 그래픽 품질을 과도하게 제한하지 않습니다.
+
+최고 품질 디자인을 먼저 설계하고, 시각적 품질의 손실을 최소화하는 방향으로 최적화합니다.
+
+그래픽 품질 프로필
+
+기능 Ultra Balanced Eco AOD
+고급 소재 최대 높음 단순화 최소
+광학 반사 동적 제한적 정적 없음
+연속 모션 전체 주요 모션 간소화 최소
+날씨 그래픽 동적 제한적 정적 없음
+시차 효과 사용 약하게 미사용 미사용
+정보 밀도 사용자 설정 사용자 설정 필수 정보 최소 정보
+센서 사용 조건부 최소화 제한 최소
+
+기본 품질 프로필은 Balanced를 추천합니다. Ultra는 사용자가 최고 수준의 그래픽을 원할 때 선택할 수 있도록 합니다.
+
+저전력 상태에서는 정보 자체를 제거하기보다 장식 효과를 먼저 줄입니다.
+
+메모리 및 전력 관리 목표
+
+활성 화면 메모리
+
+70 MB
+
+프로젝트 목표 · 공식 한도 100MB
+
+AOD 메모리
+
+7 MB
+
+프로젝트 목표 · 공식 한도 10MB
+
+AOD 발광 픽셀
+
+10% 이하
+
+공식 품질 기준 15% 이하
+
+이미지 기반 애니메이션
+
+15~30fps
+
+초기 설계 범위 · 실측 후 조정
+
+Google은 WFF 기반 AOD 화면의 발광 픽셀을 15% 이하로 제한하는 품질 기준을 제공합니다.  developer.android.com 메모리 및 그래픽 최적화 목표는 기존 연구 보고서에서 제안한 기준을 유지합니다. fileciteturn0file0
+
+최신 기기의 하드웨어 성능이 우수하더라도 WFF의 공식 제한을 초과할 수 있다고 가정하지 않습니다.
+
+
+11. 보안 및 안정성
+
+프리미엄 제품 수준의 안정성을 확보하기 위해 다음 요구사항을 적용합니다.
+
+시스템 필수 요구사항
+건강 정보 사용자 동의 및 최소 권한
+위치 정보 필요한 범위만 수집
+네트워크 HTTPS 및 응답 데이터 검증
+API Key 앱 내부 비밀키 직접 노출 방지
+캐시 데이터별 유효기간 관리
+데이터 오류 누락 및 잘못된 수치 구분
+통신 장애 오프라인 및 마지막 갱신 상태 표시
+외부 앱 충돌 기본 시간과 날짜 유지
+설정 관리 설정 백업, 버전 관리 및 복구
+업데이트 서명 및 무결성 검사
+의존성 취약점 검사 및 버전 고정
+개인정보 불필요한 외부 전송 방지
+
+심박수는 마지막 측정값과 실제 실시간 측정값을 구분합니다. 예상 강수량도 실제 관측 강수량과 구분합니다.
+
+데이터가 없을 때 정상적으로 측정된 0이라는 값을 대신 표시하지 않습니다.
+
+
+12. 개발 초기 필수 PoC
+
+전체 기능을 개발하기 전에 기술적 위험이 높은 기능을 우선 검증합니다.
+
+PoC 검증 대상 통과 기준
+POC-01 다중 WFF 빌드 지원 OS별 APK 설치 성공
+POC-02 원형 해상도 대응 432·438·480·498 해상도 잘림 없음
+POC-03 AOD 연속 모션 전환 중 불필요한 위치 점프 없음
+POC-04 Liquid Crystal 유리 소재와 반사 표현의 품질 확보
+POC-05 Titanium 정밀 금속 질감 및 광택 구현
+POC-06 Parallax 센서 반응 및 움직임 품질 확보
+POC-07 숫자 전환 변경되는 숫자의 자연스러운 전환
+POC-08 WFF Reference 외부 데이터 기반 그래픽 속성 변경
+POC-09 날씨 애니메이션 메모리 제한 준수
+POC-10 건강 데이터 권한 및 정상 데이터 공급 검증
+POC-11 지능형 상태 전환 반복 전환 및 잘못된 상태 표시 방지
+POC-12 WFF 5 신규 기능 최신 기기에서 그래픽 기능 확인
+POC-13 Companion 통신 설정 및 데이터 동기화 검증
+POC-14 전력 소비 기본 페이스와 비교 측정
+POC-15 장시간 실행 8시간 초기 시험에서 오류 및 충돌 없음
+
+최신 워치를 모두 구매하지 않고도 삼성의 Remote Test Lab을 활용할 수 있습니다.
+
+삼성은 Watch Face Studio와 Remote Test Lab을 이용한 실제 워치 페이스 시험 방법을 제공합니다. 현재 공개 기기 목록에는 갤럭시 워치 울트라2도 확인됩니다.  Samsung Developer Samsung Developer
+
+실제 예약 가능 여부와 시험 환경은 별도로 확인합니다. 손목 움직임, 건강 센서 및 배터리 효율 시험은 원격 기기만으로 완전히 대체하지 않습니다.
+
+
+13. 통합 개발 로드맵
+
+기존 보고서보다 개발 단계를 세분화합니다. 그래픽과 모션의 완성도가 프로젝트의 핵심이므로 별도의 개발 단계와 검증 단계를 배정합니다.
+
+Phase 1 — 기반 및 핵심 기술 검증
+
+작업지시서 작업 내용
+WO-01 프로젝트 초기화 및 지원 기기·OS 확정
+WO-02 Clean Architecture 및 다중 WFF 빌드 구조
+WO-03 공통 좌표계 및 반응형 레이아웃
+WO-04 기본 워치 페이스 및 AOD
+WO-05 Continuity Engine PoC
+WO-06 Material 및 Optical Effects PoC
+WO-07 Reference 및 외부 데이터 연동 PoC
+WO-08 최신 WFF 5 기능 및 호환성 검증
+
+Phase 2 — 고급 그래픽 및 모션
+
+작업지시서 작업 내용
+WO-09 AURA Design System
+WO-10 Asset Compiler 및 그래픽 제작 자동화
+WO-11 Liquid Crystal 소재 시스템
+WO-12 Titanium 소재 시스템
+WO-13 Atmospheric Light 및 Spatial Depth
+WO-14 Continuity 및 Fluid Digits
+WO-15 환경·상태·이벤트 모션
+WO-16 Signature 대표 디자인 완성
+
+Phase 3 — 데이터 및 지능형 기능
+
+작업지시서 작업 내용
+WO-17 Health Services 및 Health Connect
+WO-18 기상청·Open-Meteo·대기질 연동
+WO-19 강수 예측 및 기상 시각화
+WO-20 스마트폰 데이터 및 Data Layer
+WO-21 Intelligence 상태 머신
+WO-22 적응형 그래픽 및 전력 관리
+WO-23 캐시·오프라인·장애 대응
+
+Phase 4 — 제품 확장
+
+작업지시서 작업 내용
+WO-24 Titanium·Crystal·Ultra 테마
+WO-25 Obsidian·Chronograph·Aurora·Night Vision 테마
+WO-26 Wear OS 상세 정보 화면
+WO-27 AURA Mobile Studio
+WO-28 고급 사용자 설정 및 프리셋
+WO-29 설치·업데이트·호환 빌드 관리
+
+Phase 5 — 최적화 및 정식 출시
+
+작업지시서 작업 내용
+WO-30 그래픽 정밀도 및 시각적 품질 개선
+WO-31 애니메이션 및 프레임 최적화
+WO-32 메모리·배터리·발열 최적화
+WO-33 보안·개인정보·접근성
+WO-34 갤럭시 워치7 실기기 검증
+WO-35 워치8·워치9·Ultra 계열 호환성 검증
+WO-36 상용 제품 비교 및 독립 품질 검증
+WO-37 최종 통합 회귀 검사
+WO-38 정식 APK/AAB 패키징 및 출시 판정
+
+총 38개 WO를 초기 계획으로 설정합니다. PoC 결과에 따라 불가능한 기능의 범위를 수정하거나 작업을 통합할 수 있습니다.
+
+AI 개발 도구 활용
+
+개발 도구 담당 역할
+Codex 메인 개발, 아키텍처, 통합 구현
+Grok Build 독립 모듈 개발, 알고리즘 및 코드 검토
+Antigravity CLI 보조 구현, UI 품질 검사 및 독립 검증
+GPT 기술 조사, 요구사항, 설계 검토 및 품질 판정
+
+동일한 파일을 여러 도구가 동시에 수정하지 않도록 작업 범위와 변경 권한을 분리합니다.
+
+
+14. 최종 출시 품질 판정 기준
+
+단순히 APK가 빌드되고 워치에서 실행된다는 이유로 개발 완료를 선언하지 않습니다.
+
+검증 분야 GO 조건
+기능 필수 기능 및 데이터 공급 정상
+디자인 승인된 시각적 기준 충족
+소재 유리·금속·광원의 일관성 확보
+애니메이션 끊김 및 불필요한 그래픽 점프 없음
+가독성 주간·야간·야외 환경에서 검증
+WFF 대상 버전별 공식 규격 검사 통과
+메모리 공식 메모리 한도 준수
+배터리 비교 시험 및 사용량 목표 충족
+호환성 지정 기기별 지원 결과 확보
+안정성 장시간 실행 및 장애 시험 통과
+보안 권한·통신·저장·업데이트 검사 통과
+접근성 고대비 및 모션 감소 검증
+테스트 필수 회귀 시험에서 FAIL 없음
+
+시각적 품질은 정지 화면만으로 판단하지 않습니다. 실제 화면 전환 영상, 프레임별 변화, 소재의 반사 효과 및 여러 화면 크기에서의 가독성을 검증합니다.
+
+15. 최종 기술 선정 및 판정
+
+항목 최종 선정
+프로젝트명 AURA Ultra
+제품 유형 지능형 프리미엄 워치 페이스 플랫폼
+최소 목표 기기 갤럭시 워치7
+최신 목표 기기 갤럭시 워치9·울트라2
+워치 페이스 WFF 2~5 다중 버전
+주력 그래픽 WFF 4 및 WFF 5
+대표 디자인 Signature
+전체 테마 8종
+워치 앱 Kotlin·Compose for Wear OS
+스마트폰 앱 Kotlin·Jetpack Compose
+그래픽 제작 Figma·Blender·Inkscape
+지능형 기능 규칙 엔진·FSM·이벤트 기반 처리
+개발 구조 모듈형 Clean Architecture
+개발 단계 5개 Phase · 38개 WO
+향후 확장 WFF 신규 버전 및 차세대 기기 프로필 추가
+
+남은 기술적 제약
+
+실제 사용 중인 워치7의 OS 버전과 화면 크기는 아직 확인하지 않았습니다. 모든 지원 기기의 실기기 테스트도 수행하지 않았습니다.
+
+WFF 내부에서 Apple의 실제 Liquid Glass 셰이더나 시스템 전환 엔진을 복제하는 것은 개발 범위에서 제외합니다. 대신 시각적으로 유사한 고품질 소재 및 연속 모션을 구현합니다.
+
+또한 Signature와 Night Vision 테마의 추가, 기본 품질 프로필, 38개 WO 구성 및 다중 빌드 방식은 이번 통합 과정에서 제가 제안한 설계 결정입니다.
+
+현재 프로젝트 판정은 설계 및 기술 검증 착수 GO, 정식 출시 NO-GO입니다.
+
+
+최종 개발 철학
+
+AURA Ultra는 기존 상용 워치 페이스처럼 배경 이미지와 컴플리케이션을 조합하는 수준에서 끝내지 않습니다.
+
+Apple의 시각적 연속성과 정교한 인터랙션
+고급 기계식 시계의 금속 소재 및 정밀 가공 표현
+차세대 디지털 인터페이스의 공간감과 동적 조명
+갤럭시 워치의 원형 OLED 디스플레이와 센서
+지능형 데이터 처리 및 적응형 정보 표시
+
+이 다섯 가지를 하나의 일관된 제품으로 통합합니다.
+
+워치7의 호환성을 확보하기 위해 최신 기기의 표현력을 희생하지 않고, 화려함을 확보하기 위해 사용성과 배터리 효율을 무조건 희생하지 않는 것. 이를 AURA Ultra의 핵심 개발 원칙으로 삼는 것이 가장 적합합니다.
+
+이번 통합 정리는 기존 심층 리서치 보고서 원문, 독립 조사 결과 및 추가 일반 인터넷 검색을 기반으로 작성했습니다. 새로운 심층 리서치는 실행하지 않았습니다.
+
+Recursos de UI Seelen – Temas, Widgets e Papéis de Parede | Seelen
+
+Credor 50th Anniversary Locomotive by Gerald Genta GCCR999 - Chronopassion
+
+流れるグラデーション | iPad/タブレット壁紙ギャラリー
+
+Storm Saturn Watch
+
+
+you asked
+
+message time: 2026-11-27 21:05:52
+
+https://github.com/scarlel96-design/AURA-Ultra
+
+새로 개발했어 여기에 일단 전체 설계도 그리고 작업에 도움을 주거나 확실한 지침이 담긴 여러 문서들 먼저 진행해줘
+
+
+chatgpt response
+
+저장소의 main 브랜치에 제목만 있는 README가 있고, 쓰기 권한도 확인했습니다. 개발 코드에 손대지 않고 전체 설계서, AI 개발 지침, 그래픽 규격, 호환성 정책, 검증 기준과 첫 작업지시서를 하나의 문서 커밋으로 구성하겠습니다.
+
+AURA Ultra — 초기 설계 및 개발 지침 구축 완료
+
+AURA-Ultra GitHub 저장소의 main 브랜치에 전체 설계도와 개발 지침을 등록했습니다.
+
+설계 기준선 v1.0
+
+GitHub 커밋 및 등록 확인 완료
+
+
+등록 문서
+
+18개
+
+개발 요구사항
+
+26개
+
+개발 단계
+
+5 Phase
+
+작업지시서 계획
+
+38 WO
+
+핵심 기술 PoC
+
+15개
+
+계획된 디자인 테마
+
+8종
+
+
+커밋 6f074fb
+
+1. 등록한 전체 문서
+
+핵심 설계 및 개발 통제
+
+문서 주요 내용
+README.md 프로젝트 개요 및 전체 문서 안내
+AGENTS.md Codex 및 AI 개발 도구의 공통 작업 지침
+MASTER\_ARCHITECTURE.md 전체 소프트웨어 설계도, 모듈 책임 및 데이터 흐름
+REQUIREMENTS.md 26개 기능·비기능 요구사항
+ROADMAP.md 38개 WO의 작업 범위, 의존성 및 완료 기준
+STATUS.md 현재 개발 상태 및 미해결 사항
+
+디자인 및 기술 명세
+
+문서 주요 내용
+DESIGN\_SYSTEM.md 프리미엄 디자인 시스템, 11개 그래픽 레이어, 8개 테마
+MOTION\_SPEC.md 17개 모션 명세, AOD 연속성, 애니메이션 규칙
+COMPATIBILITY.md 갤럭시 워치7 이후 기기 및 WFF 2~5 호환성
+DATA\_INTELLIGENCE.md 건강·기상 데이터, 상황 인식, 상태 머신, 데이터 계약
+PERFORMANCE.md 메모리, 그래픽, 배터리 및 발열 최적화
+SECURITY.md 보안, 개인정보 보호 및 장애 복구
+
+개발 지원 및 품질 관리
+
+문서 주요 내용
+DEVELOPMENT.md 기술 스택, 오픈소스, 빌드 파이프라인 및 협업 지침
+QUALITY\_GATES.md PoC, 테스트, 증거 관리 및 출시 판정
+REFERENCES.md 공식 기술 자료 및 재검증 대상
+ADR 지침 아키텍처 결정 및 변경 이력 관리
+WO TEMPLATE 표준 작업지시서 양식
+WO-01 첫 번째 상세 개발 작업지시서
+
+2. 전체 소프트웨어 설계 구조
+
+AURA Mobile Studio
+
+스마트폰 커스터마이징 및 관리 앱
+
+Wear OS Data Layer
+
+AURA Wear Services
+
+Kotlin · Clean Architecture · 상황 인식 및 데이터 처리
+
+Complication Data · Reference
+
+AURA Watch Face
+
+선언형 WFF 그래픽 시스템
+
+Galaxy Watch7 이후 지원 대상 기기
+
+향후 출시 모델 및 새로운 WFF 버전 확장
+
+전체 구조는 모듈화, 관심사 분리, 의존성 주입 및 Clean Architecture를 기반으로 설계했습니다.
+
+특히 워치 페이스의 선언형 그래픽과 별도 애플리케이션의 실행 로직을 명확하게 분리했습니다.
+
+3. 화려함과 고급스러움에 대한 강제 개발 지침
+
+AGENTS.md, REQUIREMENTS.md, DESIGN_SYSTEM.md, MOTION_SPEC.md에 공통으로 반영했습니다.
+
+화려함과 고급스러움을 필수 품질 요구사항으로 유지합니다.
+저사양 기기 대응을 이유로 전체 디자인 품질을 임의로 낮추지 않습니다.
+유리와 금속의 반사광, 굴절 모사, 깊이감 및 광원 일관성을 확보합니다.
+그래픽 객체가 이동·확장·수축·변형되는 시각적 연속성을 우선합니다.
+정지 화면뿐만 아니라 실제 화면 전환 영상으로 품질을 검증합니다.
+8개 테마를 단순한 색상 변경으로 구현하지 않습니다.
+그래픽 품질을 최대한 보존하면서 메모리와 전력 사용량을 최적화합니다.
+시각적 품질을 낮추는 방식으로 테스트 통과를 유도하지 않습니다.
+
+Codex가 단순히 기능 구현과 테스트 통과에만 집중하지 않도록 디자인 완성도 자체를 개발 완료 판정에 포함했습니다.
+
+4. 전체 개발 로드맵
+
+
+전체 구현 진행률
+
+0 / 38
+
+초기 설계 문서 구축은 완료했습니다. 실제 소프트웨어 구현은 아직 시작하지 않았습니다.
+
+38개 WO 각각에 선행 작업, 주요 산출물 및 완료 검증 항목을 지정했습니다. 후속 작업은 표준 양식에 따라 상세 지시서를 작성한 후 진행하도록 구성했습니다.
+
+5. 등록 결과 검증
+
+검증 항목 결과
+GitHub 저장소 접근 PASS
+쓰기 권한 확인 PASS
+문서 18개 등록 확인 PASS
+문서 내부 상대 링크 대상 검사 PASS
+38개 WO 구성 확인 PASS
+main 브랜치 커밋 반영 확인 PASS
+실제 프로그램 빌드 NOT RUN
+WFF 규격 검사 NOT RUN
+실기기 시험 NOT RUN
+
+제한 사항: 원본 심층 리서치 보고서는 저장소에 별도 파일로 첨부하지 않았습니다. 연구 결과를 설계 문서에 반영했습니다. WO-02~38은 로드맵 수준이며 상세 작업지시서는 아직 작성하지 않았습니다.
+
+문서 분할 방식, main 브랜치 직접 등록, 초기 성능 목표 및 WO 의존성은 이번 작업에서 결정했습니다. 기존 README를 제외한 다른 파일은 없었으며, 구현 코드는 변경하지 않았습니다.
+
+신형 갤럭시 워치의 정확한 사양과 실제 OS 지원 상태는 WO-01에서 공식 자료를 통해 재확인하도록 지정했습니다.
+
+6. Codex에서 개발을 시작하는 방법
+
+이제 Codex에서 해당 저장소를 선택한 후 다음 지시사항을 입력하면 됩니다.
+
+Standard
+
+AURA-Ultra 저장소의 최신 main 브랜치를 기준으로 작업을 시작하라.
+
+README.md, AGENTS.md 및 docs 디렉터리의 전체 설계 문서를 먼저 숙지하라.
+
+docs/work-orders/WO-01.md에 명시된 작업 범위, 선행 조건, 필수 요구사항 및 검증 기준을 준수하여 WO-01을 진행하라.
+
+기존 설계 방향과 프리미엄 그래픽 품질 요구사항을 임의로 변경하지 마라.
+
+모든 기술적 주장은 공식 문서와 실제 실행 결과를 기반으로 검증하라.
+
+작업 완료 후 변경 사항, 실행 증거, 검증 결과, 미해결 문제 및 GO/PARTIAL/NO-GO 판정을 기록하라.
+
+다음 작업은 자동으로 시작하지 마라.
+
+
+
+현재 초기 설계 기준선 구축 완료, WO-01 착수 가능, 정식 출시 NO-GO 상태입니다.
+
+
+you asked
+
+message time: 2026-11-27 21:11:10
+
+이제 실제 프로그램 빌드 초기 토대 기반도 확보해줘 우리의 목표는 최대한 코덱스 사용량 절감하면서 빠른 개발이 목표니깐 채팅 모델은 너가 할 수 있는 부분은 최대한 많은 부분을 진행해줘 무리가 없는 부분까지만
+
+
+chatgpt response
+
+Codex의 작업량을 줄이기 위해 초기 Gradle 프로젝트, WFF 버전별 생성 구조, 최소 워치 페이스, 자동 검증 도구와 CI를 먼저 확보하겠습니다. 실제 빌드나 실기기 확인이 불가능한 부분은 완료로 처리하지 않겠습니다.
+
+현재 환경에는 Java가 있지만 Gradle, Android SDK 및 ADB가 없고, 외부 다운로드도 차단되어 있습니다. 공식 문서에서 호환성을 확인한 AGP·Gradle 버전을 고정하고 GitHub Actions에서 실제 APK 빌드를 검증할 수 있도록 구성하겠습니다.
+
+초기 빌드 소스와 검증 파이프라인을 main에 등록했습니다. WFF 2·3·4를 별도 APK로 빌드하도록 구성했으며, WFF 5는 SDK 및 공식 규격 확인 전까지 비활성화했습니다. 이제 커밋과 CI 실행 여부를 확인하고 있습니다.
+
+AURA Ultra — 초기 빌드 기반 구축 결과
+
+설계 문서 작성에 이어 실제 Android 프로젝트와 워치 페이스 소스코드, 빌드 환경, 자동 검증 파이프라인을 GitHub에 등록했습니다.
+
+Codex가 빈 저장소에서 프로젝트를 처음부터 구성할 필요가 없도록 개발 기반을 직접 구축했습니다.
+
+Bootstrap v0.1.0
+
+main 브랜치 반영 확인 완료
+
+
+전체 저장소 파일
+
+42개
+
+이번 작업의 신규 파일
+
+24개
+
+빌드 대상
+
+WFF 2·3·4
+
+자동 검증 스크립트
+
+3개
+
+
+GitHub 저장소 · 구현 커밋 171fca4
+
+1. 실제 구축한 개발 환경
+
+구성 요소 적용 버전
+Java Development Kit 17
+Gradle 8.11.1
+Android Gradle Plugin 8.10.1
+Android Compile SDK 36
+Android Target SDK 36
+최소 지원 SDK 34
+검증 도구 Python 3.10 이상
+프로젝트 빌드 버전 0.1.0-bootstrap
+빌드 자동화 GitHub Actions
+
+최신 버전을 무조건 사용하는 대신, 공식 호환성 문서에서 상호 호환되는 버전을 확인하고 고정했습니다.  developer.android.com gradle.org
+
+Gradle Wrapper도 공식 저장소에서 가져왔습니다. 배포 파일의 SHA-256 체크섬을 고정하고, CI에서 Wrapper JAR의 무결성을 검사하도록 구성했습니다.
+
+2. 현재 구현한 워치 페이스
+
+초기 WFF XML에 다음 기능을 적용했습니다.
+
+실제 시스템 시간 표시
+기기의 12시간제·24시간제 설정 연동
+날짜 및 요일
+워치 배터리 잔량
+걸음수 및 걸음 목표
+원형 외곽 링과 정보 패널
+AOD 전환 시 장식 그래픽 제거
+AOD 전용 시간 표시
+450×450 공통 논리 좌표계
+리소스 전용 APK 구조
+
+워치 페이스 소스코드 확인
+
+현재 워치 페이스는 빌드 검증용 최소 구현체입니다. 최종 Signature 디자인의 소재, 화려한 그래픽, 연속 모션을 대체하는 것이 아닙니다.
+
+3. 기기 및 OS 호환성 기반
+
+빌드 프로필 최소 API 대상 환경 구성 상태
+WFF 2 34 Wear OS 5 이상 구성 완료
+WFF 3 35 Wear OS 5.1 이상 구성 완료
+WFF 4 36 Wear OS 6 이상 구성 완료
+WFF 5 미확정 Wear OS 7 계열 확장 구조 확보
+
+각각 별도의 APK를 생성하도록 Gradle 빌드를 구성했습니다. 공통 그래픽 리소스를 사용하므로 향후 기능별로 전체 소스코드를 중복 관리할 필요가 없습니다.
+
+현재 WFF 2~4의 빌드 대상은 구성했지만, 최신 버전 전용 그래픽 효과까지 구현한 상태는 아닙니다.
+
+4. 자동 검증 및 빌드 시스템
+
+이 구조를 통해 향후 Codex가 소스코드를 수정할 때마다 기본 검사를 반복해서 직접 수행하는 부담을 줄일 수 있습니다.
+
+추가한 자동화 도구
+
+도구 기능
+check\_foundation.py 프로젝트 구조 및 설계 규칙 검사
+verify\_wff.py 공식 WFF Validator 실행 및 무결성 검사
+check\_apk.py APK 내부 실행 코드 및 필수 리소스 검사
+bootstrap.yml 전체 자동 빌드 및 검증 파이프라인
+
+5. 실제 검증 결과
+
+첫 번째 GitHub Actions 실행에서 SDK 설치 문제가 발견됐습니다. 원인을 확인하고 SDK 설치 전용 단계를 추가했습니다.
+
+검증 항목 결과
+GitHub 소스코드 등록 PASS
+Gradle Wrapper 무결성 PASS
+프로젝트 구조 검사 PASS
+XML 기본 구조 검사 PASS
+AOD 기본 구성 검사 PASS
+WFF 빌드 프로필 일치 검사 PASS
+Android SDK 설치 수정 후 재검증 중
+공식 WFF Validator 미확정
+APK 빌드 미확정
+메모리 및 배터리 검사 NOT RUN
+실기기 실행 NOT RUN
+
+첫 번째 CI 실행 결과 · 수정된 CI 실행 결과 · SDK 설치 문제 수정 커밋
+
+현재 두 번째 CI에서도 Wrapper 무결성과 프로젝트 구조 검사를 통과했습니다. SDK 설치가 진행 중이며 최종 APK 빌드 성공까지는 확인하지 못했습니다.
+
+6. 앞으로 GPT가 직접 담당할 수 있는 개발 범위
+
+Codex 사용량을 최대한 절감하는 방향으로 다음과 같이 작업을 분리할 수 있습니다.
+
+작업 분야 GPT 직접 수행 가능 범위
+프로젝트 설계 및 문서 높음
+작업지시서 작성 높음
+WFF XML 작성 높음
+디자인 토큰 작성 높음
+그래픽 좌표 및 배치 설계 높음
+데이터 모델 및 상태 머신 높음
+Kotlin 기본 소스코드 높음
+단위 테스트 코드 높음
+정적 검증 도구 높음
+GitHub Actions 구축 높음
+CI 오류 분석 및 수정 높음
+보안 정책 및 코드 검토 높음
+고급 그래픽 최적화 부분 가능
+복잡한 Android 통합 디버깅 부분 가능
+실기기 센서 및 렌더링 시험 직접 수행 불가
+실제 배터리 및 발열 측정 직접 수행 불가
+
+Codex는 복잡한 통합 구현, 로컬 개발 환경 제어, 실기기 디버깅처럼 실행 환경에 대한 직접적인 접근이 필요한 작업에 집중시키는 것이 효율적입니다.
+
+나머지 소스코드, 테스트, 자동화, 문서 및 GitHub 작업은 가능한 범위까지 제가 직접 담당하는 개발 방식으로 진행할 수 있습니다.
+
+7. 현재 프로젝트 판정
+
+작업 상태
+초기 전체 설계 및 개발 지침 완료
+WO-01 환경 및 플랫폼 검증 PARTIAL
+WO-02 초기 빌드 기반 PARTIAL
+WO-03 공통 레이아웃 일부 기반 확보
+WO-04 기본 워치 페이스 및 AOD 초기 구현
+프리미엄 그래픽 및 애니메이션 미착수
+정식 출시 NO-GO
+
+이번 작업의 제한 및 설계 결정
+
+현재 채팅 실행 환경에서는 Android SDK 및 Gradle을 직접 실행할 수 없습니다. 따라서 GitHub Actions를 실제 빌드 검증 환경으로 활용했습니다.
+
+개발용 패키지 ID, 초기 SDK 버전, WFF별 빌드 분리 방식은 제가 선정했습니다. 정식 배포용 패키지 ID와 서명 정책은 아직 확정하지 않았습니다.
+
+기존 38개 WO의 일부 초기 작업을 선행했지만, 정식 완료로 처리하지 않았습니다. 진행 사항과 미검증 항목은 개발 상태 문서에 기록했습니다.
+
+다음 작업에서는 Codex를 투입하기 전에 빌드 안정화, WFF 생성 자동화, 그래픽 리소스 관리 기반, 지능형 상태 머신 및 데이터 계약의 초기 코드까지 확보하는 방향이 적합합니다.
+
+최종 제품의 화려한 그래픽과 고급 소재, 정교한 연속 모션에 Codex의 사용량을 집중할 수 있도록 초기 기반부터 최대한 완성도를 높이겠습니다.
+
+
+you asked
+
+message time: 2026-11-27 21:17:53
+
+일단 채팅 모델 너가 할 수 있는 부분은 전부 진행해줬으면 해 그러니깐 한번에 진행 다 하지 못해도 너가 어디까지 할 수 있는 지 그리고 작업 완성도 100%를 기준으로 몇 퍼센트까지 너가 선행 작업을 통해서 진행할 수 있는 지 미리 체크해봐
+
+
+chatgpt response
+
+현재 저장소와 CI 결과를 확인한 후, 38개 WO를 채팅에서 직접 수행할 수 있는 범위와 Codex·실기기 작업이 필요한 범위로 나누겠습니다. 완성도와 검증 완료율도 구분해서 산정하겠습니다.
+
+현재 저장소의 개발 상태와 38개 WO, 실제 GitHub Actions 실행 결과를 기준으로 분석했습니다.
+
+결론부터 말하면, Codex를 본격적으로 투입하기 전에 전체 개발 작업량의 약 60~70%를 제가 선행하는 것을 현실적인 목표로 설정할 수 있습니다. CI를 안정화하고 검증 환경을 충분히 확보하면 그 이상도 가능합니다.
+
+다만 소스코드 작성률과 실제 제품의 완성도는 구분해야 합니다. 실기기에서 확인하지 않은 기능을 완료 처리하지 않겠습니다.
+
+1. GPT 선행 개발 목표
+
+전체 개발 작업량 100% 기준 예상 분담
+
+65%
+
+GPT 선행 개발 목표
+
+설계 · 구현 · 자동 시험 · CI 검증
+
+GPT 65%
+
+Codex 25%
+
+실기기 검증 10%
+
+
+현재 달성률이 아닌 향후 선행 개발 가능 범위의 추정치입니다. CI 및 기술 PoC 결과에 따라 조정합니다.
+
+2. 전체 개발 단계별 예상 기여도
+
+기능의 난이도와 작업량을 고려해 산정했습니다. 38개 WO를 단순히 개수로 나눠 계산하지 않았습니다.
+
+개발 단계 전체 작업 비중 GPT 수행 가능 비율 전체 기여도
+Phase 1. 기반 및 기술 검증 15% 80% 12%
+Phase 2. 고급 그래픽 및 모션 25% 60% 15%
+Phase 3. 데이터 및 지능형 기능 25% 80% 20%
+Phase 4. 테마 및 앱 개발 20% 65% 13%
+Phase 5. 최적화 및 출시 검증 15% 40% 6%
+합계 100% — 66%
+
+즉, 전체 개발 작업량의 약 66%를 직접 담당하는 것을 초기 계획으로 설정할 수 있습니다.
+
+3. 현재 실제 빌드 상태
+
+방금 GitHub Actions의 두 번째 실행 결과를 확인했습니다. 이전 작업보다 진전이 있었습니다.
+
+검증 항목 결과
+Gradle Wrapper 무결성 PASS
+프로젝트 구조 검사 PASS
+Android SDK 설치 PASS
+공식 WFF Validator PASS
+WFF 2 APK 빌드 PASS
+WFF 3 APK 빌드 PASS
+WFF 4 APK 빌드 PASS
+APK 내부 실행 코드 검사 FAIL
+APK Artifact 업로드 SKIP
+
+실제 GitHub Actions 실행 결과
+
+Gradle에서 BUILD SUCCESSFUL을 확인했습니다. 공식 WFF 검증 도구도 통과했습니다.
+
+다만 생성된 WFF 2 APK에서 실행 코드로 분류된 파일이 발견됐습니다. WFF의 리소스 전용 패키지 요구사항에 맞게 원인을 분석하고 수정해야 합니다. 정확한 원인은 아직 확정하지 않았습니다.
+
+이 문제도 Codex 투입 없이 제가 먼저 처리할 수 있는 범위입니다.
+
+4. 직접 수행 가능한 전체 개발 범위
+
+4.1 개발 기반 및 자동화
+
+예상 수행 가능 범위: 90~100%
+
+작업 GPT 담당
+Gradle 빌드 안정화 전체
+WFF 다중 버전 빌드 전체
+프로젝트 모듈 구조 전체
+의존성 관리 전체
+WFF XML 생성 도구 전체
+그래픽 리소스 생성 도구 대부분
+공식 WFF Validator 통합 전체
+Memory Footprint Evaluator 통합 전체
+APK 구조 검사 전체
+GitHub Actions 최적화 전체
+테스트 자동화 대부분
+개발 문서 및 작업지시서 전체
+정적 코드 품질 검사 전체
+의존성 및 라이선스 검사 대부분
+
+이 분야는 Codex의 사용량을 크게 절감할 수 있는 부분입니다.
+
+4.2 프리미엄 그래픽 및 애니메이션
+
+예상 수행 가능 범위: 50~70%
+
+작업 GPT 담당
+공통 디자인 토큰 전체
+원형 레이아웃 및 좌표 계산 전체
+정밀 눈금 및 데이터 링 전체
+벡터 그래픽 및 아이콘 대부분
+유리 소재의 다중 레이어 대부분
+금속 소재 및 텍스처 생성 부분
+그라데이션 및 동적 광원 대부분
+AOD 연속 모션 XML 대부분
+숫자 전환 애니메이션 부분
+손목 기울기 기반 시차 효과 대부분
+날씨 애니메이션 대부분
+그래픽 리소스 최적화 대부분
+8개 테마의 초기 구현 대부분
+실제 렌더링 품질 조정 제한적
+최종 애니메이션 튜닝 제한적
+
+그래픽의 초기 구현은 상당 부분 직접 진행할 수 있습니다.
+
+다만 화려함과 고급스러움이라는 핵심 요구사항을 충족했는지는 실제 워치에서 반드시 확인해야 합니다. 최종 소재의 광택, 입체감, 글꼴 품질 및 움직임을 조정하는 작업은 Codex와 실기기 환경에 일부 남겨야 합니다.
+
+4.3 지능형 기능 및 데이터 시스템
+
+예상 수행 가능 범위: 80~90%
+
+작업 GPT 담당
+Kotlin 데이터 모델 전체
+상태 머신 및 규칙 엔진 전체
+상황 판단 알고리즘 전체
+데이터 캐싱 전체
+오프라인 처리 전체
+오류 복구 정책 전체
+기상청 API 연동 코드 대부분
+Open-Meteo 연동 코드 대부분
+강수 예측 알고리즘 대부분
+배터리 잔여 시간 예측 대부분
+Health Services 연동 대부분
+Health Connect 연동 대부분
+Samsung Health 연동 부분
+Complication Data Source 대부분
+WFF Reference 연동 대부분
+단위 테스트 및 합성 데이터 전체
+
+실제 건강 센서와 사용자 권한이 필요한 부분을 제외하면, 대부분의 핵심 로직은 직접 구현할 수 있습니다.
+
+4.4 Wear OS 및 스마트폰 앱
+
+예상 수행 가능 범위: 60~80%
+
+작업 GPT 담당
+Wear OS 상세 화면 대부분
+Jetpack Compose UI 대부분
+스마트폰 Companion App 대부분
+설정 및 프리셋 관리 전체
+테마 편집 기능 대부분
+모션 설정 기능 대부분
+Data Layer 통신 대부분
+설정 동기화 대부분
+워치 페이스 미리보기 부분
+Watch Face Push 연동 부분
+설치 및 업데이트 관리 대부분
+최종 UI/UX 품질 조정 제한적
+
+스마트폰 앱에도 iOS와 macOS의 디자인 철학을 참고한 고급 디자인과 자연스러운 화면 전환을 반영할 수 있습니다.
+
+5. GPT 선행 개발 계획
+
+기존 38개 WO 체계를 유지하면서 채팅 모델에서 직접 진행할 작업을 12개 묶음으로 분리하는 것을 추천합니다.
+
+작업 차수 GPT 선행 개발 범위 누적 작업량 목표
+GPT-01 빌드 오류 해결 및 CI 안정화 6%
+GPT-02 멀티 WFF 빌드 및 모듈 기반 확립 12%
+GPT-03 그래픽 리소스 생성 및 WFF 생성 도구 17%
+GPT-04 디자인 토큰, 레이아웃, 타이포그래피 22%
+GPT-05 AOD 및 연속 모션 초기 구현 28%
+GPT-06 유리, 금속, 광원, 입체 효과 34%
+GPT-07 데이터 계약, 캐시 및 상태 머신 40%
+GPT-08 기상 및 강수 데이터 연동 46%
+GPT-09 건강, 배터리 및 Complication 연동 52%
+GPT-10 8개 테마의 초기 구현 57%
+GPT-11 Wear OS 및 Companion App 기반 62%
+GPT-12 자동 시험, 통합 검증, 코드 감사 66%
+
+GPT 선행 개발 단계별 누적 목표
+
+Category 누적 개발 작업량
+시작 0%
+01 6%
+02 12%
+03 17%
+04 22%
+05 28%
+06 34%
+07 40%
+08 46%
+09 52%
+10 57%
+11 62%
+12 66%
+
+계획용 가중치입니다. 실제 작업 결과와 검증 증거를 기준으로 갱신합니다.
+
+12개 작업 묶음은 반드시 12번의 대화를 의미하지 않습니다. 작업 규모나 CI 결과에 따라 한 번에 여러 작업을 처리하거나 하나의 작업을 분할할 수 있습니다.
+
+6. Codex에 남길 작업
+
+GPT 선행 개발을 최대한 진행한 후에는 Codex가 다음 분야에 집중하도록 합니다.
+
+복잡한 Android 및 Wear OS 통합 디버깅
+실제 렌더링 결과를 기반으로 한 고급 그래픽 개선
+Apple 특유의 시각적 연속성과 애니메이션 정밀 튜닝
+실제 센서 및 Samsung Health 연동 검증
+최신 갤럭시 워치 호환성 시험
+CPU·GPU·메모리·배터리·발열 최적화
+스마트폰과 워치 간 실제 연결 시험
+전체 통합 회귀 검사 및 출시 빌드
+
+Codex가 처음부터 개발하는 방식이 아니라, 이미 작성되고 자동 검증까지 진행된 프로젝트를 인수하여 고난도 구현과 최종 완성도 향상에 집중하는 방식입니다.
+
+7. 최종 예상 범위
+
+구분 현실적 목표 조건이 양호한 경우
+설계 및 기술 문서 95% 100%
+전체 소스코드 선행 작성 75% 85%
+자동 검증 체계 85% 95%
+전체 개발 작업량 60% 75%
+Codex 작업량 절감 50~60% 약 70%
+
+Codex 사용량 자체의 절감률은 실제 모델 사용량, 오류 발생 빈도 및 재작업 규모에 따라 달라집니다. 위 수치는 실측 결과가 아닙니다.
+
+목표는 GPT 선행 개발 작업량 65%, 최대 75%로 설정하겠습니다. 무리하게 코드만 늘리지 않고 실제 CI 검증이 가능한 범위까지 구현하겠습니다.
+
+이번에는 수행 가능 범위와 최신 CI 결과를 확인했으며 저장소를 추가 수정하지 않았습니다. 첫 번째 선행 개발 작업은 GPT-01: APK 실행 코드 검사 오류 해결 및 빌드 파이프라인 안정화로 선정합니다.
+
+
+you asked
+
+message time: 2026-11-27 21:19:56
+
+일단 ai는 작업이 오래 진행 될 수록 맨 뒷쪽 기억은 잊어버리잖아? 그걸 사전에 대비하고자 지금부터 미리 작업에 필요한 정보를 모두 문서화해 그리고 이후 작업 들어가면 어떤 작업을 할 지부터 작업 진행까지 너가 스스로 판단하는 데 내가 그냥 다음 작업 이렇게 지시만 해도 될 정도로
+
+
+chatgpt response
+
+대화 기억에 의존하지 않도록 저장소 자체를 개발의 기준으로 만들겠습니다. 작업 큐, 인수인계 기록, 자동 재개 규칙, 검증 증거 및 완료 판정 기준을 문서화하겠습니다. 이후에는 “다음 작업”이라는 지시만으로 현재 상태를 확인하고 적절한 작업을 선택할 수 있게 구성하겠습니다.
+
+현재 핵심 차단점도 다시 확인했습니다. WFF 2·3·4 APK 빌드와 공식 규격 검사는 통과했지만, APK 내부 실행 코드 검사가 실패했습니다. 이 결과와 정확한 CI 링크를 재개 체크포인트에 기록하고, 기존 문서의 “다음 WO 자동 진행 금지” 규칙도 새 작업 방식과 충돌하지 않도록 정리하겠습니다.
+
+AURA Ultra — 세션 독립형 개발 관리 체계 구축 완료
+
+앞으로는 대화가 길어지거나 새로운 채팅에서 작업을 재개하더라도, 이전 대화의 기억에 의존하지 않도록 GitHub 저장소 자체를 프로젝트의 장기 기억 저장소로 사용하는 체계를 구축했습니다.
+
+개발 목표부터 기술 제약, 작업 순서, 실패 원인, 검증 증거, 다음 작업 선정 기준까지 문서화했습니다.
+
+Persistent Development System v1.0
+
+main 브랜치 등록 및 검증 완료
+
+
+신규 운영 문서
+
+8개
+
+기존 문서 개선
+
+8개
+
+전체 저장소 파일
+
+50개
+
+GPT 선행 개발 단계
+
+12개
+
+
+GitHub 저장소 · 이번 작업 커밋 28f51fd
+
+1. 장기 기억 보존 및 개발 관리 문서
+
+문서 역할
+RESUME\_PROTOCOL.md 작업 재개 및 자율적인 다음 작업 선정 규칙
+PROJECT\_INVARIANTS.md 절대 누락하거나 임의로 축소하면 안 되는 개발 목표
+GPT\_EXECUTION\_PLAN.md GPT 선행 개발 12단계 및 산출물
+GPT-01.md 다음 작업의 상세 작업지시서
+BLOCKERS.md 미해결 문제, 기술적 제약 및 해결 조건
+WORK\_LOG.md 누적 개발 이력 및 변경 사항
+PROGRESS\_MODEL.md 실제 완성도 및 작업 진행률 산정 기준
+HANDOFF.md GPT·Codex·보조 AI 간 작업 인수인계
+
+특히 STATUS.md를 프로젝트의 현재 상태를 저장하는 단일 체크포인트로 개편했습니다.
+
+
+2. 앞으로의 자율 개발 진행 방식
+
+사용자가 **“다음 작업”**이라고 입력하면 다음 절차에 따라 작업합니다.
+
+
+다음 사용자 지시에서 반복
+
+이전 대화 기억이 없어도 저장소에서 작업 상태 복원
+
+매번 사용자에게 작업 범위를 지정해 달라고 요청하지 않습니다. 기존 개발 계획과 실제 진행 상황을 기준으로 제가 판단합니다.
+
+현재 작업이 외부 환경 문제로 막혀도 안전하게 진행할 수 있는 독립 작업이 있다면 먼저 수행합니다.
+
+3. 개발 목표 망각 및 변질 방지
+
+장기간 개발하면서 초기 개발 목표가 점차 축소되거나 변경되는 문제도 방지하도록 구성했습니다.
+
+핵심 요구사항 보존 정책
+화려함과 고급스러움 필수 품질 요구사항
+Apple 특유의 시각적 연속성 핵심 모션 요구사항
+유리·티타늄·동적 광원 핵심 그래픽 요구사항
+8개 독립 디자인 테마 유지
+갤럭시 워치7 이후 기기 지원 대상 유지
+향후 출시 기기 확장 가능한 구조 유지
+WFF 2~5 다중 호환성 목표 유지
+지능형 상황 인식 핵심 기능 유지
+스마트폰 Companion App 개발 범위 유지
+오픈소스 적극 활용 유지
+배터리 및 성능 최적화 필수 검증
+Codex 사용량 절감 개발 운영 목표
+
+테스트를 통과하기 위해 그래픽 품질을 낮추거나 기능을 임의로 제거하는 행위도 금지했습니다.
+
+플랫폼에서 구현할 수 없는 기능은 근거를 확인하고, 최대한 유사한 효과를 제공하는 대체 구현을 검토합니다.
+
+
+4. 작업 자동 선정 우선순위
+
+우선순위 작업 유형
+1 보안 문제, 데이터 무결성 및 핵심 기능 회귀
+2 빌드 실패 및 필수 검증 차단 문제
+3 현재 작업의 미완료 항목
+4 선행 조건이 충족된 다음 개발 작업
+5 독립적으로 진행 가능한 후속 작업
+
+동일한 우선순위의 작업이 여러 개라면 개발 의존성, 재작업 위험, Codex 사용량 절감 효과 및 실제 검증 가능성을 고려해 결정합니다.
+
+5. GPT 선행 개발 계획
+
+백분율은 단계별 누적 작업량 목표입니다. 실제 완료율이 아닙니다.
+
+기존 38개 WO 체계와 GPT의 12개 선행 개발 작업을 연계했습니다.
+
+작업 규모에 따라 한 번의 요청에서 여러 하위 작업을 진행할 수도 있습니다. 반대로 복잡한 작업은 여러 차례에 나누어 진행합니다.
+
+6. 진행률 과대평가 방지
+
+앞으로 다음 지표를 구분해서 관리합니다.
+
+지표 산정 기준
+WO 완료율 공식 GO 판정을 받은 WO
+GPT 작업 완료율 실제 종료 조건을 충족한 GPT 작업
+코드 작성률 작성된 기능의 범위
+검증 통과율 실제 실행한 필수 시험 결과
+전체 제품 완성도 기능, 그래픽, 성능, 안정성, 호환성 및 실기기 검증
+Codex 절감 효과 선행 작업으로 줄인 예상 개발 작업량
+
+설계 문서를 작성했다고 기능을 완료 처리하지 않습니다. APK가 빌드됐다고 실기기 호환성을 확보했다고 판단하지도 않습니다.
+
+
+7. 현재 작업 체크포인트
+
+GPT-01
+
+(착수 가능)
+
+초기 빌드 및 검증 파이프라인 안정화
+
+
+공식 WFF Validator PASS
+
+WFF 2·3·4 APK 빌드 PASS
+
+APK 실행 코드 검사 FAIL
+
+APK Artifact 확보 SKIP
+
+
+다음 작업
+
+APK 내부 검사 실패 원인 확인 → 리소스 전용 패키징 문제 수정 → 공식 규격 및 빌드 재검증 → APK 확보.
+
+이 상태도 저장소에 기록했기 때문에 새로운 대화에서 바로 이어서 진행할 수 있습니다.
+
+8. 등록 결과 검증
+
+항목 결과
+신규 운영 문서 8개 등록 PASS
+기존 문서 8개 개선 PASS
+전체 50개 파일 확인 PASS
+README 상대 링크 검사 PASS
+최신 체크포인트 기록 확인 PASS
+기존 개발 지침과의 충돌 수정 반영 완료
+main 브랜치 커밋 확인 PASS
+
+이번 작업은 개발 운영 및 기억 보존 문서에 한정했습니다. 실제 APK 오류는 아직 수정하지 않았습니다. GPT 작업 분할과 자동 선정 정책은 제가 설계했으며, 정식 출시 및 중요한 요구사항 변경에는 기존 승인 조건을 유지합니다.
+
+9. 앞으로 사용자가 할 일
+
+현재 대화에서는 다음과 같이 입력하면 됩니다.
+
+다음 작업
+
+
+
+새로운 채팅에서는 프로젝트를 정확히 특정할 수 있도록 다음과 같이 입력하면 됩니다.
+
+AURA-Ultra 다음 작업
+
+
+
+이후에는 작업 선정부터 구현, 검증, GitHub 반영, 개발 이력 갱신까지 가능한 범위에서 제가 직접 진행하겠습니다.
+
+목표는 사용자의 반복적인 작업 지시 부담과 Codex 사용량을 최소화하면서, 전체 제품의 품질과 개발 방향을 끝까지 유지하는 것입니다.
+
+
+you asked
+
+message time: 2026-11-27 21:23:59
+
+앞으로 매 작업 시 마다 반드시 문서화를 통해서 메모리에 의지하지 않고 문서에 의지할 수 있도록 철저한 대비를 하고 또한 작업 외에도 검증을 통해서 정말 제대로 구현이 되엇는 지 문제는 없는 지도 아주 꼼꼼하고 깐깐하게 체크할 수 있도록 그 부분도 문서화되어 있는 지 체크해
+
+
+chatgpt response
+
+기존 운영 규정과 검증 문서를 대조하겠습니다. 매 작업 후 필수 기록, 독립적인 재검증, 회귀 검사, 증거 대조, 실패 시 작업 중단 기준까지 빠짐없이 명시돼 있는지 확인하고 부족한 부분은 보완하겠습니다.
+
+기존 문서에는 기본적인 기록 의무와 출시 검증 기준이 있습니다. 다만 작업마다 요구사항과 시험을 연결하는 추적표, 테스트 자체의 오류 검사, 변경 후 별도 재검토 절차는 더 구체화할 필요가 있습니다. 실제로 현재 WFF 검사 스크립트에는 성공 메시지를 지나치게 넓게 판정할 수 있는 조건도 발견했습니다. 이번 CI 로그의 WFF 검증은 실제 통과했지만, 이 검사 로직은 다음 개발 작업에서 보완하도록 등록하겠습니다.
+
+AURA Ultra — 작업 기록 및 심층 검증 체계 v1.1
+
+기존 문서를 전부 대조한 결과, 작업 이력 관리와 검증에 관한 기본적인 규정은 이미 있었습니다. 다만 장기간 개발 과정에서 발생할 수 있는 기억 누락, 검증 도구의 오류, 불충분한 회귀 검사, 근거 없는 완료 판정까지 방지하기에는 부족한 부분이 있었습니다.
+
+해당 부분을 보완하고 GitHub에 등록했습니다.
+
+개발 운영 규정 v1.1
+
+GitHub 등록 및 반영 확인 완료
+
+
+신규 문서
+
+4개
+
+기존 문서 강화
+
+11개
+
+전체 저장소 파일
+
+54개
+
+필수 검증 게이트
+
+8단계
+
+
+변경 커밋 951593e
+
+1. 기존 문서의 문제점 및 개선 결과
+
+검사 항목 기존 상태 개선 결과
+작업 이력 보존 확보 강화
+세션 간 작업 재개 확보 강화
+개발 목표 보존 확보 유지
+작업별 상세 기록 일부 부족 보완
+요구사항과 구현 일치 검사 일부 부족 보완
+변경 영향 분석 일부 부족 보완
+경계값 및 비정상 입력 시험 일부 부족 보완
+검증 도구 자체의 정확성 검사 부족 신규 규정
+구현 후 별도 재검토 부족 신규 규정
+회귀 검사 일부 부족 강화
+테스트 증거와 보고서 일치 검사 일부 부족 강화
+미해결 결함 관리 확보 강화
+허위 완료 판정 방지 확보 강화
+
+2. 새로 추가한 핵심 문서
+
+문서 주요 역할
+TASK\_RECORD\_PROTOCOL.md 모든 작업의 시작·진행·종료 단계별 영속 기록
+VERIFICATION\_PROTOCOL.md 8단계 심층 검증 및 품질 판정 규정
+TASK\_REPORT\_TEMPLATE.md 작업마다 사용하는 표준 구현·검증 보고서
+OPS-02 감사 보고서 이번 문서 감사 결과 및 실제 발견한 문제
+
+
+3. 작업마다 반드시 수행할 문서화
+
+앞으로 단순히 작업 결과를 요약하는 수준에서 끝내지 않습니다.
+
+작업 시작 전
+
+현재 소스코드 및 커밋 SHA
+이전 작업의 결과와 미해결 문제
+작업 목적과 포함·제외 범위
+관련 요구사항 및 설계 명세
+변경 대상 파일과 의존성
+예상 위험 및 변경 영향
+구현 방법과 선정 근거
+검증 명령과 성공 기준
+실패 시 복구 방법
+
+작업 진행 중
+
+실제 변경 사항
+새로 발견한 기술적 제약
+추가하거나 변경한 인터페이스
+도입한 오픈소스 및 라이선스
+구현 과정에서 발생한 오류
+실패한 접근 방법과 실패 원인
+기술적 판단 및 설계 결정
+공식 자료와 검증 근거
+
+실패한 접근 방법까지 기록합니다. 다음 세션에서 동일한 방법을 반복해서 시도하는 일을 방지하기 위한 것입니다.
+
+작업 종료 후
+
+최종 변경 파일 및 커밋
+기능별 구현 결과
+요구사항 충족 여부
+전체 테스트 결과와 실행 증거
+발견한 결함 및 수정 결과
+재검증 및 회귀 검사 결과
+미해결 문제와 작업 제한 사항
+GO/PARTIAL/NO-GO 판정
+다음 작업과 정확한 재개 방법
+
+문서 기록과 GitHub 반영 확인을 마치지 않으면 작업 완료로 선언하지 않도록 규정했습니다.
+
+
+4. 8단계 심층 품질 검증 시스템
+
+이번 개선의 핵심입니다. 단순한 빌드 성공이나 테스트 통과만으로 작업을 완료하지 않습니다.
+
+
+작업 완료 판정
+
+필수 검증을 모두 충족하고 증거를 확보한 경우에만 GO
+
+문서만 변경하는 작업에도 해당 작업에 적용되는 검증 규정을 사용합니다. 실기기 시험이 필요한 작업은 실제 기기 검증 없이 완료로 처리하지 않습니다.
+
+5. 기술 분야별 세부 검사
+
+분야 필수 검사 대상
+소스코드 로직 오류, 중복, 누락, 예외 처리, 인터페이스
+아키텍처 모듈 책임, 의존성, 결합도, 설계 위반
+WFF 공식 스키마, 버전, 리소스, APK 구조
+그래픽 정밀도, 소재 품질, 광원, 화면 잘림, 가독성
+애니메이션 프레임, 연속성, 중복 실행, 잔상, 빠른 상태 변경
+지능형 기능 상태 충돌, 우선순위, 반복 전환, 잘못된 판단
+데이터 범위, 단위, 시간대, 누락, 갱신 및 정확성
+네트워크 연결 오류, 타임아웃, 재시도, 복구
+성능 메모리, CPU, GPU, 전력, 발열
+보안 권한, 민감정보, 무결성, 의존성
+호환성 WFF 버전, 화면 크기, OS, 대상 기기
+테스트 잘못된 성공 판정, 검사 누락, 실패 검출 능력
+문서 실제 코드, 검증 결과, 요구사항과의 일치
+
+특히 프리미엄 그래픽은 정지 화면만으로 품질을 판정하지 않습니다. 실제 렌더링과 화면 전환 영상을 검증해야 합니다.
+
+
+6. 검증 도구 자체도 검증
+
+AI 개발에서 상당히 중요한 부분입니다.
+
+예를 들어 테스트가 잘못 작성되어 있으면 실제 기능이 제대로 구현되지 않았어도 PASS가 나올 수 있습니다.
+
+이를 방지하기 위해 다음 항목을 검사하도록 규정했습니다.
+
+잘못된 데이터를 입력했을 때 실제로 실패하는가?
+존재하지 않는 기능을 정상 구현으로 판단하지 않는가?
+테스트를 하나도 실행하지 않았는데 성공으로 처리하지 않는가?
+검사 결과의 특정 문자열만 보고 잘못된 성공 판정을 내리지 않는가?
+일부 지원 기기나 빌드 대상을 누락하지 않았는가?
+기존 테스트를 삭제하거나 완화해서 통과시키지 않았는가?
+최종 소스코드가 아닌 이전 버전의 빌드 결과를 검사하지 않았는가?
+
+이번 감사에서 실제 발견한 문제
+
+현재 tools/verify_wff.py에 다음과 같은 판정 조건이 있습니다.
+
+"VALID" not in result.stdout.upper()
+
+이 조건은 공식 Validator의 성공 결과가 아니라 일반적인 Validation이라는 출력에도 일치할 수 있습니다.
+
+따라서 명시적인 성공 판정이 없더라도 특정 조건에서는 잘못 통과할 위험이 있습니다.
+
+실제 CI 로그에서는 WFF 2·3·4 모두 명시적으로 통과한 것을 확인했습니다. 현재 검증 결과가 잘못됐다는 의미는 아닙니다.
+
+해당 위험을 B-010으로 등록하고, GPT-01에서 검증 로직을 강화하도록 작업지시서에 반영했습니다.
+
+7. 결함 발견 시 처리 기준
+
+심각도 분류 처리 기준
+P0 치명적 즉시 우선 처리, 관련 개발 차단
+P1 중대 해당 작업 또는 출시 완료 차단
+P2 일반 수정 또는 명확한 근거를 바탕으로 이관
+P3 경미 후속 개선 작업에 등록
+
+결함을 발견하면 문제의 위치, 재현 방법, 원인, 영향 범위, 수정 결과 및 재검증 증거를 기록합니다.
+
+필수 기능의 결함을 해결하지 못한 상태에서 작업을 GO로 판정하지 않습니다.
+
+8. 요구사항 추적 시스템
+
+앞으로 모든 주요 기능에 다음과 같은 추적 관계를 유지합니다.
+
+이 구조를 적용하면 개발이 오래 진행된 후에도 특정 기능이 제대로 구현됐는지 추적할 수 있습니다.
+
+
+9. 이번 문서 개선 작업의 실제 검증
+
+검증 항목 결과
+신규 문서 4개 등록 PASS
+기존 문서 11개 변경 확인 PASS
+전체 54개 파일 확인 PASS
+변경 문서의 상대 링크 검사 PASS
+G0~G7 검증 규정 존재 확인 PASS
+실제 CI 로그 재확인 PASS
+검증 도구의 판정 위험 발견 B-010 등록
+GitHub main 브랜치 반영 PASS
+
+이번에는 문서 및 운영 체계만 개선했습니다. 실제 APK 오류와 Validator 스크립트는 수정하지 않았습니다. 별도의 AI 에이전트에 의한 독립 검토도 수행하지 않았습니다.
+
+현재 제품은 계속 NO-GO 상태입니다.
+
+10. 앞으로 적용할 개발 원칙
+
+구현 → 검증 → 결함 발견 → 수정 → 재검증 → 회귀 검사 → 증거 감사 → 문서화를 매 작업의 기본 절차로 확정했습니다.
+
+앞으로 사용자가 다음 작업이라고 지시하면 단순한 소스코드 작성뿐 아니라 해당 작업에 필요한 검증과 문서화까지 하나의 작업 범위로 처리합니다.
+
+대화 기억이 사라지더라도 저장소의 문서와 실제 증거를 기반으로 개발을 재개하고, 이전 작업을 무작정 신뢰하지 않고 다시 확인하도록 구성했습니다.
+
+
+you asked
+
+message time: 2026-11-27 21:27:23
+
+이제 너가 앞으로 매 턴마다 작업 시 맨 먼처 문서를 먼저 1차 체크한 다음 작업에 들어갈 수 있도록 너가 바로 직관적으로 체크하기 쉬운 위치에 지침을 박아넣어놔
+
+
+chatgpt response
+
+저장소 루트의 AGENTS.md 최상단에 작업 전 필수 확인 절차를 배치하겠습니다. README와 STATUS에도 동일한 진입 경로를 명시해 새 세션에서도 바로 확인할 수 있게 하겠습니다.
+
+반영 완료했습니다. AI 개발 도구가 가장 먼저 확인하기 쉬운 저장소 루트의 AGENTS.md 최상단에 필수 작업 전 확인 절차인 PRE-FLIGHT를 배치했습니다.
+
+1. 지침 배치 위치
+
+문서 배치 위치 역할
+AGENTS.md 최상단 매 작업 턴의 필수 확인 절차
+README.md 최상단 저장소 진입 시 확인 지침
+STATUS.md 최상단 현재 작업 상태 및 재개 지침
+
+세 문서 중 어느 문서를 먼저 읽더라도 필수 확인 절차를 발견할 수 있도록 구성했습니다.
+
+2. 매 턴 작업 시작 절차
+
+
+PRE-FLIGHT PASS
+
+확인 완료 후 실제 개발 착수
+
+다음 사항도 명시적으로 규정했습니다.
+
+같은 대화에서 연속으로 작업하더라도 매 턴 확인합니다.
+이전 턴에서 확인한 문서와 기억을 그대로 재사용하지 않습니다.
+필수 문서 확인 전에는 구현이나 코드 수정에 착수하지 않습니다.
+작업 도중 다른 커밋이 반영되면 변경 사항을 다시 확인합니다.
+작업 보고서에 실제 확인한 문서와 기준 SHA를 기록합니다.
+작업 종료 시 검증 증거와 다음 작업 정보를 문서화합니다.
+
+3. 등록 및 검증 결과
+
+항목 결과
+AGENTS.md 최상단 지침 배치 PASS
+README 최상단 지침 배치 PASS
+STATUS 최상단 지침 배치 PASS
+관련 운영 문서 동기화 PASS
+작업 보고서에 PRE-FLIGHT 항목 추가 PASS
+변경 문서 상대 링크 검사 PASS
+기존 작업 및 차단점 보존 PASS
+GitHub main 반영 PASS
+
+운영 규정 v1.2 · 문서 10개 변경 · 전체 저장소 파일 55개
+
+GitHub 변경 커밋 95e51cc · 작업 검증 보고서
+
+이번 작업에서는 제품 코드를 변경하지 않았습니다. 문서 기반 확인 절차를 마련했지만, 모든 AI 환경에서 자동으로 강제 실행되는 기능은 아닙니다. 별도 세션을 통한 실제 복구 시험도 아직 수행하지 않았습니다.
+
+앞으로 문서 확인 → 작업 선정 → 구현 → 심층 검증 → 문서 갱신을 매 작업 턴의 필수 절차로 적용하겠습니다. 이제 다음 작업이라고만 지시하면 됩니다.
+
+
+you asked
+
+message time: 2026-11-27 21:29:21
+
+AURA-Ultra 작업 시작
+
+
+chatgpt response
+
+저장소 최상단의 PRE-FLIGHT부터 수행하겠습니다. 최신 문서와 CI 결과를 대조한 뒤 활성 작업인 GPT-01의 차단점을 확인하고, 빌드 및 검증 파이프라인을 안정화하겠습니다.
+
+PRE-FLIGHT에서 최신 CI도 같은 APK 검사 실패를 확인했습니다. 이전 로그에는 DEX 생성 작업이 기록돼 있고, 삼성 공식 WFF 개발 가이드는 코드 최소화 활성화와 리소스 축소 비활성화를 안내합니다. 이 방법을 수정 후보로 적용하고, APK 검사와 Validator 판정은 실패를 정확하게 검출하도록 별도로 강화하겠습니다.
+
+새 검증 도구의 회귀 시험과 WFF 공식 Validator 검사가 CI에서 통과했습니다. 현재는 코드 축소를 적용한 세 가지 APK의 빌드 결과와 실제 패키지 내부 검사를 확인하고 있습니다.
+
+첫 번째 수정 CI가 전체 성공으로 종료됐습니다. 세 가지 APK의 리소스 전용 검사와 Artifact 업로드도 통과했습니다. 최종 로그와 산출물 목록을 대조하고, 해결된 사항과 남은 검증을 기록하겠습니다.
+
+AURA Ultra — GPT-01 개발 작업
+
+빌드 안정화 및 검증 도구 강화 · 2026.11.27
+
+1. PRE-FLIGHT 사전 확인
+
+이번 작업부터 지난번에 확정한 운영 규정 v1.2를 적용했습니다. 저장소의 최신 문서와 실제 CI 결과를 먼저 확인한 후 개발에 착수했습니다.
+
+확인 항목 결과
+최신 GitHub HEAD PASS
+AGENTS.md 및 STATUS.md PASS
+핵심 개발 요구사항 PASS
+작업별 기록 및 검증 규정 PASS
+GPT 작업 계획 및 차단점 PASS
+기존 소스코드 및 CI 결과 대조 PASS
+
+선정 작업: GPT-01 — B-001 APK 패키징 문제 및 B-010 검증기 판정 위험 개선.
+
+기존 프리미엄 그래픽과 최신 갤럭시 워치 호환성 요구사항은 그대로 유지합니다.
+
+2. 실제 구현한 개선 사항
+
+개선 항목 변경 내용
+APK 패키징 Debug 및 Release 빌드에서 R8 코드 축소 활성화
+그래픽 리소스 보호 리소스 축소 비활성화
+WFF Validator 대상 파일과 버전의 명시적 성공 판정 확인
+잘못된 성공 판정 방지 오류, 중복 결과, 버전 불일치, 종료 코드 검사
+APK 내부 검사 모든 지원 프로필의 ZIP 구성 및 실행 코드 검사
+Manifest 검사 빌드된 APK의 실제 Manifest 검증
+무결성 APK별 SHA-256 기록
+회귀 시험 검증 도구 전용 단위 테스트 추가
+CI Clean Build 및 회귀 시험 자동 실행
+
+Samsung의 공식 WFF 개발 가이드에서도 코드 최소화 활성화와 리소스 축소 비활성화를 안내합니다. 이를 패키징 문제의 수정 후보로 적용했습니다.  Samsung Developer developer.android.com
+
+실제 구현 커밋 ef9f9c9
+
+3. 실제 CI 검증 결과
+
+CI SUCCESS
+
+AURA Ultra 최초 전체 빌드 파이프라인 통과
+
+
+단위 테스트 통과
+
+19 PASS
+
+단위 테스트 실패
+
+0 FAIL
+
+APK 빌드 성공
+
+3 / 3
+
+공식 WFF 규격 검증
+
+3 / 3
+
+
+GitHub Actions 전체 실행 결과
+
+검증 항목 결과
+Gradle Wrapper 무결성 PASS
+프로젝트 구조 검사 PASS
+검증 도구 회귀 시험 19 PASS / 0 FAIL
+공식 WFF Validator PASS
+잘못된 XML의 실패 검출 3/3 PASS
+Clean Gradle Build PASS
+APK 실행 코드 검사 PASS
+실제 Manifest 검사 PASS
+그래픽 리소스 보존 확인 PASS
+APK Artifact 업로드 PASS
+
+이전까지 지속적으로 실패했던 APK 내부 실행 코드 검사를 이번에 통과했습니다.
+
+4. 실제 생성된 APK
+
+파일 최소 지원 API 빌드 내부 검사
+watchface-wff2-debug.apk 34 PASS PASS
+watchface-wff3-debug.apk 35 PASS PASS
+watchface-wff4-debug.apk 36 PASS PASS
+
+초기 테스트용 APK 3종 다운로드
+
+실제 APK 내부에서 불필요한 실행 코드가 없으며 워치 페이스 XML, 프리뷰 이미지 및 필수 리소스가 보존된 것을 확인했습니다.
+
+단, 아직 최종 디자인을 적용하지 않은 개발 기반 검증용 APK입니다.
+
+5. 심층 검증 및 문서화
+
+검증 게이트 판정
+G0 — 사전 검증 PASS
+G1 — 작업 범위 및 구현 검증 PASS
+G2 — 검증 도구 자체 검사 PASS
+G3 — 자동 시험 및 회귀 검사 PASS
+G4 — 기술 분야별 검사 PARTIAL
+G5 — 구현 후 별도 자기 재검토 완료
+G6 — 검증 증거 대조 PASS
+G7 — 문서화 및 재개 검증 PASS
+
+다음 문서를 모두 갱신하고 GitHub 반영까지 확인했습니다.
+
+STATUS.md
+WORK\_LOG.md
+BLOCKERS.md
+GPT-01 상세 작업 및 검증 보고서
+
+최종 검증 기록 커밋 86f9df3
+
+6. 현재 개발 판정
+
+GPT-01 — 빌드 안정화 (PARTIAL)
+
+
+APK 패키징 실패 현재 실패 해소
+
+Validator 판정 위험 해결 완료
+
+공식 메모리 평가 미실시
+
+과거 오류의 정확한 원인 증명 보완 필요
+
+
+전체 CI는 성공했지만 GPT-01의 모든 검증 조건을 충족하지 않았으므로 완료율을 임의로 높이지 않습니다.
+
+이번 작업에서 R8 코드 축소 방식을 선정했습니다. 현재 APK 문제는 해소됐지만, 과거 실패 APK의 정확한 실행 코드 파일명과 생성 경로까지는 증명하지 못했습니다. 메모리 측정, Release 빌드, 별도 서명 검사 및 실기기 시험도 아직 수행하지 않았습니다.
+
+7. 다음 작업
+
+GPT-01 회차 02 — 빌드 기반 최종 검증 및 메모리 평가 자동화
+
+과거 APK 오류의 격리 재현, 공식 Memory Footprint Evaluator 통합, 활성 화면 및 AOD 메모리 검사 자동화를 우선 진행합니다.
+
+이번 작업은 Codex 투입 없이 채팅 모델과 GitHub Actions를 활용해 진행했습니다. 다음 작업의 범위와 재개 조건도 저장소에 기록했습니다.
+
+이제 다음 작업이라고 입력하면 됩니다.
+
+
+you asked
+
+message time: 2026-11-27 21:34:42
+
+다음 작업
+
+
+chatgpt response
+
+최신 AGENTS.md와 STATUS.md부터 확인하겠습니다. GPT-01의 남은 패키징 원인 검증과 공식 메모리 평가 도구 통합을 진행하고, 실제 CI 결과에 따라 판정하겠습니다.
+
+공식 메모리 평가 도구의 CLI와 소스코드를 확인했습니다. 평가 결과는 바이트 단위 JSON으로 받을 수 있으며, 도구의 MB 표기는 1,048,576바이트 기준입니다. 기존 활성 70MB·AOD 7MB 목표를 자동 검사하고, 과거 패키징 오류는 별도의 CI 작업 공간에서 재현하도록 구성하겠습니다.
+
+메모리 검사와 과거 오류 재현용 CI를 등록했습니다. 기존 워치 페이스 소스와 빌드 설정은 변경하지 않았습니다. 두 CI 실행의 결과를 분리해서 확인하겠습니다.
+
+두 CI 모두 성공했습니다. 과거 APK에서 classes.dex와 자동 생성된 R 클래스 5개를 확인해 패키징 실패의 원인을 재현했습니다. 현재 APK 3종은 메모리 예산 및 디버그 서명 검사도 통과했습니다. 이 결과를 기준으로 GPT-01의 종료 판정과 다음 작업을 기록하겠습니다.
+
+AURA Ultra — GPT-01 회차 02
+
+빌드 기반 최종 검증 및 공식 메모리 평가 자동화
+
+1. PRE-FLIGHT
+
+최신 GitHub HEAD에서 필수 운영 문서와 이전 작업의 검증 증거를 확인했습니다. 기존 빌드 성공 결과와 미해결 차단점도 대조했습니다.
+
+확인 항목 결과
+AGENTS.md 및 STATUS.md PASS
+핵심 요구사항 및 아키텍처 PASS
+작업 기록 및 심층 검증 규정 PASS
+이전 CI 및 작업 보고서 PASS
+활성 작업 및 차단점 확인 PASS
+
+2. 이번 작업의 실제 구현
+
+작업 구현 내용
+공식 메모리 평가 Google Memory Footprint Evaluator 통합
+도구 무결성 SHA-256 체크섬 검증
+메모리 예산 활성 및 AOD 모드의 자동 검사
+검증기 강화 누락, 잘못된 데이터, 예산 초과 및 중복 JSON 필드 검사
+회귀 시험 메모리 검사 전용 단위 테스트 7개 추가
+APK 서명 Android SDK apksigner를 이용한 검증
+과거 패키징 문제 이전 소스코드를 격리하여 재현하는 CI 추가
+
+구현 커밋 98a4f91
+
+기존 워치 페이스 XML과 그래픽 리소스, 빌드 설정은 변경하지 않았습니다.
+
+3. 메모리 최적화 자동 검증
+
+항목 평가 도구 기준 한도 AURA 개발 목표
+활성 화면 100 MiB 70 MiB 이하
+AOD 10 MiB 7 MiB 이하
+
+공식 평가 도구의 단위 계산 방식에 맞춰 정확한 바이트 단위로 검사하도록 구현했습니다. 반올림으로 예산 초과를 놓치는 문제도 방지합니다.
+
+이 검사는 앞으로 고해상도 유리 소재, 금속 텍스처, 애니메이션 프레임 등을 추가할 때 자동으로 적용됩니다.
+
+다만 공식 도구의 결과는 그래픽 자산의 메모리 사용량 추정치입니다. 실제 워치 전체 RAM 사용량이나 배터리 소비량을 측정하는 것은 아닙니다.
+
+4. 실제 CI 검증 결과
+
+전체 CI SUCCESS
+
+현행 빌드 및 과거 오류 재현 모두 성공
+
+
+전체 단위 테스트
+
+26 PASS
+
+실패한 단위 테스트
+
+0 FAIL
+
+메모리 예산 검사
+
+3/3 PASS
+
+APK 서명 검사
+
+3/3 PASS
+
+
+현행 빌드 CI · 과거 오류 재현 CI
+
+검증 항목 결과
+Gradle Wrapper 무결성 PASS
+프로젝트 구조 검사 PASS
+기존 및 신규 단위 테스트 26 PASS / 0 FAIL
+공식 WFF 규격 검사 PASS
+WFF 2·3·4 Clean Build PASS
+APK 실행 코드 검사 PASS
+실제 Manifest 검사 PASS
+공식 메모리 평가 PASS
+APK Signature Scheme v2 PASS
+APK Artifact 생성 PASS
+과거 패키징 실패 재현 PASS
+
+5. 실제 메모리 평가 결과
+
+Google Memory Footprint Evaluator 1.5.1을 사용했습니다.
+
+빌드 활성 화면 AOD 판정
+WFF 2 2.26 MiB 2.26 MiB PASS
+WFF 3 2.26 MiB 2.26 MiB PASS
+WFF 4 2.26 MiB 2.26 MiB PASS
+
+현재 그래픽 자산 메모리 예산 사용률
+
+초기 Bootstrap 그래픽 기준입니다. 최종 프리미엄 그래픽을 추가한 후에는 다시 평가합니다.
+
+6. 과거 APK 오류의 근본 원인 확인
+
+지난 작업에서 수정했지만 정확한 원인을 입증하지 못했던 B-001 문제를 해결했습니다.
+
+과거 소스코드를 별도로 빌드한 결과, APK 내부에 classes.dex가 포함되는 현상을 재현했습니다.
+
+내부에는 Android Gradle Plugin이 자동 생성한 다음 클래스가 존재했습니다.
+
+R
+R$drawable
+R$raw
+R$string
+R$xml
+
+이 클래스들이 DEX 파일에 포함되면서 WFF의 리소스 전용 패키지 요구사항을 위반했습니다.
+
+현재 R8 코드 축소를 적용한 APK에서는 실행 코드가 제거됐으며 필수 워치 페이스 리소스는 보존됐습니다.
+
+B-001 및 B-010 모두 RESOLVED로 판정했습니다.
+
+7. 문서화 및 검증 기록
+
+다음 문서를 갱신하고 실제 GitHub 반영까지 확인했습니다.
+
+GPT-01 회차 02 상세 검증 보고서
+STATUS.md
+BLOCKERS.md
+WORK\_LOG.md
+다음 작업 GPT-02 상세 명세
+
+최종 검증 기록 커밋 d75c1a5
+
+구현 후 별도 자기 재검토와 CI 증거 대조를 수행했습니다. 다른 AI 에이전트의 독립 검토는 수행하지 않았습니다. 실기기, 실제 전력 소비, AOD 발광 픽셀, Release 빌드 및 설치·업데이트 시험은 아직 미실시 상태입니다.
+
+8. 전체 개발 진행 상황
+
+GPT-01 — 초기 빌드 토대
+
+(GO)
+
+
+GPT 선행 개발 완료 1 / 12
+
+전체 개발 작업량 계획상 가중치 6%
+
+정식 WO 완료 0 / 38
+
+정식 출시 NO-GO
+
+6%는 계획상 작업량 가중치입니다. 실제 제품 완성도 측정값은 아닙니다.
+
+9. 다음 작업
+
+GPT-02 — 호환성 및 다중 WFF 개발 기반 확립
+
+갤럭시 워치7 이후의 지원 기기, WFF 5, Android SDK 호환성, 버전별 리소스 관리 및 패키지 정책을 중점적으로 진행합니다.
+
+GPT-01을 정식 종료했으며, 다음 작업의 상세 명세도 저장소에 등록했습니다.
+
+이번에도 Codex 사용 없이 모든 작업을 진행했습니다.
+
+
+you asked
+
+message time: 2026-11-27 21:41:33
+
+다음 작업
+
+
+chatgpt response
+
+저장소의 최신 PRE-FLIGHT 문서와 GPT-01 종료 증거부터 확인하겠습니다. GPT-02에서는 공식 WFF·SDK 호환성 및 지원 기기 정보를 검증하고, 버전별 빌드 기반을 정리하겠습니다.
+
+공식 자료에서 Watch9·Ultra2의 화면 규격과 Wear OS 7을 확인했습니다. API 37을 정식 지원하려면 현재 AGP 8.10.1에서 9.1.1 이상으로 전환해야 합니다. 기존 빌드를 보호하기 위해 이번 회차에서는 WFF 5의 스키마 검증과 공통 프로필 관리부터 확보하고, SDK 전환은 별도 검증 대상으로 분리하겠습니다.
+
+신규 프로필 회귀 시험과 WFF 2~5 공식 스키마 검사 단계가 통과했습니다. 현재 세 가지 APK를 다시 빌드하고 있으며, 최종 APK의 XML 일치 여부와 메모리·서명 검사 결과까지 확인하겠습니다.
+
+AURA Ultra — GPT-02 회차 01
+
+호환성 검증 및 다중 WFF 개발 기반 확립
+
+1. PRE-FLIGHT
+
+최신 저장소의 필수 문서와 GPT-01의 종료 보고서를 확인했습니다. 이전 CI 성공 결과와 남은 차단점을 대조한 후 GPT-02에 착수했습니다.
+
+사전 확인 결과는 PASS입니다. 이번 작업에서도 Codex를 사용하지 않았습니다.
+
+2. 최신 갤럭시 워치 공식 사양 재확인
+
+삼성 공식 발표 자료를 기준으로 지원 대상의 화면 규격과 출시 OS를 정리했습니다.
+
+지원 목표 기기 화면 해상도 출시 OS
+Galaxy Watch7 40mm 432×432 Wear OS 5
+Galaxy Watch7 44mm 480×480 Wear OS 5
+Galaxy Watch Ultra 2024 480×480 Wear OS 5
+Galaxy Watch8 40mm 438×438 Wear OS 6
+Galaxy Watch8 44mm 480×480 Wear OS 6
+Galaxy Watch8 Classic 438×438 Wear OS 6
+Galaxy Watch Ultra 2025 480×480 추가 확인 필요
+Galaxy Watch9 40mm 438×438 Wear OS 7
+Galaxy Watch9 44mm 480×480 Wear OS 7
+Galaxy Watch Ultra2 498×498 Wear OS 7
+
+ 삼성전자 뉴스룸 Samsung Global Newsroom Samsung Global Newsroom Samsung US
+
+4종의 화면 해상도를 공통 레이아웃 검증 대상으로 관리합니다. 실제 설치된 OS에 따라 빌드를 선택하도록 설계합니다. 출시 OS와 현재 설치 OS는 구분하며, 실기기 호환성 시험은 아직 미실시입니다.
+
+3. WFF 5 및 차세대 SDK 전환
+
+공식 자료를 확인한 결과, Wear OS 7은 Android 17(API 37)을 기반으로 합니다. WFF 5도 공식 발표됐습니다.  developer.android.com developer.android.com
+
+개발 도구 기존 검증 환경 API 37 전환 후보
+Android SDK 36 37
+Android Gradle Plugin 8.10.1 9.1.1
+Gradle 8.11.1 9.3.1
+JDK 17 17
+Build Tools 35.0.0 36.0.0
+
+AGP 9.1.1은 API 37을 지원하는 공식 버전입니다.  developer.android.com
+
+기존에 안정화한 빌드 환경을 무리하게 변경하지 않기 위해 이번 회차는 WFF 5 스키마 검사와 호환성 기반에 집중했습니다. 실제 WFF 5 APK 빌드는 차세대 SDK 전환 검증 후 활성화합니다.
+
+4. 실제 소스코드 개선
+
+개선 항목 구현 내용
+공통 프로필 계약 WFF 버전, 최소 API, 활성 상태 통합 관리
+빌드 자동화 활성 프로필에 따른 Gradle 작업 자동 선정
+버전별 리소스 공통 XML과 WFF별 전용 XML 선택 구조
+APK 내용 검사 선택한 원본 XML과 실제 APK 내 XML 대조
+서명 검사 활성 프로필별 자동 검사
+스키마 검사 WFF 5 검사 추가
+오류 검출 누락 프로필, 중복, 잘못된 버전, APK 누락 및 중복 검사
+신규 단위 테스트 11개 추가
+
+실제 구현 커밋 7820f90
+
+앞으로 버전별로 고급 그래픽이나 모션을 구현할 때 하위 WFF 빌드에 상위 버전의 전용 기능이 잘못 포함되는 문제를 방지하는 기반입니다.
+
+5. 실제 CI 검증 결과
+
+CI SUCCESS
+
+신규 호환성 기반 및 기존 기능 회귀 검사 통과
+
+
+전체 단위 시험
+
+37 PASS
+
+단위 시험 실패
+
+0 FAIL
+
+WFF 공식 스키마 검사
+
+4/4 PASS
+
+APK 빌드 및 검사
+
+3/3 PASS
+
+
+실제 GitHub Actions 검증 결과
+
+검증 항목 결과
+Gradle Wrapper 무결성 PASS
+프로젝트 구조 검사 PASS
+기존 단위 시험 26개 PASS
+신규 단위 시험 11개 PASS
+WFF 2·3·4·5 공식 스키마 PASS
+잘못된 XML 실패 검출 4/4 PASS
+WFF 2·3·4 Clean Build PASS
+APK 리소스 전용 검사 PASS
+APK와 원본 XML 일치 검사 PASS
+메모리 예산 검사 PASS
+APK 서명 검사 PASS
+Artifact 생성 PASS
+
+기존 기능에서 발생한 회귀 오류는 확인되지 않았습니다.
+
+6. WFF 버전별 확보 상태
+
+규격 공식 스키마 APK 빌드 실기기
+WFF 2 PASS PASS NOT RUN
+WFF 3 PASS PASS NOT RUN
+WFF 4 PASS PASS NOT RUN
+WFF 5 PASS 미실시 NOT RUN
+
+WFF 5 공식 스키마 검사까지 실제로 통과했습니다. 단, 현재 공통 워치 페이스에 대한 검사이며 WFF 5 전용 그래픽 기능까지 구현했다는 의미는 아닙니다.
+
+7. 메모리 회귀 검사
+
+항목 이전 현재 변화
+활성 화면 자산 메모리 2.26 MiB 2.26 MiB 없음
+AOD 자산 메모리 2.26 MiB 2.26 MiB 없음
+
+개발 기반 개선 과정에서 기존 그래픽 자산의 메모리 사용량은 증가하지 않았습니다.
+
+8. 문서화 및 장기 기억 보존
+
+이번 작업에서 다음 문서를 신규 작성하거나 갱신했습니다.
+
+문서 기록 내용
+DEVICE\_MATRIX.md 삼성 공식 기기 규격
+TOOLCHAIN.md 개발 도구 및 SDK 전환 기준
+API\_CAPABILITIES.md WFF 버전별 기능
+SOURCES.md 공식 기술 근거
+ADR-007.md 패키지 및 배포 정책
+REPORT-01.md 이번 작업의 상세 검증 증거
+STATUS.md 현재 상태 및 다음 작업
+
+작업 이력과 차단점도 갱신했습니다. 변경 문서의 상대 링크 검사와 GitHub 반영 확인을 통과했습니다.
+
+최종 검증 기록 커밋 bfe5616
+
+9. 전체 개발 진행 상황
+
+
+GPT 선행 개발 완료 1 / 12
+
+정식 WO 완료 0 / 38
+
+정식 출시 NO-GO
+
+이번 회차의 구현 및 CI 검증은 성공했습니다. 다만 WFF 5 APK 빌드, 실제 기기 설치, 버전별 전용 그래픽 리소스의 실물 검증은 남아 있습니다. 별도의 AI 에이전트 검토 없이 자기 재검토를 수행했습니다.
+
+10. 다음 작업
+
+GPT-02 회차 02 — API 37 개발 환경 전환 및 WFF 5 APK 빌드 검증
+
+기존 안정화된 빌드 환경을 보호하기 위해 격리된 환경에서 AGP와 Gradle을 업그레이드합니다. 이후 WFF 2~5 전체 APK의 빌드, 메모리, 서명 및 회귀 검사를 수행합니다.
+
+다음 작업에 필요한 세부 지침과 현재 검증 증거는 모두 저장소에 기록했습니다.
+
+
+you asked
+
+message time: 2026-11-27 21:50:53
+
+다음 작업
+
+
+chatgpt response
+
+PRE-FLIGHT부터 진행하겠습니다. 이번에는 기존 main의 빌드 환경을 유지한 채 별도 검증 브랜치에서 API 37 전환과 WFF 5 APK 빌드를 시험하겠습니다. 모든 프로필의 회귀 검사를 통과한 경우에만 main 반영을 검토하겠습니다.
+
+AGP 9.1.1의 API 37 지원 조건과 Gradle 9.3.1의 공식 체크섬을 재확인했습니다. 기존 37개 시험은 유지하고, APK 내부 XML이 원본과 다를 때 실패하는 시험도 추가하겠습니다.
+
+첫 번째 격리 CI에서는 40개 단위 시험이 통과했지만 SDK 설치 단계에서 platforms;android-37 패키지를 찾지 못했습니다. 관련 자료에 따르면 API 37의 패키지 식별자는 android-37.0일 수 있습니다. 이를 확인할 수 있도록 설치 명령과 진단 로그를 보완해 다시 검증하겠습니다.
+
+AURA Ultra — GPT-02 회차 02
+
+API 37 개발 환경 전환 및 WFF 5 빌드 검증
+
+1. PRE-FLIGHT
+
+최신 AGENTS.md, STATUS.md, 필수 운영 규정, 요구사항 및 이전 CI 증거를 확인했습니다.
+
+사전 확인: PASS
+이전 검증 기준: 37 PASS / 0 FAIL
+작업 대상: API 37 전환 및 WFF 5 APK 빌드
+개발 방식: 별도 검증 브랜치에서 시험 후 main 반영
+
+2. 개발 환경 업그레이드
+
+구성 요소 기존 신규 후보
+Android SDK 36 37.0
+Android Gradle Plugin 8.10.1 9.1.1
+Gradle 8.11.1 9.3.1
+Build Tools 35.0.0 36.0.0
+JDK 17 17
+APK 빌드 대상 WFF 2~4 WFF 2~5
+
+공식 AGP 호환성 기준과 Gradle 배포 체크섬을 확인했습니다. 공식 Gradle Wrapper JAR 및 실행 스크립트도 확보했습니다.  developer.android.com gradle.org
+
+격리 검증 브랜치
+
+3. 실제 구현 사항
+
+작업 구현 결과
+WFF 5 빌드 프로필 추가
+Gradle Wrapper 업그레이드 후보 반영
+SDK 및 AGP 전환 후보 반영
+WFF 2~4 최소 지원 API 기존 유지
+APK 원본 XML 일치 검사 강화
+APK XML 누락 검출 시험 추가
+APK XML 불일치 검출 시험 추가
+기존 메모리 및 서명 검사 유지
+
+기존 37개 단위 시험을 유지하고 신규 3개 시험을 추가했습니다. 그래픽 리소스와 기존 워치 페이스 기능은 변경하지 않았습니다.
+
+4. 첫 번째 격리 CI에서 발견한 문제
+
+단위 시험 40 PASS / 0 FAIL을 확인했습니다. 다만 Android SDK 설치 단계에서 다음 오류가 발생했습니다.
+
+Warning: Failed to find package 'platforms;android-37'
+
+첫 번째 CI 실패 증거
+
+공개된 SDK 설치 자료를 추가로 조사한 결과, API 37은 platforms;android-37.0이라는 패키지 식별자를 사용합니다.  Git at Google
+
+이에 맞춰 SDK 설치 명령과 경로 검증을 수정했습니다. 비공식 SDK 다운로드나 임의 폴더 복제 등으로 문제를 우회하지 않습니다.
+
+SDK 설치 수정 커밋 f284b1b
+
+5. 최종 CI 검증 결과
+
+CI SUCCESS
+
+API 37.0 전환 및 WFF 5 APK 빌드 성공
+
+
+전체 단위 시험
+
+40 PASS
+
+단위 시험 실패
+
+0 FAIL
+
+APK 빌드 및 검사
+
+4/4 PASS
+
+공식 WFF 스키마
+
+4/4 PASS
+
+
+최종 GitHub Actions 실행 결과
+
+검증 항목 결과
+Gradle Wrapper 무결성 PASS
+Android SDK 37.0 설치 PASS
+Gradle 9.3.1 실행 PASS
+기존 및 신규 단위 시험 40 PASS / 0 FAIL
+WFF 2~5 공식 스키마 PASS
+잘못된 XML 실패 검출 4/4 PASS
+WFF 2~5 Clean Build PASS
+APK 리소스 전용 검사 PASS
+APK와 원본 XML 일치 검사 PASS
+실제 Manifest 검사 PASS
+메모리 예산 검사 PASS
+APK 서명 검사 PASS
+Artifact 생성 PASS
+
+검증된 변경 사항을 main 브랜치에 반영했습니다.
+
+6. WFF 버전별 개발 기반
+
+프로필 최소 API APK 빌드 메모리 서명
+WFF 2 34 PASS PASS PASS
+WFF 3 35 PASS PASS PASS
+WFF 4 36 PASS PASS PASS
+WFF 5 37 PASS PASS PASS
+
+초기 개발 검증용 APK 4종 다운로드
+
+이제 WFF 5 전용 기능을 개발할 수 있는 빌드 기반을 확보했습니다.
+
+7. 메모리 회귀 검사
+
+항목 이전 현재 변화
+활성 화면 자산 메모리 2.26 MiB 2.26 MiB 없음
+AOD 자산 메모리 2.26 MiB 2.26 MiB 없음
+
+네 가지 APK 모두 기존 메모리 예산을 충족했습니다. 현재 수치는 초기 그래픽 자산의 공식 도구 추정치이며, 실제 워치 RAM 사용량은 아닙니다.
+
+8. 문서화 및 검증 기록
+
+다음 작업에 필요한 기록도 저장소에 반영했습니다.
+
+GPT-02 최종 검증 보고서
+WO-02 상세 작업지시서
+최신 개발 상태
+차단점 관리 문서
+GPT-03 상세 작업지시서
+
+최종 반영 커밋 c1c66b7
+
+별도 자기 재검토를 수행했으며 GitHub main 반영 API에서 성공 응답을 확인했습니다. 다만 도구 호출 한도에 도달하여 최종 문서 링크와 HEAD의 추가 재조회 검사는 완료하지 못했습니다. 다음 PRE-FLIGHT에서 우선 확인합니다.
+
+실기기 설치, WFF 5 전용 기능의 동작, Release 빌드 및 독립 에이전트 검토는 아직 미실시입니다.
+
+9. 전체 개발 진행 상황
+
+
+GPT 선행 개발 완료 2 / 12
+
+전체 개발 작업량 계획상 가중치 12%
+
+정식 WO 완료 0 / 38
+
+정식 출시 NO-GO
+
+12%는 계획상 작업량 가중치이며 실제 제품 완성도 측정값은 아닙니다.
+
+10. 다음 작업
+
+GPT-03 — 그래픽 리소스 및 WFF 생성 자동화
+
+다음 단계부터 실제 그래픽 개발을 위한 기반을 구축합니다.
+
+공통 디자인 토큰, 그래픽 자산 생성기, WFF XML 생성기, 자동 리소스 검증 및 재현 가능한 생성 체계를 중점적으로 구현합니다. 향후 고급 유리 소재, 금속 텍스처, 정밀 눈금 및 애니메이션 제작에 활용할 기반입니다.
+
+이번 작업 역시 Codex 사용 없이 진행했으며, GPT-02는 개발 기반 범위에서 GO로 판정했습니다.
+
+
+you asked
+
+message time: 2026-11-27 21:58:19
+
+이후 코덱스 개발시 사용량 절감을 위해 그록 빌드,안티그래비티CLI도 이용할 까 고민중이야
+
+
+chatgpt response
+
+적극적으로 활용하는 것을 추천합니다. 특히 AURA Ultra처럼 그래픽, 애니메이션, Android SDK, 데이터 처리, 보안 및 성능 최적화까지 개발 범위가 넓은 프로젝트는 4개 AI의 역할을 명확하게 분리하는 방식이 효율적입니다.
+
+현재 Grok Build와 Antigravity CLI 모두 소스코드 수정, 터미널 실행 및 자동화 작업을 지원합니다. Antigravity는 Git worktree 기반 작업 분리와 지속적인 개발 규칙 설정도 지원합니다.  SpaceXSI Docs Google Antigravity Docs Google Antigravity Docs
+
+1. AI별 권장 역할
+
+ChatGPT — 총괄 설계 및 선행 개발
+
+현재 진행 중인 역할
+
+아키텍처, 작업지시서, 기술 조사, 기반 코드, 테스트 자동화, CI, 개발 이력 관리 및 결과 감사.
+
+
+Codex — 핵심 개발 및 최종 통합
+
+가장 복잡하고 중요한 작업에 집중
+
+고난도 로직, 모듈 통합, 복잡한 오류 해결, 아키텍처 검증, 성능 최적화 및 최종 품질 확보.
+
+
+Grok Build — 독립 기능 개발 및 결함 분석
+
+Codex 개발 부담 분산
+
+독립 모듈 구현, 알고리즘, 데이터 처리, 테스트 작성, 오류 재현 및 코드 개선.
+
+
+Antigravity CLI — Android 및 그래픽 개발
+
+Android 생태계 중심 작업 배정
+
+Wear OS API, Jetpack Compose, Android SDK, 컴플리케이션, UI/UX 및 플랫폼 호환성 검증.
+
+위 역할은 모델별 성능이 절대적으로 우수하다는 의미가 아니라, AURA Ultra의 개발 특성에 맞춘 권장 분담입니다.
+
+2. 예상 작업량 분담
+
+현재 계획한 채팅 모델의 선행 개발 목표를 유지하면서 나머지 작업을 분산한다면 다음과 같이 구성할 수 있습니다.
+
+전체 개발 작업량 배분 목표
+
+65%
+
+15%
+
+10%
+
+10%
+
+AI가 처리할 개발 작업량의 계획상 배분입니다. 실제 제품 완성도나 토큰 사용량 측정값은 아닙니다. 사용자 실기기 시험은 별도입니다.
+
+Codex에 배정하는 작업량을 전체 AI 개발 작업의 15% 수준까지 줄이는 것을 목표로 할 수 있습니다. 다만 실제 사용량 절감 효과는 통합 과정의 난이도와 재작업 규모에 따라 달라집니다.
+
+3. AURA Ultra 작업별 담당 배분
+
+개발 분야 주 담당 보조 및 검증
+전체 아키텍처 ChatGPT Codex
+WFF 생성기 ChatGPT Grok Build
+그래픽 자산 생성 ChatGPT Antigravity
+고급 유리 및 금속 소재 Codex Antigravity
+연속 애니메이션 Codex Antigravity
+지능형 상태 머신 ChatGPT Grok Build
+기상 데이터 처리 Grok Build ChatGPT
+건강 데이터 연동 Antigravity Codex
+Wear OS 컴플리케이션 Antigravity Codex
+스마트폰 Companion App Antigravity Grok Build
+테스트 및 CI 자동화 ChatGPT Grok Build
+보안 및 코드 감사 ChatGPT Grok Build
+복잡한 모듈 통합 Codex ChatGPT
+메모리 및 전력 최적화 Codex Antigravity
+최종 출시 검증 Codex ChatGPT
+
+4. 다중 AI 협업 구조
+
+단순히 여러 AI에게 같은 작업을 지시하는 방식은 피해야 합니다. 오히려 사용량과 재작업이 증가할 수 있습니다.
+
+ChatGPT — 개발 총괄
+
+작업 선정 · 명세 작성 · 의존성 분석
+
+<svg viewBox="0 0 320 32" width="100%" height="32px" xmlns="http://www.w3.org/2000/svg"><path d="M52 0 V14 H268 V0 M160 0 V29" fill="none" stroke="currentColor" stroke-width="1.5" opacity=".5" /><path d="M156 24 L160 30 L164 24" fill="none" stroke="currentColor" opacity=".5" /></svg>
+
+ChatGPT — 독립 결과 감사
+
+요구사항 대조 · 코드 분석 · 테스트 증거 확인
+
+Codex — 필요 시 최종 통합
+
+복잡한 충돌 및 통합 오류 해결
+
+GitHub Actions
+
+전체 빌드 · 회귀 검사 · 품질 게이트
+
+main 반영 및 문서 갱신
+
+5. 추가로 확보하면 좋은 협업 문서
+
+기존에 구축한 문서 기반 개발 운영 체계에 다음 문서를 추가하면 좋겠습니다.
+
+문서 역할
+MULTI_AGENT_PROTOCOL.md 다중 AI 협업 및 통합 규정
+AGENT_ROUTING.md 작업 유형별 최적 담당 AI 선정
+FILE_OWNERSHIP.md 동시 파일 수정 및 충돌 방지
+INTEGRATION_PROTOCOL.md 브랜치 병합 및 통합 검증
+USAGE_OPTIMIZATION.md AI 사용량 및 재작업 최소화
+CROSS_REVIEW_PROTOCOL.md 서로 다른 AI를 통한 교차 검증
+
+모든 AI에 기존 AGENTS.md의 PRE-FLIGHT, G0~G7 검증 및 문서화 규정을 동일하게 적용합니다.
+
+6. 권장 투입 시점
+
+지금 당장 Grok Build와 Antigravity CLI를 투입할 필요는 없습니다. 현재 ChatGPT만으로 WFF 2~5 빌드와 40개 단위 시험을 확보했기 때문입니다.
+
+GPT-03~06: ChatGPT 중심으로 그래픽 개발 기반 확보
+GPT-07~12: 필요한 경우 Grok Build와 Antigravity CLI 병행
+GPT 선행 개발 종료 후: Codex 중심의 고난도 통합 개발
+
+현재는 협업 방식에 대한 제안이며, 저장소의 운영 문서를 추가로 변경하지는 않았습니다.
+
+Codex를 모든 작업을 수행하는 개발자가 아니라, 가장 어려운 문제를 해결하는 핵심 개발자로 활용하는 것이 사용량 절감과 품질 확보에 가장 유리한 전략이라고 판단합니다.
+
+File:ChatGPT-Logo.svg - Wikimedia Commons
+
+Une app macOS pour Codex : OpenAI avance sur l’informatique pilotée par agents - MacGeneration
+
+Introducing Grok Build | xAI
+
+Google Antigravity Logo PNG & SVG Vector
+
+
+you asked
+
+message time: 2026-11-27 22:10:53
+
+일단 1차적으로 지시할 작업 지시서 두 모델에
+
+
+chatgpt response
+
+두 모델에 서로 겹치지 않는 첫 작업을 배정하겠습니다. 현재 GPT-03 그래픽 생성 작업과 충돌하지 않도록 최신 저장소 상태와 미해결 검증 항목을 확인하겠습니다.
+
+Grok Build에는 향후 날씨·건강·지능형 기능에서 공통으로 사용할 Kotlin 데이터 계약을, Antigravity CLI에는 WFF 4/5의 고급 표현 기능 검증을 배정하겠습니다. 두 작업 모두 독립 브랜치에서 진행하도록 하고, 공통 빌드와 현재 GPT-03의 소유 파일은 변경하지 못하게 지시하겠습니다.
+
+두 모델에 서로 독립적인 개발 작업을 배정했습니다. 단순 조사에 그치지 않고 실제 코드 구현과 검증까지 수행하도록 지시서를 작성했습니다.
+
+작업지시서는 GitHub에도 등록했습니다. 아래 내용을 각 모델에 그대로 입력하면 됩니다.
+
+담당 작업 ID 개발 영역
+ChatGPT GPT-03 그래픽 자산 및 WFF 생성 자동화
+Grok Build GB-01 Kotlin 데이터 처리 기반
+Antigravity CLI AG-01 WFF 4·5 고급 기능 및 모션 검증
+Codex 미배정 추후 핵심 기능 및 통합 개발
+
+1. Grok Build 작업지시서
+
+Document
+
+AURA Ultra — GB-01 개발 작업 착수
+
+저장소: https://github.com/scarlel96-design/AURA-Ultra
+
+작업지시서: docs/operations/agent-orders/GB-01.md
+
+작업 목적
+
+향후 기상, 건강, 배터리 및 지능형 상태 판단 기능에서 공통으로 사용할 순수 Kotlin 데이터 처리 기반을 구현한다.
+
+필수 사전 절차
+
+저장소의 최신 HEAD를 확인한다. AGENTS.md 최상단의 PRE-FLIGHT 절차를 반드시 수행한다.
+
+필수 운영 문서, 요구사항, 전체 아키텍처, DATA_INTELLIGENCE.md, 현재 작업 상태 및 기존 검증 결과를 확인한다.
+
+대화 기억이 아닌 저장소 문서와 실제 소스코드를 기준으로 판단한다.
+
+구현 범위
+
+Observation 및 관련 데이터 계약을 구현한다.
+데이터 출처, 단위, 관측 시각, 수신 시각, 만료 시각을 관리한다.
+정상, 오래된 데이터, 누락, 권한 거부, 오류 상태를 구분한다.
+관측값, 예측값, 추정값, 시스템 데이터를 명확하게 구분한다.
+데이터 유효성 검사 및 TTL 처리 로직을 구현한다.
+오래된 revision, 중복 데이터 및 수신 순서 역전의 처리 로직을 구현한다.
+정상 입력, 경계값, 비정상 입력 및 오류 처리에 대한 단위 테스트를 작성한다.
+향후 WeatherSnapshot, ContextSnapshot, PresentationIntent와 연결할 인터페이스 계약을 문서화한다.
+
+Android SDK, 네트워크, 실제 건강 데이터에 의존하지 않는 순수 Kotlin/JVM 구조로 구현한다.
+
+기존 설계의 미확정 사항은 임의로 확정하지 않는다. 필요한 가정과 제약을 기록한다.
+
+작업 분리
+
+브랜치: agent/grok/GB-01
+
+수정 허용 경로:
+
+modules/domain/**
+docs/evidence/GB-01/**
+
+루트 Gradle 설정, 기존 앱, 그래픽 자산, 공통 검증 도구 및 CI는 수정하지 않는다. 독립 실행용 빌드 설정은 담당 경로 내부에 작성한다.
+
+다른 개발 에이전트의 작업을 변경하거나 덮어쓰지 않는다.
+
+품질 및 검증
+
+AGENTS.md와 VERIFICATION_PROTOCOL.md의 G0~G7 검증 절차를 적용한다.
+
+실제 컴파일, 단위 테스트, 오류 주입 시험, 회귀 검사 및 구현 후 별도 코드 재검토를 수행한다.
+
+검증 실패가 발생하면 원인을 분석한다. 수정 후 관련 시험을 다시 실행한다.
+
+테스트를 완화하거나 미실시 시험을 성공으로 처리하지 않는다.
+
+최종 산출물
+
+실제 소스코드, 테스트 코드, 독립 빌드 방법, 인터페이스 명세 및 상세 검증 보고서를 작성한다.
+
+보고서 경로: docs/evidence/GB-01/REPORT.md
+
+기준 SHA, 변경 파일, 검증 대상 SHA, 테스트 결과, 실행 로그, 발견한 결함, 미해결 사항 및 후속 통합 방법을 기록한다.
+
+중앙 STATUS, WORK_LOG, BLOCKERS의 갱신 제안을 보고서에 포함한다.
+
+작업 결과를 별도 브랜치에 커밋한다. main에 직접 병합하지 않는다.
+
+작업지시서를 읽은 후 즉시 실제 작업을 시작한다. 단순한 구현 계획이나 설명만 출력하지 않는다.
+
+
+
+GitHub 상세 작업지시서 GB-01
+
+이 작업이 성공하면 GPT-07의 일부 도메인 개발을 미리 확보할 수 있습니다. 이후 기상, 건강, 지능형 기능을 구현할 때 공통 데이터 처리 코드를 반복해서 작성할 필요가 줄어듭니다.
+
+2. Antigravity CLI 작업지시서
+
+Document
+
+AURA Ultra — AG-01 개발 작업 착수
+
+저장소: https://github.com/scarlel96-design/AURA-Ultra
+
+작업지시서: docs/operations/agent-orders/AG-01.md
+
+작업 목적
+
+AURA Ultra의 고급 그래픽 및 연속 모션 구현에 필요한 WFF 4·5의 실제 기술적 지원 범위를 검증한다.
+
+공식 API와 스키마를 기반으로 재사용 가능한 최소 기능 구현체를 제작한다.
+
+필수 사전 절차
+
+저장소의 최신 HEAD를 확인한다. AGENTS.md 최상단의 PRE-FLIGHT 절차를 반드시 수행한다.
+
+전체 아키텍처, 요구사항, DESIGN_SYSTEM.md, MOTION_SPEC.md, COMPATIBILITY.md, DATA_INTELLIGENCE.md, PERFORMANCE.md 및 최신 검증 보고서를 확인한다.
+
+현재 설치된 Android SDK, JDK, Gradle, ADB 및 Wear OS 에뮬레이터 환경을 조사한다.
+
+구현 범위
+
+WFF 4 Variant 기반 AOD 전환의 지원 속성과 보간 방식을 검증한다.
+동일 객체의 위치와 크기가 자연스럽게 변화하는 연속 모션 PoC를 구현한다.
+WFF 2·3에서 사용할 수 있는 정적 AOD 대체 방식을 구현한다.
+WFF 4 Reference의 공식 지원 데이터와 참조 범위를 검증한다.
+합성 컴플리케이션 데이터로 여러 그래픽 요소를 제어하는 최소 구현체를 제작한다.
+WFF 5의 Group 또는 ComplicationSlot 혼합 기능을 검증한다.
+상위 WFF 기능이 하위 규격에 잘못 포함되는 경우를 검출한다.
+Gyro, 숫자 전환 및 기타 모션 트리거의 지원 조건과 대체 구현 방법을 문서화한다.
+
+공식 지원 범위를 넘어서는 임의 렌더러 제어, 비공개 API 및 실행 코드 삽입을 금지한다.
+
+작업 분리
+
+브랜치: agent/antigravity/AG-01
+
+수정 허용 경로:
+
+tests/compatibility/ag-01/**
+docs/evidence/AG-01/**
+
+PoC XML과 시험 스크립트는 독립 경로에 저장한다. 실제 시험용 APK는 격리된 임시 작업 공간에서 빌드한다.
+
+현재 제품의 워치 페이스 XML, 디자인 토큰, 그래픽 생성 도구, 공통 Gradle 설정 및 CI를 변경하지 않는다.
+
+필수 검증
+
+공식 WFF Validator, Memory Footprint Evaluator 및 Android SDK 도구를 사용한다.
+
+다음 항목을 실제 시험한다.
+
+버전별 정상 및 비정상 XML
+APK Clean Build
+리소스 전용 패키지 검사
+실제 Manifest 검사
+원본 XML과 APK 내부 XML의 일치 검사
+활성 화면 70 MiB 및 AOD 7 MiB 메모리 예산
+Debug APK 서명
+사용 가능한 격리 에뮬레이터의 설치 및 렌더링
+AOD 전환 및 연속 모션 동작
+
+실제 사용자 워치의 설치 및 설정 변경은 별도 승인 없이는 수행하지 않는다.
+
+시험 환경이 부족하면 해당 시험을 NOT RUN으로 기록한다. 필요한 환경과 정확한 재현 방법을 제공한다.
+
+스키마 검사 성공을 실제 렌더링 성공으로 간주하지 않는다.
+
+품질 및 문서화
+
+G0~G7 검증 절차를 적용한다. 구현 후 별도 코드 재검토를 수행한다.
+
+공식 기술 근거, API 지원 버전, 실패한 접근 방식, 검증 명령, 실제 실행 결과, 영상 및 스크린샷 증거를 기록한다.
+
+보고서 경로: docs/evidence/AG-01/REPORT.md
+
+후속 그래픽 및 애니메이션 개발에서 직접 재사용할 수 있도록 구현 방법과 플랫폼 제약을 상세하게 기록한다.
+
+중앙 STATUS, WORK_LOG, BLOCKERS의 갱신 제안을 보고서에 포함한다.
+
+별도 브랜치에 커밋한다. main에 직접 병합하지 않는다.
+
+작업지시서를 읽은 후 즉시 실제 구현 및 검증 작업을 시작한다. 단순한 기술 조사나 개발 계획만 출력하지 않는다.
+
+
+
+GitHub 상세 작업지시서 AG-01
+
+이 작업은 향후 가장 구현 난도가 높을 것으로 예상되는 연속 모션과 동적 그래픽의 기술적 제약을 사전에 확인하기 위한 것입니다.
+
+3. 병행 개발 구조
+
+현재 AURA Ultra 개발 기반
+
+WFF 2~5 · 40 PASS / 0 FAIL
+
+<svg viewBox="0 0 320 30" width="100%" height="30px" xmlns="http://www.w3.org/2000/svg"><path d="M160 0 V12 H52 V29 M160 12 H268 V29 M160 12 V29" stroke="currentColor" fill="none" opacity=".5" /></svg>
+
+ChatGPT
+
+GPT-03
+
+그래픽 생성기
+
+Grok Build
+
+GB-01
+
+데이터 처리
+
+Antigravity
+
+AG-01
+
+모션·WFF PoC
+
+<svg viewBox="0 0 320 30" width="100%" height="30px" xmlns="http://www.w3.org/2000/svg"><path d="M52 0 V12 H268 V0 M160 0 V30" stroke="currentColor" fill="none" opacity=".5" /></svg>
+
+ChatGPT 통합 감사
+
+코드 검토 · 증거 대조 · 회귀 검사
+
+검증된 코드만 main 반영
+
+Codex 사용은 복잡한 통합 및 핵심 개발에 집중
+
+4. GitHub 문서 등록 완료
+
+동시 개발에 따른 충돌을 방지하도록 운영 체계도 보완했습니다.
+
+문서 상태
+GB-01 작업지시서 등록 완료
+AG-01 작업지시서 등록 완료
+에이전트별 파일 소유권 배정표 등록 완료
+AGENTS.md 협업 지침 갱신 완료
+STATUS.md 갱신 완료
+WORK_LOG.md 갱신 완료
+GitHub main 반영 확인 PASS
+
+전체 에이전트 작업 배정표 · 변경 커밋 fe4e19d
+
+이번에는 작업 배정과 문서화만 수행했습니다. 두 모델의 실제 개발은 아직 시작하지 않았으며, Codex 사용량 절감 효과도 미측정입니다.
+
+두 모델에 위 지시서를 동시에 입력해도 됩니다. 파일 소유권과 브랜치를 분리했으므로 ChatGPT의 GPT-03 개발도 병행할 수 있습니다.
+
+
+you asked
+
+message time: 2026-11-27 22:20:35
+
+이제 너도 작업 시작
+
+
+chatgpt response
+
+최신 저장소의 PRE-FLIGHT와 외부 에이전트 브랜치를 확인하겠습니다. GPT-03의 그래픽 생성 기반을 구현하되, Grok Build와 Antigravity CLI에 배정한 파일은 변경하지 않겠습니다.
+
+기존 워치 페이스의 XML과 프리뷰를 보존하는 방식으로 생성기를 구축하겠습니다. 현재 그래픽에서 디자인 토큰으로 관리하지 않는 색상과 장식 좌표도 확인했습니다. 이를 토큰으로 편입하고, 생성 결과가 기존 XML 및 자산과 일치하는지 자동 검사하도록 하겠습니다.
+
+생성기 자체 검사와 신규 단위 시험, WFF 2~5 공식 스키마 검사가 통과했습니다. 현재 네 가지 APK를 다시 빌드하고 있습니다. 기존 자산이 그대로 유지되는지 메모리와 APK 검사 결과까지 대조하겠습니다.
+
+AURA Ultra — GPT-03 회차 01
+
+디자인 토큰 및 그래픽 자산 생성 자동화
+
+1. PRE-FLIGHT
+
+최신 저장소의 문서, 소스코드, CI 결과 및 외부 에이전트의 작업 배정표를 확인했습니다.
+
+확인 항목 결과
+최신 main HEAD PASS
+필수 운영 문서 PASS
+이전 WFF 2~5 빌드 검증 PASS
+GPT-03 작업 범위 PASS
+외부 에이전트 파일 소유권 충돌 없음
+
+Grok Build와 Antigravity CLI에 배정한 파일은 수정하지 않았습니다. 두 모델의 로컬 작업 진행 여부는 확인되지 않았습니다.
+
+2. 실제 구현 사항
+
+개발 항목 구현 내용
+디자인 토큰 색상, 좌표, 글꼴 크기, 테두리, 패널 규격
+WFF XML 생성기 공통 토큰과 XML 템플릿 기반 생성
+원형 안전 영역 요소의 좌표 및 크기 검사
+그래픽 자산 관리 원본과 생성 파일 분리
+팔레트 생성 디자인 토큰 기반 SVG 자동 생성
+무결성 관리 입력 및 출력 파일별 SHA-256
+재현성 동일 입력에 대한 동일 출력 검사
+자동 오류 검출 누락, 중복, 범위 초과, 오래된 생성 파일
+단위 시험 신규 22개 추가
+
+구현 커밋 0016b30
+
+3. 그래픽 생성 구조
+
+<svg viewBox="0 0 320 32" width="100%" height="32px" xmlns="http://www.w3.org/2000/svg"><path d="M52 0 V12 H268 V0 M160 0 V30" stroke="currentColor" fill="none" opacity=".5" /></svg>
+
+AURA Asset Generator
+
+입력 검증 · XML 생성 · 자산 처리 · 해시 기록
+
+자동 검증 및 빌드
+
+WFF 2 · WFF 3 · WFF 4 · WFF 5
+
+앞으로 고급 소재와 애니메이션을 구현할 때 각 파일을 개별적으로 수정하는 대신, 공통 토큰과 원본 자산을 이용해 생성할 수 있는 기반입니다.
+
+기존 워치 페이스 XML은 바이트 단위로 동일하게 재현합니다. 프리뷰 이미지도 원본을 그대로 보존합니다. 이번 작업에서 신규 프리미엄 소재를 적용한 것은 아닙니다.
+
+4. 현재 검증 결과
+
+생성기 및 스키마 검사 통과
+
+전체 APK 회귀 검증은 진행 중
+
+
+
+실제 CI 실행 결과
+
+5. 신규 검증 도구의 오류 검출 범위
+
+다음과 같은 오류를 검출할 수 있도록 구현했습니다.
+
+검증 대상 검사 항목
+디자인 토큰 필수 항목 누락, 중복, 잘못된 자료형
+색상 잘못된 색상 코드 및 불투명 색상 규격 위반
+레이아웃 화면 경계 및 원형 안전 영역 초과
+타이포그래피 글꼴 크기 범위 초과
+장식 요소 외곽 링 및 패널 규격 오류
+XML 템플릿 정의되지 않거나 사용하지 않은 토큰
+생성 자산 누락 및 원본 불일치
+파일 접근 상위 경로 접근 및 심볼릭 링크
+재현성 동일 입력의 출력 불일치
+
+6. 다중 AI 개발 현황
+
+담당 작업 상태
+ChatGPT GPT-03 그래픽 생성 기반 PARTIAL
+Grok Build GB-01 데이터 계약 실행 결과 미확인
+Antigravity CLI AG-01 고급 WFF PoC 실행 결과 미확인
+Codex 핵심 개발 및 통합 미투입
+
+파일 소유권 검사 결과, 다른 에이전트의 담당 파일을 변경한 사례는 0건입니다.
+
+7. 문서화 및 저장소 반영
+
+그래픽 자산 생성 기술 명세
+GPT-03 상세 작업 보고서
+현재 개발 상태
+작업 이력
+검증 브랜치
+
+총 14개 파일의 변경을 검증 브랜치에 등록했습니다. 주요 문서의 상대 링크 오류는 0건입니다.
+
+재개 정보 기록 커밋 fb26a2f
+
+전체 CI가 완료되지 않았으므로 제품 코드는 아직 main에 병합하지 않았습니다. 재현성 검사도 현재 동일 프로세스의 반복 실행을 기준으로 합니다. 독립 프로세스 재현, 실제 자산 재생성 명령 시험 및 실기기 검증은 남아 있습니다.
+
+8. 전체 진행 상황
+
+
+GPT 선행 개발 완료 2 / 12
+
+정식 출시 NO-GO
+
+다음 작업은 GPT-03 회차 02입니다. 현재 CI의 최종 결과를 확인한 후 안전하게 통합하고, 독립 자산 재생성 및 WFF 버전별 전용 리소스 빌드 검증을 진행합니다.
+
+
+you asked
+
+message time: 2026-11-27 22:59:32
+
+안티그래비티
+Last Bot Reply (1 minute ago, Nov 27, 2026, 10:55 PM)
+AURA Ultra — AG-01 (WFF 4/5 기능 및 실행 검증 PoC) 개발 및 검증 작업을 완료하고 독립 브랜치 agent/antigravity/AG-01에 커밋했습니다.
+
+기준 상태 및 브랜치·소유권 분리
+기준 main HEAD SHA: fe4e19d7c6e97c043e4f31cb5960bdb430fd507b (PRE-FLIGHT PASS)
+작업 브랜치 및 커밋 SHA: agent/antigravity/AG-01 @ 0ebe3a8d06f31bcaec959f61832efd864160fd6a
+변경 범위: 허용된 소유 경로(tests/compatibility/ag-01/, docs/evidence/AG-01/) 내부 17개 파일만 생성했으며, 기존 제품 워치 페이스 XML, 디자인 토큰, 공통 도구, Gradle 설정, CI 및 중앙 운영 문서는 변경하지 않았습니다.
+구현 산출물 요약
+증거 보고서: [REPORT.md](file:///C:/Users/scarl/Desktop/코딩 작업/AURA-Ultra/docs/evidence/AG-01/REPORT.md)
+검증 및 시험 스크립트:
+[run_ag01_verification.py](file:///C:/Users/scarl/Desktop/코딩 작업/AURA-Ultra/tests/compatibility/ag-01/run_ag01_verification.py) — 공식 WFF Validator(v1.7.0) 52건 교차 검증, 격리 임시 워크스페이스 6종 Clean APK 빌드·리소스 전용·Manifest·원본 XML 일치·Memory Footprint Evaluator(v1.5.1)·Debug v2 서명 검증 및 에뮬레이터 환경 점검 러너
+[test_ag01_suite.py](file:///C:/Users/scarl/Desktop/코딩 작업/AURA-Ultra/tests/compatibility/ag-01/test_ag01_suite.py) — 구조 불변조건, 검증기 실패 검출(G2) 및 공식 validator 매트릭스 자동 회귀 시험 스위트
+[README.md](file:///C:/Users/scarl/Desktop/코딩 작업/AURA-Ultra/tests/compatibility/ag-01/README.md) — AG-01 사용법 및 재현 명령 가이드
+버전별 정상 PoC XML (6종):
+[poc_wff2_static_aod.xml](file:///C:/Users/scarl/Desktop/코딩 작업/AURA-Ultra/tests/compatibility/ag-01/fixtures/wff2/poc_wff2_static_aod.xml) — WFF 2 단일  정적 AOD 위치·크기·색상 대체 및 날씨 누락 시 WEATHER -- fallback
+[poc_wff3_part_blend_aod.xml](file:///C:/Users/scarl/Desktop/코딩 작업/AURA-Ultra/tests/compatibility/ag-01/fixtures/wff3/poc_wff3_part_blend_aod.xml) — WFF 3 정적 AOD 대체 + PartDraw/PartText 수준 blendMode (SCREEN, SRC_OVER)
+[poc_wff4_continuity.xml](file:///C:/Users/scarl/Desktop/코딩 작업/AURA-Ultra/tests/compatibility/ag-01/fixtures/wff4/poc_wff4_continuity.xml) — WFF 4  기반 5단계 연속 AOD 전환(startOffset + duration <= 1.0, 6종 interpolation, controls, angleDirection="CLOCKWISE", 동일 시계 객체 이동·스케일·색상 연속 보간)
+[poc_wff4_reference_complication.xml](file:///C:/Users/scarl/Desktop/코딩 작업/AURA-Ultra/tests/compatibility/ag-01/fixtures/wff4/poc_wff4_reference_complication.xml) — WFF 4  단일 소스 발행 및 합성 (RANGED_VALUE, SHORT_TEXT, EMPTY) 기반 다중 그래픽 요소(외곽 호, 동적 글래스 패널 폭/위치, 상태 색상, 텍스트 및 -- fallback) 동기화 제어
+[poc_wff4_motion_triggers.xml](file:///C:/Users/scarl/Desktop/코딩 작업/AURA-Ultra/tests/compatibility/ag-01/fixtures/wff4/poc_wff4_motion_triggers.xml) —  시차/반사광(sensorSourceType), 자리별 TimeText(hh_10, hh_1, mm_10, mm_1) 컨테이너 모션, 상태 표현식  이벤트 트리거
+[poc_wff5_blend_features.xml](file:///C:/Users/scarl/Desktop/코딩 작업/AURA-Ultra/tests/compatibility/ag-01/fixtures/wff5/poc_wff5_blend_features.xml) — WFF 5 전용 , , , , 
+상위 기능 하위 침투 및 스키마 위반 검출용 Negative Fixture (7종):
+[neg_wff3_part_blend_in_wff2.xml](file:///C:/Users/scarl/Desktop/코딩 작업/AURA-Ultra/tests/compatibility/ag-01/fixtures/negative/neg_wff3_part_blend_in_wff2.xml)
+[neg_wff4_variant_transition_in_wff3.xml](file:///C:/Users/scarl/Desktop/코딩 작업/AURA-Ultra/tests/compatibility/ag-01/fixtures/negative/neg_wff4_variant_transition_in_wff3.xml)
+[neg_wff4_reference_in_wff3.xml](file:///C:/Users/scarl/Desktop/코딩 작업/AURA-Ultra/tests/compatibility/ag-01/fixtures/negative/neg_wff4_reference_in_wff3.xml)
+[neg_wff5_group_blend_in_wff4.xml](file:///C:/Users/scarl/Desktop/코딩 작업/AURA-Ultra/tests/compatibility/ag-01/fixtures/negative/neg_wff5_group_blend_in_wff4.xml)
+[neg_wff5_complicationslot_blend_in_wff4.xml](file:///C:/Users/scarl/Desktop/코딩 작업/AURA-Ultra/tests/compatibility/ag-01/fixtures/negative/neg_wff5_complicationslot_blend_in_wff4.xml)
+[neg_wff5_stroke_join_font_minsize_in_wff4.xml](file:///C:/Users/scarl/Desktop/코딩 작업/AURA-Ultra/tests/compatibility/ag-01/fixtures/negative/neg_wff5_stroke_join_font_minsize_in_wff4.xml)
+[neg_wff4_invalid_variant_and_reference_parent.xml](file:///C:/Users/scarl/Desktop/코딩 작업/AURA-Ultra/tests/compatibility/ag-01/fixtures/negative/neg_wff4_invalid_variant_and_reference_parent.xml)
+핵심 검증 결과 및 주요 기술 발견
+공식 WFF Validator (v1.7.0) 스키마 매트릭스:
+정상 PoC 6종 × WFF #2#5 (24건) 및 negative fixture 7종 × WFF #2#5 (28건) = 총 52건 교차 검증 100% PASS (지원 버전에서 명시적 PASSED, 하위 버전 침투 시 명시적 FAILED 및 SAXParseException 검출).
+격리 임시 워크스페이스 Clean APK 빌드 및 5대 패키지 검사 (6/6 APK PASS):
+모든 6종 PoC APK가 격리 임시 폴더에서 clean assembleWffNDebug로 빌드 성공했으며, 리소스 전용(.dex/.so/.jar 0개), apkanalyzer 컴파일된 Manifest(hasCode=false, 권한/실행 컴포넌트 0개), 원본 PoC XML과 APK 내부 res/raw/watchface.xml SHA-256 100% 일치, apksigner v2 서명을 통과했습니다.
+공식 Memory Footprint Evaluator (v1.5.1, b87dde8) 실측 및 자리별 시계 메모리 영향 발견:
+단일  기반 5종 PoC APK는 활성 2,371,712 bytes (2.26 MiB), AOD 2,371,712 bytes (2.26 MiB)로 측정되었습니다.
+자리별 4분할  (hh_10, hh_1, mm_10, mm_1 + 콜론 PartText)을 사용한 poc_wff4_motion_triggers APK는 활성 2,371,712 bytes (2.26 MiB), **AOD 3,181,712 bytes (3.03 MiB)*로 측정되어, 자리별 시계 분할이 AOD 오프로드 메모리를 +810,000 bytes (450×450×4 RGBA 레이어 1개분) 증가시킨다는 정량적 근거를 확인했습니다(70 MiB / 7 MiB 예산 이내 PASS).
+핵심 플랫폼 제약 발견:
+: startOffset + duration > 1.0이면 파서가 startOffset을 무시하므로 모든 단계별 구간은 startOffset + duration <= 1.0으로 정규화해야 하며, 도형(Arc, RoundRectangle 등)에는 직접 를 둘 수 없고 부모 Group/Part/DigitalClock/TimeText에 지정해야 합니다.
+: DigitalClock, TimeText, ComplicationSlot, Complication 직속 자식으로 배치할 수 없으며(21종 허용 부모만 가능), 화면에 그리지 않는 순수 계산/발행 노드는 DrawElement 자식을 강제하는  대신 을 사용해야 합니다.
+AnimationController: play 트리거(eventTriggerType)는 TAP, ON_VISIBLE, ON_NEXT_SECOND, ON_NEXT_MINUTE, ON_NEXT_HOUR 5종만 존재하므로, 충전·목표 달성·게이지 변화 등 상태 기반 모션은 으로 구현해야 합니다.
+에뮬레이터 및 실기기 런타임 판정 (NOT RUN):
+로컬 Android SDK에 모바일용 android-36.1 시스템 이미지만 존재하고 Wear OS 시스템 이미지(android-wear)와 연결된 워치가 없어(emulator -list-avds 0개, adb devices -l 0대), 무승인 다운로드 금지 지침에 따라 NOT RUN으로 기록하고 [REPORT.md](file:///C:/Users/scarl/Desktop/코딩 작업/AURA-Ultra/docs/evidence/AG-01/REPORT.md#L305-L353)에 정확한 AVD 생성·설치·AOD 전환·녹화 재현 명령과 중앙 STATUS/WORK_LOG/BLOCKERS 갱신 제안을 수록했습니다.
+최종 판정: AG-01 PARTIAL (스키마 52/52 PASS, 격리 APK 6/6 빌드·Manifest·XML·메모리·서명 PASS, 에뮬레이터/실기기 런타임 NOT RUN) / 제품 출시 NO-GO.
+Bound thread: AURA Ultra AG-01 개발 작업
+
+그록빌드
+이전 GB-01 보고서를 저장소에서 다시 읽어 그대로 보여 드리겠습니다.GB-01 회차 01 보고서입니다. 저장 위치는 docs/evidence/GB-01/REPORT.md이고, 보고서 커밋은 d7e60c06c84809676162c37a0f8b19511518f68c입니다. 검증한 코드 SHA는 098dd35e1d7111a5ece9f8417142cf1c6ecc2fd3입니다.
+작업 보고서 — GB-01 / 회차 01
+상태: GO 일자, 작업자, 검토자: 2026-11-27, Grok Build, 자기 재검토. 독립 검토자 없음. 기준 브랜치/HEAD: main fe4e19d7c6e97c043e4f31cb5960bdb430fd507b PRE-FLIGHT: 착수 시 origin/main과 로컬 main이 fe4e19d7c6e97c043e4f31cb5960bdb430fd507b였다. 작업 트리는 clean이었다. 같은 SHA에서 AGENTS.md, docs/STATUS.md, docs/operations/RESUME_PROTOCOL.md, PROJECT_INVARIANTS.md, TASK_RECORD_PROTOCOL.md, VERIFICATION_PROTOCOL.md, TASK_REPORT_TEMPLATE.md, GPT_EXECUTION_PLAN.md의 GPT-07 행, BLOCKERS.md, WORK_LOG.md, agent-orders/README.md, agent-orders/GB-01.md, DATA_INTELLIGENCE.md, REQUIREMENTS.md의 R-04/R-12/R-17/R-21/R-22, MASTER_ARCHITECTURE.md, QUALITY_GATES.md, README.md를 읽었다. 활성 작업은 GPT-03 READY와 GB-01 READY다. 차단은 B-002 BLOCKED, B-003/B-004/B-005/B-006/B-007/B-008 OPEN, B-001/B-010 RESOLVED다. 제품 코드의 최신 성공 CI는 46002470824, 코드 SHA f284b1bd69a767ef0f7285449fe7c45f05895e53이며 이 SHA는 기준 HEAD의 조상이다. 기준 HEAD 자체는 [skip ci] 문서 커밋이라 새 제품 CI가 없다. PRE-FLIGHT PASS. 제품 출시 NO-GO는 유지한다. 검증 대상 코드 SHA: 098dd35e1d7111a5ece9f8417142cf1c6ecc2fd3 관련 요구사항 / WO / GPT ID: R-04, R-12, R-17, R-21, R-22의 계약 준비. GPT-07 / WO-1723의 선행 조건은 해제하지 않는다. 정식 WO GO로 계산하지 않는다. 관련 정본 문서: docs/DATA_INTELLIGENCE.md, docs/MASTER_ARCHITECTURE.md, docs/REQUIREMENTS.md, docs/operations/agent-orders/GB-01.md 작업 목표, 포함/제외 범위: 기상·건강·배터리·상태 판단이 나중에 공유할 순수 Kotlin 데이터 계약을 구현한다. Observation, 출처, 단위, 시각, 상태, 종류, TTL, revision 순서, 단위 시험, 초안 인터페이스를 포함한다. FSM, 캐시 저장소, 네트워크, Android SDK, 실제 건강·기상 값, Wear/phone 앱, WFF, 그래픽, 루트 Gradle, CI, 중앙 STATUS/WORK_LOG/BLOCKERS는 제외한다. 선행 조건 및 이전 실패: GB-01은 독립 준비 작업이다. 기존 제품 실패와 실기기 미검증은 이 모듈의 통과로 바꾸지 않는다. 직전 도메인 모듈은 없었다. 변경 파일 소유권 / 변경 영향: 소유 경로는 modules/domain/**와 docs/evidence/GB-01/**다. 루트 설정과 앱은 수정하지 않았다. 작업 도중 공유 체크아웃이 agent/antigravity/AG-01로 바뀌어 있었다. 그 브랜치의 tests/compatibility/*는 스테이징하지 않았다. 커밋은 별도 worktree C:\Users\scarl\AppData\Local\Temp\aura-gb01-wt에서 했다. 참조 자료(정확한 URL·버전·확인일): 2026-11-27 확인. Kotlin 2.4.21, https://kotlinlang.org/docs/releases.html, Apache-2.0, https://github.com/JetBrains/kotlin/blob/v2.4.21/license/LICENSE.txt. JUnit Jupiter 5.10.1 / Platform 1.10.1, EPL-2.0, https://junit.org/junit5/. opentest4j 1.3.0. Gradle Wrapper 9.3.1, Apache-2.0. Foojay toolchain resolver 1.0.0, Apache-2.0, https://github.com/gradle/foojay-toolchains. JetBrains annotations 13.0은 kotlin-stdlib의 전이 의존성이다. 가정 / 위험 / 승인 필요 사항: modules/domain/docs/ASSUMPTIONS.md의 A1A26. 출처 목록, 단위 환산, 값 범위, TTL 길이, 미래 시각, 확률 스케일, FSM 어휘, applicationId는 승인하지 않았다. 성공 기준 / 롤백 방법: 독립 모듈이 JDK 17에서 컴파일되고 단위 시험이 실패 0이다. 잘못된 상태 조합을 정상 값으로 바꾸지 않는다. 롤백은 이 브랜치를 병합하지 않으면 된다. main은 변경하지 않았다.
+구현 및 결정
+파일·모듈
+변경 및 이유
+관련 요구사항
+확인할 영향
+modules/domain/src/main/kotlin/.../Observation.kt
+승인된 필드, 상태, 종류, 분류 읽기
+R-17, R-04
+누락과 0의 구분
+Validation.kt, Constraints.kt
+구조 검사, 단위, 범위, 미래 시각 정책
+R-17, R-22
+오류를 성공으로 바꾸지 않음
+Freshness.kt
+호출자 기준 시각, 만료 경계, STALE 파생
+R-17
+만료된 오류가 VALID가 되지 않음
+RevisionGate.kt
+오래된 revision 거절, 동률, 수신 역전
+R-17
+커서 보존
+draft/SnapshotDrafts.kt
+이름이 있는 후속 필드만 초안
+R-04, R-12
+예보 구간과 observedAt 분리
+modules/domain/build.gradle.kts, settings.gradle.kts
+루트에 넣지 않는 JVM 빌드
+R-22
+앱 빌드 비포함
+modules/domain/docs/
+빌드, 가정, 인터페이스
+R-04, R-12, R-21
+미확정 항목 보존
+결정, 대안, 기각 사유 및 ADR: 만료 경계는 EXPIRED_AT_OR_AFTER로 코드에 이름을 붙였다. 제품 상수 승인이 아니므로 ADR을 만들지 않았다. 동률 revision은 첫 수락을 유지한다. 마지막 수신 우선은 기각했다. 오류 문장 필드는 두지 않았다. WeatherSnapshot의 생략 필드는 추가하지 않았다. 중앙 문서와 루트 Gradle은 수정하지 않았다.
+시도한 접근과 실패 원인: 비ASCII 저장소 경로에서 Gradle 테스트 워커가 ClassNotFoundException으로 실패했다. JDK 17과 JDK 21 모두 재현됐다. 클래스 파일과 테스트 클래스패스는 존재했다. ASCII worktree에서 같은 명령이 실행됐다. 테스트를 삭제하지 않았다. 커밋 전 -0.0 단언이 Double.equals 때문에 실패했다. 값을 0.0으로 바꾸지 않고 부호 비트를 유지하도록 단언과 중복 충돌 시험을 고쳤다.
+사용법, 환경, 재현 명령, 설정 변경: modules/domain/docs/BUILD.md. 저장소 루트에서 .\gradlew -p modules/domain test. Windows에서 경로에 비ASCII 문자가 있으면 ASCII 접합 또는 worktree에서 같은 명령을 실행한다.
+요구사항 및 검증 추적표
+요구사항/완료 기준
+구현 파일·경로
+시험 ID
+예상 결과
+실제 결과
+증거·SHA
+판정
+R-17 누락, 오래된 값, 거부, 오류 구분
+Observation.kt, Validation.kt, Freshness.kt
+ValidationTest, FreshnessTest, PipelineTest
+0과 null과 오류가 서로 바뀌지 않음
+70개 중 해당 시험 PASS
+098dd35
+PASS, 모듈 범위
+R-04 관측량과 예측량 구분
+SnapshotDrafts.kt
+DraftContractTest
+kind가 유지되고 시각 필드가 분리됨
+12개 PASS
+098dd35
+PASS, 초안 범위. 실공급원 NOT RUN
+R-12 상황 강조
+SnapshotDrafts.kt의 Context/Presentation 초안
+DraftContractTest
+초안이 FSM을 실행하지 않음
+PASS
+098dd35
+계약만 PASS. FSM NOT RUN
+R-21 민감정보 비저장
+소스와 시험 픽스처
+SourceScanTest
+Android, 네트워크, 시계 API 없음
+PASS
+098dd35
+정적 범위 PASS. 전송·업데이트 NOT RUN
+R-22 재현 빌드
+modules/domain Gradle
+domain test, host 40
+독립 테스트와 기존 40개가 통과
+70 PASS, 40 PASS
+098dd35
+모듈 PASS. 이 브랜치 CI는 아래 기록
+오래된 revision과 역전
+RevisionGate.kt
+RevisionGateTest
+작은 revision이 커서를 바꾸지 않음
+15 PASS
+098dd35
+PASS
+기존 40개 host 시험 유지
+비수정
+tests/unit
+40 PASS
+40 PASS / 0 FAIL
+098dd35 worktree
+PASS
+제품 통합, 실데이터, 실기기
+없음
+없음
+실행하지 않음
+NOT RUN
+없음
+NOT RUN
+검증 결과
+시험 ID
+필수/선택
+종류
+명령·대상 버전
+기대 결과
+실제 결과
+판정
+로그
+GB01-UNIT
+필수
+단위, 경계, 오류 주입
+.\gradlew -p modules/domain test --rerun-tasks --offline, Kotlin 2.4.21, toolchain 17
+실패 0
+70 PASS, 0 FAIL, 0 SKIP, 0 ERROR. BUILD SUCCESSFUL in 34s. XML 시각 2026-11-27T13:43:17Z
+PASS
+domain-test-summary.log
+GB01-FAIL-DETECT
+필수
+검증기 실패 검출
+커밋 전 -0.0 단언 실패, 오류 상태+값 0 주입
+빌드 실패 후 수정본만 통과
+수정 전 BUILD FAILED, 098dd35는 PASS
+PASS
+같은 로그의 사전 실패 기록
+HOST-40
+필수
+회귀
+python -m unittest discover -s tests/unit -p test_*.py
+40 PASS
+40 PASS, 0.048s
+PASS
+같은 로그
+FOUNDATION
+선택
+구조 회귀
+python tools/check_foundation.py
+기존 구조 PASS
+PASS. 공식 스키마는 그 스크립트가 NOT RUN으로 출력
+PASS, 스크립트 범위
+같은 로그
+WFF 스키마, APK, 메모리, 서명
+회귀
+기존 CI
+코드 푸시 46009884061
+기존 파이프라인 success
+job 140542379520 success. 도메인 시험은 이 워크플로에 없음
+PASS, 기존 파이프라인
+위 CI URL
+실기기, 네트워크, 건강 데이터
+제외
+실기기
+미실행
+NOT RUN
+NOT RUN
+NOT RUN
+없음
+환경 및 도구 버전: Windows. Gradle을 띄운 JVM은 Temurin 21.0.5+11. 모듈 toolchain은 Eclipse Temurin 17.0.20.1+1, C:\Users\scarl.jdks\temurin-17. --info 컴파일에서 JAVA_VERSION=17.0.20.1, Kotlin jdkHome가 그 경로였다. 테스트 작업은 별도 launcher를 지정하지 않고 같은 Java toolchain을 사용한다. 통과한 테스트 프로세스 안에서 java.version을 출력하지는 않았다. Python 3.14.7. 총 시험 수, PASS, FAIL, SKIP, NOT RUN, PENDING: 도메인 70 PASS / 0 FAIL / 0 SKIP. host 40 PASS / 0 FAIL. foundation PASS. 실기기와 제품 통합은 NOT RUN. 도메인 70개는 로컬 Gradle이며 기존 CI 워크플로에 들어 있지 않다. CI 실행 ID / head SHA / job / step: AURA Bootstrap 46009884061, head SHA 098dd35e1d7111a5ece9f8417142cf1c6ecc2fd3, job 140542379520, conclusion success. Wrapper, 구조, 회귀 시험, SDK, 공식 WFF validation, debug APK build, APK 내용, 메모리 평가, debug 서명, artifact 업로드가 success였다. 이 CI는 루트 앱 파이프라인이며 modules/domain 단위 시험을 실행하지 않는다. 도메인 70개의 증거는 로컬 실행이다. Node.js 20 deprecation과 setup-java v4 deprecation 경고가 있었고, 이번 작업은 워크플로를 수정하지 않는다. Artifact 파일명·해시·재생성 명령(해당 시): 도메인 모듈은 APK를 만들지 않는다. 재실행 명령은 .\gradlew -p modules/domain test. 정상/실패/경계/회귀 시험 증거: 실제 0, 누락, 거부, 오류, 만료 시각 동률, 배타 범위, Long.MAX_VALUE, 음수 revision, 순서 역전, 중복, 페이로드 충돌, 단위 불일치, 유한하지 않은 수, 시간대 동일 Instant, 잘못된 kind. 검사 도구의 실패 검출 시험: 오류 상태에 숫자 0을 넣으면 VALUE_FORBIDDEN이고 값은 그대로다. 커밋 전 잘못된 단언은 빌드 종료 코드를 실패로 만들었다. 실기기 및 성능 시험 미실시 이유: GB-01 범위 밖이고 B-002로 연결된 기기가 없다.
+구현 후 검토
+검토 유형(자기 재검토 / 다른 에이전트 / 사람): 자기 재검토. 독립 에이전트와 사람 검토는 NOT RUN. 검토 대상 diff 및 SHA: 098dd35e1d7111a5ece9f8417142cf1c6ecc2fd3, 22 files, modules/domain only.
+결함 ID
+심각도
+위치·재현
+증거
+수정/이관
+재검증
+GB01-D1
+P3, 종료
+-0.0을 Double.equals로 0.0과 같다고 단언
+커밋 전 BUILD FAILED
+부호 비트를 유지하고 동률 revision 충돌로 시험
+098dd35 PASS
+GB01-E1
+환경 제한
+비ASCII 경로의 Gradle 테스트 워커 ClassNotFoundException
+같은 모듈이 ASCII 경로에서는 70 PASS
+코드로 테스트를 지우지 않음. BUILD.md에 접합 절차 기록
+ASCII worktree PASS. 원래 경로의 워커는 미해결
+열린 기능 결함은 없다. GB01-E1은 이 모듈의 판정 로직 결함이 아니다.
+종료 게이트
+게이트
+결과
+증거 또는 미적용 사유
+G0 사전 검증
+PASS
+위 PRE-FLIGHT. 제품 NO-GO는 유지
+G1 구현/요구사항
+PASS, 모듈 범위
+추적표. 실공급원과 FSM은 범위 밖
+G2 검증 도구
+PASS
+주입된 오류와 커밋 전 실패 빌드
+G3 시험/회귀
+PASS
+로컬 70, host 40, foundation, 기존 WFF CI 46009884061 success. 도메인 시험은 그 CI에 없다
+G4 분야별 검증
+PARTIAL
+데이터 계약은 시험했다. 건강 네트워크, 성능, 실기기는 NOT RUN
+G5 별도 재검토
+PASS, 자기 재검토
+독립 검토 NOT RUN
+G6 증거 및 판정
+PASS
+코드 SHA와 70개 XML이 일치. 보고서 커밋은 코드 SHA가 아니다
+G7 문서/재개
+PASS, 브랜치 기록
+중앙 STATUS/WORK_LOG/BLOCKERS는 제안만 하고 수정하지 않음
+최종 작업 판정 및 이유: GO. 독립 JVM 모듈의 컴파일, 70개 단위 시험, 실패 검출, 기존 40개 host 시험이 코드 SHA에서 통과했다. 미확정 항목은 가정으로 남겼다. 제품 출시 판정(별도): NO-GO. 실기기, 공급원, FSM, 그래픽, 배포 정책은 끝나지 않았다. 미해결 장애 / 이관 및 해결 조건: B-002, B-003 잔여, B-004, B-006, B-007 유지. A1~A26은 후속 승인이 필요하다. GB01-E1은 ASCII 경로로 회피했다. 다음 작업 ID, 읽을 문서, 첫 행동·명령, 기대 결과: 총괄 담당자가 이 브랜치를 검토한다. 병합 전에는 DATA_INTELLIGENCE와 ASSUMPTIONS를 다시 읽는다. 통합 시 루트 settings.gradle.kts에 이 모듈을 넣는 변경은 중앙 소유자가 한다. WFF 앱 안에 Kotlin을 넣지 않는다. 어댑터는 SDK 결과를 Observation으로 옮기고 applyRevision과 deriveStatus를 거친 뒤 classifiedValue()로 표시한다. 첫 확인 명령은 .\gradlew -p modules/domain test이며 기대 결과는 70 PASS다. STATUS / WORK_LOG / BLOCKERS / evidence / 정본 문서 갱신 여부: evidence와 모듈 문서만 이 브랜치에 기록한다. 중앙 문서는 아래 제안이며 이번 커밋에서 수정하지 않는다.
+중앙 문서 갱신 제안
+STATUS: GB-01 독립 모듈 GO(데이터 계약 범위). 브랜치 agent/grok/GB-01, 코드 SHA 098dd35e1d7111a5ece9f8417142cf1c6ecc2fd3. GPT-03 READY와 출시 NO-GO, 정식 WO GO 0/38은 유지. R-04/R-17의 제품 완료로 올리지 않는다.
+WORK_LOG: 2026-11-27 / GB-01 순수 Kotlin Observation 계약, 기준 fe4e19d7, 코드 098dd35, 시험 70 PASS와 host 40 PASS. 상세는 docs/evidence/GB-01/REPORT.md.
+BLOCKERS: 새 제품 차단을 추가하지 않는다. B-006의 출처 목록 미확정은 유지. 비ASCII Windows 경로의 Gradle 테스트 워커 실패는 환경 제한으로 남기고, 식별자는 총괄 담당자가 필요하면 부여한다.
+저장소 반영 확인(커밋/브랜치; 자기 참조 SHA 금지): 코드 커밋 098dd35e1d7111a5ece9f8417142cf1c6ecc2fd3은 agent/grok/GB-01에 푸시했다. 이 보고서 커밋의 SHA는 코드 검증 SHA가 아니다. main에는 병합하지 않는다.
+PR: https://github.com/scarlel96-design/AURA-Ultra/pull/1
+Bound thread: GB-01 Observation data contracts Kotlin foundation
+
+
+chatgpt response
+
+두 에이전트의 보고서를 접수했습니다. 실제 원격 브랜치와 커밋, 검증 로그를 확인한 뒤 소유권·코드 품질·통합 위험을 검토하겠습니다. GPT-03의 진행 중인 CI도 함께 확인하겠습니다.
+
+Grok Build의 원격 브랜치와 PR은 확인했습니다. 반면 Antigravity의 브랜치는 현재 GitHub에 보이지 않아 로컬 커밋을 푸시해야 원문 검토가 가능합니다. 제 GPT-03 CI는 전체 성공으로 종료됐으며, 세 작업의 결과를 구분해서 기록하겠습니다.
+
+두 모델 모두 첫 작업에서 상당히 유용한 결과를 확보했습니다. 특히 Antigravity가 발견한 WFF의 구체적인 모션 제약은 향후 그래픽 개발 과정에서 시행착오와 Codex 사용량을 줄이는 데 도움이 됩니다.
+
+다만 각 모델의 완료 보고를 그대로 인정하지 않고 GitHub의 실제 커밋과 시험 증거를 별도로 확인했습니다.
+
+1. 세 에이전트의 개발 결과
+
+담당 작업 결과
+ChatGPT GPT-03 그래픽 생성 기반 CI 전체 성공
+Grok Build GB-01 Kotlin 데이터 계약 독립 모듈 GO 보고
+Antigravity CLI AG-01 고급 WFF PoC PARTIAL 보고
+Codex 핵심 개발 및 최종 통합 아직 미투입
+
+2. Grok Build 결과 검토
+
+GB-01 — 데이터 처리 기반 (모듈 GO 보고)
+
+로컬 Kotlin 단위 시험
+
+70 PASS
+
+기존 Python 회귀 시험
+
+40 PASS
+
+원격 보고서 및 시험 요약 로그 확인. Kotlin 시험의 독립 재실행은 아직 미실시.
+
+GitHub에서 실제 소스코드, 보고서, PR 및 CI 성공 결과를 확인했습니다. 파일 소유권 위반도 없었습니다.
+
+특히 다음 구현은 향후 개발에 직접 활용할 수 있습니다.
+
+누락된 데이터와 실제 숫자 0의 구분
+오래된 데이터의 만료 처리
+수신 순서가 역전된 데이터의 처리
+중복 revision 및 데이터 충돌 방지
+관측값·예측값·추정값의 구분
+Android에 의존하지 않는 순수 Kotlin 도메인 구조
+
+GB-01 실제 PR · 검증 보고서 · 기존 WFF 회귀 CI
+
+추가 보완 사항도 발견했습니다. 현재 단위 문자열 검사에는 내부 제어 문자에 대한 검사가 없으며, 정수 범위 검사에는 유효한 정수가 하나도 없는 배타적 범위의 검토가 필요합니다. 이는 소스코드 검토에서 발견한 사항이며 아직 재현 시험을 수행하지는 않았습니다.
+
+또한 Kotlin의 70개 시험을 기존 CI가 직접 실행하지 않습니다. 통합 전에 독립적인 자동 시험 경로를 확보하는 것이 좋겠습니다.
+
+3. Antigravity CLI 결과 검토
+
+AG-01 — 고급 그래픽 기술 검증 (PARTIAL)
+
+보고된 스키마 교차 검증
+
+52/52
+
+보고된 PoC APK 빌드
+
+6/6
+
+사용자가 전달한 에이전트 보고서 기준. 원격 소스 및 원본 로그는 아직 확인하지 못함.
+
+특히 중요한 기술적 발견은 다음과 같습니다.
+
+기술 향후 개발에 활용할 내용
+AOD Continuity 동일 시계 객체의 위치·크기·색상 전환
+Variant 전환 구간의 startOffset 및 duration 제한
+Reference 단일 데이터로 여러 그래픽 요소 연동
+WFF 5 혼합 효과 Group 및 ComplicationSlot의 고급 합성
+Gyro 손목 움직임에 반응하는 반사광 및 시차
+상태 기반 모션 Transform과 Animation을 활용하는 구현 후보
+숫자 전환 자리별 TimeText 분리의 메모리 비용 확인
+
+보고된 메모리 수치도 의미가 있습니다.
+
+AOD 그래픽 자산 메모리 비교
+
+
+증가량 0.77 MiB (34.15%)
+
+AOD 개발 목표 7 MiB
+
+에이전트가 보고한 공식 평가 도구의 추정치입니다. 실제 워치 RAM 측정값이 아닙니다.
+
+다만 Antigravity의 커밋 0ebe3a8은 현재 GitHub에서 조회되지 않습니다. 로컬 브랜치에만 커밋한 것으로 추정됩니다. 원격에 푸시하기 전까지는 기술적 발견을 검증된 제품 계약으로 확정하지 않겠습니다.
+
+4. ChatGPT 개발 결과 추가 확인
+
+앞서 진행한 GPT-03의 CI도 최종 성공으로 종료됐습니다.
+
+검증 항목 결과
+기존 및 신규 단위 시험 62 PASS / 0 FAIL
+그래픽 생성 및 원본 일치 PASS
+공식 WFF 2~5 스키마 4/4 PASS
+APK Clean Build 4/4 PASS
+APK 내용 및 서명 검사 PASS
+메모리 회귀 증가 없음
+
+GPT-03 최종 CI
+
+5. 두 모델에 전달할 후속 지시서
+
+신규 기능을 바로 추가하기보다는 현재 결과물의 완성도와 검증 신뢰도를 확보하는 작업을 우선 배정합니다.
+
+Grok Build
+
+Standard
+
+GB-01 회차 02 작업을 시작한다.
+
+최신 main의 AGENTS.md와 PRE-FLIGHT를 확인한다.
+
+상세 작업지시서:
+docs/operations/agent-orders/GB-01-R02.md
+
+총괄 검토에서 발견한 단위 문자열 검사, 배타적 정수 범위, 극값 처리 및 데이터 검증 파이프라인의 잠재적 문제를 검토한다.
+
+실제 결함을 재현한 후 수정한다. 기존 70개 단위 시험을 유지하고 추가 회귀 시험을 작성한다.
+
+독립적인 JDK 17 빌드 및 테스트 재현성을 확보한다. Kotlin 시험을 CI에 통합하기 위한 최소 구성도 제안한다.
+
+기존 파일 소유권과 브랜치를 유지한다. 검증 결과를 REPORT-02.md에 기록하고 PR #1을 갱신한다.
+
+main에 직접 병합하지 않는다.
+
+
+
+GB-01 회차 02 상세 지시서
+
+Antigravity CLI
+
+Standard
+
+AG-01 회차 02 작업을 시작한다.
+
+최신 main의 AGENTS.md와 PRE-FLIGHT를 확인한다.
+
+상세 작업지시서:
+docs/operations/agent-orders/AG-01-R02.md
+
+현재 AG-01 브랜치와 커밋이 GitHub 원격 저장소에서 조회되지 않는다.
+
+기존 작업 결과를 agent/antigravity/AG-01 브랜치에 푸시하고 main 대상 PR을 생성한다.
+
+52건 스키마 검사와 6개 APK의 실제 검증 로그 및 SHA-256 증거를 보존한다.
+
+Variant, Reference, Animation 및 Gyro의 기술적 발견을 공식 문서와 실제 시험 증거로 구분한다. 자리별 시계의 AOD 메모리 증가 원인도 변수를 통제한 비교 시험으로 검토한다.
+
+Wear OS 에뮬레이터 시험에 필요한 환경을 조사한다. 승인되지 않은 신규 다운로드 및 실제 워치 변경은 수행하지 않는다.
+
+검증 결과를 REPORT-02.md에 기록한다. 기존 제품 소스 및 중앙 운영 문서를 수정하지 않는다. main에 직접 병합하지 않는다.
+
+
+
+AG-01 회차 02 상세 지시서
+
+6. 중앙 개발 문서 갱신 완료
+
+두 모델의 결과, 독립 검토 사항, 미해결 문제 및 후속 지시서를 저장소에 기록했습니다.
+
+총괄 검토 보고서 · 변경 커밋 b5dd320
+
+GitHub main 반영을 재확인했습니다. 이번에는 문서 8개만 변경했으며, 외부 에이전트의 제품 코드는 아직 병합하지 않았습니다.
+
+현재까지 Codex를 한 번도 투입하지 않고 세 에이전트가 각각 개발 성과를 확보했습니다. 다만 실제 사용량 절감률은 아직 측정하지 않았습니다. 앞으로도 이 분업 구조를 유지하는 것이 좋겠습니다.
+
+
+you asked
+
+message time: 2026-11-28 04:20:38
+
+GB-01 회차 02에서 재현된 두 결함을 고쳤고, JDK 17 clean 시험 81개가 통과했습니다. PR #1은 갱신했으며 main에는 병합하지 않았습니다.
+
+확인된 결함은 두 가지입니다.
+
+값이 있는 단위가 내부 공백(mm Hg, 세로 탭)과 비공백 제어 문자(mm\u0000)를 통과했습니다. 이제 공백은 UNIT_PADDED, 비공백 ISO 제어 문자는 UNIT_CONTROL로 거절합니다. mm, °C, m/s는 그대로 수락합니다.
+LongBounds.parse가 정수가 하나도 없는 배타 구간을 수락했습니다. (5, 6), (Long.MAX_VALUE-1, Long.MAX_VALUE), 배타 하한 Long.MAX_VALUE, 배타 상한 Long.MIN_VALUE가 해당합니다. 이 구간은 RANGE_EMPTY입니다. 포함 극값과 바로 옆의 유효 정수는 그대로 수락합니다.
+
+DENIED, ERROR, STALE, TTL 미선언은 수정 전에도 신선한 VALID 읽기로 바뀌지 않았습니다. 그 경로는 유지하고 통합 시험으로 고정했습니다. classifiedValue는 여전히 TTL을 적용하지 않습니다. 인접한 두 Double 사이의 열린 구간은 정책이 확정되지 않아 A27로만 기록했습니다.
+
+수정 전 같은 fixture는 81개 중 6개가 실패했습니다. 기존 70개는 그때도 통과했습니다. 수정 후 ASCII worktree에서 gradlew -p modules/domain clean test는 81 PASS / 0 FAIL입니다. 테스트 JVM은 Temurin 17.0.20.1입니다. host 시험 40개와 foundation 검사도 통과했습니다.
+
+비ASCII 경로의 ClassNotFoundException 원인은 Gradle이 워커 classpath @argfile을 UTF-8로 쓰고, Temurin 17이 그 파일을 MS949로 읽는 점입니다. 명령줄의 -Dfile.encoding=UTF-8은 argfile을 펼친 뒤에 적용됩니다. ASCII worktree 절차로 81개가 통과했습니다. 비ASCII 경로 자체는 아직 실패합니다.
+
+Kotlin 시험을 CI에 넣는 최소 workflow는 modules/domain/docs/CI_PROPOSAL.md에만 두었습니다. .github는 바꾸지 않았고, 그 제안은 실행하지 않았습니다.
+
+코드 SHA 46caded의 bootstrap CI는 성공입니다. push 46015880941, PR 46015887551. 이 워크플로는 Kotlin 시험을 실행하지 않으며, host 시험은 Ran 40 tests였습니다. 보고서와 JUnit XML은 docs/evidence/GB-01/REPORT-02.md에 있습니다.
+
+증거 커밋 204f561의 bootstrap CI도 성공했습니다. push 46016545164, PR 46016552563. PR #1은 열려 있습니다.
+
+AG-01 회차 02 ([AG-01-R02.md](file:///C:/Users/scarl/Desktop/코딩 작업/AURA-Ultra/docs/operations/agent-orders/AG-01-R02.md)) 작업을 완료하고 원격 브랜치 푸시 및 main 대상 PR 생성을 마쳤습니다.
+
+
+1. 원격 브랜치 푸시 및 main 대상 PR 전달
+
+브랜치: agent/antigravity/AG-01 (origin/agent/antigravity/AG-01 등록 및 조회 확인 완료, main 직접 병합 금지 준수)
+회차 01 커밋 SHA: 0ebe3a8d06f31bcaec959f61832efd864160fd6a (원격 히스토리에 그대로 보존)
+회차 02 최신 HEAD SHA (origin/agent/antigravity/AG-01): 74f04aab7abb4e846e3ca5fd798721bd732a1146
+확인한 최신 origin/main SHA: b5dd320c0718f9451b9749637c83db22584664b0
+GitHub Pull Request (base: main ← head: agent/antigravity/AG-01): https://github.com/scarlel96-design/AURA-Ultra/pull/2
+파일 소유권 경계 준수: 허용 경로(tests/compatibility/ag-01/**, docs/evidence/AG-01/**) 내 총 26개 파일만 변경되었으며, 기존 [REPORT.md](file:///C:/Users/scarl/Desktop/코딩 작업/AURA-Ultra/docs/evidence/AG-01/REPORT.md)는 보존하고 제품 소스·공통 Gradle/CI·중앙 운영 문서는 수정하지 않았습니다.
+
+
+2. 52건 스키마 검사 및 6개 격리 PoC APK 원본 증거 로그 영속 보존
+
+요약 표가 아닌 실제 원본 검증 로그를 docs/evidence/AG-01/logs/ 아래에 영속 파일로 보존하고 [REPORT-02.md](file:///C:/Users/scarl/Desktop/코딩 작업/AURA-Ultra/docs/evidence/AG-01/REPORT-02.md)의 모든 판정 항목과 1:1로 연결했습니다.
+
+[schema-matrix-52.log](file:///C:/Users/scarl/Desktop/코딩 작업/AURA-Ultra/docs/evidence/AG-01/logs/schema-matrix-52.log): 공식 wff-validator.jar (v1.7.0, SHA-256: 0e2204137fca618264e82f9a053c6c9ec6d4fad08d2b56aa8a57d75c0508a804) 52건(CASE 01/52 ~ CASE 52/52)의 실행 명령, 원본 XML SHA-256, 종료 코드 및 원본 PASSED/SEVERE 출력 전체 보존.
+[isolated-apk-verification.log](file:///C:/Users/scarl/Desktop/코딩 작업/AURA-Ultra/docs/evidence/AG-01/logs/isolated-apk-verification.log): 격리 임시 디렉터리에서 Clean Build된 6개 PoC APK([APK 1/6] ~ [APK 6/6])의 APK SHA-256, 원본 vs 패키징 res/raw/watchface.xml SHA-256 일치 결과, ZIP 엔트리 목록(0 .dex, 0 .so, 0 assets/), apkanalyzer manifest print 원본 XML, memory-footprint.jar (v1.5.1, SHA-256: 503c5f7bc9209ec4d4d4974f973cf66ad6fbb435e8422c310aac5b820f1f991a) --report 및 --verbose 원본 출력, apksigner verify --verbose --print-certs 원본 출력 전체 보존.
+[aod-memory-ablation.log](file:///C:/Users/scarl/Desktop/코딩 작업/AURA-Ultra/docs/evidence/AG-01/logs/aod-memory-ablation.log): 자리별 시계 AOD 메모리 +810,000 bytes 인과 규명용 4종 통제 비교 APK + 2종 기준선 APK의 SHA-256 및 memory-footprint.jar --report/--verbose 원본 로그 보존.
+[environment-and-emulator.log](file:///C:/Users/scarl/Desktop/코딩 작업/AURA-Ultra/docs/evidence/AG-01/logs/environment-and-emulator.log): OS/Python/JDK/JAR 해시 및 sdkmanager --list 기반 Wear OS 시스템 이미지 목록, avdmanager 디바이스 프로필, 디스크 여유 공간 조사 로그 보존.
+
+
+3. 기술 결론 정리 및 자리별 시계 AOD 메모리 +810,000 bytes 원인 규명
+
+공식 문서 vs 공식 XSD 스키마 vs 실제 실행 증거 vs NOT RUN 런타임 4단계 분리:&#x20;[REPORT-02.md §5](file:///C:/Users/scarl/Desktop/코딩 작업/AURA-Ultra/docs/evidence/AG-01/REPORT-02.md#L112-L122)에서 Variant, Reference, AnimationController(Transform/Animation), Gyro, WFF 5 Group/ComplicationSlot blendMode 각각에 대해 공식 문서의 개념/런타임 설명(startOffset + duration > 1.0 시 런타임 파서가 startOffset 무시, 순환 Reference의 최초 1회 갱신 후 중단 등)과 공식 XSD 스키마가 실제로 강제하는 문법 제약, 로컬에서 실행·입증된 정적/패키징 증거, 그리고 아직 실행되지 않은 런타임(NOT RUN) 경계를 분리했습니다.
+
+
+poc_wff4_motion_triggers.xml AOD 메모리 +810,000 bytes 증가 원인 (바이트코드 수식 + 2×2 단일 변수 통제 비교 시험):&#x20;memory-footprint.jar 내 AmbientMemoryFootprintCalculator 바이트코드 역어셈블 결과:
+&#x20;$$\text{maxAmbientBytes} = (450 \times 450 \times \text{numLayers} \times 4) + \text{maximumResourceUsage}$$
+&#x20;여기서 풀스크린 RGBA8888 오프로드 레이어 1장이 정확히 450 × 450 × 4 = 810,000 bytes이며, DigitalClock 노드는 Part*가 아니므로 numLayers를 증가시키지 않고, 동적 시계 뒤에 **AOD에서 alpha="0"으로 숨겨지지 않은 Part* 노드(PartText 등)**가 등장할 때 checkIfNewLayerIsRequired가 numLayers++를 트리거합니다.
+ActiveDecoration(Gyro + 4개 Transform Animation)을 동일하게 고정한 2×2 통제 비교 시험([ablation_a_single_clock_only.xml](file:///C:/Users/scarl/Desktop/코딩 작업/AURA-Ultra/tests/compatibility/ag-01/fixtures/ablation/ablation_a_single_clock_only.xml), [ablation_b_four_clocks_only.xml](file:///C:/Users/scarl/Desktop/코딩 작업/AURA-Ultra/tests/compatibility/ag-01/fixtures/ablation/ablation_b_four_clocks_only.xml), [ablation_c_single_clock_plus_parttext.xml](file:///C:/Users/scarl/Desktop/코딩 작업/AURA-Ultra/tests/compatibility/ag-01/fixtures/ablation/ablation_c_single_clock_plus_parttext.xml), [ablation_d_four_clocks_plus_ambient_hidden_parttext.xml](file:///C:/Users/scarl/Desktop/코딩 작업/AURA-Ultra/tests/compatibility/ag-01/fixtures/ablation/ablation_d_four_clocks_plus_ambient_hidden_parttext.xml)) 결과:
+
+통제 시험 픽스처 DigitalClock 개수 AOD 가시 PartText (ClockColon) 평가된 numLayers maxAmbientBytes 기준선 대비 증감 --verbose 레이어 시작 로그
+ablation_a_single_clock_only 1개 (hh:mm) 0개 0 2,371,712 B +0 B Number of layers: 0
+ablation_b_four_clocks_only 4개 (hh_10~mm_1) 0개 (ClockColon 제거) 0 2,371,712 B +0 B Number of layers: 0
+ablation_c_single_clock_plus_parttext 1개 (hh:mm) 1개 (ClockColon AOD 노출) 1 3,181,712 B +810,000 B Layer 1 starts at: .../PartText name = "ClockColon"
+ablation_d_four_clocks_plus_ambient_hidden_parttext 4개 (hh_10~mm_1) 0개 (ClockColon AMBIENT alpha=0) 0 2,371,712 B +0 B Number of layers: 0
+
+즉, DigitalClock을 1개에서 4개로 분할한 단독 효과는 0 bytes이며, +810,000 bytes 증가는 100% AOD에서 숨겨지지 않은 정적 <PartText name="ClockColon">이 풀스크린 정적 레이어 1개를 할당했기 때문임이 입증되었습니다.
+
+
+4. Wear OS 에뮬레이터 시험 요구 환경 조사 요약 ([REPORT-02.md §7](file:///C:/Users/scarl/Desktop/코딩 작업/AURA-Ultra/docs/evidence/AG-01/REPORT-02.md#L181-L246))
+
+현재 상태: 가용 디스크 여유 공간 93.88 GiB, 일반 폰용 시스템 이미지 1종(android-36.1;google_apis_playstore;x86_64) 및 일반 폰 AVD 1개(Medium_Phone_API_36.1)만 존재하며 Wear OS 시스템 이미지 및 Wear OS AVD는 0개(NOT RUN).
+필수 SDK 패키지 식별자 (sdkmanager --list 읽기 전용 확인):&#x20;WFF 4 (API 36 / Wear OS 6.0): system-images;android-36;android-wear-signed;x86_64 (rev 1, 압축 해제+AVD 약 3.0 GiB)
+WFF 5 (API 37 / Wear OS 7.0): system-images;android-37.0;android-wear-signed;x86_64 (rev 1, 압축 해제+AVD 약 3.2 GiB)
+WFF 3 (API 35 / Wear OS 5.1): system-images;android-35-ext15;android-wear;x86_64 (rev 1, 압축 해제+AVD 약 2.8 GiB)
+WFF 2 (API 34 / Wear OS 5.0): system-images;android-34;android-wear;x86_64 (rev 1, 압축 해제+AVD 약 2.6 GiB)
+
+
+AVD 디바이스 프로필: wearos_large_round (id 59, 450×450 원형 주 타깃), wearos_small_round (id 61), wearos_square (id 62), wearos_rect (id 60).
+
+상세 검증 결과 및 재현 명령은 [docs/evidence/AG-01/REPORT-02.md](file:///C:/Users/scarl/Desktop/코딩 작업/AURA-Ultra/docs/evidence/AG-01/REPORT-02.md)에서 확인하실 수 있습니다.
+
+통제 시험 픽스처 DigitalClock 개수 AOD 가시 PartText (ClockColon) 평가된 numLayers maxAmbientBytes 기준선 대비 증감 --verbose 레이어 시작 로그
+ablation_a_single_clock_only 1개 (hh:mm) 0개 0 2,371,712 B +0 B Number of layers: 0
+ablation_b_four_clocks_only 4개 (hh_10~mm_1) 0개 (ClockColon 제거) 0 2,371,712 B +0 B Number of layers: 0
+ablation_c_single_clock_plus_parttext 1개 (hh:mm) 1개 (ClockColon AOD 노출) 1 3,181,712 B +810,000 B Layer 1 starts at: .../PartText name = "ClockColon"
+ablation_d_four_clocks_plus_ambient_hidden_parttext 4개 (hh_10~mm_1) 0개 (ClockColon AMBIENT alpha=0) 0 2,371,712 B +0 B Number of layers: 0
+
+즉, DigitalClock을 1개에서 4개로 분할한 단독 효과는 0 bytes이며, +810,000 bytes 증가는 100% AOD에서 숨겨지지 않은 정적 <PartText name="ClockColon">이 풀스크린 정적 레이어 1개를 할당했기 때문임이 입증되었습니다.
+
+
+4. Wear OS 에뮬레이터 시험 요구 환경 조사 요약 ([REPORT-02.md §7](file:///C:/Users/scarl/Desktop/코딩 작업/AURA-Ultra/docs/evidence/AG-01/REPORT-02.md#L181-L246))
+
+현재 상태: 가용 디스크 여유 공간 93.88 GiB, 일반 폰용 시스템 이미지 1종(android-36.1;google_apis_playstore;x86_64) 및 일반 폰 AVD 1개(Medium_Phone_API_36.1)만 존재하며 Wear OS 시스템 이미지 및 Wear OS AVD는 0개(NOT RUN).
+필수 SDK 패키지 식별자 (sdkmanager --list 읽기 전용 확인):&#x20;WFF 4 (API 36 / Wear OS 6.0): system-images;android-36;android-wear-signed;x86_64 (rev 1, 압축 해제+AVD 약 3.0 GiB)
+WFF 5 (API 37 / Wear OS 7.0): system-images;android-37.0;android-wear-signed;x86_64 (rev 1, 압축 해제+AVD 약 3.2 GiB)
+WFF 3 (API 35 / Wear OS 5.1): system-images;android-35-ext15;android-wear;x86_64 (rev 1, 압축 해제+AVD 약 2.8 GiB)
+WFF 2 (API 34 / Wear OS 5.0): system-images;android-34;android-wear;x86_64 (rev 1, 압축 해제+AVD 약 2.6 GiB)
+
+
+AVD 디바이스 프로필: wearos_large_round (id 59, 450×450 원형 주 타깃), wearos_small_round (id 61), wearos_square (id 62), wearos_rect (id 60).
+
+상세 검증 결과 및 재현 명령은 [docs/evidence/AG-01/REPORT-02.md](file:///C:/Users/scarl/Desktop/코딩 작업/AURA-Ultra/docs/evidence/AG-01/REPORT-02.md)에서 확인하실 수 있습니다.
+
+AOD 메모리(+810,000 bytes) 증가 원인을 단일 변수로 분리한 4종 통제 비교(Ablation) 픽스처와 원본 증거 로그 보존 로직, 그리고 Wear OS 에뮬레이터 요구 환경 조사 기능을 구현했습니다. 현재 단위 테스트, 52건 공식 스키마 매트릭스 및 환경 로그 생성 검증 작업을 백그라운드에서 실행 중이며, 완료되는 대로 격리 APK 빌드 및 통제 비교 시험을 이어서 진행하겠습니다.
+
+단위 구조 테스트(Ag01PoCStructureTests 9건) 통과를 확인했으며, 현재 6개 격리 PoC APK의 클린 빌드 및 원본 검증 로그(docs/evidence/AG-01/logs/isolated-apk-verification.log) 생성 작업을 백그라운드에서 실행 중입니다. 완료되는 대로 AOD 메모리 통제 비교(--mode ablation) 검증을 이어서 진행하겠습니다.
+
+6개 격리 PoC APK의 클린 빌드 및 원본 검증 로그(docs/evidence/AG-01/logs/isolated-apk-verification.log) 생성이 완료되었습니다. 현재 단일 변수 통제 비교(--mode ablation) APK 빌드 및 docs/evidence/AG-01/logs/aod-memory-ablation.log 생성 작업을 백그라운드에서 실행 중입니다.
+
+docs/evidence/AG-01/REPORT-02.md 작성을 완료하고, 현재 Git 변경 경로 확인 및 test_ag01_suite.py 전체 회귀 테스트를 백그라운드에서 실행 중입니다. 완료되는 대로 커밋·푸시 및 main 대상 PR 생성을 진행하겠습니다.
+
+AG-01 회차 02 ([AG-01-R02.md](file:///C:/Users/scarl/Desktop/코딩 작업/AURA-Ultra/docs/operations/agent-orders/AG-01-R02.md)) 작업을 완료하고 원격 브랜치 푸시 및 main 대상 PR 생성을 마쳤습니다.
+
+
+1. 원격 브랜치 푸시 및 main 대상 PR 전달
+
+브랜치: agent/antigravity/AG-01 (origin/agent/antigravity/AG-01 등록 및 조회 확인 완료, main 직접 병합 금지 준수)
+회차 01 커밋 SHA: 0ebe3a8d06f31bcaec959f61832efd864160fd6a (원격 히스토리에 그대로 보존)
+회차 02 최신 HEAD SHA (origin/agent/antigravity/AG-01): 74f04aab7abb4e846e3ca5fd798721bd732a1146
+확인한 최신 origin/main SHA: b5dd320c0718f9451b9749637c83db22584664b0
+GitHub Pull Request (base: main ← head: agent/antigravity/AG-01): https://github.com/scarlel96-design/AURA-Ultra/pull/2
+파일 소유권 경계 준수: 허용 경로(tests/compatibility/ag-01/**, docs/evidence/AG-01/**) 내 총 26개 파일만 변경되었으며, 기존 [REPORT.md](file:///C:/Users/scarl/Desktop/코딩 작업/AURA-Ultra/docs/evidence/AG-01/REPORT.md)는 보존하고 제품 소스·공통 Gradle/CI·중앙 운영 문서는 수정하지 않았습니다.
+
+
+2. 52건 스키마 검사 및 6개 격리 PoC APK 원본 증거 로그 영속 보존
+
+요약 표가 아닌 실제 원본 검증 로그를 docs/evidence/AG-01/logs/ 아래에 영속 파일로 보존하고 [REPORT-02.md](file:///C:/Users/scarl/Desktop/코딩 작업/AURA-Ultra/docs/evidence/AG-01/REPORT-02.md)의 모든 판정 항목과 1:1로 연결했습니다.
+
+[schema-matrix-52.log](file:///C:/Users/scarl/Desktop/코딩 작업/AURA-Ultra/docs/evidence/AG-01/logs/schema-matrix-52.log): 공식 wff-validator.jar (v1.7.0, SHA-256: 0e2204137fca618264e82f9a053c6c9ec6d4fad08d2b56aa8a57d75c0508a804) 52건(CASE 01/52 ~ CASE 52/52)의 실행 명령, 원본 XML SHA-256, 종료 코드 및 원본 PASSED/SEVERE 출력 전체 보존.
+[isolated-apk-verification.log](file:///C:/Users/scarl/Desktop/코딩 작업/AURA-Ultra/docs/evidence/AG-01/logs/isolated-apk-verification.log): 격리 임시 디렉터리에서 Clean Build된 6개 PoC APK([APK 1/6] ~ [APK 6/6])의 APK SHA-256, 원본 vs 패키징 res/raw/watchface.xml SHA-256 일치 결과, ZIP 엔트리 목록(0 .dex, 0 .so, 0 assets/), apkanalyzer manifest print 원본 XML, memory-footprint.jar (v1.5.1, SHA-256: 503c5f7bc9209ec4d4d4974f973cf66ad6fbb435e8422c310aac5b820f1f991a) --report 및 --verbose 원본 출력, apksigner verify --verbose --print-certs 원본 출력 전체 보존.
+[aod-memory-ablation.log](file:///C:/Users/scarl/Desktop/코딩 작업/AURA-Ultra/docs/evidence/AG-01/logs/aod-memory-ablation.log): 자리별 시계 AOD 메모리 +810,000 bytes 인과 규명용 4종 통제 비교 APK + 2종 기준선 APK의 SHA-256 및 memory-footprint.jar --report/--verbose 원본 로그 보존.
+[environment-and-emulator.log](file:///C:/Users/scarl/Desktop/코딩 작업/AURA-Ultra/docs/evidence/AG-01/logs/environment-and-emulator.log): OS/Python/JDK/JAR 해시 및 sdkmanager --list 기반 Wear OS 시스템 이미지 목록, avdmanager 디바이스 프로필, 디스크 여유 공간 조사 로그 보존.
+
+
+3. 기술 결론 정리 및 자리별 시계 AOD 메모리 +810,000 bytes 원인 규명
+
+공식 문서 vs 공식 XSD 스키마 vs 실제 실행 증거 vs NOT RUN 런타임 4단계 분리:&#x20;[REPORT-02.md §5](file:///C:/Users/scarl/Desktop/코딩 작업/AURA-Ultra/docs/evidence/AG-01/REPORT-02.md#L112-L122)에서 Variant, Reference, AnimationController(Transform/Animation), Gyro, WFF 5 Group/ComplicationSlot blendMode 각각에 대해 공식 문서의 개념/런타임 설명(startOffset + duration > 1.0 시 런타임 파서가 startOffset 무시, 순환 Reference의 최초 1회 갱신 후 중단 등)과 공식 XSD 스키마가 실제로 강제하는 문법 제약, 로컬에서 실행·입증된 정적/패키징 증거, 그리고 아직 실행되지 않은 런타임(NOT RUN) 경계를 분리했습니다.
+
+
+poc_wff4_motion_triggers.xml AOD 메모리 +810,000 bytes 증가 원인 (바이트코드 수식 + 2×2 단일 변수 통제 비교 시험):&#x20;memory-footprint.jar 내 AmbientMemoryFootprintCalculator 바이트코드 역어셈블 결과:
+&#x20;$$\text{maxAmbientBytes} = (450 \times 450 \times \text{numLayers} \times 4) + \text{maximumResourceUsage}$$
+&#x20;여기서 풀스크린 RGBA8888 오프로드 레이어 1장이 정확히 450 × 450 × 4 = 810,000 bytes이며, DigitalClock 노드는 Part*가 아니므로 numLayers를 증가시키지 않고, 동적 시계 뒤에 **AOD에서 alpha="0"으로 숨겨지지 않은 Part* 노드(PartText 등)**가 등장할 때 checkIfNewLayerIsRequired가 numLayers++를 트리거합니다.
+ActiveDecoration(Gyro + 4개 Transform Animation)을 동일하게 고정한 2×2 통제 비교 시험([ablation_a_single_clock_only.xml](file:///C:/Users/scarl/Desktop/코딩 작업/AURA-Ultra/tests/compatibility/ag-01/fixtures/ablation/ablation_a_single_clock_only.xml), [ablation_b_four_clocks_only.xml](file:///C:/Users/scarl/Desktop/코딩 작업/AURA-Ultra/tests/compatibility/ag-01/fixtures/ablation/ablation_b_four_clocks_only.xml), [ablation_c_single_clock_plus_parttext.xml](file:///C:/Users/scarl/Desktop/코딩 작업/AURA-Ultra/tests/compatibility/ag-01/fixtures/ablation/ablation_c_single_clock_plus_parttext.xml), [ablation_d_four_clocks_plus_ambient_hidden_parttext.xml](file:///C:/Users/scarl/Desktop/코딩 작업/AURA-Ultra/tests/compatibility/ag-01/fixtures/ablation/ablation_d_four_clocks_plus_ambient_hidden_parttext.xml)) 결과:
+
+통제 시험 픽스처 DigitalClock 개수 AOD 가시 PartText (ClockColon) 평가된 numLayers maxAmbientBytes 기준선 대비 증감 --verbose 레이어 시작 로그
+ablation_a_single_clock_only 1개 (hh:mm) 0개 0 2,371,712 B +0 B Number of layers: 0
+ablation_b_four_clocks_only 4개 (hh_10~mm_1) 0개 (ClockColon 제거) 0 2,371,712 B +0 B Number of layers: 0
+ablation_c_single_clock_plus_parttext 1개 (hh:mm) 1개 (ClockColon AOD 노출) 1 3,181,712 B +810,000 B Layer 1 starts at: .../PartText name = "ClockColon"
+ablation_d_four_clocks_plus_ambient_hidden_parttext 4개 (hh_10~mm_1) 0개 (ClockColon AMBIENT alpha=0) 0 2,371,712 B +0 B Number of layers: 0
+
+즉, DigitalClock을 1개에서 4개로 분할한 단독 효과는 0 bytes이며, +810,000 bytes 증가는 100% AOD에서 숨겨지지 않은 정적 <PartText name="ClockColon">이 풀스크린 정적 레이어 1개를 할당했기 때문임이 입증되었습니다.
+
+
+4. Wear OS 에뮬레이터 시험 요구 환경 조사 요약 ([REPORT-02.md §7](file:///C:/Users/scarl/Desktop/코딩 작업/AURA-Ultra/docs/evidence/AG-01/REPORT-02.md#L181-L246))
+
+현재 상태: 가용 디스크 여유 공간 93.88 GiB, 일반 폰용 시스템 이미지 1종(android-36.1;google_apis_playstore;x86_64) 및 일반 폰 AVD 1개(Medium_Phone_API_36.1)만 존재하며 Wear OS 시스템 이미지 및 Wear OS AVD는 0개(NOT RUN).
+필수 SDK 패키지 식별자 (sdkmanager --list 읽기 전용 확인):&#x20;WFF 4 (API 36 / Wear OS 6.0): system-images;android-36;android-wear-signed;x86_64 (rev 1, 압축 해제+AVD 약 3.0 GiB)
+WFF 5 (API 37 / Wear OS 7.0): system-images;android-37.0;android-wear-signed;x86_64 (rev 1, 압축 해제+AVD 약 3.2 GiB)
+WFF 3 (API 35 / Wear OS 5.1): system-images;android-35-ext15;android-wear;x86_64 (rev 1, 압축 해제+AVD 약 2.8 GiB)
+WFF 2 (API 34 / Wear OS 5.0): system-images;android-34;android-wear;x86_64 (rev 1, 압축 해제+AVD 약 2.6 GiB)
+
+
+AVD 디바이스 프로필: wearos_large_round (id 59, 450×450 원형 주 타깃), wearos_small_round (id 61), wearos_square (id 62), wearos_rect (id 60).
+
+상세 검증 결과 및 재현 명령은 [docs/evidence/AG-01/REPORT-02.md](file:///C:/Users/scarl/Desktop/코딩 작업/AURA-Ultra/docs/evidence/AG-01/REPORT-02.md)에서 확인하실 수 있습니다.
+
+통제 시험 픽스처 DigitalClock 개수 AOD 가시 PartText (ClockColon) 평가된 numLayers maxAmbientBytes 기준선 대비 증감 --verbose 레이어 시작 로그
+ablation_a_single_clock_only 1개 (hh:mm) 0개 0 2,371,712 B +0 B Number of layers: 0
+ablation_b_four_clocks_only 4개 (hh_10~mm_1) 0개 (ClockColon 제거) 0 2,371,712 B +0 B Number of layers: 0
+ablation_c_single_clock_plus_parttext 1개 (hh:mm) 1개 (ClockColon AOD 노출) 1 3,181,712 B +810,000 B Layer 1 starts at: .../PartText name = "ClockColon"
+ablation_d_four_clocks_plus_ambient_hidden_parttext 4개 (hh_10~mm_1) 0개 (ClockColon AMBIENT alpha=0) 0 2,371,712 B +0 B Number of layers: 0
+
+즉, DigitalClock을 1개에서 4개로 분할한 단독 효과는 0 bytes이며, +810,000 bytes 증가는 100% AOD에서 숨겨지지 않은 정적 <PartText name="ClockColon">이 풀스크린 정적 레이어 1개를 할당했기 때문임이 입증되었습니다.
+
+
+4. Wear OS 에뮬레이터 시험 요구 환경 조사 요약 ([REPORT-02.md §7](file:///C:/Users/scarl/Desktop/코딩 작업/AURA-Ultra/docs/evidence/AG-01/REPORT-02.md#L181-L246))
+
+현재 상태: 가용 디스크 여유 공간 93.88 GiB, 일반 폰용 시스템 이미지 1종(android-36.1;google_apis_playstore;x86_64) 및 일반 폰 AVD 1개(Medium_Phone_API_36.1)만 존재하며 Wear OS 시스템 이미지 및 Wear OS AVD는 0개(NOT RUN).
+필수 SDK 패키지 식별자 (sdkmanager --list 읽기 전용 확인):&#x20;WFF 4 (API 36 / Wear OS 6.0): system-images;android-36;android-wear-signed;x86_64 (rev 1, 압축 해제+AVD 약 3.0 GiB)
+WFF 5 (API 37 / Wear OS 7.0): system-images;android-37.0;android-wear-signed;x86_64 (rev 1, 압축 해제+AVD 약 3.2 GiB)
+WFF 3 (API 35 / Wear OS 5.1): system-images;android-35-ext15;android-wear;x86_64 (rev 1, 압축 해제+AVD 약 2.8 GiB)
+WFF 2 (API 34 / Wear OS 5.0): system-images;android-34;android-wear;x86_64 (rev 1, 압축 해제+AVD 약 2.6 GiB)
+
+
+AVD 디바이스 프로필: wearos_large_round (id 59, 450×450 원형 주 타깃), wearos_small_round (id 61), wearos_square (id 62), wearos_rect (id 60).
+
+상세 검증 결과 및 재현 명령은 [docs/evidence/AG-01/REPORT-02.md](file:///C:/Users/scarl/Desktop/코딩 작업/AURA-Ultra/docs/evidence/AG-01/REPORT-02.md)에서 확인하실 수 있습니다.
+
+
+chatgpt response
+
+두 PR의 최신 코드와 원본 시험 증거를 대조하겠습니다. 이번에는 수정된 데이터 계약과 AOD 메모리 원인 분석을 중점적으로 확인하고, 통합 가능 여부와 다음 작업을 정리하겠습니다.
+
+Grok의 JUnit XML 7개에서 실제 81개 시험과 실패·오류·스킵 0건을 확인했습니다. Antigravity의 원격 로그에서도 52건의 스키마 결과와 AOD 레이어 증가 위치를 확인했습니다. 다만 보고서 날짜와 일부 환경 수치에 불일치가 있어, 기술 결과와 문서 정정 사항을 구분하겠습니다.
+
+Grok은 추가 기능을 개발하기 전에 총괄 측에서 독립 Kotlin CI를 실행하면 됩니다. Antigravity는 에뮬레이터 환경 조사 코드가 실제 SDK 목록 조회 대신 고정된 목록을 출력하는 문제를 발견했습니다. 해당 부분은 보완 대상으로 분리하고, 정상적으로 검증된 Grok 코드와 GPT-03 생성기를 먼저 통합 검증 브랜치에 올리겠습니다.
+
+AURA Ultra — 외부 에이전트 2차 결과 검토
+
+이번 회차에서는 단순히 시험 개수를 늘린 것이 아니라, 실제 결함을 수정하고 그래픽 메모리 증가 원인에 대한 기존 가설을 정정했습니다.
+
+GitHub의 PR 두 개와 실제 소스코드, 원격 보고서 및 시험 로그를 확인했습니다.
+
+1. Grok Build — GB-01 회차 02
+
+순수 Kotlin 도메인 모듈 (담당자 GO)
+
+기존 단위 시험
+
+70개
+
+보완 후 단위 시험
+
+81 PASS
+
+수정한 결함
+
+2건
+
+최종 실패·오류·스킵
+
+0건
+
+GitHub에 등록된 JUnit XML 7개와 실제 testcase 81개를 대조한 결과입니다.
+
+검토 항목 결과
+단위 문자열 결함 수정 확인
+정수 배타 범위 및 극값 처리 수정 확인
+기존 70개 시험 유지 보고서 및 증거 확인
+신규 11개 시험 확인
+JDK 17 로컬 시험 증거 확인
+기존 WFF CI 4회 SUCCESS
+파일 소유권 위반 0건
+Kotlin 독립 CI 아직 미구성
+
+제가 이전 검토에서 지적했던 두 결함 모두 실제로 재현됐으며 수정 코드도 확인했습니다. 특히 정수 최댓값과 최솟값에서 오버플로를 방지하는 처리까지 반영됐습니다.
+
+다만 Windows의 비ASCII 경로 문제는 여전히 남아 있습니다. ASCII 경로의 별도 worktree를 사용하는 우회 절차는 확보했습니다.
+
+PR \#1 · GB-01 회차 02 보고서
+
+2. Antigravity CLI — AG-01 회차 02
+
+고급 WFF 기능 검증 (PARTIAL)
+
+공식 스키마 기대 판정
+
+52/52
+
+PoC APK 검증 로그
+
+6/6
+
+통제 비교 픽스처
+
+4종
+
+실제 렌더링 시험
+
+NOT RUN
+
+원격 브랜치 및 원본 검증 로그를 확보했습니다. 독립적인 APK 재빌드는 아직 수행하지 않았습니다.
+
+52개 스키마 로그를 개별적으로 대조했습니다. 정상 판정 24건과 예상 거부 판정 28건에서 대상 파일 및 WFF 버전과 일치하는 결과를 확인했습니다.
+
+이제 원격 브랜치가 정상적으로 등록됐으므로 이전의 증거 접근 문제도 해결됐습니다.
+
+PR \#2 · AG-01 회차 02 보고서
+
+3. 중요한 그래픽 최적화 발견
+
+이전에는 시계 숫자를 개별 객체로 분할하면 AOD 메모리가 증가하는 것으로 추정했습니다. 이번 통제 비교에서는 다른 원인을 확인했습니다.
+
+AOD 메모리 평가 결과
+
+공식 Memory Footprint Evaluator 1.5.1의 평가값. 실제 하드웨어 메모리 사용량은 아님.
+
+추가 레이어 한 장의 비용은 다음과 같습니다.
+
+$$
+450\times450\times4=810,000\text{ bytes}
+$$
+
+현재 PoC에서는 숫자의 개별 분할 자체가 메모리 증가 원인이 아니었습니다. AOD에서 표시되는 정적 콜론 PartText의 배치가 추가 오프로드 레이어를 발생시켰습니다.
+
+따라서 향후 Fluid Digits와 고급 숫자 전환을 개발할 때, 개별 숫자 객체를 유지하면서도 AOD 레이어를 효율적으로 구성하는 방향을 검토할 수 있습니다. 단순한 메모리 절약을 이유로 고급 애니메이션을 포기할 필요는 없습니다.
+
+단, AOD에서 필요한 콜론과 시간 가독성을 없애는 방식은 최종 해결책으로 채택하지 않습니다.
+
+4. 총괄 독립 통합 검증
+
+두 모델의 보고서를 검토하는 것과 별개로, 제가 개발한 GPT-03과 Grok의 GB-01을 별도 통합 검증 브랜치에 구성했습니다.
+
+신규 Kotlin CI도 직접 구축했습니다. 이제 로컬 에이전트의 보고서에만 의존하지 않고 GitHub Actions에서 데이터 처리 모듈을 검증할 수 있습니다.
+
+독립 Kotlin CI SUCCESS
+
+
+Kotlin 단위 시험
+
+81 PASS
+
+실패·오류·스킵
+
+0
+
+Python 호스트 시험
+
+68 PASS
+
+독립 그래픽 재생성
+
+PASS
+
+
+Kotlin 독립 CI · JUnit 시험 증거
+
+기존 생성기에는 독립 프로세스 실행, 누락 자산 검출, 불일치 검출 및 재생성 시험을 추가했습니다. 모두 통과했습니다.
+
+5. 신규 외부 도구 문제 발견
+
+통합 CI 도중 Google이 공식 WFF 검증 도구와 메모리 평가 도구를 갱신한 사실도 확인했습니다.
+
+항목 결과
+Google 공식 릴리스 변경 확인
+기존 SHA-256 불일치 검출 정상 작동
+무결성 검사 우회 없음
+신규 공식 해시 확인 완료
+신규 도구 전환 후보 구현 완료
+신규 전체 CI 진행 중
+
+Google 공식 변경 사항 · 신규 통합 CI
+
+기존 제품 코드의 오류가 아닌 외부 도구 변경에 따른 무결성 검사 실패입니다. 신규 공식 해시는 검증 브랜치에만 반영했습니다. 전체 CI 성공 전에는 main에 병합하지 않습니다.
+
+6. 다음 작업 배정
+
+Grok Build — GB-02
+
+기존 GB-01은 독립 CI까지 성공했으므로 반복적인 결함 검증을 종료하고, 다음 단계에서는 지능형 상태 머신 개발을 맡기겠습니다.
+
+단, 현재 통합 검증이 끝난 후 착수하도록 설정했습니다.
+
+Standard
+
+GB-01 독립 Kotlin CI 81 PASS를 총괄 담당자가 확인했다.
+
+다음 작업은 GB-02다.
+
+상세 작업지시서:
+docs/operations/agent-orders/GB-02.md
+
+총괄 담당자의 GB-01 통합 승인 이후 착수한다.
+
+기존 Observation 데이터 계약을 기반으로 순수 Kotlin 지능형 상태 머신을 구현한다.
+
+상황별 우선순위, 히스테리시스, 디바운스, 최소 상태 유지 시간, 긴급 상태 전환, 데이터 신뢰도 및 모션 제어 정책을 구현하고 검증한다.
+
+후보 임계값을 제품 확정 상수로 고정하지 않는다.
+
+기존 파일 소유권과 PRE-FLIGHT 및 G0~G7 검증 규정을 준수한다. 별도 worktree 및 브랜치를 사용한다.
+
+
+
+GB-02 상세 작업지시서
+
+Antigravity CLI — AG-01 회차 03
+
+실제 소스코드를 검토한 결과, 에뮬레이터 환경 조사기가 고정된 SDK 패키지 목록을 실제 조회 결과처럼 출력하는 문제를 발견했습니다.
+
+검증기의 예상 실패 판정에도 추가 개선이 필요합니다. 기존 52건의 로그 자체는 올바른 결과를 확인했지만, 향후 도구 오류를 정상적인 스키마 거부로 오인할 위험이 있습니다.
+
+Standard
+
+AG-01 회차 03 작업을 시작한다.
+
+상세 작업지시서:
+docs/operations/agent-orders/AG-01-R03.md
+
+총괄 검토에서 발견한 에뮬레이터 환경 조사 및 스키마 실패 판정의 결함을 수정한다.
+
+하드코딩된 SDK 카탈로그를 실제 sdkmanager 및 avdmanager 조회 결과와 구분한다.
+
+검증기가 정확한 대상 파일과 WFF 버전의 실패를 검출하도록 강화한다. 도구 실행 오류를 예상된 스키마 실패로 처리하지 않는다.
+
+기존 시험 증거와 로그를 보존한다. 보고서의 날짜, 경로 및 환경 수치 불일치를 정정한다.
+
+실제 Wear OS 에뮬레이터를 대상으로 안전한 설치, 워치 페이스 선택, AOD 전환 및 영상 검증 절차를 마련한다.
+
+신규 시스템 이미지 다운로드 및 AVD 생성은 사용자 승인 이후에만 수행한다.
+
+REPORT-03.md를 작성하고 PR #2를 갱신한다. main에 직접 병합하지 않는다.
+
+
+
+AG-01 회차 03 상세 작업지시서
+
+에뮬레이터 설치는 승인하는 것을 추천합니다. 우선 WFF 4와 WFF 5의 두 가지 환경만 설치하면 됩니다. 보고된 예상 소요 공간은 약 6.2 GiB이며, 실제 설치 크기는 아직 미확인입니다.
+
+7. 현재 전체 개발 상태
+
+담당 현재 작업 상태
+ChatGPT GPT-03 및 통합 검증 PARTIAL
+Grok Build GB-01 독립 CI PASS
+Grok Build GB-02 통합 승인 대기
+Antigravity AG-01 PARTIAL
+Codex 핵심 개발 미투입
+
+총괄 검토 및 통합 보고서 · 통합 검증 브랜치 · 최종 기록 커밋
+
+중앙 문서의 main 반영을 재확인했습니다. 이번에 총괄 판단으로 통합 후보와 독립 CI를 추가했으며, 제품 코드와 외부 PR은 main에 병합하지 않았습니다.
+
+현재 세 AI의 분업은 효과적으로 진행되고 있습니다. 특히 Grok의 데이터 처리 개발과 Antigravity의 그래픽 기술 검증 덕분에 향후 Codex가 직접 해결해야 할 작업 범위가 줄어들고 있습니다. 실제 사용량 절감률은 아직 미측정입니다.
+
+
+you asked
+
+message time: 2026-11-28 04:45:34
+
+작업 겹치지 않는 선에서 너도 작업해
+
+
+chatgpt response
+
+최신 main과 통합 후보의 CI를 먼저 확인하겠습니다. Grok의 도메인 모듈과 Antigravity의 PoC 파일은 건드리지 않고, GPT-03 생성기와 공통 빌드 검증의 남은 작업을 진행하겠습니다.
+
+공식 도구 갱신 후의 CI는 전체 성공했습니다. 4개 APK의 메모리 평가값도 이전과 동일합니다. 검증된 통합 후보를 main에 반영해 Grok의 다음 작업 차단을 해제하고, 제 쪽에서는 별도 flavor 리소스 격리 검사를 추가하겠습니다.
+
+공통 기반은 main에 반영했습니다. 새 격리 시험은 WFF4에만 생성된 색상 변경을 적용하고, 나머지 세 프로필은 공통 XML을 사용하도록 구성했습니다. 빌드 후 원본만 변경해 검사기가 오래된 APK를 정확히 거부하는지도 검증합니다.
+
+AURA Ultra — GPT-03 개발 작업
+
+다른 두 에이전트와 작업이 중복되지 않도록 공통 그래픽 생성 및 빌드 자동화에 집중했습니다.
+
+1. 기존 통합 차단 문제 해결
+
+Google 공식 WFF 도구 갱신 이후의 최종 CI가 성공했습니다. 기존 통합 후보를 검토하고 main에 반영했습니다.
+
+검증 항목 결과
+Python 단위 시험 68 PASS
+Kotlin 독립 CI 81 PASS
+독립 그래픽 자산 재생성 PASS
+WFF 2~5 공식 스키마 4/4 PASS
+APK Clean Build 4/4 PASS
+APK 리소스 및 서명 검사 PASS
+메모리 평가 기존 대비 증가 없음
+
+최종 검증 CI · main 통합 커밋
+
+GB-01 통합을 승인했습니다. 이제 Grok Build는 기존에 배정한 GB-02 지능형 상태 머신 개발을 시작할 수 있습니다.
+
+Antigravity의 AG-01 전용 시험 파일과 Grok의 도메인 구현은 수정하지 않았습니다.
+
+2. 신규 개발 — 버전별 그래픽 리소스 격리 검증
+
+향후 WFF 버전별 고급 그래픽을 개발할 때 상위 버전의 리소스가 하위 버전에 잘못 포함되는 문제를 방지하기 위한 자동 검증기를 구현했습니다.
+
+공통 디자인 토큰 및 XML 생성기
+
+APK별 자동 검증
+
+리소스 일치 · 무결성 · 메모리 · 서명 · 오류 검출
+
+신규 구현 항목 상태
+버전별 리소스 격리 검사 구현 완료
+디자인 토큰 기반 전용 XML 생성 구현 완료
+APK와 선택된 원본의 SHA-256 대조 구현 완료
+오래된 APK 검출 및 복구 시험 구현 완료
+신규 단위 시험 6개 추가 완료
+임시 APK의 제품 혼입 방지 구현 완료
+실제 격리 APK 빌드 시험 CI 진행 중
+
+신규 구현 커밋 · 격리 검증 CI
+
+3. 현재 자동 시험 규모
+
+통합 main Kotlin 시험
+
+81 PASS
+
+FAIL 0 · ERROR 0 · SKIP 0
+
+신규 후보 Python 시험 규모
+
+74개
+
+기존 68개 + 신규 6개
+
+
+Python 회귀 시험 확대
+
+Category 시험 개수
+초기 19
+GPT-01 26
+GPT-02 40
+GPT-03 초기 62
+통합 68
+신규 후보 74
+
+신규 후보 74개는 최종 원본 CI 로그 확인 전 시험 구성 기준입니다.
+
+main Kotlin 재검증 CI
+
+4. 작업 중복 여부
+
+담당 현재 담당 영역
+ChatGPT 그래픽 생성기, 공통 빌드, 리소스 격리
+Grok Build 데이터 계약 및 지능형 상태 머신
+Antigravity CLI 고급 WFF 기능 및 에뮬레이터 검증
+Codex 향후 고난도 구현 및 실기기 통합
+
+신규 작업에서 다른 에이전트의 소유 파일 변경은 0건입니다.
+
+5. 개발 진행 상황
+
+상세 작업 보고서 · 최종 기록 커밋
+
+작업 기록의 main 반영까지 확인했습니다. 신규 격리 검증기는 현재 공통 리소스 기반의 초기 워치 페이스를 전제로 합니다. 실제 제품에 버전별 전용 리소스를 도입하기 전에 시험 구조를 일반화해야 합니다.
+
+다음에는 GPT-03의 최종 검증을 마무리하고 GPT-04 원형 화면 대응 및 공통 그래픽 레이아웃 개발로 넘어가겠습니다. 이 작업 역시 다른 두 에이전트의 담당 영역과 겹치지 않습니다.
+
+
+you asked
+
+message time: 2026-11-28 04:52:00
+
+다음 작업
+
+
+chatgpt response
+
+GPT-03의 격리 빌드 결과부터 확인하겠습니다. 검증을 통과한 변경만 통합하고, Grok과 Antigravity의 담당 파일을 제외한 GPT-04 레이아웃 기반 개발을 이어가겠습니다.
+
+GPT-03의 최종 격리 CI가 성공했습니다. WFF4 전용 XML만 해당 APK에 포함됐고, 의도적으로 원본을 불일치시켰을 때 WFF4만 실패했습니다. 복구 후 네 프로필 모두 다시 통과했습니다. 이제 GPT-03을 종료하고 원형 화면 레이아웃 검사 기반을 개발하겠습니다.
+
+GPT-04의 8개 정보 영역을 432·438·480·498픽셀 원형 화면에 투영했습니다. 네 해상도 모두 안전 영역과 최소 간격 조건을 충족했고, 신규 CI에서도 기하 검사와 단위 시험 단계가 통과했습니다. 실제 글꼴 잘림이나 워치 렌더링은 별도로 검증해야 합니다.
+
+AURA Ultra — GPT-03 종료 및 GPT-04 착수
+
+1. GPT-03 최종 검증 완료
+
+GPT-03 GO
+
+그래픽 자산 생성 및 리소스 격리 기반 완료
+
+
+Python 단위 시험
+
+74 PASS
+
+Kotlin 독립 시험
+
+81 PASS
+
+기본 및 격리 APK 빌드
+
+8/8 PASS
+
+단위 시험 실패
+
+0 FAIL
+
+실제 CI 원본 로그를 확인했습니다. WFF4 전용 그래픽 리소스가 다른 프로필의 APK에 포함되지 않았습니다.
+
+검증 항목 결과
+독립 그래픽 재생성 PASS
+버전별 리소스 격리 PASS
+원본 및 APK 내부 XML 일치 PASS
+의도적 불일치 오류 검출 PASS
+원본 복구 후 재검증 PASS
+공식 메모리 예산 PASS
+Debug 서명 PASS
+
+격리 검증 CI · main 통합 커밋
+
+GPT-03을 개발 기반 범위에서 GO로 판정했습니다. 기존 제품 그래픽은 그대로 보존했습니다.
+
+2. GPT-04 — 원형 화면 대응 레이아웃 개발
+
+공통 450×450 논리 좌표를 기반으로 해상도별 레이아웃 검증 도구를 구현했습니다.
+
+Signature 레이아웃 좌표 초안. 최종 디자인이나 실제 워치 렌더링 화면은 아닙니다.
+
+이번에는 고급 소재를 적용하기 전에 각 정보 영역이 서로 겹치지 않고 안정적으로 배치되는 구조를 개발했습니다.
+
+해상도별 정적 검증
+
+해상도 최소 안전 여백 실제 계산 여백 결과
+432×432 12px 16.79px PASS
+438×438 12px 16.20px PASS
+480×480 13px 17.96px PASS
+498×498 14px 18.90px PASS
+
+총 32개 정보 영역의 원형 안전 경계와 영역 간 간격을 검사했습니다. 모든 영역이 정적 기하 검사를 통과했습니다.
+
+3. 신규 구현 사항
+
+개발 항목 상태
+공통 레이아웃 토큰 구현
+원형 안전 영역 계산 구현
+해상도별 좌표 변환 구현
+정보 영역 충돌 검사 구현
+글꼴 크기 범위 검사 구현
+AOD 시간·날짜 위치 계약 초안 구현
+해상도별 SVG 와이어프레임 생성 구현
+SHA-256 기하 검증 보고서 구현
+신규 단위 시험 14개 추가
+CI 자동 검사 검사 단계 PASS
+
+GPT-04 구현 커밋 · 실제 CI
+
+4. 자동 시험 규모
+
+Category Python 시험 개수
+초기 19
+GPT-01 26
+GPT-02 40
+GPT-03 74
+GPT-04 후보 88
+
+
+Python 신규 후보
+
+88개
+
+Kotlin 검증 완료
+
+81 PASS
+
+Python 88개는 시험 구성 기준입니다. 전체 CI 원본 로그 확인 후 최종 시험 개수를 확정합니다.
+
+5. 전체 개발 진행 상황
+
+
+GPT 선행 개발 완료 3 / 12
+
+전체 작업량 계획상 누적 가중치 17%
+
+실제 제품 완성도 또는 Codex 사용량 절감률은 아닙니다.
+
+6. 작업 분리 및 기록
+
+다른 에이전트의 소유 파일 변경은 0건입니다. 기존 제품 워치 페이스도 변경하지 않았습니다.
+
+GPT-03 최종 보고서
+GPT-04 회차 01 보고서
+최신 작업 상태
+최종 기록 커밋
+
+문서의 main 반영까지 확인했습니다. 신규 레이아웃은 제가 선정한 개발용 초안이며, 실제 글리프 측정과 실기기 가독성 검증은 아직 미실시입니다. 전체 CI 완료 전까지 신규 구현은 별도 브랜치에 유지합니다.
+
+다음 작업: GPT-04 회차 02. 생성 증거를 보완하고 날짜·날씨·심박·배터리 등 실제 기본 정보 표시와 한국어·영어 가독성 검증 기반을 개발합니다.
+
+
+you asked
+
+message time: 2026-11-28 04:56:35
+
+다음 작업
+
+
+chatgpt response
+
+GPT-04 회차 01의 최종 CI부터 확인하겠습니다. 이후 기본 정보 표시와 한·영 가독성 검증을 진행하되, 외부 에이전트의 데이터 처리 및 모션 구현은 변경하지 않겠습니다.
+
+회차 01의 두 CI가 모두 성공했습니다. Python 88개 시험과 기존 APK 8개 빌드 검증을 확인했습니다. 다음 후보는 실제 WFF 데이터 표현식을 사용하며, 기존 제품 APK와 분리해 검증하겠습니다. 날씨 데이터가 누락되거나 갱신에 실패하는 경우도 별도로 표시하겠습니다.
+
+기본 페이스 생성 후보에는 시간·날짜·배터리·걸음수와 조건부 날씨·심박·강수확률 표시를 넣었습니다. 별도의 호스트 글꼴 시험에서도 한·영 합성 문자열 31개를 네 해상도에서 측정했습니다. 124개 조합 모두 영역 안에 들어갔지만, 실제 워치의 시스템 글꼴 검증과는 구분하겠습니다.
+
+AURA Ultra — GPT-04 회차 02
+
+1. 이전 작업 최종 검증
+
+원형 화면 대응 레이아웃의 전체 CI가 성공했습니다. 검증된 코드를 main에 통합했습니다.
+
+검증 항목 결과
+Python 단위 시험 88 PASS / 0 FAIL
+4개 해상도 기하 검사 PASS
+SVG·JSON 생성 결과 재현 PASS
+기본 및 격리 APK 빌드 8/8 PASS
+공식 메모리 평가 PASS
+APK 무결성 및 서명 PASS
+
+최종 CI · main 통합 커밋
+
+이번 회차에서는 좌표와 영역만 정의한 상태에서 실제 데이터 표시가 가능한 WFF 기본 페이스 개발로 진행합니다.
+
+2. Signature 기본 워치 페이스 구현
+
+기존에 정의한 8개 정보 영역에 실제 WFF 시스템 데이터 표현식을 연결했습니다.
+
+<svg viewBox="0 0 450 450" width="100%" xmlns="http://www.w3.org/2000/svg"><circle cx="225" cy="225" r="222" fill="#030508" stroke="#526A80" stroke-width="2" /><text x="225" y="60" fill="#79D4F2" font-size="15" letter-spacing="3" text-anchor="middle">AURA ULTRA</text><text x="177" y="99" fill="#A9BACB" font-size="23" text-anchor="middle">11.28 · 토</text><text x="317" y="99" fill="#79D4F2" font-size="23" text-anchor="middle">85%</text><text x="225" y="211" fill="#F3F7FA" font-size="96" text-anchor="middle" font-weight="300">10:08</text><text x="141" y="261" fill="#A9BACB" font-size="14" text-anchor="middle">구름 많음</text><text x="141" y="290" fill="#79D4F2" font-size="25" text-anchor="middle">12°C</text><text x="309" y="261" fill="#A9BACB" font-size="14" text-anchor="middle">HR</text><text x="309" y="290" fill="#F29AA8" font-size="25" text-anchor="middle">72 bpm</text><text x="225" y="336" fill="#A9BACB" font-size="23" text-anchor="middle">6,420 / 8,000</text><text x="225" y="379" fill="#79D4F2" font-size="23" text-anchor="middle">P 30%</text></svg>
+
+합성 데이터를 적용한 기본 레이아웃 예시. 실제 워치 캡처 및 최종 프리미엄 디자인이 아님.
+
+정보 구현 내용
+시간 기기 설정에 따른 12/24시간 연동
+날짜 월·일·요일 표시
+배터리 시스템 배터리 잔량
+걸음수 현재 걸음수 및 목표
+날씨 기상 상태, 현재 기온
+온도 단위 섭씨·화씨 자동 분기
+심박수 시스템 심박 데이터 표현식
+강수확률 당일 강수 예보
+AOD 시간과 날짜 유지
+
+공식 WFF 데이터 표현식을 사용했습니다. 외부 네트워크 코드와 센서 서비스는 워치 페이스에 삽입하지 않았습니다.  developer.android.com developer.android.com developer.android.com developer.android.com
+
+3. 데이터 오류 표시 구현
+
+정상 기상 데이터
+
+12°C
+
+갱신 실패·기존 값 유지
+
+! 12°C
+
+기상 데이터 없음
+
+--
+
+기상 데이터 로딩 오류
+
+ERR
+
+정상 심박 데이터
+
+72 bpm
+
+심박 표시 불가
+
+-- bpm
+
+데이터가 없을 때 임의의 숫자 0을 표시하지 않도록 구성했습니다. 다만 심박 데이터의 권한 거부와 오래된 값의 구체적인 구분은 후속 데이터 공급원 통합이 필요합니다.
+
+4. 한국어·영어 글꼴 가독성 시험
+
+실제 호스트 환경에서 Noto Sans CJK KR 글꼴을 사용해 문자열의 폭과 높이를 측정했습니다.
+
+124/124 PASS
+
+31개 합성 문자열 × 4개 화면 해상도
+
+
+해상도 시험 영역 초과
+432×432 31/31 0
+438×438 31/31 0
+480×480 31/31 0
+498×498 31/31 0
+
+한글 글리프, 영문 기상 상태, 최대 숫자 표본, 음수 기온, 오류 문자열 등을 검사했습니다.
+
+실제 글꼴 시험 및 재현 코드
+
+이는 대체 글꼴을 사용한 호스트 시험입니다. 갤럭시 워치의 실제 시스템 글꼴과 렌더러에 대한 검증은 아닙니다.
+
+5. 현재 자동 시험 규모
+
+Category Python 단위 시험
+GPT-01 26
+GPT-02 40
+GPT-03 74
+GPT-04 R01 88
+GPT-04 R02 99
+
+Python 신규 후보
+
+99개
+
+Kotlin 검증 완료
+
+81 PASS
+
+신규 Python 시험 단계는 통과했습니다. 정확한 실행 개수는 최종 CI 원본 로그 확인 후 확정합니다.
+
+6. 개발 상태 및 저장소 반영
+
+작업 상태
+GPT-01 초기 빌드 기반 GO
+GPT-02 다중 WFF 호환성 GO
+GPT-03 그래픽 생성 자동화 GO
+GPT-04 기본 정보 및 레이아웃 PARTIAL
+GPT-05 연속 모션 예정
+GPT-06 고급 소재 예정
+정식 출시 NO-GO
+
+신규 구현 커밋 · 신규 CI · 상세 보고서
+
+외부 에이전트의 소유 파일 변경은 0건입니다. 중앙 문서의 반영도 확인했습니다.
+
+신규 기본 페이스는 별도 검증 브랜치에 유지하고 있습니다. 전체 APK 검증, AM/PM 표시, 실제 프리뷰 제작 및 실기기 검증이 남아 있습니다.
+
+다음 작업에서는 GPT-04를 마무리하기 위한 검증과 보완을 진행합니다.
+
+
+you asked
+
+message time: 2026-11-28 05:12:01
+
+AG01-AUD-01(실시간 sdkmanager/avdmanager/adb 조회·파싱 및 추정 후보 분리), AG01-AUD-02(명시적 파일·버전 FAILED + [Line:Column] SEVERE 강화 판정 및 2종 단일 결함 Negative 픽스처 분리), 안전한 Wear OS 에뮬레이터 런타임 검증 모듈([wear_emulator_runtime.py](file:///C:/Users/scarl/Desktop/코딩 작업/AURA-Ultra/tests/compatibility/ag-01/wear_emulator_runtime.py)) 및 확장 회귀 테스트 구현을 완료했습니다.
+현재 백그라운드에서 전체 단위/68건 validator 회귀 테스트, 60건 엄격 스키마 원본 로그 생성 및 실시간 읽기 전용 SDK/AVD/ADB 환경 조회 로그(docs/evidence/AG-01/logs-r03/) 생성을 실행 중입니다. 완료되는 대로 결과를 검토하고 REPORT-03.md 작성 및 PR #2 갱신을 진행하겠습니다.
+실시간 읽기 전용 SDK/AVD/ADB 환경 조회(task-409)가 완료되어 docs/evidence/AG-01/logs-r03/에 sdkmanager-list.raw.log, avdmanager-list-device.raw.log, avdmanager-list-avd.raw.log, emulator-readiness-r03.log가 저장되었습니다 (status=NOT RUN, Wear 이미지 0개, Wear AVD 0개, 일반 폰 AVD Medium_Phone_API_36.1 1개 분리 확인).
+현재 백그라운드에서 실행 중인 전체 단위·회귀 테스트 및 60건 엄격 스키마 매트릭스(task-408) 완료를 기다리고 있습니다.
+G5 자기 재검토 중 [wear_emulator_runtime.py](file:///C:/Users/scarl/Desktop/코딩 작업/AURA-Ultra/tests/compatibility/ag-01/wear_emulator_runtime.py)의 워치 페이스 선택 절차에서 비검증 브로드캐스트 컴포넌트명을 제거하고 공식 Watch Face Picker + dumpsys wallpaper 활성 확인 절차로 정정했습니다. 현재 수정된 최종 코드에 대한 전체 회귀 테스트(test_ag01_suite.py 22건, 68 validator subtests)를 재실행 중입니다.
+AG-01 회차 03(docs/operations/agent-orders/AG-01-R03.md) 작업을 완료하고 agent/antigravity/AG-01 푸시 및 PR #2 갱신을 마쳤습니다.
+
+원격 반영 및 변경 경계 확인
+브랜치: agent/antigravity/AG-01 (main 직접 병합 금지 준수)
+회차 03 최신 HEAD / origin/agent/antigravity/AG-01 SHA: 2749e35cd6f061dc61dcdd57e855d430ef9dbe38 (회차 02 부모 SHA: 74f04aab7abb4e846e3ca5fd798721bd732a1146)
+확인한 최신 origin/main SHA: a9664b2e3eb72f99a06c2d973259cb80d7cc4337
+PR #2 갱신: https://github.com/scarlel96-design/AURA-Ultra/pull/2 (업데이트 코멘트: https://github.com/scarlel96-design/AURA-Ultra/pull/2#issuecomment-7227225785)
+
+소유 경로 및 기존 증거 보존: tests/compatibility/ag-01/, docs/evidence/AG-01/ 외 변경 0건. 기존 [REPORT.md](file:///C:/Users/scarl/Desktop/코딩 작업/AURA-Ultra/docs/evidence/AG-01/REPORT.md), [REPORT-02.md](file:///C:/Users/scarl/Desktop/코딩 작업/AURA-Ultra/docs/evidence/AG-01/REPORT-02.md) 및 docs/evidence/AG-01/logs/* (6 APK / 4 Ablation / 52 스키마 로그)는 수정 없이 보존하고 새 실행 증거를 docs/evidence/AG-01/logs-r03/와 [REPORT-03.md](file:///C:/Users/scarl/Desktop/코딩 작업/AURA-Ultra/docs/evidence/AG-01/REPORT-03.md)에 기록했습니다.
+최종 작업 판정 / 제품 출시 판정: 작업 PARTIAL (Wear OS 런타임·실기기 NOT RUN), 제품 출시 NO-GO 유지.
+2. 감사 결함 수정 요약 (AG01-AUD-01, AG01-AUD-02, AG01-AUD-03)
+AG01-AUD-01 (실시간 SDK/AVD 조회 및 하드코딩 분리) — [run_ag01_verification.py](file:///C:/Users/scarl/Desktop/코딩 작업/AURA-Ultra/tests/compatibility/ag-01/run_ag01_verification.py):
+하드코딩 카탈로그를 ESTIMATED_WEAR_IMAGE_CANDIDATES 추정 후보로 분리하고, 실제 sdkmanager --list, avdmanager list device, avdmanager list avd, emulator -list-avds, adb devices -l를 실행하여 stdout/stderr/exit code 원문을 아래 4개 파일에 보존하고 대조 파싱했습니다:
+[sdkmanager-list.raw.log](file:///C:/Users/scarl/Desktop/코딩 작업/AURA-Ultra/docs/evidence/AG-01/logs-r03/sdkmanager-list.raw.log)
+[avdmanager-list-device.raw.log](file:///C:/Users/scarl/Desktop/코딩 작업/AURA-Ultra/docs/evidence/AG-01/logs-r03/avdmanager-list-device.raw.log)
+[avdmanager-list-avd.raw.log](file:///C:/Users/scarl/Desktop/코딩 작업/AURA-Ultra/docs/evidence/AG-01/logs-r03/avdmanager-list-avd.raw.log)
+[emulator-readiness-r03.log](file:///C:/Users/scarl/Desktop/코딩 작업/AURA-Ultra/docs/evidence/AG-01/logs-r03/emulator-readiness-r03.log) (status=NOT RUN, Wear 이미지 0, Wear AVD 0, 일반 폰 AVD ['Medium_Phone_API_36.1'], 여유 공간 98.98 GiB)
+도구 부재/오류/타임아웃/빈 출력은 UNKNOWN, 일반 폰 AVD·임의 물리 ADB 기기·AVD 없는 Wear 이미지만 있는 경우는 NOT RUN으로 강제하며 이를 단위 테스트로 검증했습니다.
+AG01-AUD-02 (스키마 실패 판정 강화 및 단일 결함 Negative 픽스처 분리) — [run_ag01_verification.py](file:///C:/Users/scarl/Desktop/코딩 작업/AURA-Ultra/tests/compatibility/ag-01/run_ag01_verification.py):
+require_rejection이 returncode == 0, 공식 배너, 0 PASSED, 정확한 대상 XML 경로 및 WFF 버전의 명시적 FAILED 1건, [Line:Column] SEVERE 스키마 진단 내 오류 키워드 포함을 모두 요구하도록 강화했습니다(JVM 크래시·비정상 종료·잘못된 파일/버전·SEVERE 외 문자열은 모두 ValueError).
+기존 7종 Negative(52건 매트릭스, 60 validator subtests)를 유지하면서 단일 결함 픽스처 2종([neg_wff4_variant_duration_out_of_range.xml](file:///C:/Users/scarl/Desktop/코딩 작업/AURA-Ultra/tests/compatibility/ag-01/fixtures/negative/neg_wff4_variant_duration_out_of_range.xml), [neg_wff4_reference_invalid_parent.xml](file:///C:/Users/scarl/Desktop/코딩 작업/AURA-Ultra/tests/compatibility/ag-01/fixtures/negative/neg_wff4_reference_invalid_parent.xml))을 분리 추가하여 총 60건 엄격 스키마 매트릭스([schema-matrix-60-r03.log](file:///C:/Users/scarl/Desktop/코딩 작업/AURA-Ultra/docs/evidence/AG-01/logs-r03/schema-matrix-60-r03.log)) 및 68 validator subtests 전원 통과를 확인했습니다.
+AG01-AUD-03 (회차 02 정정표 및 평가기 범위 한정) — [REPORT-03.md §2](file:///C:/Users/scarl/Desktop/코딩 작업/AURA-Ultra/docs/evidence/AG-01/REPORT-03.md#L46-L56):
+REPORT-02.md의 작업일(2026-04-20 → 2026-11-27, 회차 03 2026-11-28), 프로필 경로(compatibility/profiles.json), 디스크 여유 공간(logs/ 93.67 GiB vs logs-r03/ 98.98 GiB), G6 정의 및 판정(증거 및 판정 감사, PARTIAL), AOD ablation 결론의 정적 평가기 모델 범위(SYNC_TO_DEVICE → Roboto fallback 경고 및 실기기 NOT RUN)를 원본 증거와 대조해 정정 기록했습니다.
+안전한 Wear OS 에뮬레이터 런타임 검증 절차 — [wear_emulator_runtime.py](file:///C:/Users/scarl/Desktop/코딩 작업/AURA-Ultra/tests/compatibility/ag-01/wear_emulator_runtime.py):
+물리 기기 및 일반 폰 AVD 차단, --force 옵션 제거, 모든 adb 명령에 명시적 -s  강제, ro.build.characteristics watch·minSdk 확인, Watch Face Picker 선택 + dumpsys wallpaper 활성 확인, dumpsys power/display Awake↔Doze 확인 및 screenrecord 전환 녹화 절차를 구현하고 단위 테스트·--plan-only dry-run으로 검증했습니다. (신규 이미지 다운로드 및 AVD 생성은 미실시 상태이며, 사용자 명시 승인 후 WFF 4 → WFF 5 순으로 1개씩 실행할 수 있습니다.)
+3. 실행한 최종 회귀 검증 결과
+[test_ag01_suite.py](file:///C:/Users/scarl/Desktop/코딩 작업/AURA-Ultra/tests/compatibility/ag-01/test_ag01_suite.py): 22 tests (68 validator subtests) PASS (92.608s, G5 수정 후 재실행)
+tests/unit: 40 tests PASS (0.038s)
+tools/check_foundation.py: PASS
+run_ag01_verification.py --mode schema --logs-dir docs/evidence/AG-01/logs-r03: 60/60 PASS
+run_ag01_verification.py --mode emulator --logs-dir docs/evidence/AG-01/logs-r03: 환경 조사 PASS / 에뮬레이터 런타임 NOT RUN
+Wear OS 에뮬레이터·실기기 런타임 렌더링/모션/전력: NOT RUN (승인 전 다운로드 금지 규정 준수)
+상세 내용과 정정표, 승인 후 실행 명령은 [docs/evidence/AG-01/REPORT-03.md](file:///C:/Users/scarl/Desktop/코딩 작업/AURA-Ultra/docs/evidence/AG-01/REPORT-03.md)에서 확인하실 수 있습니다.
+Bound thread: AURA Ultra AG-01 개발 
+
+GB-01 회차 02에서 재현된 두 결함을 고쳤고, JDK 17 clean 시험 81개가 통과했습니다. PR #1은 갱신했으며 main에는 병합하지 않았습니다.
+확인된 결함은 두 가지입니다.
+값이 있는 단위가 내부 공백(mm Hg, 세로 탭)과 비공백 제어 문자(mm\u0000)를 통과했습니다. 이제 공백은 UNIT_PADDED, 비공백 ISO 제어 문자는 UNIT_CONTROL로 거절합니다. mm, °C, m/s는 그대로 수락합니다.
+LongBounds.parse가 정수가 하나도 없는 배타 구간을 수락했습니다. (5, 6), (Long.MAX_VALUE-1, Long.MAX_VALUE), 배타 하한 Long.MAX_VALUE, 배타 상한 Long.MIN_VALUE가 해당합니다. 이 구간은 RANGE_EMPTY입니다. 포함 극값과 바로 옆의 유효 정수는 그대로 수락합니다.
+DENIED, ERROR, STALE, TTL 미선언은 수정 전에도 신선한 VALID 읽기로 바뀌지 않았습니다. 그 경로는 유지하고 통합 시험으로 고정했습니다. classifiedValue는 여전히 TTL을 적용하지 않습니다. 인접한 두 Double 사이의 열린 구간은 정책이 확정되지 않아 A27로만 기록했습니다.
+수정 전 같은 fixture는 81개 중 6개가 실패했습니다. 기존 70개는 그때도 통과했습니다. 수정 후 ASCII worktree에서 gradlew -p modules/domain clean test는 81 PASS / 0 FAIL입니다. 테스트 JVM은 Temurin 17.0.20.1입니다. host 시험 40개와 foundation 검사도 통과했습니다.
+비ASCII 경로의 ClassNotFoundException 원인은 Gradle이 워커 classpath @argfile을 UTF-8로 쓰고, Temurin 17이 그 파일을 MS949로 읽는 점입니다. 명령줄의 -Dfile.encoding=UTF-8은 argfile을 펼친 뒤에 적용됩니다. ASCII worktree 절차로 81개가 통과했습니다. 비ASCII 경로 자체는 아직 실패합니다.
+Kotlin 시험을 CI에 넣는 최소 workflow는 modules/domain/docs/CI_PROPOSAL.md에만 두었습니다. .github는 바꾸지 않았고, 그 제안은 실행하지 않았습니다.
+코드 SHA 46caded의 bootstrap CI는 성공입니다. push 46015880941, PR 46015887551. 이 워크플로는 Kotlin 시험을 실행하지 않으며, host 시험은 Ran 40 tests였습니다. 보고서와 JUnit XML은 docs/evidence/GB-01/REPORT-02.md에 있습니다.
+증거 커밋 204f561의 bootstrap CI도 성공했습니다. push 46016545164, PR 46016552563. PR #1은 열려 있습니다.
+Bound thread: GB-01 Observation data contracts Kotlin foundation
+
+
+chatgpt response
+
+AG-01 회차 03의 수정 코드와 원격 로그를 검토하겠습니다. GB-01은 이미 통합한 작업이므로 중복 보고인지 확인하고, 제 GPT-04 후보의 최종 CI도 함께 대조하겠습니다.
+
+AG-01의 60개 스키마 로그를 다시 대조한 결과, 정상 승인 24건과 예상 거부 36건이 모두 일치했습니다. 다만 실제 런타임 검사에서 비활성 패키지를 활성 페이스로 오인할 가능성이 남아 있습니다. 또한 제 GPT-04 후보는 Group의 필수 이름 누락으로 스키마 검사에서 실패했습니다. 이 결함은 제 담당 범위에서 수정하겠습니다.
+
+AURA Ultra — 외부 에이전트 결과 검토
+
+1. Grok Build
+
+이번에 전달한 내용은 GB-01 회차 02의 기존 보고서입니다. 현재 GitHub 상태를 다시 확인한 결과, GB-01은 이미 main에 통합됐으며 PR #1도 병합 완료 상태입니다.
+
+항목 결과
+데이터 계약 구현 완료
+확인된 결함 2건 수정 완료
+Kotlin 로컬 시험 81 PASS
+총괄 독립 Kotlin CI 81 PASS
+main 통합 완료
+GB-02 착수 가능
+
+따라서 GB-01을 다시 검증할 필요는 없습니다. Grok Build에는 GB-02 지능형 상태 머신 개발을 지시하면 됩니다.
+
+2. Antigravity — AG-01 회차 03
+
+원격 커밋과 실제 소스코드 및 시험 로그를 확인했습니다.
+
+엄격 스키마 매트릭스
+
+60/60
+
+담당자 회귀 시험 보고
+
+22 PASS
+
+정상 XML 승인
+
+24건
+
+예상 XML 거부
+
+36건
+
+
+60개 원본 로그의 파일·버전·실제 판정을 대조했습니다. 22개 회귀 시험은 담당자의 실행 보고이며 독립 재실행은 하지 않았습니다.
+
+기존 감사 항목 검토 결과
+AUD-01 실제 SDK 환경 조회 개선 확인
+AUD-02 명시적 스키마 실패 판정 개선 확인
+AUD-03 증거 및 문서 정정 반영 확인
+기존 증거 보존 확인
+담당 경로 외 파일 변경 0건
+실제 에뮬레이터 실행 NOT RUN
+
+PR \#2 · 회차 03 보고서
+
+3. 에뮬레이터 검사기의 추가 결함
+
+실제 에뮬레이터에 연결하지 않고 해당 검사 함수의 일부를 분리해 오류 입력을 주입했습니다. 다음 네 가지 오판을 재현했습니다.
+
+오류 주입 조건 현재 검사기 판정
+비활성 페이스의 패키지명이 기록에 남아 있음 활성 페이스로 오인
+동일 접두사를 가진 다른 패키지 활성 페이스로 오인
+화면 상태 UNKNOWN 활성 화면으로 오인
+Dozing 상태이지만 화면 OFF AOD 화면으로 오인
+
+이 문제는 실제 캡처 증거의 신뢰성에 영향을 줍니다. 따라서 본격적인 에뮬레이터 시험 전에 수정하도록 하겠습니다.
+
+또한 AG-01의 두 GitHub CI는 이전 공식 Validator 해시를 사용해 실패했습니다. 제가 앞서 해결했던 B-011 문제와 동일합니다. 기존 시험 증거를 폐기할 필요는 없지만, 현재 main의 공식 도구 버전을 기준으로 재검증해야 합니다.
+
+4. 두 에이전트의 다음 작업지시서
+
+Grok Build — GB-02
+
+Standard
+
+GB-01은 총괄 검증 및 main 통합까지 완료됐다. 기존 작업을 반복하지 않는다.
+
+GB-02 지능형 상태 머신 개발을 시작한다.
+
+작업지시서:
+docs/operations/agent-orders/GB-02.md
+
+최신 main을 기준으로 PRE-FLIGHT를 수행한다.
+
+상황별 우선순위, 히스테리시스, 디바운스, 긴급 상태 전환, 데이터 신뢰도 및 절전·모션 제어 정책을 구현한다.
+
+기존 데이터 계약을 유지한다. modules/intelligence/** 및 docs/evidence/GB-02/** 이외의 파일을 변경하지 않는다.
+
+기존 검증 규정 G0~G7을 준수한다. 실제 시험 증거를 확보하고 별도 PR로 제출한다.
+
+
+
+Antigravity — AG-01 회차 04
+
+Standard
+
+AG-01 회차 04 작업을 시작한다.
+
+작업지시서:
+docs/operations/agent-orders/AG-01-R04.md
+
+총괄 검토에서 재현한 활성 워치 페이스 및 Active/AOD 상태 판정 오류 4종을 수정한다.
+
+실제 대상 AVD, APK 패키지, WFF 버전, SHA-256 및 ADB 명령의 종료 상태를 검증한다. 녹화 결과와 마지막 활성 상태 복귀도 확인한다.
+
+최신 main의 승인된 공식 WFF 도구 버전과 동기화한다. 기존 시험 증거를 보존하고 전체 회귀 시험을 재실행한다.
+
+사용자 승인 이후 Wear OS 6과 Wear OS 7 전용 에뮬레이터를 순차적으로 구축하고 실제 렌더링 및 AOD 전환을 검증한다.
+
+기존 폰 에뮬레이터와 실제 사용자 워치는 변경하지 않는다.
+
+REPORT-04.md를 작성하고 PR #2를 갱신한다.
+
+
+
+AG-01 회차 04 상세 지시서
+
+이번에는 Antigravity의 에뮬레이터 설치를 승인하는 것을 권장합니다. 정적 검증만 반복하는 것보다 실제 렌더링 시험으로 넘어가는 편이 개발 효율이 높습니다.
+
+5. ChatGPT 자체 개발 및 수정 사항
+
+제 GPT-04 회차 02 검증 결과도 확인했습니다.
+
+시험 항목 결과
+Python 단위 시험 99 PASS
+독립 그래픽 재생성 PASS
+기존 APK 빌드 8/8 PASS
+신규 Signature 스키마 FAIL
+실패 원인 Group 필수 name 속성 누락
+결함 수정 완료
+추가 회귀 시험 1개
+수정본 CI 진행 중
+
+누락된 두 Group의 이름을 지정했습니다. 동일한 오류가 재발하지 않도록 필수 속성 및 이름 중복 검사도 추가했습니다.
+
+수정 커밋 · 재검증 CI
+
+6. 현재 개발 분업
+
+담당 다음 작업
+ChatGPT 기본 페이스 완성 및 그래픽 개발
+Grok Build 지능형 상태 머신
+Antigravity 고급 WFF 기술 및 실제 렌더링 검증
+Codex 미투입
+
+총괄 감사 보고서 · 중앙 기록 커밋
+
+모든 변경 사항과 미해결 문제를 저장소에 기록했습니다. 다른 에이전트의 소유 파일은 수정하지 않았으며, 신규 구현의 전체 검증 완료 전까지 병합을 보류합니다.
+
+
+you asked
+
+message time: 2026-11-28 05:26:57
+
+이제 너도 작업 재개해
+
+
+chatgpt response
+
+GPT-04 수정본의 CI 결과를 먼저 확인하겠습니다. 실패가 남아 있으면 해당 결함을 해결하고, 통과했다면 지역화와 기본 프리뷰 개발을 진행하겠습니다. 두 외부 에이전트의 담당 영역은 제외합니다.
+
+수정본 CI가 최종 성공했습니다. 신규 Signature 기본 페이스도 WFF 2~5 네 버전에서 스키마와 APK 검사를 통과했습니다. AOD 메모리 평가값은 3.03 MiB로, 날짜 표시를 추가한 뒤에도 7 MiB 목표 이내입니다.
+
+공식 WFF 문서에서 시스템 시간 형식 연동과 AM/PM 데이터는 확인했습니다. 다만 12시간제 선택 여부를 직접 판별하는 공식 데이터 표현식은 확인하지 못했습니다. 추측한 API를 넣는 대신, 검증된 XML에서 한·영·시간 형식·오류 상태별 정적 프리뷰를 생성하도록 만들겠습니다.
+
+AURA Ultra — GPT-04 회차 03
+
+1. 기존 결함 수정 및 통합 완료
+
+이전 회차에서 발생한 WFF Group 이름 누락 문제를 해결했습니다. 수정본의 전체 CI 원본 로그를 검토한 뒤 검증된 개발 코드를 main에 통합했습니다.
+
+전체 CI SUCCESS
+
+
+Python 단위 시험
+
+100 PASS
+
+기본·격리 APK 빌드
+
+12/12 PASS
+
+Signature WFF 호환 스키마
+
+4/4 PASS
+
+단위 시험 실패
+
+0 FAIL
+
+검증 CI · main 통합 커밋
+
+2. Signature 메모리 예산 검증
+
+기본 Signature 후보의 활성 메모리 평가값은 2,371,712바이트, AOD는 3,181,712바이트입니다. 네 WFF 프로필 모두 프로젝트 목표 이내입니다.
+
+AOD 날짜 표시를 유지한 후보는 이전 Bootstrap 대비 810,000바이트 증가했습니다. 공식 평가 도구의 추정값이며, 실제 RAM 사용량과 전력 소비량은 아직 측정하지 않았습니다.
+
+3. 신규 개발 — XML 기반 자동 프리뷰 생성기
+
+이전에는 레이아웃 좌표를 기반으로 프리뷰를 만들었습니다. 이번에는 실제 생성된 Signature WFF XML을 읽고 조건문과 데이터 표시 결과를 해석하는 도구를 구현했습니다.
+
+합성 데이터 기반 표시 예시입니다. 실제 워치 화면이나 최종 프리미엄 디자인은 아닙니다.
+
+신규 검증 기능 상태
+실제 WFF XML 해석 구현
+조건별 데이터 표시 구현
+한·영 합성 데이터 구현
+12/24시간 표본 구현
+섭씨·화씨 분기 구현
+데이터 누락 및 오류 구현
+AOD 표시 요소 검사 구현
+SVG 프리뷰 40종 생성기 구현
+프리뷰 SHA-256 검증 구현
+독립 재생성 및 오류 검출 CI 단계 PASS
+
+10개 표시 상황을 4개 화면 해상도에 적용했습니다.
+
+4. 추가 결함 발견 및 수정
+
+신규 프리뷰 생성기의 % 문자열 해석 과정에서 배터리 잔량과 강수확률을 잘못 거부하는 결함을 발견했습니다.
+
+수정본에는 정상 백분율 표시와 잘못된 문자열의 거부 시험을 추가했습니다. 수정 후 프리뷰 생성 및 단위 시험 단계가 통과했습니다.
+
+수정 커밋 · 재검증 CI
+
+5. 자동 시험 확대
+
+Category Python 단위 시험
+GPT-01 26
+GPT-02 40
+GPT-03 74
+GPT-04 R01 88
+GPT-04 R03 100
+GPT-04 R04 120
+
+
+Python 신규 시험 구성
+
+120개
+
+Kotlin 검증 완료
+
+81 PASS
+
+Python 120개는 신규 후보의 시험 구성 기준입니다. 정확한 실행 개수는 최종 CI 원본 로그 확인 후 확정합니다.
+
+6. 현재 개발 상태
+
+작업 판정
+GPT-01 초기 빌드 기반 GO
+GPT-02 다중 WFF 호환성 GO
+GPT-03 그래픽 생성 기반 GO
+GPT-04 레이아웃 및 기본 페이스 PARTIAL
+GPT-05 연속 모션 예정
+GPT-06 프리미엄 소재 예정
+외부 에이전트 소유 파일 변경 0건
+
+공식 WFF 문서에서 시스템 시간 형식 연동은 확인했지만, 12시간제 설정 여부를 직접 판별하는 데이터 표현식은 확인하지 못했습니다. 따라서 검증되지 않은 API를 추가하지 않았으며, 실제 AM/PM 표시와 기기 렌더링 검증은 남겨뒀습니다.
+
+회차 03 검증 보고서 · 회차 04 개발 보고서 · 최종 기록 커밋
+
+중앙 문서 반영까지 재확인했습니다. 신규 프리뷰 도구는 전체 CI가 완료될 때까지 별도 브랜치에 유지합니다.
+
+
+you asked
+
+message time: 2026-11-28 05:36:04
+
+다음 작업
+
+
+chatgpt response
+
+이전 프리뷰 수정본의 최종 CI를 확인하고, 통과한 코드를 통합하겠습니다. 그다음 GPT-04의 남은 검증 항목 중 실제 기기 없이 처리할 수 있는 부분을 진행하겠습니다.
+
+두 CI 모두 성공했습니다. 프리뷰 40개와 매니페스트의 해시도 두 실행에서 일치합니다. 추가로 공식 문서에서 IS_24_HOUR_MODE가 WFF 1부터 지원됨을 찾았습니다. 기존에 남겨 둔 AM/PM 표시 문제를 이 공식 데이터로 해결할 수 있습니다.
+
+AURA Ultra — GPT-04 회차 05
+
+1. 이전 프리뷰 개발 최종 검증 완료
+
+전체 CI SUCCESS
+
+
+Python 단위 시험
+
+120 PASS
+
+APK 빌드 및 검증
+
+12/12 PASS
+
+합성 프리뷰
+
+40/40
+
+재생성 해시 일치
+
+41/41
+
+프리뷰 생성기의 백분율 해석 결함을 해결했습니다. 전체 회귀 시험과 독립 재생성 검증을 통과한 코드를 main에 통합했습니다.
+
+검증 CI · 프리뷰 생성 결과 · main 통합 커밋
+
+2. AM/PM 표시 문제 해결 방법 확보
+
+공식 WFF 문서를 추가 확인한 결과, 다음 두 데이터 표현식이 WFF 1부터 지원된다는 사실을 확인했습니다.
+
+[IS_24_HOUR_MODE]: 기기의 12/24시간제 설정 확인.
+[AMPM_STRING]: 현재 시간의 AM 또는 PM 표시.
+
+따라서 WFF 2~5 전체에서 동일한 공식 기능을 사용할 수 있습니다. 이전 회차의 미확인 사항을 정정하고, 별도의 비공개 API 없이 구현을 진행합니다.  developer.android.com developer.android.com
+
+3. 신규 AM/PM 표시 구현
+
+신규 레이아웃의 합성 표시 예시. 실제 워치 캡처가 아닙니다.
+
+기능 구현 상태
+기기 시간 형식 연동 구현
+12시간제 AM/PM 표시 구현
+24시간제 AM/PM 숨김 구현
+자정과 정오 구분 구현
+AOD AM/PM 유지 구현
+불일치 데이터 검출 구현
+시간·날짜 위치 유지 구현
+실제 기기 동작 미검증
+
+4. 원형 레이아웃 개선
+
+AM/PM 전용 영역을 추가하면서 기존 8개 정보 영역을 9개로 확장했습니다. 중앙 시간과 날짜의 위치는 변경하지 않았습니다.
+
+화면 해상도 최소 안전 여백 계산된 여백 판정
+432×432 12px 16.79px PASS
+438×438 12px 16.20px PASS
+480×480 13px 17.96px PASS
+498×498 14px 18.90px PASS
+
+모든 영역이 원형 안전 경계 및 최소 간격 검사를 통과했습니다. 실제 글리프와 발광 픽셀 측정은 별도 시험으로 유지합니다.
+
+5. 자동 시험 확대
+
+Category Python 단위 시험
+GPT-01 26
+GPT-02 40
+GPT-03 74
+GPT-04 R01 88
+R03 100
+R04 120
+R05 129
+
+
+Python 신규 시험 구성
+
+129개
+
+Kotlin 검증 완료
+
+81 PASS
+
+신규 Python 단위 시험 단계는 통과했습니다. 정확한 실행 개수와 전체 결과는 최종 원본 로그 확인 후 확정합니다.
+
+6. 현재 개발 판정
+
+항목 상태
+GPT-01~03 GO
+GPT-04 PARTIAL
+신규 AM/PM 후보 CI 진행 중
+다른 에이전트 소유 파일 변경 0건
+기존 제품 리소스 변경 0건
+정식 출시 NO-GO
+
+신규 구현 커밋 · 검증 CI · 개발 보고서
+
+중앙 작업 기록의 반영까지 확인했습니다. 이번 하단 레이아웃 재배치는 개발상 제가 선택한 배치이며, 최종 시각 디자인으로 확정한 것은 아닙니다.
+
+다음 작업: AM/PM 최종 CI 확인, 스크린샷 자동 검증기 및 개발용 시험 패키지 준비입니다. 이후 실제 기기 검증에 필요한 부분은 분리하고 고급 소재와 그래픽 개발로 진행합니다.
+
+Powered by AI Exporter (https://saveai.net)
