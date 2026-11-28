@@ -43,3 +43,5 @@ F01 R03: R02 후보 전체 CI 및 직접 artifact 검사 PASS, 6 경로 통합. 
 F01 R04: 7개 F01 ID scoped RESOLVED. main Bootstrap 46091554292, Domain 46091554286, doc 46091554290 SUCCESS; 이전 HTTP 429 실패 이력 유지. F02 4개 재현 완료, Windows NOT RUN, 후보 검증 대기. [종료 보고](../evidence/MID-AUDIT/F01/REPORT-R04-FINAL.md). 제품/실기기 차단 유지.
 
 F02 R01 4개 ID 후보 구현/재현·focused local PASS. 실제 Linux full APK 및 Windows 두 matrix 최종 결과/원시 로그/아티팩트, 인접 basic 비번들 입력 경로 검토, 통합 회귀 전 OPEN. [보고](../evidence/MID-AUDIT/F02/REPORT-R01.md). 사용자 실기기 미실행.
+
+F02 R02: R01 전체 후보 CI/ZIP PASS. 추가 basic 비번들 경로 수정 후보, red 재현 및 일부 green 성공. 전체 Linux/Windows, 아티팩트, 통합 main 회귀 전 4개 F02 ID OPEN. [보고](../evidence/MID-AUDIT/F02/REPORT-R02.md).
