@@ -1,0 +1,23 @@
+PASS initialPauseThenStart
+PASS singleActiveAttempt
+PASS successIsTerminal
+PASS noEarlyRetry
+PASS retryBudgetIsCumulative
+PASS zeroRetriesStillAllowsInitialAttempt
+PASS foreignReceiptIgnored
+PASS constructedReceiptIgnored
+PASS duplicateCompletionCannotChangeDue
+PASS oldCompletionCannotConsumeNewAttempt
+PASS pauseDoesNotResetBackoff
+PASS serverDelayIsPreservedAcrossPause
+PASS permanentAndDeniedStop
+PASS invalidHintsFailClosed
+PASS deadlineBeforeInitialAndDuringPause
+PASS deadlineWhileInFlight
+PASS retryCannotReachDeadline
+PASS rollbackAndNegativeTicksAreTerminal
+PASS cancelBeforeAndDuringAttempt
+PASS cancelWhileWaiting
+PASS nearLongLimitFailsClosed
+PASS seededFiniteEpisodes
+RECOVERY_RESULT 22 PASS / 0 FAIL; seed=20261128 episodes=10000
