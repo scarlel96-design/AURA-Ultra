@@ -4,7 +4,7 @@
 
 일자: 2026-11-28. 작업자: Grok Build. 검토자: 없음. G5는 자기 재검토다.
 
-기준 브랜치: `agent/grok/GB-02`. 구현 SHA: `aacc744ef5844632c8b7ac588532fcf6441e8f88`. 이 보고서 커밋은 `modules/intelligence`를 바꾸지 않아야 한다. 확인은 `git diff aacc744ef5844632c8b7ac588532fcf6441e8f88 -- modules/intelligence`가 비어 있는지로 한다. CI head는 구현 뒤의 문서 병합 `bd25b331a320670775a93cb90a84f7fc5a10d3b8`다.
+기준 브랜치: `agent/grok/GB-02`. 구현 SHA: `aacc744ef5844632c8b7ac588532fcf6441e8f88`. 원시 로그와 CI 표를 담은 증거 커밋은 `8ad5fd049c47124fe8300c82f419018551ababfd`다. 그 커밋과 이 문장을 더한 기록 커밋은 `modules/intelligence`를 바꾸지 않는다. 확인은 `git diff aacc744ef5844632c8b7ac588532fcf6441e8f88 -- modules/intelligence`가 비어 있는지로 한다. CI head는 구현 뒤의 문서 병합 `bd25b331a320670775a93cb90a84f7fc5a10d3b8`다. 기록 커밋은 `[skip ci]`다.
 
 PRE-FLIGHT: PASS. 작업 시작의 `origin/main`은 `3f1f57c`였고 담당 경로와 겹치지 않아 병합 `89f303de0ccf4f65555f3b99eba84c5841a75473`로만 반영했다. 푸시 직전 `origin/main`은 `44140ff58896668092ec6453fcba936ca408809a`다. 차이는 `docs/STATUS.md`, archive, F03 증거, `BLOCKERS.md`, `GPT_EXECUTION_PLAN.md`, `WORK_LOG.md`, 배정표뿐이다. `modules/intelligence`, `modules/domain`, `.github`와 겹치지 않아 병합 `bd25b331a320670775a93cb90a84f7fc5a10d3b8`로만 반영했다. 들어온 파일은 수정하지 않았다. 같은 기준에서 `AGENTS.md`, `docs/STATUS.md`, `RESUME_PROTOCOL.md`, `PROJECT_INVARIANTS.md`, `TASK_RECORD_PROTOCOL.md`, `VERIFICATION_PROTOCOL.md`, `TASK_REPORT_TEMPLATE.md`, `GPT_EXECUTION_PLAN.md`, `BLOCKERS.md`, `WORK_LOG.md`, `GB-02-G01-R07.md`, `FINDINGS.md`, `REPORT-R02.md`, `REPORT-R03.md`, `REPORT-06.md`, `INTERFACE_CONTRACT.md`, `ASSUMPTIONS.md`, `CI_PROPOSAL.md`와 Machine/Gate/Policy를 대조했다. 현재 STATUS의 다음 행동은 `F03 R08 strict pilot 검증 종료 → 독립 SBOM/CVE/license 조사 가능 범위 확인, provenance 적용 BLOCKED. GPT-07 및 실기기 설치는 별도 승인 대기.`다. 그 문장을 바꾸지 않는다. PR #3은 OPEN이고 HOLD다.
 
