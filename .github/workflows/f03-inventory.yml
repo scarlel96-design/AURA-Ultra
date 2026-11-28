@@ -43,7 +43,10 @@ jobs:
           packages: 'platform-tools platforms;android-37.0 build-tools;36.0.0'
       - name: Collect untrusted dependency evidence
         run: python tools/audit_gradle_inventory.py --build "${{ matrix.build }}" --output "$RUNNER_TEMP/f03-inventory-${{ matrix.build }}"
+      - name: Pilot strict locking and verification in scratch trees
+        run: python tools/audit_gradle_lock_pilot.py --build "${{ matrix.build }}" --inventory "$RUNNER_TEMP/f03-inventory-${{ matrix.build }}" --output "$RUNNER_TEMP/f03-inventory-${{ matrix.build }}/lock-pilot"
       - name: Compare published checksum sidecars
+        if: always()
         run: python tools/audit_published_checksums.py --inventory "$RUNNER_TEMP/f03-inventory-${{ matrix.build }}/artifacts.json" --output "$RUNNER_TEMP/f03-inventory-${{ matrix.build }}/published-checksums.json"
       - name: Upload provisional inventory
         if: always()

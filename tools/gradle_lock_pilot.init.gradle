@@ -1,0 +1,13 @@
+// Audit-only lock activation. Never apply this init script to the production tree.
+import org.gradle.api.artifacts.dsl.LockMode
+gradle.beforeProject { p ->
+    p.dependencyLocking {
+        lockAllConfigurations()
+        lockMode = LockMode.STRICT
+    }
+    p.buildscript.configurations.configureEach {
+        if (name == "classpath") {
+            resolutionStrategy.activateDependencyLocking()
+        }
+    }
+}
