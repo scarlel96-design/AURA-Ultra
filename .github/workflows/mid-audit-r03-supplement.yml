@@ -1,0 +1,46 @@
+name: Mid-audit R03 supplemental
+on:
+  push:
+    branches: [audit-mid-r03-supplement]
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify unchanged audit input
+        run: |
+          git merge-base --is-ancestor 1c47b03477739a162fd85c868d1b06d94fed62bb HEAD
+          test -z "$(git diff 1c47b03477739a162fd85c868d1b06d94fed62bb HEAD -- tools apps modules design-system assets tests/unit tests/compatibility)"
+          mkdir -p audit-extra
+          python - <<'PY'
+          import json, subprocess
+          from pathlib import Path
+          m=json.loads(Path('tests/audit/R03/ag-blobs.json').read_text())
+          for p,s in m.items():
+              assert subprocess.check_output(['git','hash-object',p],text=True).strip()==s
+          names=subprocess.check_output(['git','ls-files','tools','tests/compatibility/ag-01','tests/audit/R03'],text=True).splitlines()
+          Path('audit-extra/source-blobs.json').write_text(json.dumps({p:subprocess.check_output(['git','hash-object',p],text=True).strip() for p in names},indent=2))
+          PY
+      - name: Bounded allocation and preinstall mock
+        run: |
+          set -o pipefail
+          python tests/audit/R03/supplement.py audit-extra/results.json | tee audit-extra/run.log
+      - name: Export exact sources for local video decoder verification
+        uses: actions/upload-artifact@v4
+        with:
+          name: mid-audit-r03-supplement
+          path: |
+            audit-extra/
+            tools/
+            tests/compatibility/ag-01/
+            tests/audit/R03/
+          if-no-files-found: error
