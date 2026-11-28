@@ -21,11 +21,17 @@
 
 | 결과 | 조건 |
 |---|---|
-| `Reading(value, VALID 또는 STALE)` | 값이 있고 유한하며 상태가 VALID 또는 STALE |
+| `Reading(value, VALID 또는 STALE)` | 지원하는 스칼라 값이 있고, 부동소수면 유한하며, 상태가 VALID 또는 STALE |
 | `Unavailable` | 상태 UNAVAILABLE, 값 null |
 | `Denied` | 상태 DENIED, 값 null |
 | `Failed` | 상태 ERROR, 값 null |
-| `Inconsistent` | 그 밖의 조합, 또는 유한하지 않은 부동소수 |
+| `Inconsistent` | 그 밖의 조합, 유한하지 않은 부동소수, 또는 지원하지 않는 페이로드 |
+
+지원하는 값은 null, `Boolean`, `Byte`, `Short`, `Int`, `Long`, `Float`, `Double`, `Char`, `String`이다. 컬렉션, 배열, 읽기 전용 컬렉션 인터페이스, 사용자 정의 객체는 지원하지 않는다.
+
+`Observation`과 `StatusDerivation.Rejected`는 검증 전 입력이다. 생성자는 값을 복사하거나 고치지 않는다. `RevisionCursor`, `ClassifiedValue.Reading`, `StatusDerivation.Unchanged`, `StatusDerivation.DegradedToStale`는 승인 상태다. 값이 지원 스칼라가 아니면 생성과 `copy`가 `UnsupportedPayloadException`을 던진다. `validateObservation`은 그 입력을 `UNSUPPORTED_PAYLOAD`로 거절하고, `applyRevision`은 기존 커서를 유지한다. `classifiedValue()`는 `Inconsistent`를 반환한다. `deriveStatus`는 `Rejected`로 입력 객체를 그대로 돌려준다.
+
+유한하지 않은 `Float`와 `Double`은 스칼라다. `validateObservation`은 `NON_FINITE`로 거절하고 `classifiedValue()`는 `Inconsistent`다. `applyRevision`은 그 값을 저장하지 않는다.
 
 ## 신선도
 

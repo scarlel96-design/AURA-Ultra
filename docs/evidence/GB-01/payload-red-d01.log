@@ -1,0 +1,99 @@
+> Task :checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :compileKotlin UP-TO-DATE
+> Task :compileJava NO-SOURCE
+> Task :processResources NO-SOURCE
+> Task :classes UP-TO-DATE
+> Task :jar UP-TO-DATE
+> Task :processTestResources NO-SOURCE
+> Task :compileTestKotlin
+> Task :compileTestJava NO-SOURCE
+> Task :testClasses UP-TO-DATE
+
+> Task :test FAILED
+TEST_JVM version=17 vendor=Eclipse Temurin path=C:\Users\scarl\.jdks\temurin-17
+
+PayloadIntegrityTest > classifiedValueDoesNotPublishAMutablePayload() FAILED
+    org.opentest4j.AssertionFailedError: expected: <[1]> but was: <[9]>
+        at app//org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+        at app//org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+        at app//org.junit.jupiter.api.AssertEquals.failNotEqual(AssertEquals.java:197)
+        at app//org.junit.jupiter.api.AssertEquals.assertEquals(AssertEquals.java:182)
+        at app//org.junit.jupiter.api.Assertions.assertEquals(Assertions.java:1156)
+        at app//kotlin.test.junit5.JUnit5Asserter.assertEquals(JUnitSupport.kt:32)
+        at app//kotlin.test.AssertionsKt__AssertionsKt.assertEquals(Assertions.kt:83)
+        at app//kotlin.test.AssertionsKt.assertEquals(Unknown Source)
+        at app//kotlin.test.AssertionsKt__AssertionsKt.assertEquals$default(Assertions.kt:82)
+        at app//kotlin.test.AssertionsKt.assertEquals$default(Unknown Source)
+        at app//io.github.scarlel96.aura.domain.PayloadIntegrityTest.classifiedValueDoesNotPublishAMutablePayload(PayloadIntegrityTest.kt:85)
+
+PayloadIntegrityTest > cyclicCustomObjectIsRejectedWithoutBeingWalked() FAILED
+    org.opentest4j.AssertionFailedError: expected: <cycle> but was: <changed>
+        at app//org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+        at app//org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+        at app//org.junit.jupiter.api.AssertEquals.failNotEqual(AssertEquals.java:197)
+        at app//org.junit.jupiter.api.AssertEquals.assertEquals(AssertEquals.java:182)
+        at app//org.junit.jupiter.api.Assertions.assertEquals(Assertions.java:1156)
+        at app//kotlin.test.junit5.JUnit5Asserter.assertEquals(JUnitSupport.kt:32)
+        at app//kotlin.test.AssertionsKt__AssertionsKt.assertEquals(Assertions.kt:83)
+        at app//kotlin.test.AssertionsKt.assertEquals(Unknown Source)
+        at app//kotlin.test.AssertionsKt__AssertionsKt.assertEquals$default(Assertions.kt:82)
+        at app//kotlin.test.AssertionsKt.assertEquals$default(Unknown Source)
+        at app//io.github.scarlel96.aura.domain.PayloadIntegrityTest.cyclicCustomObjectIsRejectedWithoutBeingWalked(PayloadIntegrityTest.kt:76)
+
+PayloadIntegrityTest > scalarZeroNullAndDeniedStayAccepted() PASSED
+
+PayloadIntegrityTest > higherRevisionStillReplacesEarlierDenial() PASSED
+
+PayloadIntegrityTest > mutableListDoesNotReplaceStoredScalarOrChangeDuplicateVerdict() FAILED
+    org.opentest4j.AssertionFailedError: expected: <[kept]> but was: <[changed, more]>
+        at app//org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+        at app//org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+        at app//org.junit.jupiter.api.AssertEquals.failNotEqual(AssertEquals.java:197)
+        at app//org.junit.jupiter.api.AssertEquals.assertEquals(AssertEquals.java:182)
+        at app//org.junit.jupiter.api.Assertions.assertEquals(Assertions.java:1156)
+        at app//kotlin.test.junit5.JUnit5Asserter.assertEquals(JUnitSupport.kt:32)
+        at app//kotlin.test.AssertionsKt__AssertionsKt.assertEquals(Assertions.kt:83)
+        at app//kotlin.test.AssertionsKt.assertEquals(Unknown Source)
+        at app//kotlin.test.AssertionsKt__AssertionsKt.assertEquals$default(Assertions.kt:82)
+        at app//kotlin.test.AssertionsKt.assertEquals$default(Unknown Source)
+        at app//io.github.scarlel96.aura.domain.PayloadIntegrityTest.mutableListDoesNotReplaceStoredScalarOrChangeDuplicateVerdict(PayloadIntegrityTest.kt:30)
+
+PayloadIntegrityTest > mapSetNestedArrayAndCustomPayloadsAreRejected() FAILED
+    org.opentest4j.AssertionFailedError: java.util.LinkedHashMap ==> expected: <null> but was: <RevisionCursor(key=ObservationKey(source=SourceId(value=fixture.source), subject=fixture.subject), revision=1, observation=Observation(value={k=1}, unit=token, source=SourceId(value=fixture.source), observedAt=2026-11-28T00:00:01Z, receivedAt=2026-11-28T00:00:20Z, expiresAt=2026-11-28T00:06:40Z, status=VALID, kind=OBSERVED))>
+        at app//org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+        at app//org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+        at app//org.junit.jupiter.api.AssertNull.failNotNull(AssertNull.java:50)
+        at app//org.junit.jupiter.api.AssertNull.assertNull(AssertNull.java:35)
+        at app//org.junit.jupiter.api.Assertions.assertNull(Assertions.java:287)
+        at app//kotlin.test.junit5.JUnit5Asserter.assertNull(JUnitSupport.kt:52)
+        at app//kotlin.test.AssertionsKt__AssertionsKt.assertNull(Assertions.kt:310)
+        at app//kotlin.test.AssertionsKt.assertNull(Unknown Source)
+        at app//io.github.scarlel96.aura.domain.PayloadIntegrityTest.mapSetNestedArrayAndCustomPayloadsAreRejected(PayloadIntegrityTest.kt:62)
+
+PayloadIntegrityTest > directCursorConstructionRejectsMutablePayload() FAILED
+    org.opentest4j.AssertionFailedError: expected: <[1]> but was: <[9]>
+        at app//org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+        at app//org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+        at app//org.junit.jupiter.api.AssertEquals.failNotEqual(AssertEquals.java:197)
+        at app//org.junit.jupiter.api.AssertEquals.assertEquals(AssertEquals.java:182)
+        at app//org.junit.jupiter.api.Assertions.assertEquals(Assertions.java:1156)
+        at app//kotlin.test.junit5.JUnit5Asserter.assertEquals(JUnitSupport.kt:32)
+        at app//kotlin.test.AssertionsKt__AssertionsKt.assertEquals(Assertions.kt:83)
+        at app//kotlin.test.AssertionsKt.assertEquals(Unknown Source)
+        at app//kotlin.test.AssertionsKt__AssertionsKt.assertEquals$default(Assertions.kt:82)
+        at app//kotlin.test.AssertionsKt.assertEquals$default(Unknown Source)
+        at app//io.github.scarlel96.aura.domain.PayloadIntegrityTest.directCursorConstructionRejectsMutablePayload(PayloadIntegrityTest.kt:94)
+
+7 tests completed, 5 failed
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':test'.
+> There were failing tests. See the report at: file:///C:/Users/scarl/AppData/Local/Temp/aura-d01-wt/modules/domain/build/reports/tests/test/index.html
+
+* Try:
+> Run with --scan to get full insights from a Build Scan (powered by Develocity).
+
+BUILD FAILED in 5s
+4 actionable tasks: 2 executed, 2 up-to-date

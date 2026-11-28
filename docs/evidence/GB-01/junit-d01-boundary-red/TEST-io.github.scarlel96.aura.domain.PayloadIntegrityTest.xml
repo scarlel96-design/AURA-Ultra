@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="io.github.scarlel96.aura.domain.PayloadIntegrityTest" tests="7" skipped="0" failures="1" errors="0" timestamp="2026-11-28T06:36:50.463Z" hostname="서브컴퓨터" time="0.135">
+  <properties/>
+  <testcase name="classifiedValueDoesNotPublishAMutablePayload()" classname="io.github.scarlel96.aura.domain.PayloadIntegrityTest" time="0.09">
+    <failure message="org.opentest4j.AssertionFailedError: Expected an exception of class io.github.scarlel96.aura.domain.UnsupportedPayloadException to be thrown, but was completed successfully with the result: &lt;Reading(value=[1], status=VALID)&gt;." type="org.opentest4j.AssertionFailedError">org.opentest4j.AssertionFailedError: Expected an exception of class io.github.scarlel96.aura.domain.UnsupportedPayloadException to be thrown, but was completed successfully with the result: &lt;Reading(value=[1], status=VALID)&gt;.
+	at org.junit.jupiter.api.AssertionUtils.fail(AssertionUtils.java:38)
+	at org.junit.jupiter.api.Assertions.fail(Assertions.java:138)
+	at kotlin.test.junit5.JUnit5Asserter.fail(JUnitSupport.kt:56)
+	at kotlin.test.AssertionsKt__AssertionsImplKt.checkResultIsFailure(AssertionsImpl.kt:20)
+	at kotlin.test.AssertionsKt.checkResultIsFailure(Unknown Source)
+	at io.github.scarlel96.aura.domain.PayloadIntegrityTest.classifiedValueDoesNotPublishAMutablePayload(PayloadIntegrityTest.kt:94)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+</failure>
+  </testcase>
+  <testcase name="cyclicCustomObjectIsRejectedWithoutBeingWalked()" classname="io.github.scarlel96.aura.domain.PayloadIntegrityTest" time="0.004"/>
+  <testcase name="scalarZeroNullAndDeniedStayAccepted()" classname="io.github.scarlel96.aura.domain.PayloadIntegrityTest" time="0.006"/>
+  <testcase name="higherRevisionStillReplacesEarlierDenial()" classname="io.github.scarlel96.aura.domain.PayloadIntegrityTest" time="0.001"/>
+  <testcase name="mutableListDoesNotReplaceStoredScalarOrChangeDuplicateVerdict()" classname="io.github.scarlel96.aura.domain.PayloadIntegrityTest" time="0.0"/>
+  <testcase name="mapSetNestedArrayAndCustomPayloadsAreRejected()" classname="io.github.scarlel96.aura.domain.PayloadIntegrityTest" time="0.007"/>
+  <testcase name="directCursorConstructionRejectsMutablePayload()" classname="io.github.scarlel96.aura.domain.PayloadIntegrityTest" time="0.003"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
