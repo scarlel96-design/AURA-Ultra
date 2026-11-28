@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="io.github.scarlel96.aura.domain.IdentityTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-11-28T06:08:56.040Z" hostname="서브컴퓨터" time="0.008">
+  <properties/>
+  <testcase name="subjectRejectsBlankAndPaddedToken()" classname="io.github.scarlel96.aura.domain.IdentityTest" time="0.002"/>
+  <testcase name="sourceIdKeepsCanonicalToken()" classname="io.github.scarlel96.aura.domain.IdentityTest" time="0.001"/>
+  <testcase name="sourceIdRejectsBlankWhitespaceAndControl()" classname="io.github.scarlel96.aura.domain.IdentityTest" time="0.001"/>
+  <testcase name="sourceIdIsCaseSensitiveAndDoesNotTrim()" classname="io.github.scarlel96.aura.domain.IdentityTest" time="0.001"/>
+  <testcase name="subjectAcceptsUnnormalizedKoreanToken()" classname="io.github.scarlel96.aura.domain.IdentityTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
