@@ -16,7 +16,7 @@ from audit_gradle_inventory import run_logged, summarize_metadata
 from audit_dependency_review import load_inventory, osv_query, request_osv, write_json
 
 ROOT = Path(__file__).resolve().parents[1]
-AGP = "9.5.1"
+AGP = "9.5.3"
 GRADLE = "9.6.1"
 DIST_SHA = "9c0f7faeeb306cb14e4279a3e084ca6b596894089a0638e68a07c945a32c9e14"
 OLD_DIST_SHA = "b266d5ff6b90eada6dc3b20cb090e3731302e553a27c5d3e4df1f0d76beaff06"
@@ -89,6 +89,21 @@ def scan(coords, query=request_osv):
     return results
 
 
+def candidate_tasks():
+    """Return all eight assembly and eight lint tasks."""
+    return [f":apps:watchface:{action}Wff{n}{kind}"
+            for action in ("assemble", "lint")
+            for n in (2, 3, 4, 5) for kind in ("Debug", "Release")]
+
+
+def require_named_coverage(index):
+    """Reject missing or empty named lint and test-worker graphs."""
+    for name in ("androidLintTool", "unified-test-platform-gradle-work-action"):
+        key = (":apps:watchface", "project", name)
+        if key not in index or not index[key]["modules"]:
+            raise ValueError("Missing named coverage: " + name)
+
+
 def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--baseline", type=Path, required=True)
@@ -121,7 +136,7 @@ def main():
             parts_dir = output / "graph-parts"
             parts_dir.mkdir()
             env["AURA_INVENTORY_GRAPH_DIR"] = str(parts_dir)
-            cmd = [str(work / "gradlew"), "-p", str(work), "--no-daemon", "--console=plain", "--no-build-cache"]
+            cmd = [str(work / "gradlew"), "-p", str(work), "--no-daemon", "--console=plain", "--no-build-cache", "--no-configuration-cache"]
             result["commands"]["version"] = run_logged(cmd + ["--version"], work, env, output / "version.log")
             if result["commands"]["version"]:
                 raise ValueError("Candidate Gradle bootstrap failed")
@@ -133,6 +148,7 @@ def main():
                 raise ValueError("Candidate graph command failed")
             parts = [json.loads(f.read_text(encoding="utf-8")) for f in sorted(parts_dir.glob("*.json"))]
             index = graph_index(parts)
+            require_named_coverage(index)
             rows = list(index.values())
             modules = {m for r in rows for m in r["modules"]}
             if "com.android.tools.build:gradle:" + AGP not in modules:
@@ -144,7 +160,9 @@ def main():
                                "removedConfigurations": sorted(old_keys - set(index)),
                                "addedModules": sorted(modules - baseline_graph),
                                "removedModules": sorted(baseline_graph - modules)}
-            tasks = [f":apps:watchface:assembleWff{n}{kind}" for n in (2, 3, 4, 5) for kind in ("Debug", "Release")]
+            tasks = candidate_tasks()
+            result["coverage"] = {"requestedTasks": tasks, "connectedDevice": "NOT RUN",
+                                  "detachedCompleteness": "UNPROVEN"}
             result["commands"]["metadata"] = run_logged(cmd + ["--write-verification-metadata", "sha256", *tasks],
                                                         work, env, output / "metadata-build.log")
             metadata = work / "gradle/verification-metadata.xml"
@@ -169,7 +187,7 @@ def main():
         result["error"] = str(exc)
     finally:
         write_json(output / "summary.json", result)
-        print("F03_R11", json.dumps(result, sort_keys=True), flush=True)
+        print("F03_R12", json.dumps(result, sort_keys=True), flush=True)
     if (result.get("error") or any(result["commands"].values()) or not result["metadata"]
             or not result["graph"] or not result["osv"]
             or result["osv"]["counts"].get("UNKNOWN") or result["osv"]["counts"].get("MATCH")):

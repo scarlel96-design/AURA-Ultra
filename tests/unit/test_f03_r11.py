@@ -30,6 +30,30 @@ class UpstreamCandidateTests(unittest.TestCase):
             with self.subTest(field=field), self.assertRaises(ValueError):
                 audit.graph_index(parts)
 
+    def test_candidate_task_matrix(self):
+        expected = {f":apps:watchface:{action}Wff{n}{kind}"
+                    for action in ("assemble", "lint")
+                    for n in (2, 3, 4, 5) for kind in ("Debug", "Release")}
+        tasks = audit.candidate_tasks()
+        self.assertEqual(len(tasks), 16)
+        self.assertEqual(set(tasks), expected)
+        self.assertEqual(audit.AGP, "9.5.3")
+
+    def test_required_named_coverage(self):
+        keys = [(":apps:watchface", "project", name)
+                for name in ("androidLintTool", "unified-test-platform-gradle-work-action")]
+        valid = {key: {"modules": ["g:a:1"]} for key in keys}
+        audit.require_named_coverage(valid)
+        for key in keys:
+            missing = dict(valid)
+            del missing[key]
+            with self.assertRaises(ValueError):
+                audit.require_named_coverage(missing)
+            empty = dict(valid)
+            empty[key] = {"modules": []}
+            with self.assertRaises(ValueError):
+                audit.require_named_coverage(empty)
+
     def test_incomplete_osv_is_unknown(self):
         self.assertEqual(audit.scan(["g:a:1"], lambda q: {})["g:a:1"]["status"], "UNKNOWN")
         self.assertEqual(audit.scan(["g:a:1"], lambda q: {"results": [{}]})["g:a:1"]["status"],
