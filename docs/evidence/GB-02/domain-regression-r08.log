@@ -1,0 +1,182 @@
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/9.3.1/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+
+
+[2A[1B[1m> Starting Daemon[m[17D[1B[1A[1m> Starting Daemon > Connecting to Daemon[m[40D[1B[1A> IDLE[0K[6D[1B[2ADaemon will be stopped at the end of the build 
+[1B[0K
+[2A[0K[1B> IDLE[6D[1B[2A[1m<[0;1m-------------> 0% INITIALIZING [116ms][m[39D[2B[2A[1m<[0;1m-------------> 0% INITIALIZING [211ms][m[39D[2B[2A[1m<[0;1m-------------> 0% INITIALIZING [304ms][m[39D[2B[2A[1m<[0;1m-------------> 0% INITIALIZING [412ms][m[39D[2B[2A[1m<[0;1m-------------> 0% INITIALIZING [504ms][m[39D[2B[2A[1m<[0;1m-------------> 0% INITIALIZING [613ms][m[39D[2B[2A[1m<[0;1m-------------> 0% INITIALIZING [706ms][m[39D[2B[2A[1m<[0;1m-------------> 0% INITIALIZING [816ms][m[39D[2B[2A[1m<[0;1m-------------> 0% INITIALIZING [911ms][m[39D[1B[1m> Evaluating settings[m[21D[1B[2A[1m<[0;1m-------------> 0% INITIALIZING [1s][m[0K[36D[2B[2A[1m<[0;1m-------------> 0% INITIALIZING [2s][m[36D[2B[1A[1m> Evaluating settings > Resolve dependencies of detachedConfiguration1[m[70D[1B[1A[1m> Evaluating settings > Resolve dependencies of classpath[m[0K[57D[1B[1A[1m> Evaluating settings > Resolve files of configuration 'classpath'[m[66D[1B[1A[1m> Evaluating settings[m[0K[21D[1B[2A[1m<[0;1m-------------> 0% INITIALIZING [3s][m[36D[2B[2A[1m<[0;1m-------------> 0% CONFIGURING [3s][m[0K[35D[1B[1m> Loading projects[m[0K[18D[1B[1A[1m> root project[m[0K[14D[1B[1A[1m> root project > Resolve dependencies of classpath[m[50D[1B[1A[1m> root project > Resolve files of configuration 'classpath'[m[59D[1B[1A[1m> root project[m[0K[14D[1B[2A[1m<[0;1m-------------> 0% CONFIGURING [4s][m[35D[2B[2A[1m<[0;1m-------------> 0% CONFIGURING [5s][m[35D[2B[2A[1m<[0;32;1m=============[0;39;1m> 100% CONFIGURING [5s][m[37D[1B> IDLE[0K[6D[1B[1A[1m> Discovering toolchains[m[24D[1B[1A[1m> Extracting toolchain metadata from 'C:\Program Files\Eclipse Adoptium\jdk-21.[m[79D[1B[1A[1m> Extracting toolchain metadata from 'C:\Program Files\Java\jre1.8.0_513' (Wind[m[79D[1B[2A[1m<[0;32;1m=============[0;39;1m> 100% CONFIGURING [6s][m[37D[1B[1m> Extracting toolchain metadata from 'C:\Program Files\Java\jdk-22' (Windows Re[m[79D[1B[1A> IDLE[0K[6D[1B[2A[1m<[0;1m-------------> 0% EXECUTING [6s][m[0K[33D[2B[1A[1m> :clean[m[8D[1B[2A[1m<[0;32;1m==[0;39;1m-----------> 16% EXECUTING [6s][m[34D[1B[1m> :compileKotlin[m[16D[1B[1A[1m> :compileKotlin > Resolve files of configuration ':detachedConfiguration1'[m[75D[1B[1A[1m> :compileKotlin[m[0K[16D[1B[2A[1m<[0;32;1m==[0;39;1m-----------> 16% EXECUTING [7s][m[34D[2B[2A[1m<[0;32;1m====[0;39;1m---------> 33% EXECUTING [7s][m[34D[2B[2A[1m<[0;32;1m====[0;39;1m---------> 33% EXECUTING [8s][m[34D[2B[2A[1m<[0;32;1m====[0;39;1m---------> 33% EXECUTING [9s][m[34D[2B[2A[1m<[0;32;1m====[0;39;1m---------> 33% EXECUTING [10s][m[35D[2B[2A[1m<[0;32;1m====[0;39;1m---------> 33% EXECUTING [11s][m[35D[2B[2A[1m<[0;32;1m====[0;39;1m---------> 33% EXECUTING [12s][m[35D[2B[2A[1m<[0;32;1m====[0;39;1m---------> 33% EXECUTING [13s][m[35D[2B[2A[1m<[0;32;1m====[0;39;1m---------> 33% EXECUTING [14s][m[35D[2B[2A[1m<[0;32;1m====[0;39;1m---------> 33% EXECUTING [15s][m[35D[2B[2A[1m<[0;32;1m====[0;39;1m---------> 33% EXECUTING [16s][m[35D[2B[2A[1m<[0;32;1m====[0;39;1m---------> 33% EXECUTING [17s][m[35D[2B[2A[1m<[0;32;1m====[0;39;1m---------> 33% EXECUTING [18s][m[35D[2B[2A[1m<[0;32;1m====[0;39;1m---------> 33% EXECUTING [19s][m[35D[2B[2A[1m<[0;32;1m=======[0;39;1m------> 58% EXECUTING [19s][m[35D[1B[1m> :jar[m[0K[6D[1B[2A[1m<[0;32;1m========[0;39;1m-----> 66% EXECUTING [19s][m[35D[1B[1m> :compileTestKotlin[m[20D[1B[2A[1m<[0;32;1m========[0;39;1m-----> 66% EXECUTING [20s][m[35D[2B[2A[1m<[0;32;1m========[0;39;1m-----> 66% EXECUTING [21s][m[35D[2B[2A[1m<[0;32;1m========[0;39;1m-----> 66% EXECUTING [22s][m[35D[2B[2A[1m<[0;32;1m========[0;39;1m-----> 66% EXECUTING [23s][m[35D[2B[2A[1m<[0;32;1m========[0;39;1m-----> 66% EXECUTING [24s][m[35D[2B[2A[1m<[0;32;1m========[0;39;1m-----> 66% EXECUTING [25s][m[35D[2B[2A[1m<[0;32;1m===========[0;39;1m--> 91% EXECUTING [25s][m[35D[1B[1m> :test[m[0K[7D[1B[2A[1m<[0;32;1m===========[0;39;1m--> 91% EXECUTING [26s][m[35D[1B[1m> :test > 0 tests completed[m[27D[1B
+[3A[1m<[0;32;1m===========[0;39;1m--> 91% EXECUTING [27s][m[35D[2B[1m> :test > Executing test io.github.scarlel96.aura.domain.DraftContractTest[m[74D[1B[2A[1m> :test > 1 test completed[m[0K[26D[2B[2A[1m> :test > 7 tests completed[m[27D[2B[2A[1m> :test > 48 tests completed[m[28D[1B[1m> :test > Executing test io.github.scarlel96.aura.domain.SourceScanTest[m[0K[71D[1B[2A[1m> :test > 81 tests completed[m[28D[1B> IDLE[0K[6D[1B[2A[1m> :test[m[0K[7D[2B[3A[0K
+[1m> Task :test[m[0K
+TEST_JVM version=17 vendor=Eclipse Temurin path=C:\Users\scarl\.jdks\temurin-17[0K
+
+DraftContractTest > contextBlankTokenIsRejectedAndZeroCharacterStaysOpaque() [32mPASSED[39m
+
+DraftContractTest > probabilityKindIsNotRewritten() [32mPASSED[39m
+
+DraftContractTest > blankLocationIsRejected() [32mPASSED[39m
+
+DraftContractTest > wrongRainKindIsReportedAndNotCoerced() [32mPASSED[39m
+
+DraftContractTest > forecastWindowIsSeparateFromObservedAt() [32mPASSED[39m
+
+DraftContractTest > missingRainStaysNull() [32mPASSED[39m
+
+DraftContractTest > contextDraftDoesNotDefaultMissingAxes() [32mPASSED[39m
+
+DraftContractTest > blankReasonCodeIsRejected() [32mPASSED[39m
+
+DraftContractTest > observedAndForecastRainStayDistinctIncludingZero() [32mPASSED[39m
+
+DraftContractTest > invertedAndEmptyValidityWindowsFail() [32mPASSED[39m
+
+DraftContractTest > presentationRevisionZeroIsDistinctFromNull() [32mPASSED[39m
+
+DraftContractTest > nestedInvalidObservationFailsTheDraft() [32mPASSED[39m
+
+FreshnessTest > structurallyInvalidInputIsNotDegraded() [32mPASSED[39m
+
+FreshnessTest > lateArrivalBeforeObservedExpiryRemainsValid() [32mPASSED[39m
+
+FreshnessTest > boundaryIsExpiredAtOrAfter() [32mPASSED[39m
+
+FreshnessTest > expiredValidBecomesStaleCopyAndKeepsPayload() [32mPASSED[39m
+
+FreshnessTest > sameInstantFromDifferentZonesHasOneFreshness() [32mPASSED[39m
+
+FreshnessTest > errorDeniedAndUnavailableAreNotRewrittenWhenExpired() [32mPASSED[39m
+
+FreshnessTest > undeclaredExpiryDoesNotBecomeStaleOrImmortalClaim() [32mPASSED[39m
+
+FreshnessTest > instantMaxBoundary() [32mPASSED[39m
+
+FreshnessTest > staleIsNotPromotedWhenStillInsideWindow() [32mPASSED[39m
+
+FreshnessTest > callerReferenceTimeDecidesFreshnessWithoutAClock() [32mPASSED[39m
+
+FreshnessTest > freshDeniedDoesNotBecomeValid() [32mPASSED[39m
+
+IdentityTest > subjectRejectsBlankAndPaddedToken() [32mPASSED[39m
+
+IdentityTest > sourceIdKeepsCanonicalToken() [32mPASSED[39m
+
+IdentityTest > sourceIdRejectsBlankWhitespaceAndControl() [32mPASSED[39m
+
+IdentityTest > sourceIdIsCaseSensitiveAndDoesNotTrim() [32mPASSED[39m
+
+IdentityTest > subjectAcceptsUnnormalizedKoreanToken() [32mPASSED[39m
+
+PipelineTest > deniedStreamRejectsALaterZeroForgery() [32mPASSED[39m
+
+PipelineTest > zeroReadingExpiresWithoutBecomingMissing() [32mPASSED[39m
+
+PipelineTest > deniedErrorAndStaleAreNotPresentedAsFreshValidReadings() [32mPASSED[39m
+
+PipelineTest > undeclaredTtlStaysDistinctFromFresh() [32mPASSED[39m
+
+PipelineTest > corruptUnitDoesNotReplaceStoredReading() [32mPASSED[39m
+
+RevisionGateTest > invalidIncomingDoesNotCreateOrReplaceCursor() [32mPASSED[39m
+
+RevisionGateTest > negativeRevisionsCompareNumerically() [32mPASSED[39m
+
+RevisionGateTest > keyMismatchKeepsTheCurrentStream() [32mPASSED[39m
+
+RevisionGateTest > equalRevisionWithOnlyReceiveTimeChangedIsDuplicate() [32mPASSED[39m
+
+RevisionGateTest > higherRevisionReplacesAndGapIsAllowed() [32mPASSED[39m
+
+RevisionGateTest > newerRevisionWithEarlierReceiveTimeIsAcceptedAndFlagged() [32mPASSED[39m
+
+RevisionGateTest > wrongUnitDoesNotPassTheGate() [32mPASSED[39m
+
+RevisionGateTest > negativeZeroIsNotTreatedAsTheSamePayload() [32mPASSED[39m
+
+RevisionGateTest > maxLongRevisionDuplicateAndPredecessor() [32mPASSED[39m
+
+RevisionGateTest > olderRevisionDoesNotReplaceCurrent() [32mPASSED[39m
+
+RevisionGateTest > equalRevisionWithDifferentPayloadDoesNotOverwrite() [32mPASSED[39m
+
+RevisionGateTest > sourceInsideObservationMustMatchKey() [32mPASSED[39m
+
+RevisionGateTest > outOfOrderSequenceKeepsTheNewestRevision() [32mPASSED[39m
+
+RevisionGateTest > blankSubjectKeyIsRejected() [32mPASSED[39m
+
+RevisionGateTest > firstValidRevisionIsAccepted() [32mPASSED[39m
+
+SourceScanTest > mainSourcesStayFreeOfPlatformClockAndNetwork() [32mPASSED[39m
+
+ValidationTest > malformedRangesAreRejected() [32mPASSED[39m
+
+ValidationTest > exclusiveLongEndpointAndMaxValue() [32mPASSED[39m
+
+ValidationTest > absentValueSkipsExpectedUnit() [32mPASSED[39m
+
+ValidationTest > futureTimestampsStayUncheckedUnlessCallerSelectsPolicy() [32mPASSED[39m
+
+ValidationTest > expiryBeforeObservedAtIsStructural() [32mPASSED[39m
+
+ValidationTest > absentValueStillSkipsUnitCharacterChecks() [32mPASSED[39m
+
+ValidationTest > internalWhitespaceInUnitIsRejectedEvenWhenExpectedMatches() [32mPASSED[39m
+
+ValidationTest > deniedAndErrorWithoutValueStayDistinct() [32mPASSED[39m
+
+ValidationTest > longRangeAcceptsIntExactlyAndRejectsDouble() [32mPASSED[39m
+
+ValidationTest > internalWhitespaceThatIsAlsoAControlCharacterIsRejected() [32mPASSED[39m
+
+ValidationTest > allKindsRemainUnchangedByValidation() [32mPASSED[39m
+
+ValidationTest > exclusiveAdjacentLongRangeIsEmpty() [32mPASSED[39m
+
+ValidationTest > unitMatchIsExactAndDoesNotConvert() [32mPASSED[39m
+
+ValidationTest > plainUnitTokensStayAccepted() [32mPASSED[39m
+
+ValidationTest > staleZeroRemainsAStaleReading() [32mPASSED[39m
+
+ValidationTest > exclusiveDoubleBoundsRejectEndpoints() [32mPASSED[39m
+
+ValidationTest > textualZeroIsNotTreatedAsMissing() [32mPASSED[39m
+
+ValidationTest > nonWhitespaceControlCharacterInUnitIsRejected() [32mPASSED[39m
+
+ValidationTest > injectedDeniedAndUnavailableNumbersAreRejected() [32mPASSED[39m
+
+ValidationTest > injectedErrorZeroIsNotAcceptedOrCoerced() [32mPASSED[39m
+
+ValidationTest > singlePointRangeAcceptsOnlyThatPoint() [32mPASSED[39m
+
+ValidationTest > validOrStaleWithoutValueIsRejectedAndNotRewritten() [32mPASSED[39m
+
+ValidationTest > negativeZeroIsAnActualReadingAndIsNotCanonicalized() [32mPASSED[39m
+
+ValidationTest > actualZeroStaysAReading() [32mPASSED[39m
+
+ValidationTest > missingValueIsUnavailableAndNotZero() [32mPASSED[39m
+
+ValidationTest > exclusiveNeighborAndExtremeInclusivePointsStayValid() [32mPASSED[39m
+
+ValidationTest > blankOrPaddedUnitIsRejectedWhenValueExists() [32mPASSED[39m
+
+ValidationTest > conflictingRangesAreRejectedBeforeComparison() [32mPASSED[39m
+
+ValidationTest > equalReferenceTimeIsNotFuture() [32mPASSED[39m
+
+ValidationTest > exclusiveExtremeWithNoRepresentableLongIsEmpty() [32mPASSED[39m
+
+ValidationTest > nonFiniteFloatsAreRejectedWithoutBecomingZero() [32mPASSED[39m
+
+ValidationTest > doubleRangeBoundaries() [32mPASSED[39m
+[0K
+[0K
+[0K
+[3A[1m<[0;32;1m=============[0;39;1m> 100% EXECUTING [27s][m[36D[1B> IDLE[6D[1B> IDLE[6D[1B[3A[1m<[0;32;1m=============[0;39;1m> 100% EXECUTING [28s][m[36D[3B[3A[0K
+[32;1mBUILD SUCCESSFUL[0;39m in 31s[0K
+5 actionable tasks: 5 executed[0K
+Consider enabling configuration cache to speed up this build: https://docs.gradle.org/9.3.1/userguide/configuration_cache_enabling.html
+[0K
+[0K
+[0K
+[3A[1m<[0;1m-------------> 0% WAITING[m[26D[1B> IDLE[6D[1B> IDLE[6D[1B[3A[2K[1B[2K[1B[2K[1B[2K[3A

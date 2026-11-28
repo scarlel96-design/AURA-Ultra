@@ -1,0 +1,266 @@
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/9.3.1/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+
+
+[2A[1B[1m> Starting Daemon[m[17D[1B[1A> IDLE[0K[6D[1B[2ADaemon will be stopped at the end of the build 
+[1B[0K
+[2A[0K[1B> IDLE[6D[1B[2A[1m<[0;1m-------------> 0% INITIALIZING [84ms][m[38D[2B[2A[1m<[0;1m-------------> 0% INITIALIZING [178ms][m[39D[2B[2A[1m<[0;1m-------------> 0% INITIALIZING [288ms][m[39D[2B[2A[1m<[0;1m-------------> 0% INITIALIZING [381ms][m[39D[2B[2A[1m<[0;1m-------------> 0% INITIALIZING [476ms][m[39D[2B[2A[1m<[0;1m-------------> 0% INITIALIZING [586ms][m[39D[2B[2A[1m<[0;1m-------------> 0% INITIALIZING [679ms][m[39D[2B[2A[1m<[0;1m-------------> 0% INITIALIZING [789ms][m[39D[2B[2A[1m<[0;1m-------------> 0% INITIALIZING [882ms][m[39D[2B[2A[1m<[0;1m-------------> 0% INITIALIZING [976ms][m[39D[1B[1m> Evaluating settings[m[21D[1B[2A[1m<[0;1m-------------> 0% INITIALIZING [1s][m[0K[36D[2B[2A[1m<[0;1m-------------> 0% INITIALIZING [2s][m[36D[2B[1A[1m> Evaluating settings > Resolve dependencies of detachedConfiguration1[m[70D[1B[1A[1m> Evaluating settings[m[0K[21D[1B[1A[1m> Evaluating settings > Resolve files of configuration 'classpath'[m[66D[1B[1A[1m> Evaluating settings[m[0K[21D[1B[2A[1m<[0;1m-------------> 0% INITIALIZING [3s][m[36D[2B[2A[1m<[0;1m-------------> 0% CONFIGURING [3s][m[0K[35D[1B[1m> Loading projects[m[0K[18D[1B[1A[1m> root project[m[0K[14D[1B[1A[1m> root project > Resolve dependencies of classpath[m[50D[1B[1A[1m> root project[m[0K[14D[1B[1A[1m> root project > Resolve files of configuration 'classpath'[m[59D[1B[1A[1m> root project[m[0K[14D[1B[2A[1m<[0;1m-------------> 0% CONFIGURING [4s][m[35D[2B[2A[1m<[0;1m-------------> 0% CONFIGURING [5s][m[35D[2B[2A[1m<[0;32;1m=============[0;39;1m> 100% CONFIGURING [5s][m[37D[1B> IDLE[0K[6D[1B[1A[1m> Discovering toolchains > Detecting local java toolchains[m[58D[1B[1A[1m> Extracting toolchain metadata from 'C:\Users\scarl\.jdks\temurin-17' (Current[m[79D[1B[1A[1m> Extracting toolchain metadata from 'C:\Program Files\Java\jdk-22' (Windows Re[m[79D[1B[2A[1m<[0;32;1m=============[0;39;1m> 100% CONFIGURING [6s][m[37D[2B[1A[1m> Extracting toolchain metadata from 'C:\Program Files\Eclipse Adoptium\jdk-21.[m[79D[1B[1A[1m> Resolve dependencies of :testRuntimeClasspath[m[0K[47D[1B[2A[1m<[0;32;1m======[0;39;1m-------> 50% CONFIGURING [6s][m[0K[36D[1B[1m> Resolve dependencies of :testRuntimeClasspath > :domain[m[57D[1B[2A[1m<[0;32;1m=============[0;39;1m> 100% CONFIGURING [6s][m[37D[1B[1m> Resolve dependencies of :testRuntimeClasspath[m[0K[47D[1B[1A> IDLE[0K[6D[1B[2A[1m<[0;1m-------------> 0% EXECUTING [7s][m[0K[33D[2B
+[3A[1m<[0;1m-------------> 5% EXECUTING [7s][m[33D[1B[1m> :clean[m[8D[1B[1m> :domain:compileKotlin[m[23D[1B[1A[1m> :domain:compileKotlin > Resolve files of configuration ':domain:detachedConfi[m[79D[1B[3A[1m<[0;32;1m=====[0;39;1m--------> 44% EXECUTING [7s][m[34D[1B[1m> :processTestResources[m[23D[1B[1m> :domain:jar[m[0K[13D[1B[3A[1m<[0;32;1m=======[0;39;1m------> 55% EXECUTING [7s][m[34D[1B> IDLE[0K[6D[1B[1m> :compileKotlin[m[16D[1B[3A[1m<[0;32;1m=======[0;39;1m------> 55% EXECUTING [8s][m[34D[3B[3A[1m<[0;32;1m=======[0;39;1m------> 55% EXECUTING [9s][m[34D[3B[3A[1m<[0;32;1m=======[0;39;1m------> 55% EXECUTING [10s][m[35D[3B[3A[1m<[0;32;1m=======[0;39;1m------> 55% EXECUTING [11s][m[35D[3B[3A[1m<[0;32;1m=======[0;39;1m------> 55% EXECUTING [12s][m[35D[3B[3A[1m<[0;32;1m=======[0;39;1m------> 55% EXECUTING [13s][m[35D[3B[3A[1m<[0;32;1m=======[0;39;1m------> 55% EXECUTING [14s][m[35D[3B[3A[1m<[0;32;1m=======[0;39;1m------> 55% EXECUTING [15s][m[35D[3B[3A[1m<[0;32;1m=======[0;39;1m------> 55% EXECUTING [16s][m[35D[3B[3A[1m<[0;32;1m=======[0;39;1m------> 55% EXECUTING [17s][m[35D[3B[3A[1m<[0;32;1m=======[0;39;1m------> 55% EXECUTING [18s][m[35D[3B[3A[1m<[0;32;1m=======[0;39;1m------> 55% EXECUTING [19s][m[35D[3B[3A[1m<[0;32;1m=======[0;39;1m------> 55% EXECUTING [20s][m[35D[3B[3A[1m<[0;32;1m=======[0;39;1m------> 55% EXECUTING [21s][m[35D[3B[3A[1m<[0;32;1m=======[0;39;1m------> 55% EXECUTING [22s][m[35D[3B[3A[1m<[0;32;1m=======[0;39;1m------> 55% EXECUTING [23s][m[35D[3B[3A[1m<[0;32;1m=========[0;39;1m----> 72% EXECUTING [23s][m[35D[2B[1m> :jar[m[0K[6D[1B[3A[1m<[0;32;1m==========[0;39;1m---> 77% EXECUTING [23s][m[35D[2B[1m> :compileTestKotlin > Resolve files of configuration ':detachedConfiguration2'[m[79D[1B[1A[1m> :compileTestKotlin[m[0K[20D[1B[3A[1m<[0;32;1m==========[0;39;1m---> 77% EXECUTING [24s][m[35D[3B[3A[1m<[0;32;1m==========[0;39;1m---> 77% EXECUTING [25s][m[35D[3B[3A[1m<[0;32;1m==========[0;39;1m---> 77% EXECUTING [26s][m[35D[3B[3A[1m<[0;32;1m==========[0;39;1m---> 77% EXECUTING [27s][m[35D[3B[3A[1m<[0;32;1m==========[0;39;1m---> 77% EXECUTING [28s][m[35D[3B[3A[1m<[0;32;1m==========[0;39;1m---> 77% EXECUTING [29s][m[35D[3B[3A[1m<[0;32;1m==========[0;39;1m---> 77% EXECUTING [30s][m[35D[3B[3A[1m<[0;32;1m==========[0;39;1m---> 77% EXECUTING [31s][m[35D[3B[3A[1m<[0;32;1m==========[0;39;1m---> 77% EXECUTING [32s][m[35D[3B[3A[0K
+[1m> Task :compileTestKotlin[m[0K
+w: file:///C:/Users/scarl/AppData/Local/Temp/aura-gb02-wt/modules/intelligence/src/test/kotlin/io/github/scarlel96/aura/intelligence/Round08Test.kt:166:60 Unnecessary safe call on a non-null receiver of type 'IntelligenceIntent'.[0K
+[0K
+[0K
+[0K
+[3A[1m<[0;32;1m==========[0;39;1m---> 77% EXECUTING [32s][m[35D[1B> IDLE[6D[1B[1m> :compileTestKotlin[m[20D[1B[3A[1m<[0;32;1m==========[0;39;1m---> 77% EXECUTING [33s][m[35D[3B[3A[1m<[0;32;1m============[0;39;1m-> 94% EXECUTING [33s][m[35D[2B[1m> :test > 0 tests completed[m[27D[1B[3A[1m<[0;32;1m============[0;39;1m-> 94% EXECUTING [34s][m[35D[3B[2A[1m> :test > Executing test io.github.scarlel96.aura.intelligence.GateTest[m[71D[2B[1A[1m> :test > 1 test completed[m[0K[26D[1B[2A[1m> :test > Executing test io.github.scarlel96.aura.intelligence.JunitXmlCheckTes[m[79D[1B[1m> :test > 4 tests completed[m[27D[1B[3A[1m<[0;32;1m============[0;39;1m-> 94% EXECUTING [35s][m[35D[3B[1A[1m> :test > 5 tests completed[m[27D[1B[1A[1m> :test > 6 tests completed[m[27D[1B[1A[1m> :test > 7 tests completed[m[27D[1B[3A[0K
+[1m> Task :test[m[0K
+TEST_JVM version=17 vendor=Eclipse Temurin path=C:\Users\scarl\.jdks\temurin-17[0K
+
+GateTest > scaleBoundsAreInclusiveAndAreNotConverted() [32mPASSED[39m
+
+GateTest > expiryBoundaryAndBadStatusStayUnusable() [32mPASSED[39m
+
+GateTest > absentIsNotZero() [32mPASSED[39m
+
+GateTest > uncheckedTokenIsNotExercise() [32mPASSED[39m
+
+JunitXmlCheckTest > rejectsMissingDirectory() [32mPASSED[39m
+
+JunitXmlCheckTest > rejectsCountMismatch() [32mPASSED[39m
+
+JunitXmlCheckTest > acceptsMatchingFreshResults() [32mPASSED[39m
+
+JunitXmlCheckTest > rejectsCorruptXml() [32mPASSED[39m
+[0K
+[0K
+[0K
+[3A[1m<[0;32;1m============[0;39;1m-> 94% EXECUTING [35s][m[35D[1B[1m> :test > Executing test io.github.scarlel96.aura.intelligence.JunitXmlCheckTes[m[79D[1B[1m> :test > 8 tests completed[m[27D[1B[3A[0K
+JunitXmlCheckTest > rejectsHeaderCaseMismatch() [32mPASSED[39m[0K
+[1B[0K
+[0K
+[3A[1m<[0;32;1m============[0;39;1m-> 94% EXECUTING [35s][m[35D[1B[1m> :test > Executing test io.github.scarlel96.aura.intelligence.JunitXmlCheckTes[m[79D[1B[1m> :test > 9 tests completed[m[27D[1B[3A[0K
+JunitXmlCheckTest > rejectsEmptyMethod() [32mPASSED[39m[0K
+[1B[0K
+[0K
+[3A[1m<[0;32;1m============[0;39;1m-> 94% EXECUTING [36s][m[35D[1B[1m> :test > Executing test io.github.scarlel96.aura.intelligence.JunitXmlCheckTes[m[79D[1B[1m> :test > 10 tests completed[m[28D[1B[3A[0K
+JunitXmlCheckTest > rejectsMissingCounters() [32mPASSED[39m[0K
+[1B[0K
+[0K
+[3A[1m<[0;32;1m============[0;39;1m-> 94% EXECUTING [36s][m[35D[1B[1m> :test > Executing test io.github.scarlel96.aura.intelligence.JunitXmlCheckTes[m[79D[1B[1m> :test > 11 tests completed[m[28D[1B[3A[0K
+JunitXmlCheckTest > rejectsMissingClassname() [32mPASSED[39m[0K
+[1B[0K
+[0K
+[3A[1m<[0;32;1m============[0;39;1m-> 94% EXECUTING [36s][m[35D[1B[1m> :test > Executing test io.github.scarlel96.aura.intelligence.JunitXmlCheckTes[m[79D[1B[1m> :test > 12 tests completed[m[28D[1B[3A[0K
+JunitXmlCheckTest > rejectsEmptyFile() [32mPASSED[39m[0K
+[1B[0K
+[0K
+[3A[1m<[0;32;1m============[0;39;1m-> 94% EXECUTING [36s][m[35D[1B[1m> :test > Executing test io.github.scarlel96.aura.intelligence.JunitXmlCheckTes[m[79D[1B[1m> :test > 13 tests completed[m[28D[1B[3A[0K
+JunitXmlCheckTest > rejectsDuplicateSuiteAndTestcase() [32mPASSED[39m[0K
+[1B[0K
+[0K
+[3A[1m<[0;32;1m============[0;39;1m-> 94% EXECUTING [36s][m[35D[1B[1m> :test > Executing test io.github.scarlel96.aura.intelligence.JunitXmlCheckTes[m[79D[1B[1m> :test > 14 tests completed[m[28D[1B[3A[0K
+JunitXmlCheckTest > rejectsUnrelatedClassname() [32mPASSED[39m[0K
+[1B[0K
+[0K
+[3A[1m<[0;32;1m============[0;39;1m-> 94% EXECUTING [36s][m[35D[1B[1m> :test > Executing test io.github.scarlel96.aura.intelligence.JunitXmlCheckTes[m[79D[1B[1m> :test > 15 tests completed[m[28D[1B[3A[0K
+JunitXmlCheckTest > rejectsHiddenFailure() [32mPASSED[39m[0K
+[1B[0K
+[0K
+[3A[1m<[0;32;1m============[0;39;1m-> 94% EXECUTING [37s][m[35D[1B[1m> :test > Executing test io.github.scarlel96.aura.intelligence.JunitXmlCheckTes[m[79D[1B[1m> :test > 16 tests completed[m[28D[1B[3A[0K
+JunitXmlCheckTest > rejectsZeroTests() [32mPASSED[39m[0K
+[1B[0K
+[0K
+[3A[1m<[0;32;1m============[0;39;1m-> 94% EXECUTING [37s][m[35D[1B[1m> :test > Executing test io.github.scarlel96.aura.intelligence.JunitXmlCheckTes[m[79D[1B[1m> :test > 17 tests completed[m[28D[1B[3A[0K
+JunitXmlCheckTest > rejectsMissingResultFile() [32mPASSED[39m[0K
+[1B[0K
+[0K
+[3A[1m<[0;32;1m============[0;39;1m-> 94% EXECUTING [37s][m[35D[1B[1m> :test > Executing test io.github.scarlel96.aura.intelligence.JunitXmlCheckTes[m[79D[1B[1m> :test > 18 tests completed[m[28D[1B[3A[0K
+JunitXmlCheckTest > rejectsHiddenError() [32mPASSED[39m[0K
+[1B[0K
+[0K
+[3A[1m<[0;32;1m============[0;39;1m-> 94% EXECUTING [37s][m[35D[1B[1m> :test > Executing test io.github.scarlel96.aura.intelligence.JunitXmlCheckTes[m[79D[1B[1m> :test > 19 tests completed[m[28D[1B[3A[0K
+JunitXmlCheckTest > rejectsHiddenSkip() [32mPASSED[39m[0K
+[1B[0K
+[0K
+[3A[1m<[0;32;1m============[0;39;1m-> 94% EXECUTING [37s][m[35D[1B[1m> :test > Executing test io.github.scarlel96.aura.intelligence.JunitXmlCheckTes[m[79D[1B[1m> :test > 20 tests completed[m[28D[1B[3A[0K
+JunitXmlCheckTest > rejectsSuiteFilenameMismatch() [32mPASSED[39m[0K
+[1B[0K
+[0K
+[3A[1m<[0;32;1m============[0;39;1m-> 94% EXECUTING [37s][m[35D[1B[1m> :test > Executing test io.github.scarlel96.aura.intelligence.JunitXmlCheckTes[m[79D[1B[1m> :test > 21 tests completed[m[28D[1B[3A[0K
+JunitXmlCheckTest > rejectsNestedTestcase() [32mPASSED[39m[0K
+[1B[0K
+[0K
+[3A[1m<[0;32;1m============[0;39;1m-> 94% EXECUTING [38s][m[35D[1B[1m> :test > Executing test io.github.scarlel96.aura.intelligence.JunitXmlCheckTes[m[79D[1B[1m> :test > 22 tests completed[m[28D[1B[3A[0K
+JunitXmlCheckTest > rejectsStaleTimestamp() [32mPASSED[39m[0K
+[1B[0K
+[0K
+[3A[1m<[0;32;1m============[0;39;1m-> 94% EXECUTING [38s][m[35D[1B[1m> :test > Executing test io.github.scarlel96.aura.intelligence.JunitXmlCheckTes[m[79D[1B[1m> :test > 23 tests completed[m[28D[1B[3A[0K
+JunitXmlCheckTest > rejectsFutureTimestamp() [32mPASSED[39m[0K
+[0K
+MachineTest > firstStepStartsAtRevisionOneAndDoesNotInferActivity() [32mPASSED[39m
+
+MachineTest > lowPowerKeepsFreshWeatherNumbersWhileRemovingParticles() [32mPASSED[39m
+
+MachineTest > urgentAlertBypassesHoldAndCommitsTheCurrentDesiredSensors() [32mPASSED[39m
+
+MachineTest > freshAlertSurvivesABadPrecipitationSample() [32mPASSED[39m
+
+MachineTest > chargingIsNotLowPowerAndBypassesHold() [32mPASSED[39m
+
+MachineTest > powerHysteresisUsesTheCandidateBand() [32mPASSED[39m
+
+MachineTest > callerScaleIsNotTheDocumentedPercentScale() [32mPASSED[39m
+
+MachineTest > omittedChannelsKeepStateAndUnusableSettingsDoNotWipeIt() [32mPASSED[39m
+
+MachineTest > repeatedSamplesAndReturningDesiredDoNotBumpRevision() [32mPASSED[39m
+
+MachineTest > precipitationHysteresisDoesNotTreatAlertAsPrecip() [32mPASSED[39m
+
+MachineTest > immediateAxesDoNotResetTheSensorHold() [32mPASSED[39m
+
+MachineTest > badObservationsAreNotPromotedAndDoNotBecomeZero() [32mPASSED[39m
+
+MachineTest > clockInversionPublishesNoNumbersAndKeepsTheMachineState() [32mPASSED[39m
+
+MachineTest > presentationChangesBumpRevisionWhenAxesStay() [32mPASSED[39m
+
+MachineTest > priorityPrefersCriticalThenPowerThenExerciseThenWeatherThenContext() [32mPASSED[39m
+
+MachineTest > documentedHoldAndSeparateDebounceKeepThePreviousSensorAxis() [32mPASSED[39m
+
+MachineTest > suppliedFreshChannelsStayFreshAndObservationsAreUnchanged() [32mPASSED[39m
+
+PolicyTest > durationsAndScalesAndUnitsMustBeUsable() [32mPASSED[39m
+
+PolicyTest > powerBandMustRise() [32mPASSED[39m
+
+PolicyTest > precipitationBandMustFall() [32mPASSED[39m
+
+PolicyTest > documentedCandidatesRemainConfigurable() [32mPASSED[39m
+
+PolicyTest > rejectedPolicyDoesNotAdvance() [32mPASSED[39m
+
+Round02Test > freshChargingFalseUsesHysteresisAndDoesNotInventZero() [32mPASSED[39m
+
+Round02Test > olderSampleCannotClearChargingOrRaiseAlert() [32mPASSED[39m
+
+Round02Test > thresholdsOutsideTheConfiguredScaleAreRejected() [32mPASSED[39m
+
+Round02Test > unchangedInputStillRejectsAnOlderSample() [32mPASSED[39m
+
+Round02Test > staleReadingDuringUrgentDoesNotLeaveLowOrPublishANumber() [32mPASSED[39m
+
+Round02Test > extremeInstantAndDurationDoNotEscapeStep() [32mPASSED[39m
+
+Round02Test > scaleEdgesRemainAccepted() [32mPASSED[39m
+
+Round02Test > revisionDoesNotWrapAndStopsAtTheLimit() [32mPASSED[39m
+
+Round02Test > inBandBatteryWithDeniedActivityStaysNormalAndDegraded() [32mPASSED[39m
+
+Round02Test > equalProcessedTimeIsNotInversion() [32mPASSED[39m
+
+Round02Test > hysteresisDebounceUrgentAndLowPowerInteract() [32mPASSED[39m
+
+Round02Test > missingOrInvalidChargingDoesNotClearCharging() [32mPASSED[39m
+
+Round03Test > chargingExceptionDoesNotBypassUnrelatedWeatherOrActivity() [32mPASSED[39m
+
+Round03Test > missingExpiryDenialInversionAndRapidRepeatsStayDistinct() [32mPASSED[39m
+
+Round03Test > olderSampleCannotClearLatestAodAndMotionReduction() [32mPASSED[39m
+
+Round03Test > missingChargingAndLowBatteryDoNotAddAPowerAxis() [32mPASSED[39m
+
+Round03Test > revisionCeilingAppliesProtectionWithoutWrapping() [32mPASSED[39m
+
+Round03Test > sameInstantReplacesSettingsBecauseItIsNotAnOlderObservation() [32mPASSED[39m
+
+Round03Test > urgentAlertDoesNotBypassAnUnrelatedActivityDebounce() [32mPASSED[39m
+
+Round04Test > ceilingProtectionIsDeliveredWhenRevisionStaysAtTheLimit() [32mPASSED[39m
+
+Round04Test > lowPowerGraphicsDoNotWaitForDebounceOrHold() [32mPASSED[39m
+
+Round04Test > freshLowBatteryLimitsDecorationWithoutChangingTheChargingAxis() [32mPASSED[39m
+
+Round04Test > ceilingWithdrawsExpiredAndDeniedPublications() [32mPASSED[39m
+
+Round04Test > anotherAxisDoesNotRestartDebounceOrHold() [32mPASSED[39m
+
+Round05Test > continuousChangesDoNotResetOtherAxisClocks() [32mPASSED[39m
+
+Round05Test > revisionOnlyConsumerMissesSameRevisionProtection() [32mPASSED[39m
+
+Round05Test > sameInstantAndOlderSamplesKeepProtection() [32mPASSED[39m
+
+Round05Test > timeAndPolicyBoundariesStayInsideStep() [32mPASSED[39m
+[0K
+[0K
+[0K
+[3A[1m<[0;32;1m============[0;39;1m-> 94% EXECUTING [38s][m[35D[1B[1m> :test > Executing test io.github.scarlel96.aura.intelligence.Round05Test[m[74D[1B[1m> :test > 74 tests completed[m[28D[1B[3A[0K
+Round05Test > compositeConflictsKeepCanonicalPriority() [32mPASSED[39m[0K
+[1B[0K
+[0K
+[3A[1m<[0;32;1m============[0;39;1m-> 94% EXECUTING [38s][m[35D[1B[1m> :test > Executing test io.github.scarlel96.aura.intelligence.Round05Test[m[74D[1B[1m> :test > 75 tests completed[m[28D[1B[3A[1m<[0;32;1m============[0;39;1m-> 94% EXECUTING [39s][m[35D[3B[3A[0K
+Round05Test > longRunKeepsInvariants() [32mPASSED[39m[0K
+[0K
+Round05Test > reorderedIntentCanOverwriteNewerProtection() [32mPASSED[39m
+
+Round06Test > permissionStatusStaysDistinctFromTtl() [32mPASSED[39m
+
+Round06Test > nonFiniteAndInvertedBoundsAreRejected() [32mPASSED[39m
+
+Round06Test > abnormalUnitTokensAreRejected() [32mPASSED[39m
+
+Round07Test > newerSourceCanReplaceAnOlderSource() [32mPASSED[39m
+
+Round07Test > sameObservationTimeWithoutRevisionFollowsCallOrder() [32mPASSED[39m
+
+Round07Test > forecastDoesNotReplaceAnAcceptedObservation() [32mPASSED[39m
+
+Round07Test > equalRevisionConflictKeepsTheFirstBattery() [32mPASSED[39m
+
+Round07Test > ceilingDropsOmittedBatteryAfterStoredTtlAndResyncCanReplaceIt() [32mPASSED[39m
+
+Round07Test > deniedBatteryIsNotRedisplayedByAnOlderSample() [32mPASSED[39m
+
+Round07Test > badPolicyKeepsProtectionWithoutPretendingThePolicyIsValid() [32mPASSED[39m
+
+Round07Test > chargingAndLowWaitKeepGraphicsInsideTheCandidateBand() [32mPASSED[39m
+
+Round07Test > olderObservationDoesNotReplaceNewerBattery() [32mPASSED[39m
+
+Round07Test > deliverySequenceKeepsLateReleaseFromClearingNewerProtection() [32mPASSED[39m
+
+Round07Test > futureObservedValueIsRejectedWithoutAProductSkew() [32mPASSED[39m
+
+Round08Test > ceilingResyncDoesNotBypassValidation() [32mPASSED[39m
+
+Round08Test > ceilingRaiseSurvivesSaturatedUnprotectAndOldSessionRelease() [32mPASSED[39m
+
+Round08Test > duplicateReverseNegativeAndSameTickStayOrdered() [32mPASSED[39m
+
+Round08Test > rejectedPolicyWithdrawsExpiredAndRevokedNumbers() [32mPASSED[39m
+
+Round08Test > denialThenMidpointAndOtherStreamsDoNotRepublish() [32mPASSED[39m
+
+Round08Test > forecastAndOlderAxesDoNotRewriteState() [32mPASSED[39m
+
+SourceScanTest > plantedClockAndNetworkTokensAreDetected() [32mPASSED[39m
+[0K
+[0K
+[0K
+[3A[1m<[0;32;1m============[0;39;1m-> 94% EXECUTING [39s][m[35D[1B[1m> :test > Executing test io.github.scarlel96.aura.intelligence.SourceScanTest[m[77D[1B[1m> :test > 98 tests completed[m[28D[1B[3A[0K
+SourceScanTest > mainSourcesStayFreeOfPlatformClockAndNetwork() [32mPASSED[39m[0K
+[1B[0K
+[0K
+[3A[1m<[0;32;1m============[0;39;1m-> 94% EXECUTING [39s][m[35D[1B> IDLE[6D[1B[1m> :test > 99 tests completed[m[28D[1B[1A[1m> :test[m[0K[7D[1B[3A[1m<[0;32;1m=============[0;39;1m> 100% EXECUTING [39s][m[36D[2B> IDLE[0K[6D[1B[3A[1m<[0;32;1m=============[0;39;1m> 100% EXECUTING [40s][m[36D[3B[3A[0K
+[Incubating] Problems report is available at: file:///C:/Users/scarl/AppData/Local/Temp/aura-gb02-wt/modules/intelligence/build/reports/problems/problems-report.html[0K
+[0K
+[32;1mBUILD SUCCESSFUL[0;39m in 44s
+7 actionable tasks: 5 executed, 2 up-to-date
+Consider enabling configuration cache to speed up this build: https://docs.gradle.org/9.3.1/userguide/configuration_cache_enabling.html
+[0K
+[0K
+[0K
+[3A[1m<[0;1m-------------> 0% WAITING[m[26D[1B> IDLE[6D[1B> IDLE[6D[1B[3A[2K[1B[2K[1B[2K[1B[2K[3A

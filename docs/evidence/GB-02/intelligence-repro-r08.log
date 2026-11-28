@@ -1,0 +1,123 @@
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/9.3.1/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+
+
+[2A[1B[1m> Starting Daemon[m[17D[1B[1A[1m> Starting Daemon > Connecting to Daemon[m[40D[1B[2ADaemon will be stopped at the end of the build 
+[1B[0K
+[2A[0K[1B> IDLE[6D[1B[2A[1m<[0;1m-------------> 0% INITIALIZING [23ms][m[38D[2B[2A[1m<[0;1m-------------> 0% INITIALIZING [118ms][m[39D[2B[2A[1m<[0;1m-------------> 0% INITIALIZING [229ms][m[39D[2B[2A[1m<[0;1m-------------> 0% INITIALIZING [322ms][m[39D[2B[2A[1m<[0;1m-------------> 0% INITIALIZING [428ms][m[39D[2B[2A[1m<[0;1m-------------> 0% INITIALIZING [522ms][m[39D[2B[2A[1m<[0;1m-------------> 0% INITIALIZING [631ms][m[39D[2B[2A[1m<[0;1m-------------> 0% INITIALIZING [726ms][m[39D[2B[2A[1m<[0;1m-------------> 0% INITIALIZING [820ms][m[39D[2B[2A[1m<[0;1m-------------> 0% INITIALIZING [929ms][m[39D[2B[2A[1m<[0;1m-------------> 0% INITIALIZING [1s][m[0K[36D[2B[1A[1m> Evaluating settings[m[21D[1B[2A[1m<[0;1m-------------> 0% INITIALIZING [2s][m[36D[2B[1A[1m> Evaluating settings > Resolve dependencies of detachedConfiguration1[m[70D[1B[1A[1m> Evaluating settings[m[0K[21D[1B[1A[1m> Evaluating settings > Resolve files of configuration 'classpath'[m[66D[1B[2A[1m<[0;1m-------------> 0% INITIALIZING [3s][m[36D[1B[1m> Evaluating settings[m[0K[21D[1B[2A[1m<[0;1m-------------> 0% CONFIGURING [3s][m[0K[35D[1B[1m> Loading projects[m[0K[18D[1B[1A[1m> root project[m[0K[14D[1B[1A[1m> root project > Resolve dependencies of detachedConfiguration1[m[63D[1B[1A[1m> root project > Resolve dependencies of classpath[m[0K[50D[1B[2A[1m<[0;1m-------------> 0% CONFIGURING [4s][m[35D[1B[1m> root project > Resolve files of configuration 'classpath'[m[59D[1B[1A[1m> root project[m[0K[14D[1B[2A[1m<[0;1m-------------> 0% CONFIGURING [5s][m[35D[2B[2A[1m<[0;32;1m=============[0;39;1m> 100% CONFIGURING [5s][m[37D[1B> IDLE[0K[6D[1B[2A[1m<[0;32;1m=============[0;39;1m> 100% CONFIGURING [6s][m[37D[1B[1m> Extracting toolchain metadata from 'C:\Program Files\Java\jdk-22' (Windows Re[m[79D[1B[1A> IDLE[0K[6D[1B[2A[1m<[0;32;1m======[0;39;1m-------> 50% CONFIGURING [6s][m[0K[36D[1B[1m> Resolve dependencies of :testRuntimeClasspath > :domain[m[57D[1B[2A[1m<[0;32;1m=============[0;39;1m> 100% CONFIGURING [6s][m[37D[1B[1m> Resolve dependencies of :testRuntimeClasspath[m[0K[47D[1B[1A> IDLE[0K[6D[1B[2A[1m<[0;32;1m=============[0;39;1m> 100% CONFIGURING [7s][m[37D[2B[1A[1m> Resolve dependencies of :kotlinBuildToolsApiClasspath[m[55D[1B[1A> IDLE[0K[6D[1B[2A[1m<[0;1m-------------> 0% EXECUTING [7s][m[0K[33D[2B
+[3A[1m<[0;32;1m=[0;39;1m------------> 11% EXECUTING [7s][m[34D[1B[1m> :domain:compileKotlin[m[23D[1B[1m> :processResources[m[19D[1B[3A[1m<[0;32;1m===[0;39;1m----------> 23% EXECUTING [7s][m[34D[1B[1m> :domain:compileKotlin > Resolve files of configuration ':domain:detachedConfi[m[79D[1B> IDLE[0K[6D[1B[3A[1m<[0;32;1m===[0;39;1m----------> 29% EXECUTING [7s][m[34D[1B[1m> :domain:compileJava[m[0K[21D[2B[3A[1m<[0;32;1m=========[0;39;1m----> 76% EXECUTING [7s][m[34D[1B> IDLE[0K[6D[2B[2A[1m> :compileTestKotlin > Resolve files of configuration ':detachedConfiguration2'[m[79D[2B[3A[1m<[0;32;1m=========[0;39;1m----> 76% EXECUTING [8s][m[34D[1B[1m> :compileTestKotlin[m[0K[20D[2B[3A[1m<[0;32;1m=========[0;39;1m----> 76% EXECUTING [9s][m[34D[3B[3A[1m<[0;32;1m=========[0;39;1m----> 76% EXECUTING [10s][m[35D[3B[3A[1m<[0;32;1m=========[0;39;1m----> 76% EXECUTING [11s][m[35D[3B[3A[1m<[0;32;1m=========[0;39;1m----> 76% EXECUTING [12s][m[35D[3B[3A[1m<[0;32;1m=========[0;39;1m----> 76% EXECUTING [13s][m[35D[3B[3A[1m<[0;32;1m=========[0;39;1m----> 76% EXECUTING [14s][m[35D[3B[3A[1m<[0;32;1m=========[0;39;1m----> 76% EXECUTING [15s][m[35D[3B[3A[1m<[0;32;1m=========[0;39;1m----> 76% EXECUTING [16s][m[35D[3B[3A[0K
+[1m> Task :compileTestKotlin[m[0K
+w: file:///C:/Users/scarl/AppData/Local/Temp/aura-gb02-wt/modules/intelligence/src/test/kotlin/io/github/scarlel96/aura/intelligence/Round08ReproTest.kt:55:60 Unnecessary safe call on a non-null receiver of type 'IntelligenceIntent'.[0K
+[0K
+[0K
+[0K
+[3A[1m<[0;32;1m=========[0;39;1m----> 76% EXECUTING [16s][m[35D[1B[1m> :compileTestKotlin[m[20D[1B> IDLE[6D[1B[2A[1m> :compileTestKotlin > Packing build cache entry[m[48D[2B[3A[1m<[0;32;1m============[0;39;1m-> 94% EXECUTING [16s][m[35D[1B> IDLE[0K[6D[2B[2A[1m> :test[m[7D[2B[2A[1m> :test > 0 tests completed[m[27D[2B[3A[1m<[0;32;1m============[0;39;1m-> 94% EXECUTING [17s][m[35D[3B[1A[1m> :test > Executing test io.github.scarlel96.aura.intelligence.Round08ReproTest[m[79D[1B[3A[1m<[0;32;1m============[0;39;1m-> 94% EXECUTING [18s][m[35D[1B[1m> :test[m[0K[7D[1B> IDLE[0K[6D[1B[3A[0K
+[31;1m> Task :test[0;39m[31m FAILED[39m[0K
+TEST_JVM version=17 vendor=Eclipse Temurin path=C:\Users\scarl\.jdks\temurin-17[0K
+
+Round08ReproTest > resyncForecastExtendsCeilingTtl() [31mFAILED[39m
+    org.opentest4j.AssertionFailedError: actual value is not null ==> expected: <null> but was: <80.0>
+        at app//org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+        at app//org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+        at app//org.junit.jupiter.api.AssertNull.failNotNull(AssertNull.java:50)
+        at app//org.junit.jupiter.api.AssertNull.assertNull(AssertNull.java:35)
+        at app//org.junit.jupiter.api.Assertions.assertNull(Assertions.java:287)
+        at app//kotlin.test.junit5.JUnit5Asserter.assertNull(JUnitSupport.kt:52)
+        at app//kotlin.test.AssertionsKt__AssertionsKt.assertNull(Assertions.kt:310)
+        at app//kotlin.test.AssertionsKt.assertNull(Unknown Source)
+        at app//kotlin.test.AssertionsKt__AssertionsKt.assertNull$default(Assertions.kt:308)
+        at app//kotlin.test.AssertionsKt.assertNull$default(Unknown Source)
+        at app//io.github.scarlel96.aura.intelligence.Round08ReproTest.resyncForecastExtendsCeilingTtl(Round08ReproTest.kt:153)
+
+Round08ReproTest > lateChargingAndForecastChangeRealState() [31mFAILED[39m
+    org.opentest4j.AssertionFailedError: expected: <CHARGING> but was: <NORMAL>
+        at app//org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+        at app//org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+        at app//org.junit.jupiter.api.AssertEquals.failNotEqual(AssertEquals.java:197)
+        at app//org.junit.jupiter.api.AssertEquals.assertEquals(AssertEquals.java:182)
+        at app//org.junit.jupiter.api.Assertions.assertEquals(Assertions.java:1156)
+        at app//kotlin.test.junit5.JUnit5Asserter.assertEquals(JUnitSupport.kt:32)
+        at app//kotlin.test.AssertionsKt__AssertionsKt.assertEquals(Assertions.kt:83)
+        at app//kotlin.test.AssertionsKt.assertEquals(Unknown Source)
+        at app//kotlin.test.AssertionsKt__AssertionsKt.assertEquals$default(Assertions.kt:82)
+        at app//kotlin.test.AssertionsKt.assertEquals$default(Unknown Source)
+        at app//io.github.scarlel96.aura.intelligence.Round08ReproTest.lateChargingAndForecastChangeRealState(Round08ReproTest.kt:116)
+
+Round08ReproTest > saturatedCeilingDropsANewProtectionRequest() [31mFAILED[39m
+    org.opentest4j.AssertionFailedError: Expected value to be true.
+        at app//org.junit.jupiter.api.AssertionUtils.fail(AssertionUtils.java:38)
+        at app//org.junit.jupiter.api.Assertions.fail(Assertions.java:138)
+        at app//kotlin.test.junit5.JUnit5Asserter.fail(JUnitSupport.kt:56)
+        at app//kotlin.test.Asserter.assertTrue(Assertions.kt:1545)
+        at app//kotlin.test.junit5.JUnit5Asserter.assertTrue(JUnitSupport.kt:30)
+        at app//kotlin.test.Asserter.assertTrue(Assertions.kt:1555)
+        at app//kotlin.test.junit5.JUnit5Asserter.assertTrue(JUnitSupport.kt:30)
+        at app//kotlin.test.AssertionsKt__AssertionsKt.assertTrue(Assertions.kt:44)
+        at app//kotlin.test.AssertionsKt.assertTrue(Unknown Source)
+        at app//kotlin.test.AssertionsKt__AssertionsKt.assertTrue$default(Assertions.kt:42)
+        at app//kotlin.test.AssertionsKt.assertTrue$default(Unknown Source)
+        at app//io.github.scarlel96.aura.intelligence.Round08ReproTest.saturatedCeilingDropsANewProtectionRequest(Round08ReproTest.kt:39)
+
+Round08ReproTest > denialThenMidpointObservationRepublishes() [31mFAILED[39m
+    org.opentest4j.AssertionFailedError: actual value is not null ==> expected: <null> but was: <10.0>
+        at app//org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+        at app//org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+        at app//org.junit.jupiter.api.AssertNull.failNotNull(AssertNull.java:50)
+        at app//org.junit.jupiter.api.AssertNull.assertNull(AssertNull.java:35)
+        at app//org.junit.jupiter.api.Assertions.assertNull(Assertions.java:287)
+        at app//kotlin.test.junit5.JUnit5Asserter.assertNull(JUnitSupport.kt:52)
+        at app//kotlin.test.AssertionsKt__AssertionsKt.assertNull(Assertions.kt:310)
+        at app//kotlin.test.AssertionsKt.assertNull(Unknown Source)
+        at app//kotlin.test.AssertionsKt__AssertionsKt.assertNull$default(Assertions.kt:308)
+        at app//kotlin.test.AssertionsKt.assertNull$default(Unknown Source)
+        at app//io.github.scarlel96.aura.intelligence.Round08ReproTest.denialThenMidpointObservationRepublishes(Round08ReproTest.kt:94)
+
+Round08ReproTest > forecastChangesBatteryChargingAndGraphics() [31mFAILED[39m
+    org.opentest4j.AssertionFailedError: expected: <NORMAL> but was: <CHARGING>
+        at app//org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+        at app//org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+        at app//org.junit.jupiter.api.AssertEquals.failNotEqual(AssertEquals.java:197)
+        at app//org.junit.jupiter.api.AssertEquals.assertEquals(AssertEquals.java:182)
+        at app//org.junit.jupiter.api.Assertions.assertEquals(Assertions.java:1156)
+        at app//kotlin.test.junit5.JUnit5Asserter.assertEquals(JUnitSupport.kt:32)
+        at app//kotlin.test.AssertionsKt__AssertionsKt.assertEquals(Assertions.kt:83)
+        at app//kotlin.test.AssertionsKt.assertEquals(Unknown Source)
+        at app//kotlin.test.AssertionsKt__AssertionsKt.assertEquals$default(Assertions.kt:82)
+        at app//kotlin.test.AssertionsKt.assertEquals$default(Unknown Source)
+        at app//io.github.scarlel96.aura.intelligence.Round08ReproTest.forecastChangesBatteryChargingAndGraphics(Round08ReproTest.kt:124)
+
+Round08ReproTest > rejectedPolicyKeepsExpiredAndRevokedNumbers() [31mFAILED[39m
+    org.opentest4j.AssertionFailedError: actual value is not null ==> expected: <null> but was: <10.0>
+        at app//org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+        at app//org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+        at app//org.junit.jupiter.api.AssertNull.failNotNull(AssertNull.java:50)
+        at app//org.junit.jupiter.api.AssertNull.assertNull(AssertNull.java:35)
+        at app//org.junit.jupiter.api.Assertions.assertNull(Assertions.java:287)
+        at app//kotlin.test.junit5.JUnit5Asserter.assertNull(JUnitSupport.kt:52)
+        at app//kotlin.test.AssertionsKt__AssertionsKt.assertNull(Assertions.kt:310)
+        at app//kotlin.test.AssertionsKt.assertNull(Unknown Source)
+        at app//kotlin.test.AssertionsKt__AssertionsKt.assertNull$default(Assertions.kt:308)
+        at app//kotlin.test.AssertionsKt.assertNull$default(Unknown Source)
+        at app//io.github.scarlel96.aura.intelligence.Round08ReproTest.rejectedPolicyKeepsExpiredAndRevokedNumbers(Round08ReproTest.kt:52)
+[0K
+[0K
+[0K
+[3A[1m<[0;31;1m=============[0;39;1m> 100% EXECUTING [18s][m[36D[1B> IDLE[6D[1B> IDLE[6D[1B[3A[0K
+[Incubating] Problems report is available at: file:///C:/Users/scarl/AppData/Local/Temp/aura-gb02-wt/modules/intelligence/build/reports/problems/problems-report.html[0K
+6 actionable tasks: 2 executed, 4 up-to-date[0K
+[0K
+[0K
+[0K
+[3A[1m<[0;1m-------------> 0% WAITING[m[26D[1B> IDLE[6D[1B> IDLE[6D[1B
+6 tests completed, 6 failed
+
+[31mFAILURE: [39m[31mBuild failed with an exception.[39m
+
+* What went wrong:
+Execution failed for task ':test'.
+[33m> [39mThere were failing tests. See the report at: file:///C:/Users/scarl/AppData/Local/Temp/aura-gb02-wt/modules/intelligence/build/reports/tests/test/index.html
+
+* Try:
+[33m> [39mRun with [1m--scan[m to get full insights from a Build Scan (powered by Develocity).
+
+[31;1mBUILD FAILED[0;39m in 22s
+[3A[2K[1B[2K[1B[2K[1B[2K[3A
