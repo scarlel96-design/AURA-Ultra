@@ -12,7 +12,7 @@
 | 정식 WO GO | 0/38 |
 | GPT 묶음 GO | 3/12 (PARTIAL 독립 준비 종료는 GO에 포함하지 않음) |
 | 출시 | NO-GO |
-| 다음 행동 | F03 R01 Actions pin 및 checkout 최소 권한 → Gradle 의존성 검증/잠금. GPT-07 및 실기기 설치는 별도 승인 대기. |
+| 다음 행동 | F03 R01 최종 후보 CI·아티팩트 확인 → 통합 회귀 → Gradle 검증/잠금. GPT-07 및 실기기 설치는 별도 승인 대기. |
 
 ## 근거 및 이관
 - [GPT-06 전체 종료 보고](evidence/GPT-06/REPORT-FINAL-CLOSURE.md). R01~R06 및 OPS-07 독립 준비 산출물 통합·자동 검증 완료. 결합 후보와 main 코드·시험·자산·CI 102개, 보호 경로 38개 blob 동일. 원본 아카이브 8개 SHA 동일. 활성 8개 문서 500021→24609 B(검증 코드 기준).
@@ -49,3 +49,5 @@
 - [F02 R03](evidence/MID-AUDIT/F02/REPORT-R03.md): 후보 전체 Linux/Windows 361 PASS씩, 3 ZIP/8 APK/47 layout 직접 검증. 10 exact blob main 통합; 통합 CI SUCCESS. F02 GO(자동 범위), F03 진입, 제품 NO-GO.
 
 - [F02 R04 종료](evidence/MID-AUDIT/F02/REPORT-R04-FINAL.md): 통합 main Linux/Windows 361 PASS씩, doc SUCCESS, 3 ZIP/8 APK/47 layout 및 RGBA 직접 검사. 4개 F02 ID 자동 범위 해결; F01/F02 합계 11개. F03 R01 다음.
+
+- [F03 R01](evidence/MID-AUDIT/F03/REPORT-R01.md): c0a75d94dfc37e32a5fea1b52078dfaa215505c1, 19/19 Actions pin, checkout 5/5 false, 신규 9 methods. Red 370/9 policy errors; 중간 후보 Windows exit 처리 수정. 최종 CI 진행 중, 후보 미통합. Gradle OPEN.
