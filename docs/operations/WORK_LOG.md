@@ -19,3 +19,11 @@
 - F01 R01 후보 46089767751 SUCCESS 330 PASS/4 APK, artifact 15240069149 직접 hash/CRC/XML/PNG PASS; 정확한 7개 blob 통합, main CI PENDING. [검증](../evidence/MID-AUDIT/F01/REPORT-R01-VERIFIED.md). GB R05 최신 PR 대조, [G01 R06 지시서](agent-orders/GB-02-G01-R06.md) 작성. GPT-07 미착수.
 
 - F01 R01 main 46090317180 SUCCESS 330 PASS, doc 46090317238 SUCCESS. F01 R02 2f6e78d04b328e3bb58e157f1623196f101fb796 후보 16 신규 methods, red 46091036843 346 tests/20 failed assertions. Green 46091098873/46091098810 및 doc 46091098801, [R02 보고](../evidence/MID-AUDIT/F01/REPORT-R02.md). main 코드 미변경, 출시 NO-GO.
+
+- F01 R03: 후보 Bootstrap 46091098873 SUCCESS 346 PASS; Domain 46091098810 SUCCESS 81 PASS; doc 46091098801 SUCCESS. 4 artifacts 직접 검사, XML/PNG 동일. 이전 main 46091179097 FAIL (HTTP 429). exact 6 paths 통합 및 [보고](../evidence/MID-AUDIT/F01/REPORT-R03.md); 통합 회귀 PENDING. F02 미착수.
+
+- F01 R04 종료: main 314782f0d7b8e7d7f70ed2ae3f45f543423e6a66, 46091554292/46091554286/46091554290 SUCCESS 346+81 PASS. 4 ZIP 직접 검사, 47 layout 및 4 APK material 자산 일치. F01 7개 자동 범위 해결. F02 읽기 전용 4개 재현, [보고](../evidence/MID-AUDIT/F01/REPORT-R04-FINAL.md).
+
+- F02 R01: 4개 결함 exact-blob 재현, red 46092069340 356/10 실패 assertions. 4c49ec4d2a97eb64f60e97a8d9997bea6e7c0377 6 paths, local focused green PASS, Linux 46092110757 host step SUCCESS, Windows 46092110752 full host PENDING, doc 46092110747 SUCCESS. [보고](../evidence/MID-AUDIT/F02/REPORT-R01.md). 후보 미통합.
+
+- F02 R02: R01 Linux 46092110757 및 Windows 46092110752 양쪽 SUCCESS 356 PASS, 3 ZIP/47 layout/4+4 APK 자산 검증. b867b097ec10fcd3f5569db089275536bed43bb6 basic 비번들 입력 통일 및 신규 5 tests; red Linux 361/4 실패 assertions, Windows red 양쪽 FAIL. Green Linux host SUCCESS/Android PENDING, Windows false 361 PASS/true PENDING, doc SUCCESS. [보고](../evidence/MID-AUDIT/F02/REPORT-R02.md). main 코드 미변경.

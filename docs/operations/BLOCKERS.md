@@ -37,3 +37,11 @@ F01 R01: AUD-R01-02/R03-02/R04-01/R04-03 수정 후보 구현, red 22 실패 재
 F01 R01 4개 ID 후보 자동 검증 PASS, main 통합 회귀 PENDING. G01 R06 첫 개선 지시서 준비, 외부 실행 미확인. [검증](../evidence/MID-AUDIT/F01/REPORT-R01-VERIFIED.md). 전체 39개 등록부 이력 유지; 해결 판정은 main CI 이후.
 
 F01 R01 main CI SUCCESS 330 PASS 및 소재 원본 hash 일치. F01 R02 AUD-R01-03/04/05 후보 구현, Red 20 실패 재현; 전체 Green 검증 및 main 통합 회귀 전 OPEN 유지. [보고](../evidence/MID-AUDIT/F01/REPORT-R02.md). GPT-07 금지.
+
+F01 R03: R02 후보 전체 CI 및 직접 artifact 검사 PASS, 6 경로 통합. main 회귀 전 3개 ID OPEN 유지. 이전 main 46091179097 Gradle Maven Central HTTP 429 FAIL; 새 통합 CI로 확인, 재발 시 제한 재실행. [보고](../evidence/MID-AUDIT/F01/REPORT-R03.md).
+
+F01 R04: 7개 F01 ID scoped RESOLVED. main Bootstrap 46091554292, Domain 46091554286, doc 46091554290 SUCCESS; 이전 HTTP 429 실패 이력 유지. F02 4개 재현 완료, Windows NOT RUN, 후보 검증 대기. [종료 보고](../evidence/MID-AUDIT/F01/REPORT-R04-FINAL.md). 제품/실기기 차단 유지.
+
+F02 R01 4개 ID 후보 구현/재현·focused local PASS. 실제 Linux full APK 및 Windows 두 matrix 최종 결과/원시 로그/아티팩트, 인접 basic 비번들 입력 경로 검토, 통합 회귀 전 OPEN. [보고](../evidence/MID-AUDIT/F02/REPORT-R01.md). 사용자 실기기 미실행.
+
+F02 R02: R01 전체 후보 CI/ZIP PASS. 추가 basic 비번들 경로 수정 후보, red 재현 및 일부 green 성공. 전체 Linux/Windows, 아티팩트, 통합 main 회귀 전 4개 F02 ID OPEN. [보고](../evidence/MID-AUDIT/F02/REPORT-R02.md).

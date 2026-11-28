@@ -4,15 +4,15 @@
 | 항목 | 현재 값 |
 |---|---|
 | 정본 | main |
-| 최종 검증 코드 | 53d43d918c3e3c1002b70473f5de843c0f946d8e |
-| main 회귀 | [46083911786](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46083911786) SUCCESS 316 PASS/0 FAIL/0 SKIP; [46083911794](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46083911794) SUCCESS 7 PASS/12개 문서 |
+| 최종 검증 코드 | 314782f0d7b8e7d7f70ed2ae3f45f543423e6a66 |
+| main 회귀 | [46091554292](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46091554292) SUCCESS 346 PASS; [46091554286](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46091554286) SUCCESS 81 PASS; [46091554290](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46091554290) SUCCESS |
 | GPT-06 | 독립 준비 종료·중단 / PARTIAL (실기기 및 동적 효과 미검증) |
 | GPT-04/05 | PARTIAL |
 | GPT-07 | NOT STARTED / 사용자 별도 승인 대기 |
 | 정식 WO GO | 0/38 |
 | GPT 묶음 GO | 3/12 (PARTIAL 독립 준비 종료는 GO에 포함하지 않음) |
 | 출시 | NO-GO |
-| 다음 행동 | F01 R02 후보 CI/증거 검증 → 안전 통합 → main 회귀 확인. GPT-07 및 실기기 설치는 별도 승인 대기. |
+| 다음 행동 | F02 R02 후보 Linux/Windows 최종 검증 → 아티팩트 확인 → 통합 조건 확인. GPT-07 및 실기기 설치는 별도 승인 대기. |
 
 ## 근거 및 이관
 - [GPT-06 전체 종료 보고](evidence/GPT-06/REPORT-FINAL-CLOSURE.md). R01~R06 및 OPS-07 독립 준비 산출물 통합·자동 검증 완료. 결합 후보와 main 코드·시험·자산·CI 102개, 보호 경로 38개 blob 동일. 원본 아카이브 8개 SHA 동일. 활성 8개 문서 500021→24609 B(검증 코드 기준).
@@ -25,7 +25,7 @@
 ## 중단
 사용자 요청에 따라 GPT-06 전체 독립 준비 종료 후 중단한다. GPT-07 착수 금지. PARTIAL 및 제품 NO-GO 유지.
 
-## 전체 중간 감사 — 조사 종료 / F01 진행
+## 전체 중간 감사 — F01 종료 / F02 진입
 [최종 보고](evidence/MID-AUDIT/REPORT-FINAL.md) · [통합 결함 등록부](evidence/MID-AUDIT/FINDINGS.md) · [후속 개선 계획](evidence/MID-AUDIT/REMEDIATION-PLAN.md) · [26개 요구사항 추적](evidence/MID-AUDIT/REQUIREMENTS-TRACE.md).
 - R01~R04 감사 보고와 증거를 유지한다. FINAL: GPT-06 대비 비문서 114/114 blob/mode 동일, 보존 ZIP 5/5 hash/CRC, Kotlin XML 17/162 cases, 외부 dependency 29/29 재검사.
 - 40개 ID→39개(중복 1), P1 12/P2 24/P3 1/정책 2. 해결 판정 전 전부 OPEN. 전체 감사 접근 가능 조사 종료, 실기기/보안 전체 검증 PARTIAL, 출시 NO-GO.
@@ -36,4 +36,12 @@
 
 - [F01 R01 후보 검증](evidence/MID-AUDIT/F01/REPORT-R01-VERIFIED.md): 330 PASS, 4 APK/메모리/서명/원본 XML·PNG SHA 일치. 다음 F01 R02 후보 검증. [GB-02 G01 R06 지시서](operations/agent-orders/GB-02-G01-R06.md): 사용자 전달용, 실행 확인 전; PR #3 HOLD. 기존 72/81 재시험 증거 보존.
 
-- [F01 R02](evidence/MID-AUDIT/F01/REPORT-R02.md): AUD-R01-03/04/05 후보 2f6e78d04b328e3bb58e157f1623196f101fb796; red 346 methods/20 실패 assertions 재현. Green Bootstrap 46091098873 PENDING, Domain 46091098810 PENDING, doc 46091098801 SUCCESS. 전체 증거 확인 전 main 통합 금지. GPT-07 미착수.
+- [F01 R02](evidence/MID-AUDIT/F01/REPORT-R02.md): AUD-R01-03/04/05 후보 2f6e78d04b328e3bb58e157f1623196f101fb796; red 346 methods/20 실패 assertions 재현. Green Bootstrap 46091098873 SUCCESS 346 PASS, Domain 46091098810 SUCCESS 81 PASS, doc 46091098801 SUCCESS. 후보 검증 완료. GPT-07 미착수.
+
+- [F01 R03](evidence/MID-AUDIT/F01/REPORT-R03.md): 후보 raw log 및 4 artifact 직접 무결성 검사 완료. 6개 exact blob main 통합, 통합 CI SUCCESS. 이전 main 46091179097 FAIL (Maven Central 429), doc 46091179110 SUCCESS. 의존성/검증 기준 유지. F01 자동 검증 GO, F02 진입.
+
+- [F01 R04 종료](evidence/MID-AUDIT/F01/REPORT-R04-FINAL.md): main 346 host/81 Domain PASS, doc SUCCESS, 4 ZIP 직접 검증, 47 layout/4 material XML·PNG 동일. F01 7개 검증 결함 해결(자동 범위). F02 4개 재현 및 후보 구현. 제품 NO-GO, GPT-07 미착수.
+
+- [F02 R01](evidence/MID-AUDIT/F02/REPORT-R01.md): 4c49ec4d2a97eb64f60e97a8d9997bea6e7c0377, 4개 개선 후보·10 신규 methods. Red 46092069340 356 methods/10 실패 assertions; focused local green PASS. Green Linux 46092110757 SUCCESS 356 PASS, Windows 46092110752 양쪽 SUCCESS 356 PASS, doc 46092110747 SUCCESS. 3 ZIP 직접 검증 완료. main 코드 미변경; F02 PARTIAL, 제품 NO-GO.
+
+- [F02 R02](evidence/MID-AUDIT/F02/REPORT-R02.md): 후보 b867b097ec10fcd3f5569db089275536bed43bb6; 기본 Signature 번들/비번들 committed snapshot 통일, 신규 5 methods. Red 46092424885 361 tests/4 실패 assertions; Windows red 양쪽 FAIL. Green Linux 46092446205 host SUCCESS/Android 진행 중, Windows 46092446130 false 361 PASS/true 진행 중, doc 46092446153 SUCCESS. 후보 미통합, 전체 검증 전 F02 PARTIAL. 제품 NO-GO.
