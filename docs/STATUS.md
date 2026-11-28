@@ -12,7 +12,7 @@
 | 정식 WO GO | 0/38 |
 | GPT 묶음 GO | 3/12 (PARTIAL 독립 준비 종료는 GO에 포함하지 않음) |
 | 출시 | NO-GO |
-| 다음 행동 | F02 R01 재현 시험 및 격리 후보 검증. GPT-07 및 실기기 설치는 별도 승인 대기. |
+| 다음 행동 | F02 R01 Linux/Windows 후보 CI 검증 → 인접 basic 비번들 입력 경로 검토 → 통합 조건 확인. GPT-07 및 실기기 설치는 별도 승인 대기. |
 
 ## 근거 및 이관
 - [GPT-06 전체 종료 보고](evidence/GPT-06/REPORT-FINAL-CLOSURE.md). R01~R06 및 OPS-07 독립 준비 산출물 통합·자동 검증 완료. 결합 후보와 main 코드·시험·자산·CI 102개, 보호 경로 38개 blob 동일. 원본 아카이브 8개 SHA 동일. 활성 8개 문서 500021→24609 B(검증 코드 기준).
@@ -40,4 +40,6 @@
 
 - [F01 R03](evidence/MID-AUDIT/F01/REPORT-R03.md): 후보 raw log 및 4 artifact 직접 무결성 검사 완료. 6개 exact blob main 통합, 통합 CI SUCCESS. 이전 main 46091179097 FAIL (Maven Central 429), doc 46091179110 SUCCESS. 의존성/검증 기준 유지. F01 자동 검증 GO, F02 진입.
 
-- [F01 R04 종료](evidence/MID-AUDIT/F01/REPORT-R04-FINAL.md): main 346 host/81 Domain PASS, doc SUCCESS, 4 ZIP 직접 검증, 47 layout/4 material XML·PNG 동일. F01 7개 검증 결함 해결(자동 범위). F02 4개 재현 성공, 후보 구현 전. 제품 NO-GO, GPT-07 미착수.
+- [F01 R04 종료](evidence/MID-AUDIT/F01/REPORT-R04-FINAL.md): main 346 host/81 Domain PASS, doc SUCCESS, 4 ZIP 직접 검증, 47 layout/4 material XML·PNG 동일. F01 7개 검증 결함 해결(자동 범위). F02 4개 재현 및 후보 구현. 제품 NO-GO, GPT-07 미착수.
+
+- [F02 R01](evidence/MID-AUDIT/F02/REPORT-R01.md): 4c49ec4d2a97eb64f60e97a8d9997bea6e7c0377, 4개 개선 후보·10 신규 methods. Red 46092069340 356 methods/10 실패 assertions; focused local green PASS. Green Linux 46092110757 host step SUCCESS/Android PENDING, Windows 46092110752 full host PENDING, doc 46092110747 SUCCESS. 인접 basic 비번들 입력 검토 필요. main 코드 미변경; F02 PARTIAL, 제품 NO-GO.
