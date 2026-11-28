@@ -50,4 +50,6 @@
 
 - GB R08 총괄 검토: 19 XML 99/81, 6 CI/8 jobs SUCCESS, 구현~최종 Intelligence diff 없음. [검토](../evidence/MID-AUDIT/GB-02-R08-REVIEW.md), [제한 보완](agent-orders/GB-02-G01-R08-CLOSEOUT.md); 3 가설 미실행, HOLD. R09 없음.
 
-- F03 R13: 466fc5f00064, 46109603011 SUCCESS, 664 ledger/48 exact bytes/48 .asc, ZIP 검증. [보고](../evidence/MID-AUDIT/F03/REPORT-R13.md). 서명/배포자 미승인; 공통 CI PENDING.
+- F03 R13: 466fc5f00064, 46109603011 SUCCESS, 664 ledger/48 exact bytes/48 .asc, ZIP 검증. [보고](../evidence/MID-AUDIT/F03/REPORT-R13.md). 서명/배포자 미승인; 공통 CI SUCCESS (R14 확인).
+
+- F03 R14: be0bd7b2be4c, 46109868360 정책상 FAIL, 6+10 시험 PASS; 48 bytes/18 VALID/30 차단, 12 공식 키 대조. [보고](../evidence/MID-AUDIT/F03/REPORT-R14.md). 증거 ZIP 검증, 제품 변경 없음.

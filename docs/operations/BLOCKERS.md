@@ -44,3 +44,5 @@ R11: AGP9.5.1/Gradle9.6.1 격리 후보 46103946447 8 builds PASS, 8 MATCH/9 IDs
 R12: [결과](../evidence/MID-AUDIT/F03/REPORT-R12-RESULT.md). AGP9.5.3 16 tasks PASS, 잔여 9 IDs 동일·CRITICAL OPEN. 제품 적용 금지; detached/실기기·trust/license OPEN. 동일 후보 반복 및 강제 전이 버전 적용 금지.
 
 R13: [보고](../evidence/MID-AUDIT/F03/REPORT-R13.md). 우선 48 exact bytes/.asc 확보; 기존 미확보 38개 바이트 보완(원본 sidecar는 여전히 430 UNAVAILABLE). 서명 검증·신뢰·라이선스 승인 0; 나머지 392 바이트 재확인 및 전체 범위 OPEN.
+
+R14: [보고](../evidence/MID-AUDIT/F03/REPORT-R14.md). 48 바이트 일치, 18 강한 서명 검증(12 공식 키 대조/6 발견 전용), 28 SHA-1/2 공개키 미확보 차단. 신뢰 승격 0; 독립 강한 출처, 서명자 승인, 전체 라이선스/392 바이트 범위 OPEN.
