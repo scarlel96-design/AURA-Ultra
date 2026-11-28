@@ -1,0 +1,43 @@
+name: Windows host reproducibility
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: windows-repro-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  host:
+    runs-on: windows-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        autocrlf: ['true', 'false']
+    steps:
+      - name: Set checkout line endings
+        run: git config --global core.autocrlf ${{ matrix.autocrlf }}
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Confirm checkout mode
+        shell: pwsh
+        run: |
+          $actual = git config --get core.autocrlf
+          if ($actual -ne '${{ matrix.autocrlf }}') { throw "Unexpected checkout mode: $actual" }
+          git check-attr eol -- assets/generated/bootstrap/palette.svg apps/watchface/src/main/res/raw/watchface.xml design-system/templates/bootstrap.xml.tmpl
+          git --version
+          python --version
+      - name: Verify bootstrap and independent reproduction
+        shell: pwsh
+        run: |
+          python tools/generate_bootstrap.py --check
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python tools/check_bootstrap_reproduction.py
+      - name: Verify layout reproduction
+        run: python tools/check_layout_reproduction.py
+      - name: Full host regression suite
+        run: python -m unittest discover -s tests/unit -p 'test_*.py' -v

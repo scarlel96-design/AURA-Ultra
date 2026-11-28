@@ -8,8 +8,9 @@ import tempfile
 import zipfile
 from pathlib import Path
 
-from generate_bootstrap import ROOT, FACE, TOKENS, TEMPLATE, parse_tokens, render_face
+from generate_bootstrap import ROOT, FACE, TOKENS, TEMPLATE, parse_tokens, render_face, safe_path
 from profile_contract import enabled_profiles, face_source, check_source_sets, debug_apk
+from committed_build_inputs import clean_commit, copy_committed_inputs
 
 OVERRIDE = "apps/watchface/src/wff4/res/raw/watchface.xml"
 FILES = ("settings.gradle.kts", "build.gradle.kts", "gradle.properties", "gradlew", "gradlew.bat")
@@ -76,18 +77,22 @@ def require_mismatch(output):
 
 
 def main():
+    source = clean_commit(ROOT)
     common = (ROOT / FACE).read_bytes()
     if (ROOT / OVERRIDE).exists():
         raise ValueError("Test requires the original common-only bootstrap")
     with tempfile.TemporaryDirectory(prefix="aura-flavor-") as directory:
         root = Path(directory)
-        for name in FILES:
-            shutil.copy2(ROOT / name, root / name)
-        for name in DIRECTORIES:
-            shutil.copytree(ROOT / name, root / name, ignore=shutil.ignore_patterns("__pycache__"))
-        shutil.copy2(ROOT / "apps/watchface/build.gradle.kts", root / "apps/watchface/build.gradle.kts")
-        # Reuse verified JAR bytes. The shared wrappers check their pinned hashes again.
-        shutil.copytree(ROOT / ".aura-tools", root / ".aura-tools")
+        count = copy_committed_inputs(ROOT, root, source,
+                                      FILES + ("apps/watchface/build.gradle.kts",), DIRECTORIES)
+        if (root / FACE).read_bytes() != common or (root / OVERRIDE).exists():
+            raise ValueError("Committed flavor input mismatch")
+        print(f"FLAVOR_COMMITTED_INPUTS {source} {count}", flush=True)
+        # Reuse only the two named JARs. Their wrappers verify pinned digests.
+        (root / ".aura-tools").mkdir()
+        for name in ("wff-validator.jar", "memory-footprint.jar"):
+            path = ".aura-tools/" + name
+            shutil.copy2(safe_path(ROOT, path), root / path)
         run(root, "generate_bootstrap.py", "--check")
         override = make_override(root)
         path = root / OVERRIDE
@@ -107,7 +112,7 @@ def main():
         verify_matrix(root, common, override)
         if (root / FACE).read_bytes() != common:
             raise ValueError("Common face changed inside the isolated project")
-    if (ROOT / FACE).read_bytes() != common or (ROOT / OVERRIDE).exists():
+    if clean_commit(ROOT) != source or (ROOT / FACE).read_bytes() != common or (ROOT / OVERRIDE).exists():
         raise ValueError("Product source changed")
     print("PASS: generated WFF4 override isolated; all four APKs verified; stale source rejected; product unchanged")
 
