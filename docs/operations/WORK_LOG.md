@@ -58,6 +58,6 @@
 
 - F03 R11: 6a651984c3e3377b5cf15baf8d175cf5e26a38d8 AGP9.5.1/Gradle9.6.1 scratch 후보, 46103946447 focused PASS/8 builds PASS, 197 OSV/9 IDs, ZIP 검증; [결과](../evidence/MID-AUDIT/F03/REPORT-R11-RESULT.md). [보고](../evidence/MID-AUDIT/F03/REPORT-R11.md). R10 전체 CI SUCCESS. 제품 미변경.
 
-- F03 R12: R11 ZIP/원시 CI 재검증, 9 권고 패치 기준, AGP9.5.3 audit a1158e8b430c 및 lint/UTP coverage gate. CI 미확인. [착수](../evidence/MID-AUDIT/F03/REPORT-R12-START.md).
+- F03 R12: a1158e8b430c, 46108927818 16 tasks PASS, 9 IDs 잔여·gate FAIL; 4 공통 jobs SUCCESS. ZIP 대조. [결과](../evidence/MID-AUDIT/F03/REPORT-R12-RESULT.md).
 
 - GB R08 총괄 검토: 19 XML 99/81, 6 CI/8 jobs SUCCESS, 구현~최종 Intelligence diff 없음. [검토](../evidence/MID-AUDIT/GB-02-R08-REVIEW.md), [제한 보완](agent-orders/GB-02-G01-R08-CLOSEOUT.md); 3 가설 미실행, HOLD. R09 없음.

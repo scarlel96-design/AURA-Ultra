@@ -41,4 +41,4 @@ R10: 52 권고 상세 확인, CRITICAL 3/HIGH 21; Portal marker 기존 hash 일�
 
 R11: AGP9.5.1/Gradle9.6.1 격리 후보 46103946447 8 builds PASS, 8 MATCH/9 IDs, CRITICAL 잔여; 새 UTP/lint/detached coverage와 trust OPEN. [결과](../evidence/MID-AUDIT/F03/REPORT-R11-RESULT.md). [보고](../evidence/MID-AUDIT/F03/REPORT-R11.md).
 
-R12: [착수](../evidence/MID-AUDIT/F03/REPORT-R12-START.md). AGP9.5.3 후보 CI/OSV 및 lint 미확인. detached/실기기·trust OPEN; 강제 전이 버전 적용 금지.
+R12: [결과](../evidence/MID-AUDIT/F03/REPORT-R12-RESULT.md). AGP9.5.3 16 tasks PASS, 잔여 9 IDs 동일·CRITICAL OPEN. 제품 적용 금지; detached/실기기·trust/license OPEN. 동일 후보 반복 및 강제 전이 버전 적용 금지.
