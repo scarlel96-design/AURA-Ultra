@@ -14,7 +14,9 @@ PRE-FLIGHT: PASS. 시작 시점 `origin/main`은 `860b51d4f26abf44aa1608fc121847
 
 CI head `8969a7e915ce6bb409e9a45c6da787ca0fa187ba`를 확인한 뒤 `origin/main`은 `50b946d03ea118c3ad1f5a81bbf2930ba73ff9ad`로 이동했다. 차이는 중앙 문서와 F02/F03 증거뿐이다. 같은 세 경로와 겹치지 않아 병합 커밋 `f43e1510d7041361b1e1cd7e0dfcebb6386fcc6a`로만 반영했다. 들어온 파일은 수정하지 않았다. 로컬 `python tools/check_doc_budget.py`는 exit 0이다. 그 병합 시점 STATUS의 다음 행동은 `F03 R01 최종 후보 CI·아티팩트 확인 → 통합 회귀 → Gradle 검증/잠금. GPT-07 및 실기기 설치는 별도 승인 대기.`다. 그 문장을 바꾸지 않았다.
 
-head `9163cbae6e2892343c30df0a5da84d6f06d582bb`의 CI를 확인한 뒤 `origin/main`은 `56db9192add22b7fef279dc6f4831516d7f00c32`로 이동했다. 차이는 다섯 워크플로의 Action pin, 중앙 문서, F03 증거, `tests/unit/test_f03_r01.py`다. `modules/intelligence`, `modules/domain` 소스, `docs/evidence/GB-02`와 겹치지 않아 병합 커밋 `ede0cfda8f3f930d318763b4af01926ad9f2f9bb`로만 반영했다. 들어온 파일은 수정하지 않았다. 로컬 문서 예산은 exit 0이다. 로컬 호스트는 370개 중 368 PASS, 1 FAIL, 1 ERROR다. 추가된 시험은 PASS다. 현재 STATUS의 다음 행동은 `F03 pin/checkout 통합 CI 확인 → Gradle 검증/잠금. GPT-07 및 실기기 설치는 별도 승인 대기.`다. 그 문장을 바꾸지 않는다.
+head `9163cbae6e2892343c30df0a5da84d6f06d582bb`의 CI를 확인한 뒤 `origin/main`은 `56db9192add22b7fef279dc6f4831516d7f00c32`로 이동했다. 차이는 다섯 워크플로의 Action pin, 중앙 문서, F03 증거, `tests/unit/test_f03_r01.py`다. `modules/intelligence`, `modules/domain` 소스, `docs/evidence/GB-02`와 겹치지 않아 병합 커밋 `ede0cfda8f3f930d318763b4af01926ad9f2f9bb`로만 반영했다. 들어온 파일은 수정하지 않았다. 로컬 문서 예산은 exit 0이다. 로컬 호스트는 370개 중 368 PASS, 1 FAIL, 1 ERROR다. 추가된 시험은 PASS다. 그 병합 시점 STATUS의 다음 행동은 `F03 pin/checkout 통합 CI 확인 → Gradle 검증/잠금. GPT-07 및 실기기 설치는 별도 승인 대기.`다. 그 문장을 바꾸지 않았다.
+
+Action pin head `a1d1933391749ea65e07c1030f28c739f07fa1bc`의 CI를 확인한 뒤 `origin/main`은 `f0a5b3c6e3b789607c6d0e4f1640f7a9d9eb1397`로 이동했다. 차이는 중앙 문서와 `docs/evidence/MID-AUDIT/F03/REPORT-R03.md`뿐이다. `modules/intelligence`, `modules/domain` 소스, `docs/evidence/GB-02`와 겹치지 않아 병합 커밋 `a3aaebeae8cd9277c18cab42b3a8b4fc9c0bee67`로만 반영했다. 들어온 파일은 수정하지 않았다. 로컬 `python tools/check_doc_budget.py`는 exit 0이다. 이 병합은 워크플로와 시험을 바꾸지 않는다. 기록 커밋은 `[skip ci]`라서 이 병합의 GitHub 실행은 없다. 현재 STATUS의 다음 행동은 `F03 R03 Gradle 격리 inventory 결과/원본 hash 검토 → strict 검증/잠금. GPT-07 및 실기기 설치는 별도 승인 대기.`다. 그 문장을 바꾸지 않는다.
 
 작업 목표: AUD-R02-01, AUD-R02-05, AUD-R02-08, AUD-R01-06만 고친다. R05의 72개 intelligence 시험, 81개 domain 시험, 시드 `20261128`의 100000회 전이, `reasonCodes` 불변화는 유지한다. 공통 CI, domain, WFF, 중앙 문서는 수정하지 않는다.
 
@@ -90,7 +92,20 @@ Bootstrap step 12 `Validation tool regression tests`, step 22 `Isolated Signatur
 | Windows host reproducibility | push | 46094327659 | 140822110917 `host (true)`, 140822111158 `host (false)` | 11, 11 | https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46094327659 |
 | Windows host reproducibility | pull_request | 46094332617 | 140822127444 `host (true)`, 140822127598 `host (false)` | 11, 11 | https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46094332617 |
 
-Action pin 병합 `ede0cfda8f3f930d318763b4af01926ad9f2f9bb`는 워크플로를 바꾸므로 이 기록 커밋에는 `[skip ci]`를 넣지 않는다. 그 head의 실행 ID는 확인 뒤에 추가한다.
+Action pin을 포함한 head `a1d1933391749ea65e07c1030f28c739f07fa1bc`도 모든 step conclusion이 success다. `BAD`는 0이다.
+
+| 워크플로 | 이벤트 | run | job | steps | URL |
+|---|---|---|---|---|---|
+| AURA Bootstrap | push | 46094936329 | 140824021873 | 31 | https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46094936329 |
+| AURA Bootstrap | pull_request | 46094940196 | 140824033816 | 31 | https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46094940196 |
+| Active documentation budget | push | 46094936501 | 140824022291 | 9 | https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46094936501 |
+| Active documentation budget | pull_request | 46094940210 | 140824033689 | 9 | https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46094940210 |
+| Domain Kotlin | push | 46094936323 | 140824021701 | 13 | https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46094936323 |
+| Historical WFF packaging reproduction | push | 46094936280 | 140824021315 | 13 | https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46094936280 |
+| Windows host reproducibility | push | 46094936363 | 140824021992 `host (true)`, 140824022267 `host (false)` | 12, 12 | https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46094936363 |
+| Windows host reproducibility | pull_request | 46094940351 | 140824034402 `host (true)`, 140824034211 `host (false)` | 12, 12 | https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46094940351 |
+
+Bootstrap step 13 `Validation tool regression tests`, step 23 `Isolated Signature basic display without bundle`, Domain Kotlin step 8 `Validate JUnit evidence`, Windows step 9 `Full host regression suite`는 success다. Domain Kotlin과 Historical WFF의 pull_request는 경로 필터상 시작하지 않았다. 중앙 문서 병합 `a3aaebeae8cd9277c18cab42b3a8b4fc9c0bee67`의 GitHub 실행은 없다.
 
 ## G0~G7
 
@@ -102,7 +117,7 @@ Action pin 병합 `ede0cfda8f3f930d318763b4af01926ad9f2f9bb`는 워크플로를 
 | G3 | PASS | intelligence 82, domain 81, 100000회 1메서드. FAIL 0, ERROR 0, SKIP 0. |
 | G4 | PASS, 제한 | 데이터/FSM의 TTL과 권한 사유를 분리했다. 실기기·공급원은 NOT RUN. |
 | G5 | PASS, 자기 재검토 | 독립 검토자는 NOT RUN. 열린 P0/P1은 이 변경에 없다. |
-| G6 | PASS, Action pin head의 CI는 별도 | 코드 SHA `14328ae`. CI head `8969a7e`와 문서 병합 head `9163cba`의 bootstrap 30, 문서 예산 8, Windows 11 steps는 success. `8969a7e`의 Domain Kotlin push 12 steps도 success다. Action pin 병합 `ede0cfd`의 실행 ID는 그 push 뒤에 추가한다. 제품 GO로 올리지 않음. |
+| G6 | PASS | 코드 SHA `14328ae`. CI head `8969a7e`, `9163cba`, Action pin head `a1d1933`의 위 실행은 step success다. 그 뒤 중앙 문서 병합 `a3aaebe`는 로컬 문서 예산 exit 0이고 GitHub 실행은 없다. 제품 GO로 올리지 않음. |
 | G7 | PASS, 제한 | 중앙 STATUS/WORK_LOG/BLOCKERS는 수정하지 않았다. 제안만 아래에 둔다. |
 
 최종 판정: 독립 모듈 통합 후보. 기존 72개와 domain 81개를 유지하고 신규 10개 메서드가 통과했다. intelligence와 domain은 FAIL 0, ERROR 0, SKIP 0이다. 100000회 불변 조건 위반은 0이다. 담당 경로 위반은 0이다. 공통 워크플로는 수정하지 않았고 main으로는 병합하지 않았다. 최신 main은 이 브랜치로만 병합했다.
@@ -122,7 +137,7 @@ Action pin 병합 `ede0cfda8f3f930d318763b4af01926ad9f2f9bb`는 워크플로를 
 
 ## 중앙 문서 제안
 
-- STATUS: 현재 다음 행동인 F03 pin/checkout 통합 CI 확인을 빼지 않는다. GB-02 PR #3 회차 06은 로컬 intelligence 82 PASS, domain 81 PASS, CI head `8969a7e`와 `9163cba`의 bootstrap·문서 예산·Windows 재현이 success, 실기기와 intelligence 모듈 CI는 NOT RUN, 제품 NO-GO, PR은 미병합이라고 한 줄 추가할 수 있다.
+- STATUS: 현재 다음 행동인 F03 R03 Gradle 격리 inventory 검토를 빼지 않는다. GB-02 PR #3 회차 06은 로컬 intelligence 82 PASS, domain 81 PASS, CI head `a1d1933`의 bootstrap·문서 예산·Domain Kotlin push·Windows 재현·Historical WFF push가 success, 실기기와 intelligence 모듈 CI는 NOT RUN, 제품 NO-GO, PR은 미병합이라고 한 줄 추가할 수 있다.
 - WORK_LOG: 같은 한 줄을 추가할 수 있다.
 - BLOCKERS: 변경하지 않는다. R07 후보와 GB02-R05-ASYNC는 이 보고서의 차단점이다.
 - FINDINGS: 총괄이 네 ID의 해결 증거를 이 보고서와 맞춘 뒤에만 상태를 바꾼다.
