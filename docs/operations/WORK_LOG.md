@@ -33,3 +33,5 @@
 - RV01-CLOSEOUT 558e188→68f52eb: red 2 FAIL, green 22 XML 102/108, 15 CI SUCCESS, 3 Domain 원본 로그 대조; C1/C2 범위 GO·독립 종료. [RV02](agent-orders/GB-02-RV02.md) 격리 데이터 경계 후보 준비, 사용자 전달 대기. HOLD 유지.
 
 - RV02 로컬 보고 dbacc75→a611bda, 124/102·100000 PASS(미독립 확인). [CI 등록](../evidence/MID-AUDIT/RV02-CI/REPORT.md) 고정 108/124, RV01 26 blob overlay, 신규 자체 시험 10 PASS·YAML 구조 확인. main CI 대기; 원격 제출 전 확인.
+
+- RV02 75c9ab4 검수: 23 XML 102/124, 29 Intelligence blob 동일, 16 CI SUCCESS, 실제 composite 로그 3건. [검수](../evidence/MID-AUDIT/RV02-REVIEW.md) 3 경계 보완, PARTIAL. [마감](agent-orders/GB-02-RV02-CLOSEOUT.md) 사용자 전달 대기.
