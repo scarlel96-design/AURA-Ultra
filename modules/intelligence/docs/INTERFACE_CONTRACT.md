@@ -91,9 +91,11 @@ Wear Services, WFF 렌더링, 실제 공급원 연결, 실기기, 배터리 측�
 
 ## 보호 수신 경계
 
-`ProtectedBoundary`는 `step` 밖에 있는 순수 후보다. 기계 상태, `deliveredIntent`, 전달 epoch, AOD, 그래픽 제한, 정책 임계값을 바꾸지 않는다. 설정된 합성 scope와 stream만 받는다. 수신은 `AuthorityCoordinator.permits`가 기대 scope와 기대 요청을 모두 통과할 때만 capability와 그 관측 인스턴스를 한 슬롯에 묶는다. 최종 `read`와 `commit`이 같은 검사를 다시 한다. 공개 타입을 직접 구현한 기록, 다른 scope로의 재부착, 이전 generation의 지연 결과는 공개하지 않는다.
+`ProtectedBoundary`는 `step` 밖에 있는 순수 후보다. 기계 상태, `deliveredIntent`, 전달 epoch, AOD, 그래픽 제한, 정책 임계값을 바꾸지 않는다. 설정된 합성 scope와 stream만 받는다. `begin`이 현재 capability, 기대 scope, 기대 요청에 순서를 묶는다. 호출자는 순서 숫자를 넘기지 못한다. `accept`는 그 영수증을 한 번만 소모하고, 신뢰된 어댑터가 `CURRENT`로 표시한 결과만 대기열에 둔다. `HISTORICAL`과 `UNKNOWN`은 거절한다. 시각으로 출처를 추정하지 않는다. 실제 SDK 출처 증명은 어댑터 의무다.
 
-스트림 `ERROR`와 `UNAVAILABLE`은 그 슬롯만 지우고 순서 울타리를 올린다. 권한 generation은 바꾸지 않는다. 권한 무효화는 coordinator generation을 돌리고 그 scope의 슬롯을 비운다. 재허가 뒤에도 이전 기록은 공개되지 않는다. 재허가 이전 이력 공개 함수는 없다. 누락 값을 0으로 바꾸지 않는다. `FORECAST`와 TTL 만료는 권한 상태가 아니다. 슬롯은 설정한 stream마다 하나다. capability 목록은 쌓지 않는다. 순서가 `Long.MAX_VALUE`를 넘기려 하면 잠그고 감싸지 않는다.
+대기 영수증에는 페이로드가 없다. `commit`과 `read`는 호출자가 준 `referenceTime`으로 신선도와 시계 후퇴를 다시 본다. 만료 시각과 같거나 그 이후, 또는 수신 시각보다 이른 시각이면 그 스트림의 대기 값과 공개 값을 함께 철회한다. 더 오래된 값으로 대체하지 않는다. TTL 철회는 권한 generation을 바꾸지 않는다. 시스템 시계는 읽지 않는다.
+
+스트림 `ERROR`와 `UNAVAILABLE`은 그 슬롯의 대기 값과 공개 값을 지우고 순서 울타리를 올린다. 권한 generation은 바꾸지 않는다. 장애 전의 같은 acquisition은 다시 시작할 수 없고, 회복은 새 acquire가 필요하다. 권한 무효화는 coordinator generation을 돌리고 그 scope의 슬롯을 비운다. coordinator를 직접 무효화한 경우에도 최종 검사가 같은 scope의 대기 값과 공개 값을 함께 지운다. 다른 scope는 남긴다. 이미 사라진 영수증을 다시 `commit`하면 거절이며, 더 새로운 공개 값을 지우거나 권한 철회로 표시하지 않는다. 재허가 이전 이력 공개 함수는 없다. 누락 값을 0으로 바꾸지 않는다. `FORECAST`는 권한 상태가 아니다. 슬롯은 설정한 stream마다 하나다. acquisition 목록은 쌓지 않고, 슬롯은 마지막으로 시작한 acquisition 번호만 기억한다. 순서가 `Long.MAX_VALUE`를 넘기려 하면 잠그고 감싸지 않는다.
 
 이 경계의 시험은 등록된 Intelligence 108개에 포함되지 않는다. 108개의 식별자와 기대는 유지한다. 공통 검사기 등록 전에 이 수량을 등록된 수량으로 말하지 않는다.
 
