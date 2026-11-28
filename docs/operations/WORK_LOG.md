@@ -39,3 +39,5 @@
 - RV02-CLOSEOUT 8dd1c7c→7501dcf: red 5 FAIL, green 23 XML 102/124, 8 CI SUCCESS, 2 실제 복합 로그 대조. 재현 수정 검수 완료, 독립 개발 중지/PARTIAL. [잔여 계약 및 통합 인계](../evidence/MID-AUDIT/RV02-REVIEW.md); 승인 전 인수·병합 금지.
 
 - F04 AUD-R04-08: [문서 정정](../evidence/MID-AUDIT/F04/REPORT-DOC.md) ADR-007 WFF2~5 ID/최소 API, BUILD_GUIDE 생성기·Python3.12·역사 기준선 정정. 제품 변경 0; CI 대기. AUD-R03-01/F03 차단 유지.
+
+- AUD-R04-08 GO: ca008a7 공통 3 CI/4 jobs SUCCESS, Linux·Windows 402×3 host PASS, doc 7 PASS. 감사 14/16. [F03 로컬 인계](agent-orders/CODEX-F03-HANDOFF.md) 사용자 승인 대기; F04 구현 차단, PR HOLD.
