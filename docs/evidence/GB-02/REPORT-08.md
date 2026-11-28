@@ -4,7 +4,7 @@
 
 일자: 2026-11-28. 작업자: Grok Build. 검토자: 없음. G5는 자기 재검토다.
 
-기준 브랜치: `agent/grok/GB-02`. 기준 구현: `aacc744ef5844632c8b7ac588532fcf6441e8f88`. 이번 구현 SHA: `671e999d668811ee402042e692bda7293bba24d2`. CI head: `1f6d9605b59670a3489a0a76746c857e7fc7cf99`. 증거 커밋 SHA는 이 문서를 담은 커밋을 기록 커밋에서 가리킨다. 기록 커밋은 `[skip ci]`이고 `modules/intelligence`를 바꾸지 않는다. 확인은 `git diff 671e999d668811ee402042e692bda7293bba24d2 -- modules/intelligence`가 비어 있는지로 한다.
+기준 브랜치: `agent/grok/GB-02`. 기준 구현: `aacc744ef5844632c8b7ac588532fcf6441e8f88`. 이번 구현 SHA: `671e999d668811ee402042e692bda7293bba24d2`. 원시 로그와 CI 표를 담은 증거 커밋은 `cedc2f36022f7e8dbc0154b12fd77319036551be`다. 그 커밋과 이 문장을 더한 기록 커밋은 `[skip ci]`이고 `modules/intelligence`를 바꾸지 않는다. 확인은 `git diff 671e999d668811ee402042e692bda7293bba24d2 -- modules/intelligence`가 비어 있는지로 한다. CI head는 `1f6d9605b59670a3489a0a76746c857e7fc7cf99`다.
 
 PRE-FLIGHT: PASS. 작업 시작 HEAD는 `2389ea1a3e857515cf312938cafc9c45def35e9f`다. `origin/main`은 `c8541f504b2417f5680c5358f476f1ba3383ccdd`였고 차이는 중앙 문서와 R08 지시서뿐이라 병합 `8df2ac8`로만 반영했다. 푸시 직전 `origin/main`은 `9eb0c86`이고 F03 R11 문서뿐이라 병합 `1f6d9605b59670a3489a0a76746c857e7fc7cf99`로만 반영했다. `modules/intelligence`, `modules/domain`, `.github`, `tools`, Gradle과 겹치지 않았다. 들어온 파일은 수정하지 않았다. 같은 기준에서 `AGENTS.md`, `docs/STATUS.md`, `RESUME_PROTOCOL.md`, `PROJECT_INVARIANTS.md`, `TASK_RECORD_PROTOCOL.md`, `VERIFICATION_PROTOCOL.md`, `TASK_REPORT_TEMPLATE.md`, `GPT_EXECUTION_PLAN.md`, `BLOCKERS.md`, `WORK_LOG.md`, `GB-02-G01-R08.md`, R07 계약·가정·빌드 문서와 `Machine.kt`를 읽었다. PR #3은 OPEN이고 HEAD는 푸시 전 `2389ea1`이었다. 현재 STATUS의 다음 행동은 F03 R11 이후의 공급망 검토와 GPT-07 승인 대기다. 그 문장을 바꾸지 않는다.
 
