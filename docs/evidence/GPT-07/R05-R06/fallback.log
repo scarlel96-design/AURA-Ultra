@@ -1,0 +1,10 @@
+PASS freshOfflineCandidate
+PASS staleExplicitOnly
+PASS absentUnknownAndInvalidNotEligible
+PASS protectedAndUnknownNeverEligible
+PASS denialAndSecurityBlockFresh
+PASS invalidPermanentUnknownBlockStale
+PASS transientCausesPreserved
+PASS noImplicitRenewal
+PASS exhaustiveDecisionMatrix
+CACHE_RESULT 9 PASS / 0 FAIL; matrix=300
