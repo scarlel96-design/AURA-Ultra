@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Negative Fixture 6: WFF 5 Stroke join="ROUND" and Font minSize="14" leaked into WFF 2/3/4. -->
+<WatchFace width="450" height="450">
+    <Scene backgroundColor="#FF000000">
+        <Group name="ActiveDecoration" x="0" y="0" width="450" height="450">
+            <Variant mode="AMBIENT" target="alpha" value="0" />
+            <PartDraw x="0" y="0" width="450" height="450">
+                <Ellipse x="15" y="15" width="420" height="420">
+                    <Stroke color="#FF314B60" thickness="2" join="ROUND" />
+                </Ellipse>
+            </PartDraw>
+            <PartText x="145" y="52" width="160" height="28">
+                <Text align="CENTER">
+                    <Font family="SYNC_TO_DEVICE" size="16" minSize="14" color="#FF79D4F2">AURA ULTRA</Font>
+                </Text>
+            </PartText>
+        </Group>
+        <DigitalClock x="40" y="131" width="370" height="118">
+            <TimeText x="0" y="0" width="370" height="118" format="hh:mm" hourFormat="SYNC_TO_DEVICE" align="CENTER">
+                <Font family="SYNC_TO_DEVICE" size="96" color="#FFF3F7FA" />
+            </TimeText>
+        </DigitalClock>
+    </Scene>
+</WatchFace>

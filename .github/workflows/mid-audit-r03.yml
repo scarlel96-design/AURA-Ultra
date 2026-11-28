@@ -1,0 +1,63 @@
+name: Mid-audit R03 graphics and compatibility
+on:
+  push:
+    branches: [audit-mid-r03]
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify exact audit baseline and copied source
+        run: |
+          git merge-base --is-ancestor c12556d862dcc261253a72c2c3b0189e0a3d57bc HEAD
+          test -z "$(git diff c12556d862dcc261253a72c2c3b0189e0a3d57bc HEAD -- tools apps modules design-system assets tests/unit)"
+          python - <<'PY'
+          import json, subprocess
+          from pathlib import Path
+          manifest=json.loads(Path("tests/audit/R03/ag-blobs.json").read_text())
+          for name, sha in manifest.items():
+              actual=subprocess.check_output(["git","hash-object",name],text=True).strip()
+              assert actual==sha,(name,actual,sha)
+          print("AUDIT_AG_BLOBS",len(manifest),"match")
+          PY
+          mkdir -p audit-results
+      - name: Host regression
+        run: |
+          set -o pipefail
+          python -m unittest discover -s tests/unit -p 'test_*.py' -v 2>&1 | tee audit-results/host.log
+      - name: Official pinned validator
+        run: |
+          set -o pipefail
+          python tools/verify_wff.py 2>&1 | tee audit-results/main-schema.log
+      - name: AG-01 full regression including real schema matrix
+        run: |
+          set -o pipefail
+          python -m unittest discover -s tests/compatibility/ag-01 -p 'test_*.py' -v 2>&1 | tee audit-results/ag.log
+      - name: New audit observation probes
+        if: always()
+        run: |
+          set -o pipefail
+          mkdir -p audit-results
+          python tests/audit/R03/probes.py audit-results/results.json 2>&1 | tee audit-results/probes.log
+      - name: Upload audit evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mid-audit-r03-evidence
+          path: |
+            audit-results/
+            tests/audit/R03/
+          if-no-files-found: error

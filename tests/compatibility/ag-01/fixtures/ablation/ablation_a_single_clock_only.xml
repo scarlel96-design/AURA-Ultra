@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  AG-01 Controlled Ablation A (WFF 4):
+  Identical ActiveDecoration (Gyro + 4 Transform Animations) as poc_wff4_motion_triggers.xml,
+  with 1 DigitalClock (format="hh:mm") and 0 AOD-visible PartText nodes.
+-->
+<WatchFace width="450" height="450">
+    <Metadata key="CLOCK_TYPE" value="DIGITAL" />
+    <Metadata key="PREVIEW_TIME" value="10:08:00" />
+    <Scene backgroundColor="#FF000000">
+        <Group name="ActiveDecoration" x="0" y="0" width="450" height="450" alpha="255">
+            <Variant mode="AMBIENT" target="alpha" value="0" startOffset="0.05" duration="0.80" interpolation="EASE_OUT" />
+
+            <Group name="ParallaxRingLayer" x="0" y="0" width="450" height="450">
+                <Gyro x="clamp([ACCELEROMETER_ANGLE_X], -30, 30) * 0.12"
+                      y="clamp([ACCELEROMETER_ANGLE_Y], -30, 30) * 0.12"
+                      angle="clamp([ACCELEROMETER_ANGLE_X], -30, 30) * 0.08"
+                      alpha="clamp(210 + [ACCELEROMETER_ANGLE_XY] * 0.5, 160, 255)" />
+                <PartDraw x="0" y="0" width="450" height="450" blendMode="SCREEN">
+                    <Ellipse x="15" y="15" width="420" height="420">
+                        <Stroke color="#FF314B60" thickness="2" />
+                    </Ellipse>
+                    <Arc centerX="225" centerY="225" width="404" height="404" startAngle="310" endAngle="50" direction="CLOCKWISE">
+                        <Stroke color="#FF79D4F2" thickness="3" cap="ROUND" />
+                    </Arc>
+                </PartDraw>
+            </Group>
+
+            <PartDraw name="EventTriggeredGraphics" x="0" y="0" width="450" height="450">
+                <Arc centerX="225" centerY="225" width="412" height="412" startAngle="0" endAngle="0" direction="CLOCKWISE">
+                    <Transform target="endAngle" value="clamp([STEP_PERCENT], 0, 100) * 3.6">
+                        <Animation duration="0.40" interpolation="EASE_OUT" fps="30" repeat="0" />
+                    </Transform>
+                    <Stroke color="#FF81D7AF" thickness="4" cap="ROUND" />
+                </Arc>
+                <RoundRectangle x="85" y="252" width="280" height="44" cornerRadiusX="22" cornerRadiusY="22">
+                    <Transform target="width" value="[BATTERY_CHARGING_STATUS] == 1 ? 296 : 280">
+                        <Animation duration="0.65" interpolation="EASE_IN_OUT" repeat="0" />
+                    </Transform>
+                    <Transform target="x" value="[BATTERY_CHARGING_STATUS] == 1 ? 77 : 85">
+                        <Animation duration="0.65" interpolation="EASE_IN_OUT" repeat="0" />
+                    </Transform>
+                    <Fill color="#FF101E2A" />
+                    <Stroke color="#FF314B60" thickness="2">
+                        <Transform target="color" value="[BATTERY_CHARGING_STATUS] == 1 ? #FF81D7AF : ([STEP_PERCENT] &gt;= 100 ? #FF79D4F2 : #FF314B60)">
+                            <Animation duration="0.75" interpolation="EASE_IN_OUT" repeat="0" />
+                        </Transform>
+                    </Stroke>
+                </RoundRectangle>
+            </PartDraw>
+
+            <PartText x="90" y="90" width="270" height="34">
+                <Text align="CENTER">
+                    <Font family="SYNC_TO_DEVICE" size="22" color="#FFA9BACB">
+                        <Template>%s.%s · %s<Parameter expression="[MONTH_Z]" /><Parameter expression="[DAY_Z]" /><Parameter expression="[DAY_OF_WEEK_S]" /></Template>
+                    </Font>
+                </Text>
+            </PartText>
+            <PartText x="95" y="258" width="260" height="32">
+                <Text align="CENTER">
+                    <Font family="SYNC_TO_DEVICE" size="20" color="#FF79D4F2">
+                        <Template>BAT %s%% · STEP %s%%<Parameter expression="[BATTERY_PERCENT]" /><Parameter expression="[STEP_PERCENT]" /></Template>
+                    </Font>
+                </Text>
+            </PartText>
+        </Group>
+
+        <Group name="FluidClockContainer" x="40" y="131" width="370" height="118" pivotX="0.5" pivotY="0.5" scaleX="1.0" scaleY="1.0">
+            <Variant mode="AMBIENT" target="y" value="166" startOffset="0.00" duration="0.85" interpolation="EASE_IN_OUT" />
+            <Variant mode="AMBIENT" target="scaleX" value="0.88" startOffset="0.00" duration="0.85" interpolation="EASE_IN_OUT" />
+            <Variant mode="AMBIENT" target="scaleY" value="0.88" startOffset="0.00" duration="0.85" interpolation="EASE_IN_OUT" />
+
+            <Group name="SingleClockGroup" x="15" y="0" width="340" height="118">
+                <DigitalClock x="0" y="0" width="340" height="118">
+                    <TimeText x="0" y="0" width="340" height="118" format="hh:mm" hourFormat="SYNC_TO_DEVICE" align="CENTER">
+                        <Font family="SYNC_TO_DEVICE" size="92" weight="NORMAL" color="#FFF3F7FA" />
+                    </TimeText>
+                </DigitalClock>
+            </Group>
+        </Group>
+    </Scene>
+</WatchFace>
