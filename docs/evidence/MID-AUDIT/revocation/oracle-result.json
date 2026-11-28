@@ -1,0 +1,104 @@
+{
+  "normal": [
+    {
+      "id": "RV-01",
+      "pass": true
+    },
+    {
+      "id": "RV-02",
+      "pass": true
+    },
+    {
+      "id": "RV-03",
+      "pass": true
+    },
+    {
+      "id": "RV-04",
+      "pass": true
+    },
+    {
+      "id": "RV-05",
+      "pass": true
+    },
+    {
+      "id": "RV-06",
+      "pass": true
+    },
+    {
+      "id": "RV-07",
+      "pass": true
+    },
+    {
+      "id": "RV-08",
+      "pass": true
+    },
+    {
+      "id": "RV-09",
+      "pass": true
+    },
+    {
+      "id": "RV-10",
+      "pass": true
+    },
+    {
+      "id": "RV-11",
+      "pass": true
+    },
+    {
+      "id": "RV-12",
+      "pass": true
+    },
+    {
+      "id": "RV-13",
+      "pass": true
+    },
+    {
+      "id": "RV-14",
+      "pass": true
+    },
+    {
+      "id": "RV-15",
+      "pass": true
+    },
+    {
+      "id": "RV-16",
+      "pass": true
+    }
+  ],
+  "mutations": [
+    {
+      "mut": "ignore-session",
+      "rejectedBy": [
+        "RV-07"
+      ]
+    },
+    {
+      "mut": "ignore-generation",
+      "rejectedBy": [
+        "RV-03",
+        "RV-12"
+      ]
+    },
+    {
+      "mut": "ignore-authority",
+      "rejectedBy": [
+        "RV-16"
+      ]
+    },
+    {
+      "mut": "skip-final-check",
+      "rejectedBy": [
+        "RV-10",
+        "RV-11",
+        "RV-16"
+      ]
+    },
+    {
+      "mut": "error-revokes",
+      "rejectedBy": [
+        "RV-08"
+      ]
+    }
+  ],
+  "pass": true
+}

@@ -21,3 +21,5 @@
 - D01 bfb115a main 병합, Domain 소스 변경 없음, 신규 CI PENDING. [권한 철회 계약 후보·14 시험](../evidence/MID-AUDIT/REVOCATION-CONTRACT-REVIEW.md) 사전 검토, 미승인/PARTIAL. 소스 변경 없음.
 
 - D01 FINAL-CI: bfb115a 8 runs/10 jobs SUCCESS, push/PR 88 exact, 검사기 15 each, Domain 17 source/test blobs 동일, 최종 d847028 기록만 변경. [검수](../evidence/MID-AUDIT/D01-CLOSEOUT-REVIEW.md). 불변성 범위 GO·독립 종료, HOLD; 권한 계약 합의 대기.
+
+- 권한 계약 ADR-008 PROPOSED, 격리 oracle 16/16·부정 변형 5/5 검출; 실제 제품 시험 NOT RUN. [소유자 검토](agent-orders/GB-REVOCATION-REVIEW.md) 준비; D01/G01 종료 유지.

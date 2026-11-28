@@ -12,7 +12,7 @@
 | 정식 WO GO | 0/38 |
 | GPT 묶음 GO | 3/12 (PARTIAL 독립 준비 종료는 GO에 포함하지 않음) |
 | 출시 | NO-GO |
-| 다음 행동 | D01 불변성 GO·독립 종료, [최종 검수](evidence/MID-AUDIT/D01-CLOSEOUT-REVIEW.md). [권한 후보](evidence/MID-AUDIT/REVOCATION-CONTRACT-REVIEW.md) 합의 대기; HOLD/F03/F04 차단. |
+| 다음 행동 | D01 불변성 GO·종료. [ADR-008](adr/ADR-008.md) 권한 계약 후보·모델 검증, [소유자 검토](operations/agent-orders/GB-REVOCATION-REVIEW.md) 대기; HOLD/F03/F04 차단. |
 
 ## 근거 및 이관
 - [GPT-06 전체 종료 보고](evidence/GPT-06/REPORT-FINAL-CLOSURE.md). R01~R06 및 OPS-07 독립 준비 산출물 통합·자동 검증 완료. 결합 후보와 main 코드·시험·자산·CI 102개, 보호 경로 38개 blob 동일. 원본 아카이브 8개 SHA 동일. 활성 8개 문서 500021→24609 B(검증 코드 기준).
