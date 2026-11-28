@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="io.github.scarlel96.aura.intelligence.Round02Test" tests="12" skipped="0" failures="0" errors="0" timestamp="2026-11-28T05:17:45.559Z" hostname="서브컴퓨터" time="0.029">
+  <properties/>
+  <testcase name="freshChargingFalseUsesHysteresisAndDoesNotInventZero()" classname="io.github.scarlel96.aura.intelligence.Round02Test" time="0.002"/>
+  <testcase name="olderSampleCannotClearChargingOrRaiseAlert()" classname="io.github.scarlel96.aura.intelligence.Round02Test" time="0.001"/>
+  <testcase name="thresholdsOutsideTheConfiguredScaleAreRejected()" classname="io.github.scarlel96.aura.intelligence.Round02Test" time="0.001"/>
+  <testcase name="unchangedInputStillRejectsAnOlderSample()" classname="io.github.scarlel96.aura.intelligence.Round02Test" time="0.001"/>
+  <testcase name="staleReadingDuringUrgentDoesNotLeaveLowOrPublishANumber()" classname="io.github.scarlel96.aura.intelligence.Round02Test" time="0.0"/>
+  <testcase name="extremeInstantAndDurationDoNotEscapeStep()" classname="io.github.scarlel96.aura.intelligence.Round02Test" time="0.003"/>
+  <testcase name="scaleEdgesRemainAccepted()" classname="io.github.scarlel96.aura.intelligence.Round02Test" time="0.001"/>
+  <testcase name="revisionDoesNotWrapAndStopsAtTheLimit()" classname="io.github.scarlel96.aura.intelligence.Round02Test" time="0.005"/>
+  <testcase name="inBandBatteryWithDeniedActivityStaysNormalAndDegraded()" classname="io.github.scarlel96.aura.intelligence.Round02Test" time="0.001"/>
+  <testcase name="equalProcessedTimeIsNotInversion()" classname="io.github.scarlel96.aura.intelligence.Round02Test" time="0.001"/>
+  <testcase name="hysteresisDebounceUrgentAndLowPowerInteract()" classname="io.github.scarlel96.aura.intelligence.Round02Test" time="0.003"/>
+  <testcase name="missingOrInvalidChargingDoesNotClearCharging()" classname="io.github.scarlel96.aura.intelligence.Round02Test" time="0.002"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

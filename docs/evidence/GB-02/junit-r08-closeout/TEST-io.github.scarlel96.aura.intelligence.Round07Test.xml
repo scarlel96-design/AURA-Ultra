@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="io.github.scarlel96.aura.intelligence.Round07Test" tests="11" skipped="0" failures="0" errors="0" timestamp="2026-11-28T05:17:46.846Z" hostname="서브컴퓨터" time="0.024">
+  <properties/>
+  <testcase name="newerSourceCanReplaceAnOlderSource()" classname="io.github.scarlel96.aura.intelligence.Round07Test" time="0.001"/>
+  <testcase name="sameObservationTimeWithoutRevisionFollowsCallOrder()" classname="io.github.scarlel96.aura.intelligence.Round07Test" time="0.0"/>
+  <testcase name="forecastDoesNotReplaceAnAcceptedObservation()" classname="io.github.scarlel96.aura.intelligence.Round07Test" time="0.001"/>
+  <testcase name="equalRevisionConflictKeepsTheFirstBattery()" classname="io.github.scarlel96.aura.intelligence.Round07Test" time="0.002"/>
+  <testcase name="ceilingDropsOmittedBatteryAfterStoredTtlAndResyncCanReplaceIt()" classname="io.github.scarlel96.aura.intelligence.Round07Test" time="0.005"/>
+  <testcase name="deniedBatteryIsNotRedisplayedByAnOlderSample()" classname="io.github.scarlel96.aura.intelligence.Round07Test" time="0.0"/>
+  <testcase name="badPolicyKeepsProtectionWithoutPretendingThePolicyIsValid()" classname="io.github.scarlel96.aura.intelligence.Round07Test" time="0.001"/>
+  <testcase name="chargingAndLowWaitKeepGraphicsInsideTheCandidateBand()" classname="io.github.scarlel96.aura.intelligence.Round07Test" time="0.002"/>
+  <testcase name="olderObservationDoesNotReplaceNewerBattery()" classname="io.github.scarlel96.aura.intelligence.Round07Test" time="0.001"/>
+  <testcase name="deliverySequenceKeepsLateReleaseFromClearingNewerProtection()" classname="io.github.scarlel96.aura.intelligence.Round07Test" time="0.002"/>
+  <testcase name="futureObservedValueIsRejectedWithoutAProductSkew()" classname="io.github.scarlel96.aura.intelligence.Round07Test" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
