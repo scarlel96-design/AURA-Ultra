@@ -12,14 +12,14 @@
 | 정식 WO GO | 0/38 |
 | GPT 묶음 GO | 3/12 (PARTIAL 독립 준비 종료는 GO에 포함하지 않음) |
 | 출시 | NO-GO |
-| 다음 행동 | F03 R01 최종 후보 CI·아티팩트 확인 → 통합 회귀 → Gradle 검증/잠금. GPT-07 및 실기기 설치는 별도 승인 대기. |
+| 다음 행동 | F03 pin/checkout 통합 CI 확인 → Gradle 검증/잠금. GPT-07 및 실기기 설치는 별도 승인 대기. |
 
 ## 근거 및 이관
 - [GPT-06 전체 종료 보고](evidence/GPT-06/REPORT-FINAL-CLOSURE.md). R01~R06 및 OPS-07 독립 준비 산출물 통합·자동 검증 완료. 결합 후보와 main 코드·시험·자산·CI 102개, 보호 경로 38개 blob 동일. 원본 아카이브 8개 SHA 동일. 활성 8개 문서 500021→24609 B(검증 코드 기준).
 - [최종 개발용 APK](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46083911786/artifacts/15238910535): 114716 B, 직접 다운로드·SHA256·CRC·XML·PNG·RGBA 검증 PASS. WFF2~5 각 공식 평가기 2412312 B active/3181712 B AOD. 정적 Balanced 후보. 실제 RAM/전력 아님.
 - [R05](evidence/GPT-06/REPORT-05-INTEGRATED.md): 152 SVG, 36 PNG, 최소 호스트 대비 5.729308:1, PNG 1266831→139710 B. [R06](evidence/GPT-06/REPORT-FINAL-INTEGRATION.md).
 - [실기기 및 승격 게이트](operations/SIGNATURE_DEVICE_GATE.md): 실제 설치·렌더링·센서·동적 효과·발광 픽셀·전력 NOT RUN. Bootstrap 제품 리소스 유지. 실제 후보 프리뷰·육안 승인·사용자 승인 필요. 브랜치 보호 비활성화 확인(AUD-R01-01).
-- AG-01 PR #2 HOLD, HEAD fc98c3ad5993e131f733a9444b5849e737a49086. GB-02 PR #3 HOLD, HEAD 122d81b05fb0fc56020fb3d03b667545eb6671c3; R05 증거 및 독립 Kotlin CI 확인. [배정](operations/agent-orders/README.md). B-002/003/004/005/006/007/008 유지; [차단점](operations/BLOCKERS.md).
+- AG-01 PR #2 HOLD, HEAD fc98c3ad5993e131f733a9444b5849e737a49086. GB-02 PR #3 HOLD, HEAD 9163cbae6e2892343c30df0a5da84d6f06d582bb; G01 R06 제출, 자체 GO/총괄 HOLD. [배정](operations/agent-orders/README.md). B-002/003/004/005/006/007/008 유지; [차단점](operations/BLOCKERS.md).
 - [GPT-06](operations/GPT-06.md), [계획](operations/GPT_EXECUTION_PLAN.md), [이력](operations/WORK_LOG.md). 종료 기록 커밋은 문서만 변경한다. 검증 코드 SHA와 종료 기록 SHA를 구분한다. 새 문서 커밋 CI는 별도 상태를 확인한다.
 
 ## 중단
@@ -50,4 +50,6 @@
 
 - [F02 R04 종료](evidence/MID-AUDIT/F02/REPORT-R04-FINAL.md): 통합 main Linux/Windows 361 PASS씩, doc SUCCESS, 3 ZIP/8 APK/47 layout 및 RGBA 직접 검사. 4개 F02 ID 자동 범위 해결; F01/F02 합계 11개. F03 R01 다음.
 
-- [F03 R01](evidence/MID-AUDIT/F03/REPORT-R01.md): c0a75d94dfc37e32a5fea1b52078dfaa215505c1, 19/19 Actions pin, checkout 5/5 false, 신규 9 methods. Red 370/9 policy errors; 중간 후보 Windows exit 처리 수정. 최종 CI 진행 중, 후보 미통합. Gradle OPEN.
+- [F03 R01](evidence/MID-AUDIT/F03/REPORT-R01.md): c0a75d94dfc37e32a5fea1b52078dfaa215505c1, 19/19 Actions pin, checkout 5/5 false, 신규 9 methods. Red 370/9 policy errors; 중간 후보 Windows exit 처리 수정. 최종 후보 5 CI SUCCESS, 통합 회귀 대기. Gradle OPEN.
+
+- [F03 R02](evidence/MID-AUDIT/F03/REPORT-R02.md): 후보 370 PASS×3+81 Domain, 4 ZIP/8 APK/47 layout 직접 검증. 8 exact blob main 통합; 통합 CI PENDING. Gradle 인벤토리/검증/잠금 OPEN.
