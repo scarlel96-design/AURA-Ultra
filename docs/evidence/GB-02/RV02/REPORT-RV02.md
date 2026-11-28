@@ -1,6 +1,6 @@
 # GB-02 RV02 로컬 증거
 
-상태: 원격 제출 완료. 제품 판정은 NO-GO. PR #7은 HOLD이며 main에 병합하지 않았다. PR #3, PR #5, PR #6은 변경하지 않았고 병합하지 않았다.
+상태: RV02-C1, C2, C3만 PR #7에서 보완했다. 제품 판정은 NO-GO. PR #7은 HOLD이며 main에 병합하지 않았다. PR #3, PR #5, PR #6은 변경하지 않았고 병합하지 않았다.
 
 구현 커밋: `dbacc75d559699963eeeb8d9da40692f07b8ddf2`
 부모: `0c4890ea7f69c6145791d17d51b98c97fed45c1d` (`agent/grok/GB-02` G01 최종 HEAD)
@@ -113,3 +113,27 @@ Intelligence 트리: `cbbb838836f206ae0363796bc1812f5dcc8e9083` (구현 커밋�
 Domain Kotlin push `46140337510`은 `DOMAIN_INVENTORY baseline`, `DOMAIN_RESULT 81 PASS / 0 FAIL / 0 ERROR / 0 SKIP`이다. 커밋된 baseline이며 overlay 102가 아니다. pull_request Domain Kotlin은 경로 필터로 시작되지 않았다.
 
 도구 자체 시험 로그에 나오는 다른 `RV02_DOMAIN` SHA는 합성 저장소 시험이다. 제품 pin은 `558e188`뿐이다.
+
+## RV02-CLOSEOUT
+
+PRE-FLIGHT: main `958e69b3c00a7c95c68def03a69605d179db930e`는 검수 기록과 마감 지시만 추가했다. 병합 `de77cdf4f12a6b1087bf6c8b9d66645321eb4f87`. PR #3 `0c4890e`, PR #5 `d847028`, PR #6 `68f52eb`는 OPEN이다. 제품 NO-GO. 활성 지시는 RV02-C1, C2, C3이다.
+
+수정 전 `75c9ab4` 코드에서 기존 16개 이름 중 5개가 실패했다. `closeout-red` 시각 `2026-11-28T12:32:46.627Z`, tests 16, failures 5, errors 0, skipped 0.
+
+- C1: 장애 뒤 같은 capability의 지연 결과가 `ACCEPTED`였다. 같은 acquisition의 더 높은 revision 교체도 `ACCEPTED`였다.
+- C2: `commit`에 `Instant` 매개변수가 없어 최종 시각을 전달할 수 없었다.
+- C3: `ACCEPTED` 기록이 페이로드 `12.0`을 노출했다. 새 값이 남은 상태에서 오래된 기록의 `commit`은 `WITHDRAWN`이었다.
+
+고친 단언은 그 세 가지를 더 이상 허용하지 않는다. 같은 capability 재사용을 통과시키던 `staleReplayAfterWithdrawalCannotResurrect`는 새 acquire와 `CURRENT`만 받는다. 승인 전 `payload()`를 읽던 단언은 영수증에 페이로드가 없음을 확인한다. 오래된 영수증의 `WITHDRAWN`은 `STALE_RECEIPT` 거절로 바꿨고, 새 공개 값은 지우지 않는다. 시험 식별자 16개와 기존 108개는 유지했다.
+
+구현 `8dd1c7c6dab9c61f824d60f3bfed9fe2b2a2e239`. Intelligence 트리 `dcd75fb4809140dfe806c8f504da08cd565630eb`, 29개 파일. Domain 오버레이는 커밋하지 않았다.
+
+스크래치 `C:\Users\scarl\AppData\Local\Temp\rv02-composite-8dd1c7c`. JDK 17 clean offline no-daemon no-build-cache. 시험 전후:
+
+`RV02_DOMAIN commit=558e18804d08ebd4d79be620962c256e0af07f96 tree=c51dfeb3fe4e87201f123cd89aceb48b373a0aaf files=26`
+
+`RV02_INTELLIGENCE commit=8dd1c7c6dab9c61f824d60f3bfed9fe2b2a2e239 tree=dcd75fb4809140dfe806c8f504da08cd565630eb files=29`
+
+`DOMAIN_RESULT 102 PASS / 0 FAIL / 0 ERROR / 0 SKIP`. `INTELLIGENCE_RESULT 124 PASS / 0 FAIL / 0 ERROR / 0 SKIP`. `longRunKeepsInvariants()` PASSED. seed `20261128`, 반복 `100000`. 도구 자체 시험 10 PASS. 원본 `junit-domain`과 `junit-intelligence`는 그대로 두고, 초록 XML은 `closeout-green`에 뒀다. Domain 9개 `2026-11-28T12:38:47.482Z`–`2026-11-28T12:38:47.970Z`. Intelligence 14개 `2026-11-28T12:39:27.059Z`–`2026-11-28T12:39:31.780Z`.
+
+이 기록 커밋은 `modules/intelligence`를 바꾸지 않는다. 복합 CI의 HEAD는 기록 커밋이고 Intelligence 트리는 `dcd75fb4809140dfe806c8f504da08cd565630eb`이다. 원격 실행 식별자는 PR 본문에 적는다. 여기 있는 102/124는 로컬 스크래치 결과다.

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="io.github.scarlel96.aura.domain.PayloadIntegrityTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-11-28T12:38:47.889Z" hostname="서브컴퓨터" time="0.023">
+  <properties/>
+  <testcase name="classifiedValueDoesNotPublishAMutablePayload()" classname="io.github.scarlel96.aura.domain.PayloadIntegrityTest" time="0.009"/>
+  <testcase name="cyclicCustomObjectIsRejectedWithoutBeingWalked()" classname="io.github.scarlel96.aura.domain.PayloadIntegrityTest" time="0.001"/>
+  <testcase name="scalarZeroNullAndDeniedStayAccepted()" classname="io.github.scarlel96.aura.domain.PayloadIntegrityTest" time="0.004"/>
+  <testcase name="higherRevisionStillReplacesEarlierDenial()" classname="io.github.scarlel96.aura.domain.PayloadIntegrityTest" time="0.0"/>
+  <testcase name="mutableListDoesNotReplaceStoredScalarOrChangeDuplicateVerdict()" classname="io.github.scarlel96.aura.domain.PayloadIntegrityTest" time="0.0"/>
+  <testcase name="mapSetNestedArrayAndCustomPayloadsAreRejected()" classname="io.github.scarlel96.aura.domain.PayloadIntegrityTest" time="0.004"/>
+  <testcase name="directCursorConstructionRejectsMutablePayload()" classname="io.github.scarlel96.aura.domain.PayloadIntegrityTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

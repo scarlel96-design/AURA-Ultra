@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="io.github.scarlel96.aura.intelligence.PolicyTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-11-28T12:39:30.727Z" hostname="서브컴퓨터" time="0.005">
+  <properties/>
+  <testcase name="durationsAndScalesAndUnitsMustBeUsable()" classname="io.github.scarlel96.aura.intelligence.PolicyTest" time="0.001"/>
+  <testcase name="powerBandMustRise()" classname="io.github.scarlel96.aura.intelligence.PolicyTest" time="0.0"/>
+  <testcase name="precipitationBandMustFall()" classname="io.github.scarlel96.aura.intelligence.PolicyTest" time="0.001"/>
+  <testcase name="documentedCandidatesRemainConfigurable()" classname="io.github.scarlel96.aura.intelligence.PolicyTest" time="0.0"/>
+  <testcase name="rejectedPolicyDoesNotAdvance()" classname="io.github.scarlel96.aura.intelligence.PolicyTest" time="0.002"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
