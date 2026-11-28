@@ -35,7 +35,7 @@ GPT-06 독립 준비 종료/STOPPED. [종료 보고](../evidence/GPT-06/REPORT-F
 ## 현재 후속 감사 차단점
 - F01 자동 범위 7/7 RESOLVED: [종료](../evidence/MID-AUDIT/F01/REPORT-R04-FINAL.md). F02 자동 범위 4/4 RESOLVED: [종료](../evidence/MID-AUDIT/F02/REPORT-R04-FINAL.md). 이전 세부 원본 [보관](../archive/2026-11-28-225f9dd/operations/BLOCKERS.md).
 - F03 AUD-R01-07/R04-06 RESOLVED: [R03](../evidence/MID-AUDIT/F03/REPORT-R03.md). setup-java v4 major migration 별도. AUD-R04-05 OPEN: [R08](../evidence/MID-AUDIT/F03/REPORT-R08.md) Android/Domain strict pilot PASS, 197 configs/6 locks exact, synthetic tamper/missing lock 거부. 미승인 metadata/lock main 적용 금지. 234/664 sidecar 일치도 독립 publisher trust 아님; 430 미확보. settings/detached coverage, owner 승인, isolated snapshot, 전체 CVE/license/SBOM 및 독립 검토 OPEN. GitHub 보안 API 조회 차단으로 경보 UNKNOWN. [이관](../evidence/MID-AUDIT/F03/PROVENANCE-HANDOFF.md). 동일 pilot 반복하지 않는다. [R09](../evidence/MID-AUDIT/F03/REPORT-R09.md): 373/664 provisional SBOM, OSV 21 MATCH/52 advisory IDs, 352 NO_KNOWN_MATCH, POM 1 hash mismatch/74 no direct/61 no pinned/237 declared. R10 상세 권고 및 marker 출처 검증, CI 재확인. trust 적용 차단 유지.
-- F04 AUD-R03-01: F03 및 G01 보호 계약 합의 전 구현 착수 금지. AUD-R04-08 문서 개선 별도 범위. G01 R08-CLOSEOUT 108/81·8 jobs 대조, 3 경계 수정 후보 확인; [인계](agent-orders/GB-02-G01-HANDOFF.md) 6 상태 단언 확인, 최종 XML/CI/PR 인계 대기. [D01](agent-orders/GB-01-D01.md) 사용자 승인 대기. 전용 CI/F04/C01/실측 정책 OPEN. PR #2/#3 HOLD. 제품 NO-GO, GPT-07 미착수.
+- F04 AUD-R03-01: F03 및 G01 보호 계약 합의 전 구현 착수 금지. AUD-R04-08 문서 개선 별도 범위. G01 R08-CLOSEOUT 108/81·8 jobs 대조, 3 경계 수정 후보 확인; [인계](agent-orders/GB-02-G01-HANDOFF.md) 최종 XML 108/81·8 jobs/PR 확인, 독립 개발 종료. [D01](agent-orders/GB-01-D01-CLOSEOUT.md) PR #5 HOLD: 88/108 XML 검수, PR PASS/push FAIL; main 반영·CI 대기. 전용 CI/F04/C01/실측 정책 OPEN. PR #2/#3 HOLD. 제품 NO-GO, GPT-07 미착수.
 
 R10: 52 권고 상세 확인, CRITICAL 3/HIGH 21; Portal marker 기존 hash 일치, Central metadata 상이. 독립 trust, 업스트림 호환 개선, 라이선스 및 실제 범위 검증 OPEN. [보고](../evidence/MID-AUDIT/F03/REPORT-R10.md).
 
@@ -51,4 +51,4 @@ R15: [보고](../evidence/MID-AUDIT/F03/REPORT-R15.md). Apache JAR 강한 배포
 
 R16: [보고](../evidence/MID-AUDIT/F03/REPORT-R16.md). 392 검사/389 일치/1 POM 불일치/2 Kotlin compiler JAR 미확보. 누적 427/430, 전체 661/664에 sidecar 또는 byte 일치 근거, 신뢰 승인 0. 425 baseline 서명 존재/12 강한 서명 검증. [R17](../evidence/MID-AUDIT/F03/REPORT-R17.md): Portal POM exact, 원본 Gradle route 미확정; JAR 2개 Central 양쪽 github.com redirect 차단. 428/430 byte 근거(경로별), 662/664 combined. 자동 출처 수집 종료, 독립 네트워크 및 trust/CVE/license/strict 도입 승인 차단. 동일 수집 반복 금지.
 
-Host: [보고](../evidence/MID-AUDIT/HOST-REPRO/REPORT.md). Python3.14.7 zlib-ng PNG hash drift 재현, RGBA/XML 동일; fresh LF 정상. CRLF-only 복구/정본 PNG 패키징 차단 후보. 공통 CI 및 선택 통합 전 OPEN; 3.14 호환 미승인. 로컬 사용자는 검증된 Python3.12 사용.
+Host: [보고](../evidence/MID-AUDIT/HOST-REPRO/REPORT.md). Python3.14.7 zlib-ng PNG hash drift 재현, RGBA/XML 동일; fresh LF 정상. CRLF-only 복구/정본 PNG 차단 main 374×3 PASS, 범위 GO. 실제 로컬 palette 원인 미확정; 3.14 호환 미승인. 로컬 사용자는 검증된 Python3.12 사용.
