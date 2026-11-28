@@ -1,0 +1,28 @@
+..................E....................................................F..................................................................................................................................................................................................................................................................
+======================================================================
+ERROR: test_checked_in_outputs (test_bootstrap_generator.GeneratorTests.test_checked_in_outputs)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\scarl\AppData\Local\Temp\aura-gb02-wt\tests\unit\test_bootstrap_generator.py", line 31, in test_checked_in_outputs
+    check_outputs(ROOT, outputs)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "C:\Users\scarl\AppData\Local\Temp\aura-gb02-wt\tools\generate_bootstrap.py", line 164, in check_outputs
+    raise ValueError("Missing or stale generated file: " + name)
+ValueError: Missing or stale generated file: assets/generated/bootstrap/palette.svg
+
+======================================================================
+FAIL: test_normal_artifact_preserved (test_f01_r01.F01SignatureTests.test_normal_artifact_preserved)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\scarl\AppData\Local\Temp\aura-gb02-wt\tests\unit\test_f01_r01.py", line 30, in test_normal_artifact_preserved
+    self.assertEqual(material.digest(self.png), "0ca25941c01f013440698b81252025b7cb6e349e440a61325f7ba3d754da5d8c")
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'd771727c4f0a98806f2e7ae8e24d7446c90461f7083641f0dbdd172741e02378' != '0ca25941c01f013440698b81252025b7cb6e349e440a61325f7ba3d754da5d8c'
+- d771727c4f0a98806f2e7ae8e24d7446c90461f7083641f0dbdd172741e02378
++ 0ca25941c01f013440698b81252025b7cb6e349e440a61325f7ba3d754da5d8c
+
+
+----------------------------------------------------------------------
+Ran 330 tests in 60.654s
+
+FAILED (failures=1, errors=1)

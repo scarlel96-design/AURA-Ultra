@@ -1,0 +1,171 @@
+Starting a Gradle Daemon, 3 incompatible and 1 stopped Daemons could not be reused, use --status for details
+> Task :domain:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :processResources NO-SOURCE
+> Task :processTestResources NO-SOURCE
+> Task :domain:compileKotlin UP-TO-DATE
+> Task :domain:compileJava NO-SOURCE
+> Task :domain:processResources NO-SOURCE
+> Task :domain:classes UP-TO-DATE
+> Task :domain:jar UP-TO-DATE
+> Task :compileKotlin UP-TO-DATE
+> Task :compileJava NO-SOURCE
+> Task :classes UP-TO-DATE
+> Task :jar UP-TO-DATE
+> Task :compileTestKotlin
+> Task :compileTestJava NO-SOURCE
+> Task :testClasses UP-TO-DATE
+
+> Task :test
+TEST_JVM version=17 vendor=Eclipse Temurin path=C:\Users\scarl\.jdks\temurin-17
+
+JunitXmlCheckTest > rejectsEmptyMethod() FAILED
+    org.opentest4j.AssertionFailedError: expected: not equal but was: <0>
+        at app//org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:152)
+        at app//org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+        at app//org.junit.jupiter.api.AssertNotEquals.failEqual(AssertNotEquals.java:277)
+        at app//org.junit.jupiter.api.AssertNotEquals.assertNotEquals(AssertNotEquals.java:263)
+        at app//org.junit.jupiter.api.Assertions.assertNotEquals(Assertions.java:2832)
+        at app//kotlin.test.junit5.JUnit5Asserter.assertNotEquals(JUnitSupport.kt:36)
+        at app//kotlin.test.AssertionsKt__AssertionsKt.assertNotEquals(Assertions.kt:130)
+        at app//kotlin.test.AssertionsKt.assertNotEquals(Unknown Source)
+        at app//kotlin.test.AssertionsKt__AssertionsKt.assertNotEquals$default(Assertions.kt:129)
+        at app//kotlin.test.AssertionsKt.assertNotEquals$default(Unknown Source)
+        at app//io.github.scarlel96.aura.intelligence.JunitXmlCheckTest.rejectsEmptyMethod(JunitXmlCheckTest.kt:168)
+
+JunitXmlCheckTest > rejectsMissingCounters() FAILED
+    org.opentest4j.AssertionFailedError: expected: not equal but was: <0>
+        at app//org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:152)
+        at app//org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+        at app//org.junit.jupiter.api.AssertNotEquals.failEqual(AssertNotEquals.java:277)
+        at app//org.junit.jupiter.api.AssertNotEquals.assertNotEquals(AssertNotEquals.java:263)
+        at app//org.junit.jupiter.api.Assertions.assertNotEquals(Assertions.java:2832)
+        at app//kotlin.test.junit5.JUnit5Asserter.assertNotEquals(JUnitSupport.kt:36)
+        at app//kotlin.test.AssertionsKt__AssertionsKt.assertNotEquals(Assertions.kt:130)
+        at app//kotlin.test.AssertionsKt.assertNotEquals(Unknown Source)
+        at app//kotlin.test.AssertionsKt__AssertionsKt.assertNotEquals$default(Assertions.kt:129)
+        at app//kotlin.test.AssertionsKt.assertNotEquals$default(Unknown Source)
+        at app//io.github.scarlel96.aura.intelligence.JunitXmlCheckTest.rejectsMissingCounters(JunitXmlCheckTest.kt:198)
+
+JunitXmlCheckTest > rejectsMissingClassname() FAILED
+    org.opentest4j.AssertionFailedError: expected: not equal but was: <0>
+        at app//org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:152)
+        at app//org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+        at app//org.junit.jupiter.api.AssertNotEquals.failEqual(AssertNotEquals.java:277)
+        at app//org.junit.jupiter.api.AssertNotEquals.assertNotEquals(AssertNotEquals.java:263)
+        at app//org.junit.jupiter.api.Assertions.assertNotEquals(Assertions.java:2832)
+        at app//kotlin.test.junit5.JUnit5Asserter.assertNotEquals(JUnitSupport.kt:36)
+        at app//kotlin.test.AssertionsKt__AssertionsKt.assertNotEquals(Assertions.kt:130)
+        at app//kotlin.test.AssertionsKt.assertNotEquals(Unknown Source)
+        at app//kotlin.test.AssertionsKt__AssertionsKt.assertNotEquals$default(Assertions.kt:129)
+        at app//kotlin.test.AssertionsKt.assertNotEquals$default(Unknown Source)
+        at app//io.github.scarlel96.aura.intelligence.JunitXmlCheckTest.rejectsMissingClassname(JunitXmlCheckTest.kt:153)
+
+JunitXmlCheckTest > rejectsUnrelatedClassname() FAILED
+    org.opentest4j.AssertionFailedError: expected: not equal but was: <0>
+        at app//org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:152)
+        at app//org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+        at app//org.junit.jupiter.api.AssertNotEquals.failEqual(AssertNotEquals.java:277)
+        at app//org.junit.jupiter.api.AssertNotEquals.assertNotEquals(AssertNotEquals.java:263)
+        at app//org.junit.jupiter.api.Assertions.assertNotEquals(Assertions.java:2832)
+        at app//kotlin.test.junit5.JUnit5Asserter.assertNotEquals(JUnitSupport.kt:36)
+        at app//kotlin.test.AssertionsKt__AssertionsKt.assertNotEquals(Assertions.kt:130)
+        at app//kotlin.test.AssertionsKt.assertNotEquals(Unknown Source)
+        at app//kotlin.test.AssertionsKt__AssertionsKt.assertNotEquals$default(Assertions.kt:129)
+        at app//kotlin.test.AssertionsKt.assertNotEquals$default(Unknown Source)
+        at app//io.github.scarlel96.aura.intelligence.JunitXmlCheckTest.rejectsUnrelatedClassname(JunitXmlCheckTest.kt:183)
+
+JunitXmlCheckTest > rejectsSuiteFilenameMismatch() FAILED
+    org.opentest4j.AssertionFailedError: expected: not equal but was: <0>
+        at app//org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:152)
+        at app//org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+        at app//org.junit.jupiter.api.AssertNotEquals.failEqual(AssertNotEquals.java:277)
+        at app//org.junit.jupiter.api.AssertNotEquals.assertNotEquals(AssertNotEquals.java:263)
+        at app//org.junit.jupiter.api.Assertions.assertNotEquals(Assertions.java:2832)
+        at app//kotlin.test.junit5.JUnit5Asserter.assertNotEquals(JUnitSupport.kt:36)
+        at app//kotlin.test.AssertionsKt__AssertionsKt.assertNotEquals(Assertions.kt:130)
+        at app//kotlin.test.AssertionsKt.assertNotEquals(Unknown Source)
+        at app//kotlin.test.AssertionsKt__AssertionsKt.assertNotEquals$default(Assertions.kt:129)
+        at app//kotlin.test.AssertionsKt.assertNotEquals$default(Unknown Source)
+        at app//io.github.scarlel96.aura.intelligence.JunitXmlCheckTest.rejectsSuiteFilenameMismatch(JunitXmlCheckTest.kt:213)
+
+JunitXmlCheckTest > rejectsNestedTestcase() FAILED
+    org.opentest4j.AssertionFailedError: expected: not equal but was: <0>
+        at app//org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:152)
+        at app//org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+        at app//org.junit.jupiter.api.AssertNotEquals.failEqual(AssertNotEquals.java:277)
+        at app//org.junit.jupiter.api.AssertNotEquals.assertNotEquals(AssertNotEquals.java:263)
+        at app//org.junit.jupiter.api.Assertions.assertNotEquals(Assertions.java:2832)
+        at app//kotlin.test.junit5.JUnit5Asserter.assertNotEquals(JUnitSupport.kt:36)
+        at app//kotlin.test.AssertionsKt__AssertionsKt.assertNotEquals(Assertions.kt:130)
+        at app//kotlin.test.AssertionsKt.assertNotEquals(Unknown Source)
+        at app//kotlin.test.AssertionsKt__AssertionsKt.assertNotEquals$default(Assertions.kt:129)
+        at app//kotlin.test.AssertionsKt.assertNotEquals$default(Unknown Source)
+        at app//io.github.scarlel96.aura.intelligence.JunitXmlCheckTest.rejectsNestedTestcase(JunitXmlCheckTest.kt:230)
+
+JunitXmlCheckTest > rejectsFutureTimestamp() FAILED
+    org.opentest4j.AssertionFailedError: usage: check_junit_xml.py [-h] --dir DIR --files FILES --tests TESTS
+                              [--not-before NOT_BEFORE]
+    check_junit_xml.py: error: unrecognized arguments: --not-after 2026-11-28T00:20:00Z
+        at app//org.junit.jupiter.api.AssertionUtils.fail(AssertionUtils.java:38)
+        at app//org.junit.jupiter.api.Assertions.fail(Assertions.java:138)
+        at app//kotlin.test.junit5.JUnit5Asserter.fail(JUnitSupport.kt:56)
+        at app//kotlin.test.Asserter.assertTrue(Assertions.kt:1545)
+        at app//kotlin.test.junit5.JUnit5Asserter.assertTrue(JUnitSupport.kt:30)
+        at app//kotlin.test.Asserter.assertTrue(Assertions.kt:1555)
+        at app//kotlin.test.junit5.JUnit5Asserter.assertTrue(JUnitSupport.kt:30)
+        at app//kotlin.test.AssertionsKt__AssertionsKt.assertTrue(Assertions.kt:44)
+        at app//kotlin.test.AssertionsKt.assertTrue(Unknown Source)
+        at app//io.github.scarlel96.aura.intelligence.JunitXmlCheckTest.rejectsFutureTimestamp(JunitXmlCheckTest.kt:246)
+
+Round06Test > permissionStatusStaysDistinctFromTtl() FAILED
+    org.opentest4j.AssertionFailedError: DENIED UNDECLARED ==> expected: <DENIED> but was: <UNDECLARED>
+        at app//org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+        at app//org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+        at app//org.junit.jupiter.api.AssertEquals.failNotEqual(AssertEquals.java:197)
+        at app//org.junit.jupiter.api.AssertEquals.assertEquals(AssertEquals.java:182)
+        at app//org.junit.jupiter.api.Assertions.assertEquals(Assertions.java:1156)
+        at app//kotlin.test.junit5.JUnit5Asserter.assertEquals(JUnitSupport.kt:32)
+        at app//kotlin.test.AssertionsKt__AssertionsKt.assertEquals(Assertions.kt:83)
+        at app//kotlin.test.AssertionsKt.assertEquals(Unknown Source)
+        at app//io.github.scarlel96.aura.intelligence.Round06Test.permissionStatusStaysDistinctFromTtl(Round06Test.kt:41)
+
+Round06Test > nonFiniteAndInvertedBoundsAreRejected() FAILED
+    org.opentest4j.AssertionFailedError: Expected value to be of type <io.github.scarlel96.aura.intelligence.Channel$Unusable (Kotlin reflection is not available)>, actual <class io.github.scarlel96.aura.intelligence.Channel$Fresh (Kotlin reflection is not available)>.
+        at app//org.junit.jupiter.api.AssertionUtils.fail(AssertionUtils.java:38)
+        at app//org.junit.jupiter.api.Assertions.fail(Assertions.java:138)
+        at app//kotlin.test.junit5.JUnit5Asserter.fail(JUnitSupport.kt:56)
+        at app//kotlin.test.Asserter.assertTrue(Assertions.kt:1545)
+        at app//kotlin.test.junit5.JUnit5Asserter.assertTrue(JUnitSupport.kt:30)
+        at app//kotlin.test.AssertionsKt__AssertionsKt.assertIsOfType(Assertions.kt:242)
+        at app//kotlin.test.AssertionsKt.assertIsOfType(Unknown Source)
+        at app//io.github.scarlel96.aura.intelligence.Round06Test.nonFiniteAndInvertedBoundsAreRejected(Round06Test.kt:81)
+
+Round06Test > abnormalUnitTokensAreRejected() FAILED
+    org.opentest4j.AssertionFailedError:  percent
+        at app//org.junit.jupiter.api.AssertionUtils.fail(AssertionUtils.java:38)
+        at app//org.junit.jupiter.api.Assertions.fail(Assertions.java:138)
+        at app//kotlin.test.junit5.JUnit5Asserter.fail(JUnitSupport.kt:56)
+        at app//kotlin.test.Asserter.assertTrue(Assertions.kt:1545)
+        at app//kotlin.test.junit5.JUnit5Asserter.assertTrue(JUnitSupport.kt:30)
+        at app//kotlin.test.Asserter.assertTrue(Assertions.kt:1555)
+        at app//kotlin.test.junit5.JUnit5Asserter.assertTrue(JUnitSupport.kt:30)
+        at app//kotlin.test.AssertionsKt__AssertionsKt.assertTrue(Assertions.kt:44)
+        at app//kotlin.test.AssertionsKt.assertTrue(Unknown Source)
+        at app//io.github.scarlel96.aura.intelligence.Round06Test.abnormalUnitTokensAreRejected(Round06Test.kt:66)
+
+10 tests completed, 10 failed
+
+> Task :test FAILED
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':test'.
+> There were failing tests. See the report at: file:///C:/Users/scarl/AppData/Local/Temp/aura-gb02-wt/modules/intelligence/build/reports/tests/test/index.html
+
+* Try:
+> Run with --scan to get full insights from a Build Scan (powered by Develocity).
+
+BUILD FAILED in 26s
+6 actionable tasks: 2 executed, 4 up-to-date
