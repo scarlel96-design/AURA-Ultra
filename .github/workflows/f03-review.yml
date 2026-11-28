@@ -4,8 +4,8 @@ on:
     branches: [audit-f03-r03-gradle-inventory]
     paths:
       - '.github/workflows/f03-review.yml'
-      - 'tools/audit_alternative_provenance.py'
-      - 'tests/unit/test_f03_r15.py'
+      - 'tools/audit_remaining_provenance.py'
+      - 'tests/unit/test_f03_r16.py'
 permissions:
   contents: read
   actions: read
@@ -22,25 +22,21 @@ jobs:
           python-version: '3.12'
       - name: Check evidence tool and workflow policy
         run: |
-          python -m unittest discover -s tests/unit -p test_f03_r15.py -v
+          python -m unittest discover -s tests/unit -p test_f03_r16.py -v
           python -m unittest discover -s tests/unit -p test_f03_r01.py -v
-      - name: Retrieve exact prior archives
+      - name: Retrieve exact prior archive
         env:
           GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
           set -euo pipefail
-          for pair in r13:15249136206 r14:15248908639; do
-            name="${pair%%:*}"
-            id="${pair##*:}"
-            curl --fail --silent --show-error --location --max-time 90 -H "Authorization: Bearer $GH_TOKEN" "https://api.github.com/repos/${{ github.repository }}/actions/artifacts/$id/zip" -o "$RUNNER_TEMP/$name.zip"
-          done
-      - name: Collect bounded alternative provenance evidence
-        run: python tools/audit_alternative_provenance.py --r13 "$RUNNER_TEMP/r13.zip" --r14 "$RUNNER_TEMP/r14.zip" --output "$RUNNER_TEMP/f03-alternatives"
+          curl --fail --silent --show-error --location --max-time 90 -H "Authorization: Bearer $GH_TOKEN" "https://api.github.com/repos/${{ github.repository }}/actions/artifacts/15249136206/zip" -o "$RUNNER_TEMP/r13.zip"
+      - name: Collect remaining baseline artifact evidence
+        run: python tools/audit_remaining_provenance.py --input "$RUNNER_TEMP/r13.zip" --output "$RUNNER_TEMP/f03-remaining"
       - name: Preserve unreviewed evidence
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: f03-alternative-provenance
-          path: ${{ runner.temp }}/f03-alternatives/
+          name: f03-remaining-provenance
+          path: ${{ runner.temp }}/f03-remaining/
           if-no-files-found: error
