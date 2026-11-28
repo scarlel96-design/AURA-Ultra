@@ -12,7 +12,7 @@
 | 정식 WO GO | 0/38 |
 | GPT 묶음 GO | 3/12 (PARTIAL 독립 준비 종료는 GO에 포함하지 않음) |
 | 출시 | NO-GO |
-| 다음 행동 | D01 GO·종료. [ADR-008](adr/ADR-008.md) 소유자 검토 완료·보완. [RV01](operations/agent-orders/GB-01-RV01.md) 사용자 전달 대기; HOLD/F03/F04 차단. |
+| 다음 행동 | D01 GO·종료. [RV01 검사기](evidence/MID-AUDIT/RV01-JUNIT/REPORT.md) 102 등록·CI 대기; 로컬 제출 102/108, 원격 검수 대기. HOLD/F03/F04 차단. |
 
 ## 근거 및 이관
 - [GPT-06 전체 종료 보고](evidence/GPT-06/REPORT-FINAL-CLOSURE.md). R01~R06 및 OPS-07 독립 준비 산출물 통합·자동 검증 완료. 결합 후보와 main 코드·시험·자산·CI 102개, 보호 경로 38개 blob 동일. 원본 아카이브 8개 SHA 동일. 활성 8개 문서 500021→24609 B(검증 코드 기준).
@@ -48,7 +48,7 @@
 
 - [F03 R07](evidence/MID-AUDIT/F03/REPORT-R07.md): Domain strict/graph/negative PASS, audit host 383×3 PASS. Android HTTP429로 중단, 동일 SHA 단일 job 재시도 PENDING. [출처 검증 이관](evidence/MID-AUDIT/F03/PROVENANCE-HANDOFF.md). F03 PARTIAL.
 
-- [F03 R08](evidence/MID-AUDIT/F03/REPORT-R08.md): 46096211808 Android retry strict PASS, WFF2~5 Debug/Release 8종, Domain 81, 197 configs/6 locks exact, 2 ZIP 직접 검사. 430 미확보 및 독립 출처 신뢰 OPEN. F03 PARTIAL. GPT-09 종료 감사 추가 계획은 기능 개발 재개 시 적용.
+- [F03 R08](evidence/MID-AUDIT/F03/REPORT-R08.md): 46096211808 Android retry strict PASS, WFF2~5 Debug/Release 8종, Domain 81, 197 configs/6 locks exact, 2 ZIP 직접 검사. 430 미확보 및 독립 출처 신뢰 OPEN. F03 PARTIAL. GPT-09 변경 범위 통합 검증으로 대체.
 
 - [F03 R09](evidence/MID-AUDIT/F03/REPORT-R09.md): 373 components/664 artifacts provisional SBOM; OSV 21 MATCH/352 NO_KNOWN_MATCH/52 IDs, POM 237 declared/74 no direct/61 no pinned/1 hash mismatch. [CI](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46101636971) 증거 직접 검증, audit 정책 수정 CI PENDING. trust/출시 BLOCKED.
 
