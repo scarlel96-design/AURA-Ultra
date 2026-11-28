@@ -5,6 +5,8 @@ import json
 import re
 import struct
 import sys
+import os
+import tempfile
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
@@ -160,8 +162,45 @@ def generate(root=ROOT):
 def check_outputs(root, outputs):
     for name, data in outputs.items():
         path = safe_path(root, name)
-        if not path.is_file() or path.read_bytes() != data:
-            raise ValueError("Missing or stale generated file: " + name)
+        actual = path.read_bytes() if path.is_file() else None
+        if actual != data:
+            suffix = ""
+            if name == PALETTE and actual is not None and actual.replace(b"\r\n", b"\n") == data:
+                suffix = " (CRLF-only mismatch; use --repair-palette-crlf)"
+            raise ValueError("Missing or stale generated file: " + name + suffix)
+
+
+def repair_palette_crlf(root, outputs):
+    """Restore only an exact CRLF conversion; reject other changes."""
+    if set(outputs) != {FACE, PACKAGED_PREVIEW, PALETTE}:
+        raise ValueError("Unexpected bootstrap output inventory")
+    for name in (FACE, PACKAGED_PREVIEW):
+        check_outputs(root, {name: outputs[name]})
+    path = safe_path(root, PALETTE)
+    old = path.read_bytes()
+    expected = outputs[PALETTE]
+    if old == expected:
+        return False
+    if b"\r\n" not in old or old.replace(b"\r\n", b"\n") != expected:
+        raise ValueError("Palette differs beyond CRLF conversion")
+    # Use a sibling temporary file. Preserve mode and reject intervening changes.
+    tmp = None
+    try:
+        with tempfile.NamedTemporaryFile(dir=path.parent, delete=False) as stream:
+            tmp = Path(stream.name)
+            stream.write(expected)
+            stream.flush()
+            os.fsync(stream.fileno())
+        os.chmod(tmp, path.stat().st_mode)
+        if safe_path(root, PALETTE).read_bytes() != old:
+            raise ValueError("Palette changed before repair")
+        os.replace(tmp, path)
+        tmp = None
+    finally:
+        if tmp is not None:
+            tmp.unlink(missing_ok=True)
+    check_outputs(root, outputs)
+    return True
 
 
 def main():
@@ -169,6 +208,7 @@ def main():
     action = parser.add_mutually_exclusive_group(required=True)
     action.add_argument("--check", action="store_true")
     action.add_argument("--write", action="store_true")
+    action.add_argument("--repair-palette-crlf", action="store_true")
     args = parser.parse_args()
     try:
         outputs, manifest = generate()
@@ -177,6 +217,8 @@ def main():
                 path = safe_path(ROOT, name)
                 path.parent.mkdir(parents=True, exist_ok=True)
                 path.write_bytes(data)
+        if args.repair_palette_crlf:
+            repair_palette_crlf(ROOT, outputs)
         check_outputs(ROOT, outputs)
         # Check two independent executions of the generation logic.
         if generate() != (outputs, manifest):

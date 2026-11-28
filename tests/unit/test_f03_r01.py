@@ -20,6 +20,8 @@ WORKFLOWS = {
                           "actions/upload-artifact"],
     "reproduce-packaging.yml": ["actions/checkout", "actions/setup-java",
                                 "actions/setup-python", "android-actions/setup-android"],
+    "intelligence-rv02.yml": ["actions/checkout", "actions/setup-java", "actions/setup-python",
+                              "actions/upload-artifact"],
     "windows-repro.yml": ["actions/checkout", "actions/setup-python"],
 }
 

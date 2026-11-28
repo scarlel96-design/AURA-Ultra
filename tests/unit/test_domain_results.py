@@ -6,7 +6,8 @@ import xml.etree.ElementTree as ET
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "tools"))
-from check_domain_results import BASELINE_METHODS, verify
+from check_domain_results import (BASELINE_METHODS, D01_METHODS, D01_BRANCH,
+                                  RV01_METHODS, RV01_BRANCH, ci_profile, verify)
 
 
 class DomainEvidenceTests(unittest.TestCase):
@@ -55,3 +56,189 @@ class DomainEvidenceTests(unittest.TestCase):
         self.modify(lambda suite: suite.findall("testcase")[1].set("name", suite.findall("testcase")[0].get("name")))
         with self.assertRaises(ValueError):
             verify(self.root)
+
+class D01InventoryTests(unittest.TestCase):
+    setUp = DomainEvidenceTests.setUp
+    def add_d01(self):
+        name = "io.github.scarlel96.aura.domain.PayloadIntegrityTest"
+        methods = D01_METHODS["PayloadIntegrityTest"]
+        suite = ET.Element("testsuite", name=name, tests=str(len(methods)),
+                           failures="0", errors="0", skipped="0")
+        for method in sorted(methods):
+            ET.SubElement(suite, "testcase", classname=name, name=method)
+        self.d01_path = self.root / f"TEST-{name}.xml"
+        ET.ElementTree(suite).write(self.d01_path)
+
+    def edit_d01(self, edit):
+        tree = ET.parse(self.d01_path)
+        edit(tree.getroot())
+        tree.write(self.d01_path)
+
+    def test_explicit_inventory_accepts_all_88(self):
+        self.add_d01()
+        self.assertEqual(88, verify(self.root, "d01"))
+        with self.assertRaisesRegex(ValueError, "Unknown or duplicate suite"):
+            verify(self.root)
+
+    def test_candidate_cannot_fall_back_to_81(self):
+        with self.assertRaisesRegex(ValueError, "Missing baseline suites"):
+            verify(self.root, "d01")
+
+    def test_candidate_requires_every_original_suite(self):
+        self.add_d01()
+        (self.root / "TEST-io.github.scarlel96.aura.domain.PipelineTest.xml").unlink()
+        with self.assertRaises(ValueError):
+            verify(self.root, "d01")
+
+    def test_candidate_rejects_unknown_method_same_count(self):
+        self.add_d01()
+        self.edit_d01(lambda s: s.find("testcase").set("name", "invented()"))
+        with self.assertRaises(ValueError):
+            verify(self.root, "d01")
+
+    def test_candidate_rejects_duplicate_method(self):
+        self.add_d01()
+        self.edit_d01(lambda s: s.findall("testcase")[1].set("name", s.find("testcase").get("name")))
+        with self.assertRaises(ValueError):
+            verify(self.root, "d01")
+
+    def test_candidate_rejects_hidden_nonpassing(self):
+        self.add_d01()
+        for tag in ("failure", "error", "skipped"):
+            with self.subTest(tag=tag):
+                self.add_d01()
+                self.edit_d01(lambda s: ET.SubElement(s.find("testcase"), tag))
+                with self.assertRaises(ValueError):
+                    verify(self.root, "d01")
+
+    def test_candidate_rejects_extra_suite(self):
+        self.add_d01()
+        extra = self.root / "TEST-extra.xml"
+        extra.write_bytes(self.d01_path.read_bytes())
+        with self.assertRaises(ValueError):
+            verify(self.root, "d01")
+
+    def test_unknown_profile_rejected(self):
+        with self.assertRaisesRegex(ValueError, "Unknown test inventory"):
+            verify(self.root, "auto")
+
+    def test_branch_selection_is_exact(self):
+        repo = "scarlel96-design/AURA-Ultra"
+        for event in ("push", "workflow_dispatch"):
+            self.assertEqual("d01", ci_profile(event, "refs/heads/" + D01_BRANCH, "", "", repo))
+            self.assertEqual("baseline", ci_profile(event, "refs/heads/main", "", "", repo))
+            self.assertEqual("baseline", ci_profile(event, "refs/heads/" + D01_BRANCH + "-other", "", "", repo))
+        self.assertEqual("d01", ci_profile("pull_request", "refs/pull/5/merge", D01_BRANCH, repo, repo))
+        self.assertEqual("baseline", ci_profile("pull_request", "refs/pull/6/merge", D01_BRANCH, "other/fork", repo))
+        with self.assertRaises(ValueError):
+            ci_profile("pull_request", "refs/pull/5/merge", "", "", repo)
+        with self.assertRaises(ValueError):
+            ci_profile("unknown", "refs/heads/" + D01_BRANCH, "", "", repo)
+
+
+class RV01InventoryTests(unittest.TestCase):
+    setUp = DomainEvidenceTests.setUp
+    add_d01 = D01InventoryTests.add_d01
+
+    def add_rv01(self):
+        name = "io.github.scarlel96.aura.domain.AuthorityContractTest"
+        methods = RV01_METHODS["AuthorityContractTest"]
+        suite = ET.Element("testsuite", name=name, tests=str(len(methods)),
+                           failures="0", errors="0", skipped="0")
+        for method in sorted(methods):
+            ET.SubElement(suite, "testcase", classname=name, name=method)
+        self.rv01_path = self.root / f"TEST-{name}.xml"
+        ET.ElementTree(suite).write(self.rv01_path)
+
+    def edit_rv01(self, edit):
+        tree = ET.parse(self.rv01_path)
+        edit(tree.getroot())
+        tree.write(self.rv01_path)
+
+    def test_exact_102_rejects_older_profiles(self):
+        self.add_d01()
+        self.add_rv01()
+        self.assertEqual(102, verify(self.root, "rv01"))
+        for profile in ("baseline", "d01"):
+            with self.subTest(profile=profile), self.assertRaises(ValueError):
+                verify(self.root, profile)
+
+    def test_no_fallback_to_81_or_88(self):
+        with self.assertRaises(ValueError):
+            verify(self.root, "rv01")
+        self.add_d01()
+        with self.assertRaises(ValueError):
+            verify(self.root, "rv01")
+
+    def test_requires_original_and_d01_suites(self):
+        self.add_rv01()
+        with self.assertRaises(ValueError):
+            verify(self.root, "rv01")
+        self.add_d01()
+        (self.root / "TEST-io.github.scarlel96.aura.domain.PipelineTest.xml").unlink()
+        with self.assertRaises(ValueError):
+            verify(self.root, "rv01")
+
+    def test_rejects_renamed_or_duplicate_method(self):
+        self.add_d01()
+        for kind in ("renamed", "duplicate"):
+            with self.subTest(kind=kind):
+                self.add_rv01()
+                self.edit_rv01(lambda s: s.findall("testcase")[1].set(
+                    "name", "invented()" if kind == "renamed" else s.find("testcase").get("name")))
+                with self.assertRaises(ValueError):
+                    verify(self.root, "rv01")
+
+    def test_rejects_wrong_class_and_missing_method(self):
+        self.add_d01()
+        self.add_rv01()
+        self.edit_rv01(lambda s: s.find("testcase").set("classname", "other.Class"))
+        with self.assertRaises(ValueError):
+            verify(self.root, "rv01")
+        self.add_rv01()
+        self.edit_rv01(lambda s: (s.remove(s.find("testcase")), s.set("tests", "13")))
+        with self.assertRaises(ValueError):
+            verify(self.root, "rv01")
+
+    def test_rejects_nonpassing_counters_and_hidden_results(self):
+        self.add_d01()
+        for counter_name, tag in (("failures", "failure"), ("errors", "error"), ("skipped", "skipped")):
+            with self.subTest(tag=tag):
+                self.add_rv01()
+                self.edit_rv01(lambda s: s.set(counter_name, "1"))
+                with self.assertRaises(ValueError):
+                    verify(self.root, "rv01")
+                self.add_rv01()
+                self.edit_rv01(lambda s: ET.SubElement(s.find("testcase"), tag))
+                with self.assertRaises(ValueError):
+                    verify(self.root, "rv01")
+
+    def test_rejects_extra_suite(self):
+        self.add_d01()
+        self.add_rv01()
+        (self.root / "TEST-extra.xml").write_bytes(self.rv01_path.read_bytes())
+        with self.assertRaises(ValueError):
+            verify(self.root, "rv01")
+
+    def test_registered_branch_selection(self):
+        repo = "scarlel96-design/AURA-Ultra"
+        for event in ("push", "workflow_dispatch"):
+            for branch, profile in ((RV01_BRANCH, "rv01"), (D01_BRANCH, "d01"),
+                                    ("main", "baseline"), (RV01_BRANCH + "-other", "baseline"),
+                                    (RV01_BRANCH.lower(), "baseline")):
+                with self.subTest(event=event, branch=branch):
+                    self.assertEqual(profile, ci_profile(event, "refs/heads/" + branch, "", "", repo))
+        self.assertEqual("baseline", ci_profile("push", "refs/tags/" + RV01_BRANCH, "", "", repo))
+        self.assertEqual("rv01", ci_profile("pull_request", "refs/pull/6/merge", RV01_BRANCH, repo, repo))
+        self.assertEqual("baseline", ci_profile("pull_request", "refs/pull/6/merge", RV01_BRANCH, "other/fork", repo))
+        self.assertEqual("baseline", ci_profile("pull_request", "refs/pull/6/merge", RV01_BRANCH + "-other", repo, repo))
+        with self.assertRaises(ValueError):
+            ci_profile("pull_request", "refs/pull/6/merge", RV01_BRANCH, "", repo)
+
+    def test_exact_inventory_through_selected_profile(self):
+        self.add_d01()
+        self.add_rv01()
+        repo = "scarlel96-design/AURA-Ultra"
+        self.assertEqual(102, verify(self.root, ci_profile("push", "refs/heads/" + RV01_BRANCH, "", "", repo)))
+        with self.assertRaises(ValueError):
+            verify(self.root, ci_profile("pull_request", "refs/pull/6/merge", RV01_BRANCH, "other/fork", repo))

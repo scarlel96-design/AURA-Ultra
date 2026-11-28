@@ -1,6 +1,7 @@
 """Validate exact Gradle JUnit test identities and passing evidence."""
+import argparse
+import os
 import re
-import sys
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
@@ -105,6 +106,69 @@ BASELINE_METHODS = {
     )),
 }
 BASELINE = {name: len(methods) for name, methods in BASELINE_METHODS.items()}
+D01_BRANCH = "agent/grok/GB-01-D01"
+D01_METHODS = {
+    "PayloadIntegrityTest": frozenset((
+        "classifiedValueDoesNotPublishAMutablePayload()",
+        "cyclicCustomObjectIsRejectedWithoutBeingWalked()",
+        "directCursorConstructionRejectsMutablePayload()",
+        "higherRevisionStillReplacesEarlierDenial()",
+        "mapSetNestedArrayAndCustomPayloadsAreRejected()",
+        "mutableListDoesNotReplaceStoredScalarOrChangeDuplicateVerdict()",
+        "scalarZeroNullAndDeniedStayAccepted()",
+    )),
+}
+
+RV01_BRANCH = "agent/grok/GB-01-RV01"
+RV01_METHODS = {
+    "AuthorityContractTest": frozenset((
+        "capabilityConstructionAndCopyCannotForgeAcceptance()",
+        "currentIssuedCheckCanGrant()",
+        "duplicateAndConflictingCompletionAreHandled()",
+        "foreignScopeSessionAndRequestAreRejected()",
+        "genericRevisionAndScalarContractRemainIndependent()",
+        "invalidateWhileUnknownFencesPendingCheck()",
+        "ordinaryDataStatusDoesNotGrantOrRevokeAuthority()",
+        "regrantRejectsPriorGeneration()",
+        "restartRequiresFreshAuthority()",
+        "sameStateCheckDoesNotResurrectInvalidatedGrant()",
+        "ticketAndGenerationCeilingsFailClosed()",
+        "trustedFailureAndUntrustedInputAreDistinct()",
+        "unissuedForeignAndStaleTicketsCannotGrant()",
+        "unknownAndDeniedCannotAcquire()",
+    )),
+}
+BRANCH_PROFILES = {D01_BRANCH: "d01", RV01_BRANCH: "rv01"}
+
+
+def expected_methods(profile):
+    if profile not in ("baseline", "d01", "rv01"):
+        raise ValueError("Unknown test inventory: " + str(profile))
+    expected = dict(BASELINE_METHODS)
+    if profile in ("d01", "rv01"):
+        if set(expected) & set(D01_METHODS):
+            raise ValueError("D01 inventory overlaps the baseline")
+        expected.update(D01_METHODS)
+    if profile == "rv01":
+        if set(expected) & set(RV01_METHODS):
+            raise ValueError("RV01 inventory overlaps earlier inventories")
+        expected.update(RV01_METHODS)
+    return {PREFIX + name: methods for name, methods in expected.items()}
+
+
+def ci_profile(event, ref, head_ref, head_repo, repository):
+    """Select an exact registered branch, never infer from test output."""
+    if event == "pull_request":
+        if not repository or not head_repo or not head_ref:
+            raise ValueError("Missing pull request context")
+        if head_repo == repository:
+            return BRANCH_PROFILES.get(head_ref, "baseline")
+        return "baseline"
+    if event in ("push", "workflow_dispatch"):
+        if not ref.startswith("refs/heads/"):
+            return "baseline"
+        return BRANCH_PROFILES.get(ref[len("refs/heads/"):], "baseline")
+    raise ValueError("Unsupported CI event: " + str(event))
 
 
 def counter(root, key):
@@ -114,8 +178,8 @@ def counter(root, key):
     return int(value)
 
 
-def verify(directory):
-    expected = {PREFIX + name: methods for name, methods in BASELINE_METHODS.items()}
+def verify(directory, profile="baseline"):
+    expected = expected_methods(profile)
     seen = set()
     total = 0
     for path in sorted(directory.glob("*.xml")):
@@ -162,5 +226,25 @@ def verify(directory):
     return total
 
 
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("directory", type=Path)
+    mode = parser.add_mutually_exclusive_group()
+    mode.add_argument("--profile", choices=("baseline", "d01", "rv01"), default="baseline")
+    mode.add_argument("--ci", action="store_true")
+    args = parser.parse_args()
+    profile = args.profile
+    if args.ci:
+        profile = ci_profile(
+            os.environ.get("GITHUB_EVENT_NAME", ""),
+            os.environ.get("GITHUB_REF", ""),
+            os.environ.get("GITHUB_HEAD_REF", ""),
+            os.environ.get("DOMAIN_HEAD_REPO", ""),
+            os.environ.get("GITHUB_REPOSITORY", ""),
+        )
+    print(f"DOMAIN_INVENTORY {profile}", flush=True)
+    print(f"DOMAIN_RESULT {verify(args.directory, profile)} PASS / 0 FAIL / 0 ERROR / 0 SKIP")
+
+
 if __name__ == "__main__":
-    print(f"DOMAIN_RESULT {verify(Path(sys.argv[1]))} PASS / 0 FAIL / 0 ERROR / 0 SKIP")
+    main()
