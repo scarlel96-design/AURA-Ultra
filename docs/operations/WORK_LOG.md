@@ -15,3 +15,5 @@
 - 전체 중간 감사 FINAL: [최종 보고](../evidence/MID-AUDIT/REPORT-FINAL.md), [39개 통합 등록부](../evidence/MID-AUDIT/FINDINGS.md), [개선 계획](../evidence/MID-AUDIT/REMEDIATION-PLAN.md). 비문서 114 blob/mode 동일 및 5 ZIP 직접 재검사. 감사 조사 종료; 수정 미착수. F01 후속 승인 대기. 제품 NO-GO, GPT-07 NOT STARTED.
 
 - F01 사용자 착수 승인. R01 4개 개선 대상 후보 994b5011e1cc338b482e22ca6ac942304bf8643b; [red](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46089721067) 330 tests/22 실패 assertions, [green](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46089767751) host SUCCESS/Android 단계 PENDING, doc SUCCESS. [체크포인트](../evidence/MID-AUDIT/F01/REPORT-R01.md). 제품/외부 브랜치 변경 없음. 전체 CI 후 통합 및 R02.
+
+- F01 R01 후보 46089767751 SUCCESS 330 PASS/4 APK, artifact 15240069149 직접 hash/CRC/XML/PNG PASS; 정확한 7개 blob 통합, main CI PENDING. [검증](../evidence/MID-AUDIT/F01/REPORT-R01-VERIFIED.md). GB R05 최신 PR 대조, [G01 R06 지시서](agent-orders/GB-02-G01-R06.md) 작성. GPT-07 미착수.

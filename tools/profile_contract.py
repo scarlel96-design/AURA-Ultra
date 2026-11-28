@@ -9,7 +9,9 @@ API_BY_VERSION = {2: 34, 3: 35, 4: 36, 5: 37}
 
 def validate_profiles(config):
     """Reject missing, duplicate or inconsistent profiles."""
-    if config.get("schemaVersion") != 1 or config.get("logicalSize") != 450:
+    if (type(config) is not dict or type(config.get("schemaVersion")) is not int or
+            type(config.get("logicalSize")) is not int or
+            config["schemaVersion"] != 1 or config["logicalSize"] != 450):
         raise ValueError("Unsupported profile contract")
     profiles = config.get("profiles")
     if not isinstance(profiles, list):
@@ -35,8 +37,19 @@ def validate_profiles(config):
     return sorted(profiles, key=lambda p: p["version"])
 
 
+def unique_object(pairs):
+    """Reject duplicate JSON object keys at every nesting level."""
+    result = {}
+    for key, value in pairs:
+        if key in result:
+            raise ValueError("Duplicate profile JSON key: " + key)
+        result[key] = value
+    return result
+
+
 def load_profiles(root=ROOT):
-    return validate_profiles(json.loads((root / "compatibility/profiles.json").read_text(encoding="utf-8")))
+    return validate_profiles(json.loads((root / "compatibility/profiles.json").read_text(encoding="utf-8"),
+                                       object_pairs_hook=unique_object))
 
 
 def enabled_profiles(root=ROOT):
