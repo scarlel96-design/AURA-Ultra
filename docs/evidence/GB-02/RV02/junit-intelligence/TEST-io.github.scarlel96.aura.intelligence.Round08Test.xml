@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="io.github.scarlel96.aura.intelligence.Round08Test" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-11-28T11:04:13.553Z" hostname="서브컴퓨터" time="0.008">
+  <properties/>
+  <testcase name="ceilingResyncDoesNotBypassValidation()" classname="io.github.scarlel96.aura.intelligence.Round08Test" time="0.001"/>
+  <testcase name="ceilingRaiseSurvivesSaturatedUnprotectAndOldSessionRelease()" classname="io.github.scarlel96.aura.intelligence.Round08Test" time="0.0"/>
+  <testcase name="duplicateReverseNegativeAndSameTickStayOrdered()" classname="io.github.scarlel96.aura.intelligence.Round08Test" time="0.0"/>
+  <testcase name="rejectedPolicyWithdrawsExpiredAndRevokedNumbers()" classname="io.github.scarlel96.aura.intelligence.Round08Test" time="0.001"/>
+  <testcase name="denialThenMidpointAndOtherStreamsDoNotRepublish()" classname="io.github.scarlel96.aura.intelligence.Round08Test" time="0.001"/>
+  <testcase name="forecastAndOlderAxesDoNotRewriteState()" classname="io.github.scarlel96.aura.intelligence.Round08Test" time="0.002"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

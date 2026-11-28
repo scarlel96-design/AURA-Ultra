@@ -88,3 +88,24 @@ Wear Services, WFF 렌더링, 실제 공급원 연결, 실기기, 배터리 측�
 ## 하지 않는 일
 
 도메인 소스를 바꾸지 않는다. 상황 스냅샷 초안을 채우지 않는다. 예보를 계산하지 않는다. 민감한 행동을 추정하지 않는다. 시스템 시계와 네트워크와 Android를 쓰지 않는다. 실기기 측정값으로 임계값을 확정하지 않는다. Wear·WFF 연결로 재정렬을 대신 막지 않는다. `deliverySequence`는 총괄 합의 전의 후보이고, 회차 05 호출 순서 소비자를 제거하지 않는다.
+
+## 보호 수신 경계
+
+`ProtectedBoundary`는 `step` 밖에 있는 순수 후보다. 기계 상태, `deliveredIntent`, 전달 epoch, AOD, 그래픽 제한, 정책 임계값을 바꾸지 않는다. 설정된 합성 scope와 stream만 받는다. 수신은 `AuthorityCoordinator.permits`가 기대 scope와 기대 요청을 모두 통과할 때만 capability와 그 관측 인스턴스를 한 슬롯에 묶는다. 최종 `read`와 `commit`이 같은 검사를 다시 한다. 공개 타입을 직접 구현한 기록, 다른 scope로의 재부착, 이전 generation의 지연 결과는 공개하지 않는다.
+
+스트림 `ERROR`와 `UNAVAILABLE`은 그 슬롯만 지우고 순서 울타리를 올린다. 권한 generation은 바꾸지 않는다. 권한 무효화는 coordinator generation을 돌리고 그 scope의 슬롯을 비운다. 재허가 뒤에도 이전 기록은 공개되지 않는다. 재허가 이전 이력 공개 함수는 없다. 누락 값을 0으로 바꾸지 않는다. `FORECAST`와 TTL 만료는 권한 상태가 아니다. 슬롯은 설정한 stream마다 하나다. capability 목록은 쌓지 않는다. 순서가 `Long.MAX_VALUE`를 넘기려 하면 잠그고 감싸지 않는다.
+
+이 경계의 시험은 등록된 Intelligence 108개에 포함되지 않는다. 108개의 식별자와 기대는 유지한다. 공통 검사기 등록 전에 이 수량을 등록된 수량으로 말하지 않는다.
+
+나중 F04·C01·GPT-07이 실제 경로를 연결할 때 비워야 하는 필드는 다음과 같다. 이번 후보는 그 경로를 구현하지 않는다.
+
+| 필드 | 이유 |
+|---|---|
+| `ObservationMemory`의 보호 스트림 커서와 만료 시각 | 철회 뒤 이전 측정이 남으면 지연 재생이 된다 |
+| `Emission.publishedBatteryPercent`, `publishedPrecipitation`, `reasonCodes` | 파생 숫자가 권한과 따로 공개된다 |
+| `IntelligenceIntent`의 같은 공개 숫자·이유·revision | `deliveredIntent()`가 null이어도 철회가 전달돼야 한다 |
+| `PendingSensors`와 축 확정 시각 | 보류 목표가 철회된 입력을 확정할 수 있다 |
+| `MachineState.focus`와 `revision` | 파생 포커스를 권한 증거로 보면 안 된다 |
+| `CallerSettings`, AOD, 모션 감소, 그래픽 전력 제한 | 보호 설정은 데이터 철회와 함께 끄지 않는다 |
+
+직렬화한 envelope는 발급 표식을 잃으므로 권한 증거가 아니다. `commit`을 권한 무효화와 겹치지 않게 호출하는 일은 어댑터의 compare-and-commit 의무다. 이 모듈은 그 동시성을 증명하지 않는다.

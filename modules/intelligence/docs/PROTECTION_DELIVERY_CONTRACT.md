@@ -19,6 +19,8 @@
 
 회차 05 소비자는 이 필드를 보지 않는다. 그 소비자는 호출 순서대로 null이 아닌 `deliveredIntent()`를 적용하고, `processedAt`이 더 이르면 버린다. 같은 `processedAt`은 호출 순서를 유지한다. 두 계약은 함께 있다. 순서 필드를 넘기지 않는 호출은 회차 05 계약만 따른다.
 
+`ProtectedBoundary`는 이 전달 계약의 생산자나 소비자가 아니다. `deliverySequence`, `deliveryEpoch`, `deliveredIntent`, AOD, 모션 감소, 그래픽 전력 제한의 의미는 그대로다.
+
 ## 보호별 입력과 출력
 
 | 보호 | 켜는 입력 | 출력 | 해제 | 잘못된 정책 | 상한 |
