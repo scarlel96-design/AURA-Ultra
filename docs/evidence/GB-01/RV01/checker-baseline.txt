@@ -1,0 +1,11 @@
+DOMAIN_INVENTORY baseline
+Traceback (most recent call last):
+  File "C:\Users\scarl\AppData\Local\Temp\aura-d01-wt\tools\check_domain_results.py", line 225, in <module>
+    main()
+    ~~~~^^
+  File "C:\Users\scarl\AppData\Local\Temp\aura-d01-wt\tools\check_domain_results.py", line 221, in main
+    print(f"DOMAIN_RESULT {verify(args.directory, profile)} PASS / 0 FAIL / 0 ERROR / 0 SKIP")
+                           ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\scarl\AppData\Local\Temp\aura-d01-wt\tools\check_domain_results.py", line 167, in verify
+    raise ValueError("Unknown or duplicate suite: " + str(name))
+ValueError: Unknown or duplicate suite: io.github.scarlel96.aura.domain.AuthorityContractTest
