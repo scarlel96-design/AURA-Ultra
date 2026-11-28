@@ -10,7 +10,9 @@ PRE-FLIGHT: PASS. 시작 시점 `origin/main`은 `860b51d4f26abf44aa1608fc121847
 
 증거 커밋 직전 `origin/main`은 `12a5f609c8002df84547ec416566d582eef2c173`으로 이동했다. 차이는 `.github/workflows/domain-kotlin.yml`의 경로 필터, 중앙 문서, F01/F02 증거, `tests/unit/test_domain_results.py`, `tests/unit/test_f01_r02.py`, `tools/check_domain_results.py`, `tools/verify_wff.py`다. `modules/intelligence`, `modules/domain` 소스, `docs/evidence/GB-02`와 겹치지 않아 병합 커밋 `42dbb49fdcbef432c278caa4ec316d04af4d5141`로만 반영했다. 들어온 파일은 수정하지 않았다.
 
-그 증거 커밋 뒤 `origin/main`은 `59b808d0c542e09e0eaa95caaa781648d2c1377d`로 다시 이동했다. 차이는 `.gitattributes`, `bootstrap.yml`의 번들 없는 Signature 단계, 새 `windows-repro.yml`, 중앙 문서, F02 증거, `tests/unit/test_f02_r01.py`, `tests/unit/test_f02_r02.py`, `tools/check_basic_face_build.py`, `tools/check_flavor_isolation.py`, `tools/committed_build_inputs.py`다. 같은 세 경로와 겹치지 않아 병합 커밋 `6ed59e48069e05370b05a83b9c104964456e92d9`로만 반영했다. 들어온 파일은 수정하지 않았다. 현재 STATUS의 다음 행동은 `F02 통합 main Linux/Windows/문서 CI 및 아티팩트 확인 → F02 종료 → F03 공급망 개선. GPT-07 및 실기기 설치는 별도 승인 대기.`다. 그 문장을 바꾸지 않는다.
+그 증거 커밋 뒤 `origin/main`은 `59b808d0c542e09e0eaa95caaa781648d2c1377d`로 다시 이동했다. 차이는 `.gitattributes`, `bootstrap.yml`의 번들 없는 Signature 단계, 새 `windows-repro.yml`, 중앙 문서, F02 증거, `tests/unit/test_f02_r01.py`, `tests/unit/test_f02_r02.py`, `tools/check_basic_face_build.py`, `tools/check_flavor_isolation.py`, `tools/committed_build_inputs.py`다. `modules/intelligence`, `modules/domain` 소스, `docs/evidence/GB-02`와 겹치지 않아 병합 커밋 `6ed59e48069e05370b05a83b9c104964456e92d9`로만 반영했다. 들어온 파일은 수정하지 않았다.
+
+CI head `8969a7e915ce6bb409e9a45c6da787ca0fa187ba`를 확인한 뒤 `origin/main`은 `50b946d03ea118c3ad1f5a81bbf2930ba73ff9ad`로 이동했다. 차이는 중앙 문서와 F02/F03 증거뿐이다. 같은 세 경로와 겹치지 않아 병합 커밋 `f43e1510d7041361b1e1cd7e0dfcebb6386fcc6a`로만 반영했다. 들어온 파일은 수정하지 않았다. 로컬 `python tools/check_doc_budget.py`는 exit 0이다. 현재 STATUS의 다음 행동은 `F03 R01 최종 후보 CI·아티팩트 확인 → 통합 회귀 → Gradle 검증/잠금. GPT-07 및 실기기 설치는 별도 승인 대기.`다. 그 문장을 바꾸지 않는다.
 
 작업 목표: AUD-R02-01, AUD-R02-05, AUD-R02-08, AUD-R01-06만 고친다. R05의 72개 intelligence 시험, 81개 domain 시험, 시드 `20261128`의 100000회 전이, `reasonCodes` 불변화는 유지한다. 공통 CI, domain, WFF, 중앙 문서는 수정하지 않는다.
 
@@ -58,9 +60,21 @@ PRE-FLIGHT: PASS. 시작 시점 `origin/main`은 `860b51d4f26abf44aa1608fc121847
 
 환경: Windows. ASCII worktree `C:\Users\scarl\AppData\Local\Temp\aura-gb02-wt`. 테스트 JVM Eclipse Temurin 17, `C:\Users\scarl\.jdks\temurin-17`. Gradle 9.3.1. Kotlin 2.4.21. Python 3.14.7. Intelligence XML `2026-11-28T01:21:20Z`대, domain XML `2026-11-28T01:21:46Z`대. 시각은 UTC다.
 
-호스트 1 ERROR는 기존 Windows `palette.svg` CRLF다. 소유 경로 밖이라 수정하지 않았다. 1 FAIL은 `tests/unit/test_f01_r01.py`의 `test_normal_artifact_preserved`다. Windows에서 `signature_material.generate()`가 만든 PNG 다이제스트가 기록된 값과 다르다. `tools/`와 `.gitattributes`는 수정하지 않았다. 같은 두 건은 구현 직후 330개, main `12a5f60` 병합 후 346개, main `59b808d` 병합 후 361개에서 같다. 추가된 시험은 PASS다. main Ubuntu CI `46090317180`은 당시 330개를 PASS로 기록했다. 이 브랜치의 Ubuntu bootstrap과 Windows host reproducibility가 현재 스위트를 다시 실행한다. `modules/intelligence`와 `modules/domain` 소스는 뒤의 main 병합으로 바뀌지 않아 82개와 81개 Gradle 시험은 재실행하지 않았다. 저장한 domain XML은 병합된 `check_domain_results.py`에서 81 PASS다.
+호스트 1 ERROR는 기존 Windows `palette.svg` CRLF다. 소유 경로 밖이라 수정하지 않았다. 1 FAIL은 `tests/unit/test_f01_r01.py`의 `test_normal_artifact_preserved`다. 로컬 Python 3.14.7에서 `signature_material.generate()`가 만든 PNG 다이제스트가 기록된 값과 다르다. `tools/`와 `.gitattributes`는 수정하지 않았다. 같은 두 건은 구현 직후 330개, main `12a5f60` 병합 후 346개, main `59b808d` 병합 후 361개에서 같다. GitHub `windows-latest`, Python 3.12, `core.autocrlf` true와 false의 `Full host regression suite`는 head `8969a7e`에서 success다. Ubuntu bootstrap의 `Validation tool regression tests`도 push와 pull_request에서 success다. 로컬 두 건은 그 실행에서 재현되지 않았다. `modules/intelligence`와 `modules/domain` 소스는 뒤의 main 병합으로 바뀌지 않아 82개와 81개 Gradle 시험은 재실행하지 않았다. 저장한 domain XML은 병합된 `check_domain_results.py`에서 81 PASS다.
 
-CI 실행 ID: 이 보고서 시점에는 회차 06 head의 bootstrap이 아직 없다. push 뒤의 기록 커밋에 적는다. bootstrap은 intelligence 시험을 실행하지 않는다. 모듈 시험은 위 로컬 로그가 정본이다.
+CI head는 `8969a7e915ce6bb409e9a45c6da787ca0fa187ba`다. 모든 아래 step conclusion은 success다. bootstrap은 intelligence 시험을 실행하지 않는다. 모듈 시험은 위 로컬 로그가 정본이다. Domain Kotlin pull_request는 경로 필터상 시작하지 않았다. push는 실행됐다.
+
+| 워크플로 | 이벤트 | run | job | steps | URL |
+|---|---|---|---|---|---|
+| AURA Bootstrap | push | 46093700558 | 140820175168 | 30 | https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46093700558 |
+| AURA Bootstrap | pull_request | 46093705881 | 140820191455 | 30 | https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46093705881 |
+| Active documentation budget | push | 46093700606 | 140820174997 | 8 | https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46093700606 |
+| Active documentation budget | pull_request | 46093705745 | 140820190682 | 8 | https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46093705745 |
+| Domain Kotlin | push | 46093700557 | 140820175179 | 12 | https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46093700557 |
+| Windows host reproducibility | push | 46093700618 | 140820175378 `host (false)`, 140820175592 `host (true)` | 11, 11 | https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46093700618 |
+| Windows host reproducibility | pull_request | 46093705757 | 140820191117 `host (false)`, 140820191275 `host (true)` | 11, 11 | https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46093705757 |
+
+Bootstrap step 12 `Validation tool regression tests`, step 22 `Isolated Signature basic display without bundle`, Domain Kotlin step `Validate JUnit evidence`는 success다. 문서 main 병합 `f43e1510d7041361b1e1cd7e0dfcebb6386fcc6a`의 실행 ID는 그 head를 push한 뒤 기록한다.
 
 ## G0~G7
 
@@ -72,7 +86,7 @@ CI 실행 ID: 이 보고서 시점에는 회차 06 head의 bootstrap이 아직 �
 | G3 | PASS | intelligence 82, domain 81, 100000회 1메서드. FAIL 0, ERROR 0, SKIP 0. |
 | G4 | PASS, 제한 | 데이터/FSM의 TTL과 권한 사유를 분리했다. 실기기·공급원은 NOT RUN. |
 | G5 | PASS, 자기 재검토 | 독립 검토자는 NOT RUN. 열린 P0/P1은 이 변경에 없다. |
-| G6 | PASS, CI 기록 전 | 코드 SHA `14328ae`. bootstrap ID는 push 뒤 기록. 제품 GO로 올리지 않음. |
+| G6 | PASS, 후속 문서 병합의 CI는 별도 | 코드 SHA `14328ae`. CI head `8969a7e`의 bootstrap 30, 문서 예산 8, Domain Kotlin push 12, Windows 11 steps는 success. 문서 병합 `f43e151`의 실행 ID는 그 push 뒤에 추가한다. 제품 GO로 올리지 않음. |
 | G7 | PASS, 제한 | 중앙 STATUS/WORK_LOG/BLOCKERS는 수정하지 않았다. 제안만 아래에 둔다. |
 
 최종 판정: 독립 모듈 통합 후보. 기존 72개와 domain 81개를 유지하고 신규 10개 메서드가 통과했다. intelligence와 domain은 FAIL 0, ERROR 0, SKIP 0이다. 100000회 불변 조건 위반은 0이다. 담당 경로 위반은 0이다. 공통 워크플로는 수정하지 않았고 main으로는 병합하지 않았다. 최신 main은 이 브랜치로만 병합했다.
@@ -87,12 +101,12 @@ CI 실행 ID: 이 보고서 시점에는 회차 06 head의 bootstrap이 아직 �
 | GB02-R05-ASYNC | P2 유지 | 호출 순서, null이 아닌 `deliveredIntent()`, 더 이른 `processedAt` 폐기. Wear/WFF 코드는 없다. |
 | AUD-R02-02/03/04/06/07, AUD-R02-10/11 | R07 후보, 미구현 | R06 범위 밖. 미래 관측 오차와 제품 임계값은 정하지 않았다. |
 | 공통 CI | 미적용 | 총괄이 `CI_PROPOSAL.md`를 적용한다. 기대 수량은 10/82와 7/81이다. |
-| 호스트 Windows | 환경 | 최신 병합 후 361개 중 359 PASS, 1 FAIL, 1 ERROR. CRLF와 로컬 PNG 다이제스트. Ubuntu bootstrap과 Windows reproducibility로 재확인. |
+| 호스트 Windows | 로컬만 | 로컬 Python 3.14.7은 361개 중 359 PASS, 1 FAIL, 1 ERROR. head `8969a7e`의 GitHub Windows 전체 스위트와 Ubuntu 검증 도구 회귀는 success다. |
 | 제품 출시 | NO-GO | 실기기, 공급원, WFF, 배터리, 확정 임계값 없음. |
 
 ## 중앙 문서 제안
 
-- STATUS: 현재 다음 행동인 F02 통합 main Linux/Windows/문서 CI 확인을 빼지 않는다. GB-02 PR #3 회차 06은 로컬 intelligence 82 PASS, domain 81 PASS, 로컬 호스트 361 중 359 PASS / 1 FAIL / 1 ERROR, 실기기와 intelligence 모듈 CI는 NOT RUN, 제품 NO-GO, PR은 미병합이라고 한 줄 추가할 수 있다.
+- STATUS: 현재 다음 행동인 F03 R01 최종 후보 CI·아티팩트 확인을 빼지 않는다. GB-02 PR #3 회차 06은 로컬 intelligence 82 PASS, domain 81 PASS, CI head `8969a7e`의 bootstrap·문서 예산·Domain Kotlin push·Windows 재현이 success, 실기기와 intelligence 모듈 CI는 NOT RUN, 제품 NO-GO, PR은 미병합이라고 한 줄 추가할 수 있다.
 - WORK_LOG: 같은 한 줄을 추가할 수 있다.
 - BLOCKERS: 변경하지 않는다. R07 후보와 GB02-R05-ASYNC는 이 보고서의 차단점이다.
 - FINDINGS: 총괄이 네 ID의 해결 증거를 이 보고서와 맞춘 뒤에만 상태를 바꾼다.
