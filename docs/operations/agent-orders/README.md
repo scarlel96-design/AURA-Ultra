@@ -3,10 +3,12 @@
 
 | 담당 | ID | 상태 | 브랜치 | 소유 경로 |
 |---|---|---|---|---|
-| ChatGPT | GPT-04/05/06 | GPT-06 독립 준비 종료·중단 / PARTIAL; GPT-07 미착수 | main 및 격리 후보 | 그래픽, 공통 도구/CI, 중앙 운영 문서 |
+| ChatGPT | GPT-04/05/06 | GPT-06 독립 준비 종료·중단 / PARTIAL; 중간 감사 종료; F01 승인 대기; GPT-07 미착수 | main 및 격리 후보 | 그래픽, 공통 도구/CI, 중앙 운영 문서 |
 | Grok Build | [GB-01](GB-01.md) | 독립 모듈 통합 GO | agent/grok/GB-01 | modules/domain/**, docs/evidence/GB-01/** |
-| Grok Build | [GB-02](GB-02.md) | R05 제출, 감사 CI 72/81 PASS, 계약 위험 OPEN, HOLD | agent/grok/GB-02 | modules/intelligence/**, docs/evidence/GB-02/** |
-| Antigravity | [AG-01](AG-01.md) | R07 격리 재시험 38 PASS, 감사 결함 OPEN, runtime NOT RUN, HOLD | agent/antigravity/AG-01 | tests/compatibility/ag-01/**, docs/evidence/AG-01/** |
+| Grok Build | [GB-02](GB-02.md) | R05 제출, 감사 CI 72/81 PASS, 계약 위험 OPEN, G01 후속 지시 대기, HOLD | agent/grok/GB-02 | modules/intelligence/**, docs/evidence/GB-02/** |
+| Antigravity | [AG-01](AG-01.md) | R07 격리 재시험 38 PASS, 감사 결함 OPEN, A01 후속 지시/사용량 회복 대기, runtime NOT RUN, HOLD | agent/antigravity/AG-01 | tests/compatibility/ag-01/**, docs/evidence/AG-01/** |
 | Codex | 미배정 | NOT STARTED | 추후 지정 | 고난도 통합·실기기 |
 
 매 턴 AGENTS.md PRE-FLIGHT 및 G0~G7. 사용자 지시에 따라 각 CLI에서 실행한다. 동일 파일 수정 금지. 외부 에이전트는 자기 evidence에 중앙 갱신 제안을 기록한다. 총괄만 중앙 문서 갱신. PR #2/#3 자동 병합·강제 푸시 금지. 사용량 제한 중 AG 작업을 다른 에이전트에게 임의 인수하지 않는다. 신규 SDK/AVD 설치는 사용자 승인 전 금지. 독립 모듈의 자체 GO는 총괄 통합 GO가 아니다. 제품 NO-GO.
+
+중간 감사 후속 배정 제안: [통합 등록부](../../evidence/MID-AUDIT/FINDINGS.md), [실행 계획](../../evidence/MID-AUDIT/REMEDIATION-PLAN.md). 기존 소유권 유지. D01 domain 작업은 별도 사용자 승인 및 배정 필요. 감사 branch 병합 금지. 제안은 agent 작업 시작 또는 병합 승인이 아니다.

@@ -13,7 +13,7 @@
 
 | 추가 항목 | 상태 / 조치 |
 |---|---|
-| AG01-AUD-01~09 | PR #2 HOLD. R07 원시 로그 38 PASS 확인, 실제 runtime NOT RUN. R03 추가 감사 후 판정. |
+| AG01-AUD-01~09 | PR #2 HOLD. R07 원시 로그 38 PASS 확인, 실제 runtime NOT RUN. 최종 감사 완료, AG A01 해결 및 별도 검토 전 HOLD. |
 | GB02-AUD-05~08 및 revision 보호 | PR #3 HOLD. R05 제출, 별도 Kotlin CI 72+81 PASS. 소비자·TTL·관측 순서 및 검증기 결함 해결 전 HOLD. |
 | GB01-E1 | 비ASCII Windows Gradle worker 제한. ASCII worktree 사용. |
 | GPT06-D1 | 호스트 링 충돌 해결: CI 46080386050. 실제 소재 승인 미확보. |
@@ -30,11 +30,4 @@ R06 아티팩트 직접 다운로드/파일 검사 성공. 설치, 실제 렌더
 GPT-06 독립 준비 종료/STOPPED. [종료 보고](../evidence/GPT-06/REPORT-FINAL-CLOSURE.md). 실제 기기, 동적 광학·모션, 후보 프리뷰 및 승격 승인 미충족. B-002/005/008 및 제품 NO-GO 유지. GPT-07 별도 승인 대기.
 
 ## 중간 감사 OPEN
-- AUD-R01-01/02 P1: main 보호 미설정, Signature 검사기 6개 부정 입력 미검출. 사용자 권한/승인 및 검사기 강화 필요.
-- AUD-R01-03~07 P2: JUnit 식별자·WFF 오류 분류·CI 경로 조건·Actions pin. R01-06 추가 재현 7/7 잘못된 입력 수용.
-- AUD-R02-01/03/04 P1: 오류 상태 TTL 소실, 이전 관측 반영 및 보호 의도 누락의 통합 위험. 제품 통합 전 해결.
-- AUD-R02-02/05~09/12 P2: 미래 입력·정책 단위·revision 상한·NaN 범위·가변 payload·CRLF. 10/11은 그래픽 히스테리시스 정책 재검토. [R02](../evidence/MID-AUDIT/REPORT-R02.md). GPT-07 금지, PR HOLD.
-
-- AUD-R03-01/04/05/06/07/09 P1 또는 통합 전 P1: 역순 보호 요청, wallpaper 섹션 오인, Manifest 정규식, 덮어쓰기 race, MP4 bytes/path 불일치, MP4 검사 전 할당. AUD-R03-02/03/10~13 P2 및 안전 경계: transition metadata, PNG 부가 구조, install 복구 범위/표시 대상/remote 파일/최종 재확인. R03-08은 기존 AUD-R01-04 재현. [R03 증거](../evidence/MID-AUDIT/REPORT-R03.md). AG-01 실제 runtime 실행 금지, HOLD 유지. 수정 및 독립 재검증은 전체 감사 후 소유권별 계획.
-
-- AUD-R04-01~04 P2: source Manifest 검사 누락(최종 compiled 검사 정상), 기존 destination symlink, profile JSON 중복 키, assume-unchanged 출처 검증 한계. AUD-R04-05 P1: Gradle 의존성 verification/lock 미적용. AUD-R04-06~08 P2/P3: checkout credentials/격리 입력/문서 일치. SBOM/전체 CVE/license 미완료, B-007 유지. [R04](../evidence/MID-AUDIT/REPORT-R04.md). 다음 FINAL 종합. 
+[통합 등록부](../evidence/MID-AUDIT/FINDINGS.md): 39개(12 P1, 24 P2, 1 P3, 2 정책), 이전 원본 R01~04 링크 및 모든 ID 보존. 중복 R03-08=R01-04. [개선 계획](../evidence/MID-AUDIT/REMEDIATION-PLAN.md). F01~04 GPT, G01 GB, A01 AG, D01 domain 별도 승인, F00 관리자. 관련 P1 및 필수 결함 해결 전 통합 GO 금지. 전체 공급망/CVE/license/SBOM/실기기 미실행. 사용자 후속 개선 승인 대기. PR #2/#3 HOLD, GPT-07 금지.

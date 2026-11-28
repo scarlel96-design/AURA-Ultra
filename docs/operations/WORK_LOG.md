@@ -11,3 +11,5 @@
 - 중간 감사 R03: https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46087379624 SUCCESS 316+38 PASS, AG 23 blob 일치, 16 관찰, 보충 https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46087610218 SUCCESS. 원시 artifact 및 로컬 ffprobe 재검증. [보고서](../evidence/MID-AUDIT/REPORT-R03.md). 다음 R04 보안/공급망/요구사항 추적·종합 판정. 제품 코드/외부 브랜치 불변.
 
 - 중간 감사 R04: https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46088472103 SUCCESS, 843 파일 출현 secret pattern 검사 hit 0, 외부 의존성 29/29 해시 일치, 7개 경계 관찰, [보고서](../evidence/MID-AUDIT/REPORT-R04.md) 및 [요구사항 추적](../evidence/MID-AUDIT/REQUIREMENTS-TRACE.md). 다음 FINAL. 제품 및 외부 브랜치 불변.
+
+- 전체 중간 감사 FINAL: [최종 보고](../evidence/MID-AUDIT/REPORT-FINAL.md), [39개 통합 등록부](../evidence/MID-AUDIT/FINDINGS.md), [개선 계획](../evidence/MID-AUDIT/REMEDIATION-PLAN.md). 비문서 114 blob/mode 동일 및 5 ZIP 직접 재검사. 감사 조사 종료; 수정 미착수. F01 후속 승인 대기. 제품 NO-GO, GPT-07 NOT STARTED.

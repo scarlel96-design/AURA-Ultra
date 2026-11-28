@@ -23,4 +23,4 @@ GPT-01~03 GO(개발 기반). GPT-04 PARTIAL; GPT-05 독립 준비 PARTIAL. GB-01
 GPT-02~12는 사전 범위다. 시작 직전에 관련 실제 코드·공식 API·의존성을 확인하여 상세 WO 또는 GPT 작업 명세를 작성한다. 무효화된 과거 계획을 그대로 실행하지 않는다.
 사용자가 "다음 작업"이라고 하면 위 표와 STATUS, BLOCKERS에 따라 안전한 작업을 선정한다. 순서 변경은 근거와 선행 조건을 WORK_LOG에 남긴다.
 
-현재 우선순위: GPT-06 종료 보고 확인 후 사용자 결정 대기. 실기기 확인 및 승격 조건은 SIGNATURE_DEVICE_GATE.md. GPT-07 자동 착수 금지. [과거 기록](../archive/README.md).
+현재 우선순위: 전체 중간 감사 조사 종료. [후속 개선 계획](../evidence/MID-AUDIT/REMEDIATION-PLAN.md)의 F01부터 사용자 후속 승인 대기. 신규 기능 GPT-07과 분리. 실기기 확인 및 승격 조건은 SIGNATURE_DEVICE_GATE.md. GPT-07 자동 착수 금지. [과거 기록](../archive/README.md).

@@ -12,7 +12,7 @@
 | 정식 WO GO | 0/38 |
 | GPT 묶음 GO | 3/12 (PARTIAL 독립 준비 종료는 GO에 포함하지 않음) |
 | 출시 | NO-GO |
-| 다음 행동 | 전체 중간 감사 FINAL: R01~04 종합·중복 제거·담당별 수정 계획 확정. GPT-07 및 실기기 설치는 별도 승인 대기. |
+| 다음 행동 | 중간 감사 종료. 사용자 후속 개선 승인 시 MID-AUDIT F01 검증기 강화부터 시작. GPT-07 및 실기기 설치는 별도 승인 대기. |
 
 ## 근거 및 이관
 - [GPT-06 전체 종료 보고](evidence/GPT-06/REPORT-FINAL-CLOSURE.md). R01~R06 및 OPS-07 독립 준비 산출물 통합·자동 검증 완료. 결합 후보와 main 코드·시험·자산·CI 102개, 보호 경로 38개 blob 동일. 원본 아카이브 8개 SHA 동일. 활성 8개 문서 500021→24609 B(검증 코드 기준).
@@ -25,11 +25,9 @@
 ## 중단
 사용자 요청에 따라 GPT-06 전체 독립 준비 종료 후 중단한다. GPT-07 착수 금지. PARTIAL 및 제품 NO-GO 유지.
 
-## 전체 중간 감사 (사용자 승인, 기능 개발 아님)
-- [R01](evidence/MID-AUDIT/REPORT-R01.md): 실제 main CI 46084484983 316 PASS 및 APK 4/4 재검사. P1/P2 발견 7개. 브랜치 보호 OFF, 검증기 결함.
-- [R02](evidence/MID-AUDIT/REPORT-R02.md): [격리 Kotlin CI](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46086659055) SUCCESS, domain 81/81, intelligence 72/72, 신규 감사 9개 정상 실행(결함 관찰 포함). [원시 XML](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46086659055/artifacts/15239207748) 17개 직접 검사. TTL 오류 사유 소실, 관측 순서·보호 정책 통합 위험, 검증기 및 Windows CRLF 결함 재현. 제품 소스 변경 없음. 감사 브랜치 병합 금지.
-- 감사 PARTIAL, 제품 NO-GO. 종합 판정 전 결함 수정·외부 PR 병합·GPT-07 착수 금지. 상세 우선순위는 보고서 및 BLOCKERS 참조.
-
-- [R03](evidence/MID-AUDIT/REPORT-R03.md): 격리 [CI](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46087379624) SUCCESS, main host 316/316, AG-01 38/38, AG 원본 23개 blob 일치. 소재 XML/PNG 재생성 동일. 16 관찰 중 정상 대조 3, 12 위험 관찰, 1 ffprobe NOT RUN(CI). [보충 CI](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46087610218) SUCCESS; 로컬 exact 58개 source blob, 실제 ffprobe 정상 12/12, 서로 다른 컨테이너/디코딩 입력을 VERIFIED로 승인하는 결함 재현. PNG/Manifest/선택/덮어쓰기/모션 순서/메모리/복구 범위 문제. 실제 기기 NOT RUN. 두 감사 브랜치 병합 금지. AG-01/GB-02 HOLD. 제품 소스 변경 없음.
-
-- [R04](evidence/MID-AUDIT/REPORT-R04.md): [CI](https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46088472103) SUCCESS, 3 snapshot 843 파일 출현 제한 패턴 검사 hit 0, 외부 의존성 29/29 해시 일치. 소스/경로/프로필/출처 검사 7개 위험 관찰. [요구사항 추적](evidence/MID-AUDIT/REQUIREMENTS-TRACE.md) 26/26. 전체 CVE/라이선스/실기기 NOT RUN. 다음 FINAL 종합 감사. 제품 코드 무변경.
+## 전체 중간 감사 — 조사 종료 / 개선 미착수
+[최종 보고](evidence/MID-AUDIT/REPORT-FINAL.md) · [통합 결함 등록부](evidence/MID-AUDIT/FINDINGS.md) · [후속 개선 계획](evidence/MID-AUDIT/REMEDIATION-PLAN.md) · [26개 요구사항 추적](evidence/MID-AUDIT/REQUIREMENTS-TRACE.md).
+- R01~R04 감사 보고와 증거를 유지한다. FINAL: GPT-06 대비 비문서 114/114 blob/mode 동일, 보존 ZIP 5/5 hash/CRC, Kotlin XML 17/162 cases, 외부 dependency 29/29 재검사.
+- 40개 ID→39개(중복 1), P1 12/P2 24/P3 1/정책 2. 전부 OPEN. 전체 감사 접근 가능 조사 종료, 실기기/보안 전체 검증 PARTIAL, 출시 NO-GO.
+- F01 검증기 → F02 재현성 → F03 공급망 → F04 보호 계약. G01/AG A01은 별도 사용자 지시 및 소유권, D01 별도 배정. F00 관리자 보호 설정, C01 실제 통합/실기기 별도 승인. 외부 PR HOLD, 감사 브랜치 병합 금지. GPT-07 미착수. 기존 B-002~008 유지.
+- 최신 확인 main CI 46087742551 SUCCESS, doc 46088719146 SUCCESS; 46088719175 PENDING at report drafting. 기록 커밋 후 CI 별도 확인.
