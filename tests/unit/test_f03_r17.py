@@ -64,6 +64,25 @@ class ExceptionTests(unittest.TestCase):
         result = audit.attempt(row, audit.CENTRAL, 10, "a" * 64, Path("."), reader=reader)
         self.assertEqual((result["status"], result["reason"]), ("UNAVAILABLE", "Stream exceeds bound"))
 
+    def test_redirect_host_only(self):
+        with self.assertRaisesRegex(ValueError, "^Redirect refused; host=example.invalid$"):
+            audit.ObservedRedirect().redirect_request(None, None, 302, "", {}, "https://example.invalid/a?secret=x")
+
+    def test_alternate_only_on_unavailable(self):
+        raw = b"artifact"
+        row = {"coordinate": "g:a:1", "artifact": "a-1.jar", "sha256": [audit.sha(raw)], "trust": "UNREVIEWED"}
+        calls = []
+        def reader(url, limit, retain):
+            calls.append(url)
+            if url.startswith(audit.CENTRAL):
+                raise ValueError("blocked")
+            return {"sha256": audit.sha(raw), "bytes": len(raw)}, b""
+        routes = audit.compiler_routes(row, Path("."), reader)
+        self.assertEqual([x["status"] for x in routes], ["UNAVAILABLE", "MATCH"])
+        self.assertEqual(len(calls), 2)
+        routes = audit.compiler_routes(row, Path("."), lambda *a: ({"sha256": "0"*64, "bytes": 1}, b""))
+        self.assertEqual([x["status"] for x in routes], ["MISMATCH"])
+
 
 if __name__ == "__main__":
     unittest.main()

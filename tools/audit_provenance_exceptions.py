@@ -7,6 +7,7 @@ import re
 import subprocess
 import time
 import urllib.request
+import urllib.parse
 import http.client
 
 from audit_provenance_priority import archive, sha, MAX_ARTIFACT
@@ -19,6 +20,7 @@ SOURCE = "5c1df1f4ccf989354ed09b616ed2d32243383884"
 COMPILER_LIMIT = 256 * 1024 * 1024
 MARKER_LIMIT = 64 * 1024
 CHUNK = 1024 * 1024
+CENTRAL_ALTERNATE = "https://repo1.maven.org/maven2/"
 TARGETS = {
     ("org.jetbrains.kotlin:kotlin-compiler-embeddable:2.2.10", "kotlin-compiler-embeddable-2.2.10.jar"),
     ("org.jetbrains.kotlin:kotlin-compiler-embeddable:2.4.0", "kotlin-compiler-embeddable-2.4.0.jar"),
@@ -57,11 +59,20 @@ def consume(response, limit, retain=False, clock=time.monotonic):
     return {"bytes": size, "declaredBytes": declared, "sha256": digest.hexdigest()}, b"".join(parts)
 
 
+class ObservedRedirect(RestrictedRedirect):
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        if not allowed_url(newurl):
+            host = urllib.parse.urlsplit(newurl).hostname or "UNKNOWN"
+            # Do not retain query parameters or follow an unapproved redirect.
+            raise ValueError("Redirect refused; host=" + host[:253])
+        return super().redirect_request(req, fp, code, msg, headers, newurl)
+
+
 def retrieve(url, limit, retain=False):
     if not allowed_url(url):
         raise ValueError("Unapproved repository")
     request = urllib.request.Request(url, headers={"Accept-Encoding": "identity"})
-    with urllib.request.build_opener(RestrictedRedirect()).open(request, timeout=20) as response:
+    with urllib.request.build_opener(ObservedRedirect()).open(request, timeout=20) as response:
         if not allowed_url(response.geturl()) or response.status != 200:
             raise ValueError("Unapproved final source or HTTP status")
         result, body = consume(response, limit, retain)
@@ -85,6 +96,14 @@ def attempt(row, base, limit, expected, output, retain=False, reader=retrieve):
         r.update(status="UNAVAILABLE", error=type(exc).__name__, reason=str(exc)[:300],
                  http=getattr(exc, "code", None))
     return r
+
+
+def compiler_routes(row, output, reader=retrieve):
+    expected = row["sha256"][0]
+    routes = [attempt(row, CENTRAL, COMPILER_LIMIT, expected, output, reader=reader)]
+    if routes[0]["status"] == "UNAVAILABLE":
+        routes.append(attempt(row, CENTRAL_ALTERNATE, COMPILER_LIMIT, expected, output, reader=reader))
+    return routes
 
 
 def select(rows, results):
@@ -127,8 +146,8 @@ def main():
         r = {"coordinate": row["coordinate"], "artifact": row["artifact"],
              "expectedSha256": expected, "trust": "UNREVIEWED"}
         if row["artifact"].endswith(".jar"):
-            r["routes"] = [attempt(row, CENTRAL, COMPILER_LIMIT, expected, a.output)]
-            r["status"] = r["routes"][0]["status"]
+            r["routes"] = compiler_routes(row, a.output)
+            r["status"] = r["routes"][-1]["status"]
         else:
             if historical[PORTAL] != expected or historical[CENTRAL] == expected:
                 raise ValueError("Historical marker hashes do not identify separate routes")
