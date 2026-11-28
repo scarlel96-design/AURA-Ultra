@@ -21,6 +21,7 @@ WORKFLOWS = {
     "reproduce-packaging.yml": ["actions/checkout", "actions/setup-java",
                                 "actions/setup-python", "android-actions/setup-android"],
     "windows-repro.yml": ["actions/checkout", "actions/setup-python"],
+    "host-repair.yml": ["actions/checkout", "actions/setup-python"],
 }
 
 
