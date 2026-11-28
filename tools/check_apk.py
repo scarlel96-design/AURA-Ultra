@@ -34,24 +34,20 @@ def inspect_entries(names):
     return errors
 
 
-def inspect_manifest(xml, profile):
-    """Check the compiled APK manifest, not the source manifest."""
-    root = ET.fromstring(xml)
+def resource_manifest_errors(root, expected_version):
+    """Apply the same resource-only policy to source and compiled manifests."""
     errors = []
-    expected_id = BASE_ID + "." + profile["name"]
-    if root.tag != "manifest" or root.get("package") != expected_id:
-        errors.append("Incorrect package: " + str(root.get("package")))
-    sdk = root.find("uses-sdk")
-    if sdk is None or sdk.get(NS + "minSdkVersion") != str(profile["minSdk"]):
-        errors.append("Incorrect minSdkVersion")
-    app = root.find("application")
-    if app is None:
-        return errors + ["Missing application element"]
+    if root.tag != "manifest":
+        errors.append("Invalid manifest root")
+    apps = root.findall("application")
+    if len(apps) != 1:
+        return errors + ["Expected one application element"]
+    app = apps[0]
     if app.get(NS + "hasCode") != "false":
         errors.append("Missing explicit android:hasCode=false")
     values = [p.get(NS + "value") for p in app.findall("property")
               if p.get(NS + "name") == WFF_PROPERTY]
-    if values != [str(profile["version"])]:
+    if values != [expected_version]:
         errors.append("Incorrect or duplicate WFF version property: " + str(values))
     for tag in ("activity", "activity-alias", "service", "receiver", "provider"):
         if app.findall(tag):
@@ -64,6 +60,18 @@ def inspect_manifest(xml, profile):
         errors.append("Missing required watch feature")
     return errors
 
+
+def inspect_manifest(xml, profile):
+    """Check compiled package identity and the resource-only policy."""
+    root = ET.fromstring(xml)
+    errors = resource_manifest_errors(root, str(profile["version"]))
+    expected_id = BASE_ID + "." + profile["name"]
+    if root.get("package") != expected_id:
+        errors.append("Incorrect package: " + str(root.get("package")))
+    sdk = root.findall("uses-sdk")
+    if len(sdk) != 1 or sdk[0].get(NS + "minSdkVersion") != str(profile["minSdk"]):
+        errors.append("Incorrect minSdkVersion")
+    return errors
 
 def inspect_face(archive, expected):
     """Compare the packaged face with the selected source bytes."""

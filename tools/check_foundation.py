@@ -1,5 +1,6 @@
 """Check project invariants. This is not the official WFF validator."""
 import json
+from check_apk import resource_manifest_errors
 from profile_contract import load_profiles, check_source_sets, face_source
 import re
 import sys
@@ -18,11 +19,8 @@ def require(ok, message):
 
 def check():
     manifest = ET.parse(APP / "src/main/AndroidManifest.xml").getroot()
-    app = manifest.find("application")
-    require(app is not None and app.get(NS + "hasCode") == "false", "WFF must be resource-only")
-    require(not list(app.findall("activity")) and not list(app.findall("service")), "Executable component in WFF")
-    require(not list(manifest.findall("uses-permission")), "Unexpected permission")
-    require(any(p.get(NS + "name") == "com.google.wear.watchface.format.version" and p.get(NS + "value") == "${wffVersion}" for p in app.findall("property")), "Missing version placeholder")
+    errors = resource_manifest_errors(manifest, "$"+"{wffVersion}")
+    require(not errors, "; ".join(errors))
     require(not any(p.suffix in (".kt", ".java", ".dex", ".so") for p in (APP / "src").rglob("*") if p.is_file()), "Executable source or binary in WFF")
     face = ET.parse(RES / "raw/watchface.xml").getroot()
     require(face.tag == "WatchFace" and (face.get("width"), face.get("height")) == ("450","450"), "Invalid root or canvas")
