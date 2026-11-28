@@ -90,19 +90,38 @@ main `6645d35`가 같은 7개 메서드를 D01 목록으로 등록했다. pull_r
 | Active documentation budget | push | 46117711562 | 140895136381 | success |
 | Active documentation budget | pull_request | 46117715521 | 140895149024 | success |
 
-보고 시점 `origin/main`은 `c646860948860d14b376a548fb50019a88c3dc9f`다. 차이는 중앙 문서와 이 마감 지시서다. Domain 파일과 겹치지 않아 병합하지 않았다. 중앙 STATUS 문장은 바꾸지 않았다.
+## FINAL-CI
+
+PRE-FLIGHT PASS. 기준 main `163860a95581f55c543c84c5fd67dff294797726`. PR #5 head는 병합 전 `c7cef1d880b40baf1719c986b288bc9a6f09e52e`였다. 검수 보고서는 `docs/evidence/MID-AUDIT/D01-CLOSEOUT-REVIEW.md`다. STATUS의 다음 행동은 이 push CI를 88 PASS로 확인하는 것이다. 중앙 문서는 직접 고치지 않고 main 병합으로만 가져왔다.
+
+구현 SHA `ef57005a2177bf87db3193c454ca6888be819df0`. main 반영 SHA `bfb115adca615f430f733f592ad2bb0c6a40564d`. 부모는 `c7cef1d880b40baf1719c986b288bc9a6f09e52e`와 `163860a95581f55c543c84c5fd67dff294797726`다. 제품 코드와 시험은 수정하지 않았다. `modules/domain/src/main` 8개 blob과 `modules/domain/src/test` 9개 blob이 `ef57005`와 같다. 그래서 Intelligence 108 PASS와 `longRunKeepsInvariants` 100000회 증거를 다시 실행하지 않는다.
+
+이전 push `46117711549`는 브랜치에 있던 등록 전 검사기가 `PayloadIntegrityTest`를 unknown suite로 거절한 실패다. 시험 단계는 success였다. 이번 병합은 main의 검사기와 `domain-kotlin.yml`의 `--ci`를 그대로 가져온다. 저장된 closeout XML에 `--profile d01`을 적용하면 `DOMAIN_RESULT 88 PASS / 0 FAIL / 0 ERROR / 0 SKIP`이다.
+
+최종 증거 커밋은 기록 커밋이 가리킨다. Historical WFF는 시작하지 않았다. FAIL, ERROR, SKIP은 0이다.
+
+| 워크플로 | 이벤트 | run | job | 결과 |
+|---|---|---|---|---|
+| Domain Kotlin | push | 46124616225 | 140916359789 | success. `DOMAIN_INVENTORY d01`. `DOMAIN_RESULT 88 PASS / 0 FAIL / 0 ERROR / 0 SKIP` |
+| Domain Kotlin | pull_request | 46124620271 | 140916372657 | success. 같은 88 PASS |
+| AURA Bootstrap | push | 46124616263 | 140916359825 | success, 31 steps |
+| AURA Bootstrap | pull_request | 46124620318 | 140916372667 | success, 31 steps |
+| Windows host reproducibility | push | 46124616266 | 140916359867 host(true), 140916359642 host(false) | success. Full host regression |
+| Windows host reproducibility | pull_request | 46124620286 | 140916372666 host(true), 140916372439 host(false) | success. Full host regression |
+| Active documentation budget | push | 46124616226 | 140916359492 | success |
+| Active documentation budget | pull_request | 46124620315 | 140916372718 | success |
 
 ## 게이트
 
 | 게이트 | 결과 |
 |---|---|
-| G0 | PASS. 착수 main에서 새 브랜치. 제품 NO-GO. 이후 main `f3f3340`과 충돌 없음 |
-| G1 | PASS, 한계 있음. 가변 페이로드는 거절. revision과 철회 시각의 우선순위는 합의 전 |
-| G2 | 브랜치 push 검사기는 등록 전 FAIL. main과 합친 pull_request 검사는 `DOMAIN_RESULT 88 PASS` |
-| G3 | PASS. Domain 88, Intelligence 108, 100000. JUnit FAIL/ERROR/SKIP 0 |
+| G0 | PASS. main `163860a` 병합. Domain 경로 충돌 없음. 제품 NO-GO |
+| G1 | PASS, 한계 있음. 구현 `ef57005` 유지. revision과 철회 시각의 우선순위는 합의 전 |
+| G2 | PASS. push `46124616225`와 pull_request `46124620271` 모두 88 PASS. 이전 push `46117711549`는 등록 전 실패로 남긴다 |
+| G3 | PASS. Domain 88, Intelligence 108, 100000. blob이 같아 Intelligence는 재실행하지 않음. FAIL/ERROR/SKIP 0 |
 | G4 | PASS, 제한. 스칼라 소비자와 거절 경로. 실기기 NOT RUN |
-| G5 | PASS, 자기 재검토. 독립 검수 NOT RUN |
-| G6 | PASS, 제품 NO-GO. 로그와 XML. Bootstrap은 intelligence 시험이 아니다 |
-| G7 | PASS, 제한. 이 보고서와 domain 가정 A28. 중앙 문서는 수정하지 않음 |
+| G5 | 독립 검수 완료. `docs/evidence/MID-AUDIT/D01-CLOSEOUT-REVIEW.md`. 제품 승인은 아님 |
+| G6 | PASS. 구현, main 반영, 증거를 구분한다. Bootstrap은 intelligence 시험이 아니다 |
+| G7 | PASS, 제한. 이 보고서와 PR #5. 중앙 STATUS는 main 병합본이다 |
 
 미해결: revision과 권한 철회 시각의 우선순위, F04, C01, intelligence 전용 CI, 실기기. 컬렉션 페이로드를 승인하는 계약은 없다. PR은 HOLD다.
