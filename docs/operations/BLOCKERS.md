@@ -39,4 +39,4 @@ GPT-06 독립 준비 종료/STOPPED. [종료 보고](../evidence/GPT-06/REPORT-F
 
 R10: 52 권고 상세 확인, CRITICAL 3/HIGH 21; Portal marker 기존 hash 일치, Central metadata 상이. 독립 trust, 업스트림 호환 개선, 라이선스 및 실제 범위 검증 OPEN. [보고](../evidence/MID-AUDIT/F03/REPORT-R10.md).
 
-R11: AGP9.5.1/Gradle9.6.1 격리 후보 CI 46103946447 PENDING. 신규 해결 버전/graph/OSV/호환성 및 trust 미확정. [보고](../evidence/MID-AUDIT/F03/REPORT-R11.md).
+R11: AGP9.5.1/Gradle9.6.1 격리 후보 46103946447 8 builds PASS, 8 MATCH/9 IDs, CRITICAL 잔여; 새 UTP/lint/detached coverage와 trust OPEN. [결과](../evidence/MID-AUDIT/F03/REPORT-R11-RESULT.md). [보고](../evidence/MID-AUDIT/F03/REPORT-R11.md).
