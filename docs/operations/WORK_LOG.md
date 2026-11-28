@@ -4,3 +4,6 @@
 - R05 301 PASS, [통합 증거](../evidence/GPT-06/REPORT-05-INTEGRATED.md).
 - R06 309 PASS/4개 소재 APK. OPS-07 7개 검사기 시험, 12개 활성 문서 예산, 원본 8개 blob 아카이브. [결합 증거](../evidence/GPT-06/REPORT-FINAL-INTEGRATION.md).
 - 최종 main 53d43d918c3e3c1002b70473f5de843c0f946d8e: 46083911786 SUCCESS 316 PASS, 46083911794 SUCCESS 7 PASS. 다운로드 무결성 PASS. [전체 종료 보고](../evidence/GPT-06/REPORT-FINAL-CLOSURE.md). GPT-06 독립 준비 종료·중단, 공식 PARTIAL, 출시 NO-GO. GPT-07 미착수. 사용자 별도 승인 대기.
+
+- 중간 감사 R01: 최신 main 316 PASS 및 소재 APK 재검사, 7개 개선점. [보고서](../evidence/MID-AUDIT/REPORT-R01.md).
+- 중간 감사 R02: GB-02 제출 XML 전체 16개/153건 검토, 별도 CI https://github.com/scarlel96-design/AURA-Ultra/actions/runs/46086659055 성공 81+72+9건, artifact 직접 검사 17 XML. JUnit 검증기 결함 7개 주입 및 CRLF 재현, Kotlin 11개 관찰. [보고서](../evidence/MID-AUDIT/REPORT-R02.md). 다음 R03. GPT-07 미착수.

@@ -13,8 +13,8 @@
 
 | 추가 항목 | 상태 / 조치 |
 |---|---|
-| AG01-AUD-01~09 | PR #2 HOLD. R07 사용량 제한, 실제 runtime NOT RUN. 보고서/독립 검토 후 판정. |
-| GB02-AUD-05~08 및 revision 보호 | PR #3 HOLD. R04 보완 보고; R05 복합 전이/소비자/CI 제안 검증 후 독립 감사. |
+| AG01-AUD-01~09 | PR #2 HOLD. R07 원시 로그 38 PASS 확인, 실제 runtime NOT RUN. R03 추가 감사 후 판정. |
+| GB02-AUD-05~08 및 revision 보호 | PR #3 HOLD. R05 제출, 별도 Kotlin CI 72+81 PASS. 소비자·TTL·관측 순서 및 검증기 결함 해결 전 HOLD. |
 | GB01-E1 | 비ASCII Windows Gradle worker 제한. ASCII worktree 사용. |
 | GPT06-D1 | 호스트 링 충돌 해결: CI 46080386050. 실제 소재 승인 미확보. |
 | B-011 | 현재 validator/evaluator pin RESOLVED: CI 46056609237. release 변경 시 재확인. |
@@ -23,8 +23,14 @@
 
 신규 차단점은 ID, 심각도, 재현, 증거, 담당 및 해결 조건을 기록한다. 과거 세부 이력은 보관소 및 해당 evidence에 연결한다.
 
-OPS-07: 문서 검사 CI 46083441202 SUCCESS; GitHub 필수 상태 검사 설정 미확인. 통합 및 main CI 46083911794 SUCCESS. 실기기 설치 승인/접근 없음; 기기 검사 NOT RUN.
+OPS-07: 문서 검사 CI 46083441202 SUCCESS; GitHub main 보호 OFF 및 ruleset 0 확인. 통합 및 main CI 46083911794 SUCCESS. 실기기 설치 승인/접근 없음; 기기 검사 NOT RUN.
 
 R06 아티팩트 직접 다운로드/파일 검사 성공. 설치, 실제 렌더링, 로컬 서명 재검사 미실행; main 회귀 성공. B-002/005/008 유지.
 
 GPT-06 독립 준비 종료/STOPPED. [종료 보고](../evidence/GPT-06/REPORT-FINAL-CLOSURE.md). 실제 기기, 동적 광학·모션, 후보 프리뷰 및 승격 승인 미충족. B-002/005/008 및 제품 NO-GO 유지. GPT-07 별도 승인 대기.
+
+## 중간 감사 OPEN
+- AUD-R01-01/02 P1: main 보호 미설정, Signature 검사기 6개 부정 입력 미검출. 사용자 권한/승인 및 검사기 강화 필요.
+- AUD-R01-03~07 P2: JUnit 식별자·WFF 오류 분류·CI 경로 조건·Actions pin. R01-06 추가 재현 7/7 잘못된 입력 수용.
+- AUD-R02-01/03/04 P1: 오류 상태 TTL 소실, 이전 관측 반영 및 보호 의도 누락의 통합 위험. 제품 통합 전 해결.
+- AUD-R02-02/05~09/12 P2: 미래 입력·정책 단위·revision 상한·NaN 범위·가변 payload·CRLF. 10/11은 그래픽 히스테리시스 정책 재검토. [R02](../evidence/MID-AUDIT/REPORT-R02.md). GPT-07 금지, PR HOLD.
